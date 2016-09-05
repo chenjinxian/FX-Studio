@@ -57,8 +57,8 @@ public:
 	ErrorMessengerList m_errorMessengers;
 	
 	// thread safety
-	CriticalSection m_tagCriticalSection;
-	CriticalSection m_messengerCriticalSection;
+	mutable boost::mutex m_tagMutex;
+	mutable boost::mutex m_messengerMutex;
 
 public:
 	// construction
@@ -100,14 +100,13 @@ LogMgr::LogMgr(void)
 //------------------------------------------------------------------------------------------------------------------------------------
 LogMgr::~LogMgr(void)
 {
-	m_messengerCriticalSection.Lock();
+	boost::mutex::scoped_lock lock(m_messengerMutex);
 	for (auto it = m_errorMessengers.begin(); it != m_errorMessengers.end(); ++it)
 	{
 		Logger::ErrorMessenger* pMessenger = (*it);
 		delete pMessenger;
 	}
 	m_errorMessengers.clear();
-	m_messengerCriticalSection.Unlock();
 }
 
 
@@ -153,11 +152,10 @@ void LogMgr::Init(const char* loggingConfigFilename)
 //------------------------------------------------------------------------------------------------------------------------------------
 void LogMgr::Log(const string& tag, const string& message, const char* funcName, const char* sourceFile, unsigned int lineNum)
 {
-	m_tagCriticalSection.Lock();
+	boost::mutex::scoped_lock lock(m_tagMutex);
 	Tags::iterator findIt = m_tags.find(tag);
 	if (findIt != m_tags.end())
 	{
-		m_tagCriticalSection.Unlock();
 		
 		string buffer;
 		GetOutputBuffer(buffer, tag, message, funcName, sourceFile, lineNum);
@@ -167,7 +165,6 @@ void LogMgr::Log(const string& tag, const string& message, const char* funcName,
 	{
 		// Critical section is exited in the if statement above, so we need to exit it here if that didn't 
 		// get executed.
-		m_tagCriticalSection.Unlock();
 	}
 }  // end LogMgr::Log()
 
@@ -177,7 +174,7 @@ void LogMgr::Log(const string& tag, const string& message, const char* funcName,
 //------------------------------------------------------------------------------------------------------------------------------------
 void LogMgr::SetDisplayFlags(const std::string& tag, unsigned char flags)
 {
-	m_tagCriticalSection.Lock();
+	boost::mutex::scoped_lock lock(m_tagMutex);
 	if (flags != 0)
 	{
 		Tags::iterator findIt = m_tags.find(tag);
@@ -190,7 +187,6 @@ void LogMgr::SetDisplayFlags(const std::string& tag, unsigned char flags)
 	{
 		m_tags.erase(tag);
 	}
-	m_tagCriticalSection.Unlock();
 }
 
 
@@ -199,9 +195,8 @@ void LogMgr::SetDisplayFlags(const std::string& tag, unsigned char flags)
 //------------------------------------------------------------------------------------------------------------------------------------
 void LogMgr::AddErrorMessenger(Logger::ErrorMessenger* pMessenger)
 {
-	m_messengerCriticalSection.Lock();
+	boost::mutex::scoped_lock lock(m_messengerMutex);
 	m_errorMessengers.push_back(pMessenger);
-	m_messengerCriticalSection.Unlock();
 }
 
 
@@ -217,11 +212,10 @@ LogMgr::ErrorDialogResult LogMgr::Error(const std::string& errorMessage, bool is
 	GetOutputBuffer(buffer, tag, errorMessage, funcName, sourceFile, lineNum);
 
 	// write the final buffer to all the various logs
-	m_tagCriticalSection.Lock();
+	boost::mutex::scoped_lock lock(m_tagMutex);
 	Tags::iterator findIt = m_tags.find(tag);
 	if (findIt != m_tags.end())
 		OutputFinalBufferToLogs(buffer, findIt->second);
-	m_tagCriticalSection.Unlock();
 
 	// show the dialog box
 	int result = ::MessageBoxA(NULL, buffer.c_str(), tag.c_str(), MB_ABORTRETRYIGNORE|MB_ICONERROR|MB_DEFBUTTON3);

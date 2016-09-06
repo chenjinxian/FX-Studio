@@ -1,49 +1,3 @@
-//========================================================================
-// String.cpp : Defines some useful string utility functions
-//
-// Part of the GameCode4 Application
-//
-// GameCode4 is the sample application that encapsulates much of the source code
-// discussed in "Game Coding Complete - 4th Edition" by Mike McShaffry and David
-// "Rez" Graham, published by Charles River Media. 
-// ISBN-10: 1133776574 | ISBN-13: 978-1133776574
-//
-// If this source code has found it's way to you, and you think it has helped you
-// in any way, do the authors a favor and buy a new copy of the book - there are 
-// detailed explanations in it that compliment this code well. Buy a copy at Amazon.com
-// by clicking here: 
-//    http://www.amazon.com/gp/product/1133776574/ref=olp_product_details?ie=UTF8&me=&seller=
-//
-// There's a companion web site at http://www.mcshaffry.com/GameCode/
-// 
-// The source code is managed and maintained through Google Code: 
-//    http://code.google.com/p/gamecode4/
-//
-// (c) Copyright 2012 Michael L. McShaffry and David Graham
-//
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser GPL v3
-// as published by the Free Software Foundation.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See 
-// http://www.gnu.org/licenses/lgpl-3.0.txt for more details.
-//
-// You should have received a copy of the GNU Lesser GPL v3
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-//
-//========================================================================
-
-//========================================================================
-//
-// String manipulation routines
-//
-// Not described in the book, but very useful for printing multiline text
-// Used in ..\Win32\Fonts.cpp
-//========================================================================
-
 #include "string.h"
 
 using std::string;
@@ -71,48 +25,6 @@ void TrimLeft(std::wstring &s)
 	if (i<len)
 		s = s.substr(i);
 }
-
-
-
-/*****************
-void RemoveFirstLine(std::wstring &src, std::wstring &result)
-{
-	int breakPosition = (int)src.find('\n');
-	result = _T("");
-	if(breakPosition != std::string.npos)	//if found...
-	{
-		int len = (int)src.length();
-		result = src.substr(0, breakPosition);
-		src = src.substr(breakPosition+1, (len-breakPosition)-1);		// skip the '/n'
-	}
-	else
-	{
-		result = src;
-		src = _T("");
-	}
-}
-
-
-
-int CountLines(const std::wstring &s)
-{
-	int lines = 0;
-	int breakPos = 0;
-
-	do 
-	{
-		++lines;
-		breakPos = (int)s.find('\n', breakPos+1);
-	} while (breakPos != std::string.npos);
-
-	return lines;
-}	
-*********************/
-
-
-// The following function was found on http://xoomer.virgilio.it/acantato/dev/wildcard/wildmatch.html, where it was attributed to 
-// the C/C++ Users Journal, written by Mike Cornelison. It is a little ugly, but it is FAST. Use this as an excercise in not reinventing the
-// wheel, even if you see gotos. 
 
 BOOL WildcardMatch(const char *pat, const char *str) {
    int i, star;
@@ -149,14 +61,6 @@ test_match:
    goto test_match;
 }
 
-
-//-----------------------------------------------------------------------------
-// Name: AnsiToWideCch()
-// Desc: This is a UNICODE conversion utility to convert a CHAR string into a
-//       WCHAR string. 
-//       cchDestChar is the size in TCHARs of wstrDestination.  Be careful not to 
-//       pass in sizeof(strDest) 
-//-----------------------------------------------------------------------------
 HRESULT AnsiToWideCch( WCHAR* wstrDestination, const CHAR* strSource, 
 									 int cchDestChar )
 {
@@ -172,14 +76,6 @@ HRESULT AnsiToWideCch( WCHAR* wstrDestination, const CHAR* strSource,
 	return S_OK;
 }
 
-
-
-//-----------------------------------------------------------------------------
-// Name: WideToAnsi()
-// Desc: This is a UNICODE conversion utility to convert a WCHAR string into a
-//       CHAR string. 
-//       cchDestChar is the size in TCHARs of strDestination
-//-----------------------------------------------------------------------------
 HRESULT WideToAnsiCch( CHAR* strDestination, const WCHAR* wstrSource, 
 									 int cchDestChar )
 {
@@ -195,16 +91,6 @@ HRESULT WideToAnsiCch( CHAR* strDestination, const WCHAR* wstrSource,
 	return S_OK;
 }
 
-
-
-
-
-//-----------------------------------------------------------------------------
-// Name: GenericToAnsi()
-// Desc: This is a UNICODE conversion utility to convert a TCHAR string into a
-//       CHAR string. 
-//       cchDestChar is the size in TCHARs of strDestination
-//-----------------------------------------------------------------------------
 HRESULT GenericToAnsiCch( CHAR* strDestination, const TCHAR* tstrSource, 
 										   int cchDestChar )
 {
@@ -220,16 +106,6 @@ HRESULT GenericToAnsiCch( CHAR* strDestination, const TCHAR* tstrSource,
 #endif   
 }
 
-
-
-
-//-----------------------------------------------------------------------------
-// Name: GenericToWide()
-// Desc: This is a UNICODE conversion utility to convert a TCHAR string into a
-//       WCHAR string. 
-//       cchDestChar is the size in TCHARs of wstrDestination.  Be careful not to 
-//       pass in sizeof(strDest) 
-//-----------------------------------------------------------------------------
 HRESULT GenericToWideCch( WCHAR* wstrDestination, const TCHAR* tstrSource, 
 										   int cchDestChar )
 {
@@ -245,15 +121,6 @@ HRESULT GenericToWideCch( WCHAR* wstrDestination, const TCHAR* tstrSource,
 #endif    
 }
 
-
-
-//-----------------------------------------------------------------------------
-// Name: AnsiToGeneric()
-// Desc: This is a UNICODE conversion utility to convert a CHAR string into a
-//       TCHAR string. 
-//       cchDestChar is the size in TCHARs of tstrDestination.  Be careful not to 
-//       pass in sizeof(strDest) on UNICODE builds
-//-----------------------------------------------------------------------------
 HRESULT AnsiToGenericCch( TCHAR* tstrDestination, const CHAR* strSource, 
 										   int cchDestChar )
 {
@@ -269,17 +136,6 @@ HRESULT AnsiToGenericCch( TCHAR* tstrDestination, const CHAR* strSource,
 #endif    
 }
 
-
-
-
-
-//-----------------------------------------------------------------------------
-// Name: AnsiToGeneric()
-// Desc: This is a UNICODE conversion utility to convert a WCHAR string into a
-//       TCHAR string. 
-//       cchDestChar is the size in TCHARs of tstrDestination.  Be careful not to 
-//       pass in sizeof(strDest) on UNICODE builds
-//-----------------------------------------------------------------------------
 HRESULT WideToGenericCch( TCHAR* tstrDestination, const WCHAR* wstrSource, 
 										   int cchDestChar )
 {
@@ -295,8 +151,6 @@ HRESULT WideToGenericCch( TCHAR* tstrDestination, const WCHAR* wstrSource,
 #endif
 }
 
-
-
 std::string ws2s(const std::wstring& s)
 {
 	int slength = (int)s.length() + 1;
@@ -306,7 +160,6 @@ std::string ws2s(const std::wstring& s)
 	return r;
 }
 
-
 std::wstring s2ws(const std::string &s)
 {
 	int slength = (int)s.length() + 1;
@@ -315,10 +168,6 @@ std::wstring s2ws(const std::string &s)
 	MultiByteToWideChar(CP_ACP, 0, s.c_str(), slength, &r[0], len);
 	return r;
 }
-
-
-
-
 
 string ToStr(int num, int base)
 {
@@ -370,12 +219,6 @@ string ToStr(const Vector3& vec)
 	return string("(" + ToStr(vec.x) + "," + ToStr(vec.y) + "," + ToStr(vec.z) + ")");
 }
 
-
-
-//---------------------------------------------------------------------------------------------------------------------
-// This is basically like the Perl split() function.  It splits str into substrings by cutting it at each delimiter.  
-// The result is stored in vec.
-//---------------------------------------------------------------------------------------------------------------------
 void Split(const string& str, StringVec& vec, char delimiter)
 {
 	vec.clear();
@@ -397,27 +240,9 @@ void Split(const string& str, StringVec& vec, char delimiter)
 		vec.push_back(str.substr(startIndex));
 }
 
-
-
 void *
 HashedString::hash_name( char const * pIdentStr )
 {
-	// Relatively simple hash of arbitrary text string into a
-	// 32-bit identifier Output value is
-	// input-valid-deterministic, but no guarantees are made
-	// about the uniqueness of the output per-input
-	//
-	// Input value is treated as lower-case to cut down on false
-	// separations cause by human mistypes. Sure, it could be
-	// construed as a programming error to mix up your cases, and
-	// it cuts down on permutations, but in Real World Usage
-	// making this text case-sensitive will likely just lead to
-	// Pain and Suffering.
-	//
-	// This code lossely based upon the adler32 checksum by Mark
-	// Adler and published as part of the zlib compression
-	// library sources.
-
 	// largest prime smaller than 65536
 	unsigned long BASE = 65521L;
 

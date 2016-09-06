@@ -1,9 +1,9 @@
 #pragma once
-#include "../RenderEngine.h"
+#include "../RenderEngineInterface.h"
+#include "../Mainloop/ProcessManager.h"
 
 class ActorFactory;
 class LevelManager;
-class ProcessManager;
 
 enum BaseGameState
 {

@@ -1,4 +1,41 @@
-#include "stdafx.h"
+//========================================================================
+// Logger.cpp : 
+//
+// Part of the GameCode4 Application
+//
+// GameCode4 is the sample application that encapsulates much of the source code
+// discussed in "Game Coding Complete - 4th Edition" by Mike McShaffry and David
+// "Rez" Graham, published by Charles River Media. 
+// ISBN-10: 1133776574 | ISBN-13: 978-1133776574
+//
+// If this source code has found it's way to you, and you think it has helped you
+// in any way, do the authors a favor and buy a new copy of the book - there are 
+// detailed explanations in it that compliment this code well. Buy a copy at Amazon.com
+// by clicking here: 
+//    http://www.amazon.com/gp/product/1133776574/ref=olp_product_details?ie=UTF8&me=&seller=
+//
+// There's a companion web site at http://www.mcshaffry.com/GameCode/
+// 
+// The source code is managed and maintained through Google Code: 
+//    http://code.google.com/p/gamecode4/
+//
+// (c) Copyright 2012 Michael L. McShaffry and David Graham
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser GPL v3
+// as published by the Free Software Foundation.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See 
+// http://www.gnu.org/licenses/lgpl-3.0.txt for more details.
+//
+// You should have received a copy of the GNU Lesser GPL v3
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+//
+//========================================================================
+
 #include "Logger.h"
 
 #include "../Multicore/CriticalSection.h"
@@ -18,17 +55,17 @@ static const char* ERRORLOG_FILENAME = "error.log";
 
 // default display flags
 #ifdef _DEBUG
-	const unsigned char ERRORFLAG_DEFAULT =		LOGFLAG_WRITE_TO_DEBUGGER;
-	const unsigned char WARNINGFLAG_DEFAULT =	LOGFLAG_WRITE_TO_DEBUGGER;
-	const unsigned char LOGFLAG_DEFAULT =		LOGFLAG_WRITE_TO_DEBUGGER;
+const unsigned char ERRORFLAG_DEFAULT = LOGFLAG_WRITE_TO_DEBUGGER;
+const unsigned char WARNINGFLAG_DEFAULT = LOGFLAG_WRITE_TO_DEBUGGER;
+const unsigned char LOGFLAG_DEFAULT = LOGFLAG_WRITE_TO_DEBUGGER;
 #elif NDEBUG
-	const unsigned char ERRORFLAG_DEFAULT =		(LOGFLAG_WRITE_TO_DEBUGGER | LOGFLAG_WRITE_TO_LOG_FILE);
-	const unsigned char WARNINGFLAG_DEFAULT =	(LOGFLAG_WRITE_TO_DEBUGGER | LOGFLAG_WRITE_TO_LOG_FILE);
-	const unsigned char LOGFLAG_DEFAULT =		(LOGFLAG_WRITE_TO_DEBUGGER | LOGFLAG_WRITE_TO_LOG_FILE);
+const unsigned char ERRORFLAG_DEFAULT = (LOGFLAG_WRITE_TO_DEBUGGER | LOGFLAG_WRITE_TO_LOG_FILE);
+const unsigned char WARNINGFLAG_DEFAULT = (LOGFLAG_WRITE_TO_DEBUGGER | LOGFLAG_WRITE_TO_LOG_FILE);
+const unsigned char LOGFLAG_DEFAULT = (LOGFLAG_WRITE_TO_DEBUGGER | LOGFLAG_WRITE_TO_LOG_FILE);
 #else
-	const unsigned char ERRORFLAG_DEFAULT =		0;
-	const unsigned char WARNINGFLAG_DEFAULT =	0;
-	const unsigned char LOGFLAG_DEFAULT =		0;
+const unsigned char ERRORFLAG_DEFAULT = 0;
+const unsigned char WARNINGFLAG_DEFAULT = 0;
+const unsigned char LOGFLAG_DEFAULT = 0;
 #endif
 
 // singleton
@@ -52,10 +89,10 @@ public:
 
 	typedef std::map<string, unsigned char> Tags;
 	typedef std::list<Logger::ErrorMessenger*> ErrorMessengerList;
-	
+
 	Tags m_tags;
 	ErrorMessengerList m_errorMessengers;
-	
+
 	// thread safety
 	mutable boost::mutex m_tagMutex;
 	mutable boost::mutex m_messengerMutex;
@@ -156,7 +193,7 @@ void LogMgr::Log(const string& tag, const string& message, const char* funcName,
 	Tags::iterator findIt = m_tags.find(tag);
 	if (findIt != m_tags.end())
 	{
-		
+
 		string buffer;
 		GetOutputBuffer(buffer, tag, message, funcName, sourceFile, lineNum);
 		OutputFinalBufferToLogs(buffer, findIt->second);
@@ -169,9 +206,9 @@ void LogMgr::Log(const string& tag, const string& message, const char* funcName,
 }  // end LogMgr::Log()
 
 
-//------------------------------------------------------------------------------------------------------------------------------------
-// Sets one or more display flags
-//------------------------------------------------------------------------------------------------------------------------------------
+   //------------------------------------------------------------------------------------------------------------------------------------
+   // Sets one or more display flags
+   //------------------------------------------------------------------------------------------------------------------------------------
 void LogMgr::SetDisplayFlags(const std::string& tag, unsigned char flags)
 {
 	boost::mutex::scoped_lock lock(m_tagMutex);
@@ -218,15 +255,15 @@ LogMgr::ErrorDialogResult LogMgr::Error(const std::string& errorMessage, bool is
 		OutputFinalBufferToLogs(buffer, findIt->second);
 
 	// show the dialog box
-	int result = ::MessageBoxA(NULL, buffer.c_str(), tag.c_str(), MB_ABORTRETRYIGNORE|MB_ICONERROR|MB_DEFBUTTON3);
+	int result = ::MessageBoxA(NULL, buffer.c_str(), tag.c_str(), MB_ABORTRETRYIGNORE | MB_ICONERROR | MB_DEFBUTTON3);
 
 	// act upon the choice
 	switch (result)
 	{
-		case IDIGNORE : return LogMgr::LOGMGR_ERROR_IGNORE;
-		case IDABORT  : __debugbreak(); return LogMgr::LOGMGR_ERROR_RETRY;  // assembly language instruction to break into the debugger
-		case IDRETRY :	return LogMgr::LOGMGR_ERROR_RETRY;
-		default :       return LogMgr::LOGMGR_ERROR_RETRY;
+	case IDIGNORE: return LogMgr::LOGMGR_ERROR_IGNORE;
+	case IDABORT: __debugbreak(); return LogMgr::LOGMGR_ERROR_RETRY;  // assembly language instruction to break into the debugger
+	case IDRETRY:	return LogMgr::LOGMGR_ERROR_RETRY;
+	default:       return LogMgr::LOGMGR_ERROR_RETRY;
 	}
 }
 
@@ -289,7 +326,7 @@ void LogMgr::GetOutputBuffer(std::string& outOutputBuffer, const string& tag, co
 		memset(lineNumBuffer, 0, sizeof(char));
 		outOutputBuffer += _itoa_s(lineNum, lineNumBuffer, 10);
 	}
-	
+
 	outOutputBuffer += "\n";
 }
 
@@ -322,32 +359,32 @@ void Logger::ErrorMessenger::Show(const std::string& errorMessage, bool isFatal,
 
 namespace Logger {
 
-void Init(const char* loggingConfigFilename)
-{
-	if (!s_pLogMgr)
+	void Init(const char* loggingConfigFilename)
 	{
-		s_pLogMgr = GCC_NEW LogMgr;
-		s_pLogMgr->Init(loggingConfigFilename);
+		if (!s_pLogMgr)
+		{
+			s_pLogMgr = GCC_NEW LogMgr;
+			s_pLogMgr->Init(loggingConfigFilename);
+		}
 	}
-}
 
-void Destroy(void)
-{
-	delete s_pLogMgr;
-	s_pLogMgr = NULL;
-}
+	void Destroy(void)
+	{
+		delete s_pLogMgr;
+		s_pLogMgr = NULL;
+	}
 
-void Log(const string& tag, const string& message, const char* funcName, const char* sourceFile, unsigned int lineNum)
-{
-	GCC_ASSERT(s_pLogMgr);
-	s_pLogMgr->Log(tag, message, funcName, sourceFile, lineNum);
-}
+	void Log(const string& tag, const string& message, const char* funcName, const char* sourceFile, unsigned int lineNum)
+	{
+		GCC_ASSERT(s_pLogMgr);
+		s_pLogMgr->Log(tag, message, funcName, sourceFile, lineNum);
+	}
 
-void SetDisplayFlags(const std::string& tag, unsigned char flags)
-{
-	GCC_ASSERT(s_pLogMgr);
-	s_pLogMgr->SetDisplayFlags(tag, flags);
-}
+	void SetDisplayFlags(const std::string& tag, unsigned char flags)
+	{
+		GCC_ASSERT(s_pLogMgr);
+		s_pLogMgr->SetDisplayFlags(tag, flags);
+	}
 
 }  // end namespace Logger
 #pragma endregion

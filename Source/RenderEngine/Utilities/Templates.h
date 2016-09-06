@@ -17,6 +17,14 @@ public:
 	virtual ~singleton() { *m_pGlobalValue = m_OldValue; }
 };
 
+
+//---------------------------------------------------------------------------------------------------------------------
+// [rez] Tr1 / Boost smart pointers make me sad.  In order to dereference a weak_ptr, you have to cast it to a 
+// shared_ptr first.  You still have to check to see if the pointer is dead dead by calling expired() on the weak_ptr, 
+// so why not just allow the weak_ptr to be dereferenceable?  It doesn't buy anything to force this extra step because 
+// you can still cast a dead weak_ptr to a shared_ptr and crash.  Nice.  Anyway, this function takes some of that 
+// headache away.
+//---------------------------------------------------------------------------------------------------------------------
 template <class Type>
 shared_ptr<Type> MakeStrongPtr(weak_ptr<Type> pWeakPtr)
 {
@@ -25,6 +33,24 @@ shared_ptr<Type> MakeStrongPtr(weak_ptr<Type> pWeakPtr)
 	else
 		return shared_ptr<Type>();
 }
+
+
+//////////////////////////////////////////////////////////////////////////////
+// optional.h
+//
+// An isolation point for optionality, provides a way to define
+// objects having to provide a special "null" state.
+//
+// In short:
+//
+// struct optional<T>
+// {
+//     bool m_bValid;
+//
+//	   T	m_data;
+// };
+//
+//
 
 #include <new>
 

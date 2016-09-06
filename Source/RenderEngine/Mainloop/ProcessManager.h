@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../RenderEngineBase.h"
 #include "Process.h"
 
 class ProcessManager

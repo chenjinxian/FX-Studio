@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "XmlResource.h"
 
 void XmlResourceExtraData::ParseXml(char* pRawBuffer)

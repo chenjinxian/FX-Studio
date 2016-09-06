@@ -6,7 +6,6 @@
 #pragma comment(lib, "advapi32.lib")
 #pragma comment(lib, "winmm.lib")
 
-#ifdef _M_IX86
 #ifdef _DEBUG
 #pragma comment(lib, "DirectXTKd.lib")
 #pragma comment(lib, "DXUTd.lib")
@@ -21,11 +20,6 @@
 #pragma comment(lib, "Effects11.lib")
 #pragma comment(lib, "tinyxml.lib")
 #pragma comment(lib, "zlibstatic.lib")
-#endif
-#elif defined(_M_IA64)
-#ifdef _DEBUG
-#else
-#endif
 #endif
 
 const UINT RenderEngineApp::SCREEN_WIDTH = 1024;

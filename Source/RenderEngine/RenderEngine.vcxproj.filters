@@ -1,80 +1,42 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
-    </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="AppFramework">
-      <UniqueIdentifier>{365fd38b-1335-4a90-96e1-5aeb6605546d}</UniqueIdentifier>
+    <Filter Include="Mainloop">
+      <UniqueIdentifier>{1239767b-41f0-4a1b-9cea-5a7c1ce62d7c}</UniqueIdentifier>
     </Filter>
     <Filter Include="Debugging">
-      <UniqueIdentifier>{876e1002-e86d-47ad-851e-f2a4d8dd7834}</UniqueIdentifier>
+      <UniqueIdentifier>{16ad56e0-a625-45fa-aae6-43c32ca997b7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Actors">
-      <UniqueIdentifier>{1c9cfbf5-7471-4528-973b-c605a18d00a4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Graphics3D">
-      <UniqueIdentifier>{7512f251-ab45-42f8-89a6-f578d76562cf}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Mainloop">
-      <UniqueIdentifier>{2467fc40-561a-4a8a-99b7-61e55c2252ee}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Multicore">
-      <UniqueIdentifier>{375bed1f-5b83-402d-8c75-ba8859429073}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ResourceCache">
-      <UniqueIdentifier>{56e97a1d-3f8a-4bd8-a4f1-825b3d4e9326}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="UserInterface">
-      <UniqueIdentifier>{3c73658c-ef53-4f5a-93e6-ece4488b0cf3}</UniqueIdentifier>
+    <Filter Include="MultiCore">
+      <UniqueIdentifier>{265b5e3f-4d7a-4e18-a76b-f66b616052a2}</UniqueIdentifier>
     </Filter>
     <Filter Include="Utilities">
-      <UniqueIdentifier>{30bf824b-0bbd-409e-af39-efba040b7ce3}</UniqueIdentifier>
+      <UniqueIdentifier>{971b20ed-8dbe-4db8-a6ad-4fcc1e0880b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ResourceCache">
+      <UniqueIdentifier>{d36c45f5-8278-4d08-b45d-f14f92ca3f48}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RenderEngineApp">
+      <UniqueIdentifier>{4d8c977f-6a96-484d-87b6-6a08a7a8e3bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Actors">
+      <UniqueIdentifier>{f1d9a7f5-8448-4599-b374-391f9846dc16}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UserInterface">
+      <UniqueIdentifier>{ed3c34cc-5036-4b7b-a808-0f99728994e3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphics3D">
+      <UniqueIdentifier>{257dc7e4-5150-4b69-b4d2-2a4f88ad69bb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="stdafx.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="targetver.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RenderEngine.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RenderEngineInterface.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Utilities\String.h">
-      <Filter>Utilities</Filter>
-    </ClInclude>
-    <ClInclude Include="ResourceCache\ResCache.h">
-      <Filter>ResourceCache</Filter>
-    </ClInclude>
-    <ClInclude Include="ResourceCache\XmlResource.h">
-      <Filter>ResourceCache</Filter>
-    </ClInclude>
-    <ClInclude Include="ResourceCache\ZipFile.h">
-      <Filter>ResourceCache</Filter>
-    </ClInclude>
-    <ClInclude Include="Multicore\CriticalSection.h">
-      <Filter>Multicore</Filter>
-    </ClInclude>
-    <ClInclude Include="Mainloop\InitialOptions.h">
-      <Filter>Mainloop</Filter>
-    </ClInclude>
     <ClInclude Include="Mainloop\Process.h">
       <Filter>Mainloop</Filter>
     </ClInclude>
@@ -90,35 +52,61 @@
     <ClInclude Include="Debugging\MiniDump.h">
       <Filter>Debugging</Filter>
     </ClInclude>
-    <ClInclude Include="Utilities\Templates.h">
+    <ClInclude Include="Multicore\CriticalSection.h">
+      <Filter>MultiCore</Filter>
+    </ClInclude>
+    <ClInclude Include="Utilities\String.h">
       <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Utilities\templates.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Mainloop\InitialOptions.h">
+      <Filter>Mainloop</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceCache\ResCache.h">
+      <Filter>ResourceCache</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceCache\XmlResource.h">
+      <Filter>ResourceCache</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceCache\ZipFile.h">
+      <Filter>ResourceCache</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderEngineBase.h" />
+    <ClInclude Include="RenderEngineInterface.h" />
+    <ClInclude Include="RenderEngineApp\GameClock.h">
+      <Filter>RenderEngineApp</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderEngineApp\GameTime.h">
+      <Filter>RenderEngineApp</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderEngineApp\RenderEngineApp.h">
+      <Filter>RenderEngineApp</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderEngineApp\BaseGameLogic.h">
+      <Filter>RenderEngineApp</Filter>
+    </ClInclude>
+    <ClInclude Include="Actors\Actor.h">
+      <Filter>Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="Actors\ActorFactory.h">
+      <Filter>Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="Actors\ActorComponent.h">
+      <Filter>Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="UserInterface\HumanView.h">
+      <Filter>UserInterface</Filter>
+    </ClInclude>
+    <ClInclude Include="UserInterface\UserInterface.h">
+      <Filter>UserInterface</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics3D\D3DRenderer.h">
+      <Filter>Graphics3D</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="stdafx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="RenderEngine.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="dllmain.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Utilities\String.cpp">
-      <Filter>Utilities</Filter>
-    </ClCompile>
-    <ClCompile Include="ResourceCache\ResCache.cpp">
-      <Filter>ResourceCache</Filter>
-    </ClCompile>
-    <ClCompile Include="ResourceCache\XmlResource.cpp">
-      <Filter>ResourceCache</Filter>
-    </ClCompile>
-    <ClCompile Include="ResourceCache\ZipFile.cpp">
-      <Filter>ResourceCache</Filter>
-    </ClCompile>
-    <ClCompile Include="Mainloop\InitialOptions.cpp">
-      <Filter>Mainloop</Filter>
-    </ClCompile>
     <ClCompile Include="Mainloop\Process.cpp">
       <Filter>Mainloop</Filter>
     </ClCompile>
@@ -130,6 +118,45 @@
     </ClCompile>
     <ClCompile Include="Debugging\MiniDump.cpp">
       <Filter>Debugging</Filter>
+    </ClCompile>
+    <ClCompile Include="Utilities\String.cpp">
+      <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Mainloop\InitialOptions.cpp">
+      <Filter>Mainloop</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceCache\ResCache.cpp">
+      <Filter>ResourceCache</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceCache\XmlResource.cpp">
+      <Filter>ResourceCache</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceCache\ZipFile.cpp">
+      <Filter>ResourceCache</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderEngineApp\GameClock.cpp">
+      <Filter>RenderEngineApp</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderEngineApp\GameTime.cpp">
+      <Filter>RenderEngineApp</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderEngineApp\RenderEngineApp.cpp">
+      <Filter>RenderEngineApp</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderEngineApp\BaseGameLogic.cpp">
+      <Filter>RenderEngineApp</Filter>
+    </ClCompile>
+    <ClCompile Include="Actors\Actor.cpp">
+      <Filter>Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="Actors\ActorFactory.cpp">
+      <Filter>Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="UserInterface\HumanView.cpp">
+      <Filter>UserInterface</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics3D\D3DRenderer.cpp">
+      <Filter>Graphics3D</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -1,5 +1,5 @@
 #pragma once
-#include "../RenderEngine.h"
+#include "../RenderEngineBase.h"
 
 class GameTime;
 

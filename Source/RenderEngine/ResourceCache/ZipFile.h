@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../RenderEngineBase.h"
 #include <stdio.h>
 
 typedef std::map<std::string, int> ZipContentsMap;

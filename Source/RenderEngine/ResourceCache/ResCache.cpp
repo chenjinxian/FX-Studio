@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "ResCache.h"
 #include "../Utilities/String.h"
 #include <list>
@@ -145,8 +144,7 @@ int DevelopmentResourceZipFile::VGetRawResource(const Resource &r, char *buffer)
 			return -1;
 
 		std::string fullFileSpec = ws2s(m_AssetsDir) + r.m_name.c_str();
-		FILE *f = nullptr;
-		fopen_s(&f, fullFileSpec.c_str(), "rb");
+		FILE *f = fopen(fullFileSpec.c_str(), "rb");
 		size_t bytes = fread(buffer, 1, m_AssetFileInfo[num].nFileSizeLow, f);
 		fclose(f);
 		return bytes;

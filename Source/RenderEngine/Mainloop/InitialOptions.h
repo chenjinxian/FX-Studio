@@ -1,4 +1,5 @@
 #pragma once
+#include "../RenderEngineBase.h"
 
 class InitialOptions
 {

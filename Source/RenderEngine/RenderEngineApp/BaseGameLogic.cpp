@@ -1,9 +1,7 @@
 #include "BaseGameLogic.h"
-#include "RenderEngineApp.h"
 #include "../ResourceCache/XmlResource.h"
 #include "../Actors/Actor.h"
 #include "../Actors/ActorFactory.h"
-#include "../Mainloop/ProcessManager.h"
 
 BaseGameLogic::BaseGameLogic(RenderEngineApp* pApp)
 	: m_pApp(pApp), m_LifeTime(.0f), m_LastActorId(0), m_State(BGS_Initializing), m_HumanGamesLoaded(0),

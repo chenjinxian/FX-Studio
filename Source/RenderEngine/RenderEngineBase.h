@@ -1,19 +1,11 @@
-// stdafx.h : include file for standard system include files,
-// or project specific include files that are used frequently, but
-// are changed infrequently
-//
-
 #pragma once
 
-#include "targetver.h"
-
 #define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
-// Windows Header Files:
+
+// TODO: reference additional headers your program requires here
 #include <windows.h>
 #include <tchar.h>
 #include <mmsystem.h>
-
-// TODO: reference additional headers your program requires here
 
 #include <memory>
 #include <algorithm>
@@ -28,6 +20,12 @@ using std::tr1::weak_ptr;
 using std::tr1::static_pointer_cast;
 using std::tr1::dynamic_pointer_cast;
 
+#if defined(_DEBUG)
+#	define GCC_NEW new(_NORMAL_BLOCK,__FILE__, __LINE__)
+#else
+#	define GCC_NEW new
+#endif
+
 #include "DXUT.h"
 #include "SDKmisc.h"
 #include "SimpleMath.h"
@@ -37,14 +35,10 @@ using namespace DirectX::SimpleMath;
 #include "boost/noncopyable.hpp"
 #include "tinyxml.h"
 
-#if defined(_DEBUG)
-#	define GCC_NEW new(_NORMAL_BLOCK,__FILE__, __LINE__)
-#else
-#	define GCC_NEW new
-#endif
-
 #include "Debugging\Logger.h"
-#include "Utilities\Templates.h"
+#include "Utilities\templates.h"
+
+#pragma warning( disable : 4996 ) // 'function' declared deprecated - gets rid of all those 2005 warnings....
 
 #if !defined(SAFE_DELETE)
 #define SAFE_DELETE(x) if(x) delete x; x=NULL;

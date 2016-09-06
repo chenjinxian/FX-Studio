@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include <cctype>
 
 #include "ZipFile.h"

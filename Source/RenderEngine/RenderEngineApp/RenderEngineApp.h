@@ -1,7 +1,7 @@
 #pragma once
 
+#include "../RenderEngineInterface.h"
 #include "../Mainloop/InitialOptions.h"
-#include "BaseGameLogic.h"
 
 class BaseGameLogic;
 class ResCache;

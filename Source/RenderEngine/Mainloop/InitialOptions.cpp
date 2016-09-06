@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "InitialOptions.h"
 #include <shlobj.h>
 #include <direct.h>

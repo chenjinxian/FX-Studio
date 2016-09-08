@@ -100,7 +100,7 @@
     <Compile Include="ToolStripEx.Designer.cs">
       <DependentUpon>ToolStripEx.cs</DependentUpon>
     </Compile>
-    <Compile Include="ToolStripRenderer.cs" />
+    <Compile Include="ToolStripExRenderer.cs" />
     <Compile Include="ViewWindow.cs">
       <SubType>Form</SubType>
     </Compile>

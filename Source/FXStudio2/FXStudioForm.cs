@@ -38,9 +38,9 @@ namespace FXStudio
             try
             {
                 IntPtr hInstance = Marshal.GetHINSTANCE(this.GetType().Module);
-                IntPtr hwnd = this.panelAllView.Handle;
-                //                 RenderMethods.CreateInstance(hInstance, IntPtr.Zero, hwnd, 1, this.panelAllView.Width, this.panelAllView.Height);
-                m_messageHandler = new MessageHandler(this.panelAllView, this);
+                IntPtr hwnd = this.dockPanel.Handle;
+//                 RenderMethods.CreateInstance(hInstance, IntPtr.Zero, hwnd, 1, this.dockPanel.Width, this.dockPanel.Height);
+                m_messageHandler = new MessageHandler(this.dockPanel, this);
             }
             catch (Exception e)
             {
@@ -55,7 +55,7 @@ namespace FXStudio
 
         private void ShutDown()
         {
-            //             RenderMethods.DestroyInstance();
+//             RenderMethods.DestroyInstance();
             Application.Exit();
         }
 
@@ -76,13 +76,13 @@ namespace FXStudio
             m_propertiesView.DockPanel = null;
             m_outputView.DockPanel = null;
 
-            foreach (IDockContent document in panelAllView.DocumentsToArray())
+            foreach (IDockContent document in dockPanel.DocumentsToArray())
             {
                 document.DockHandler.DockPanel = null;
                 document.DockHandler.Close();
             }
 
-            System.Diagnostics.Debug.Assert(panelAllView.Panes.Count == 0);
+            System.Diagnostics.Debug.Assert(dockPanel.Panes.Count == 0);
         }
 
         private IDockContent GetContentFromString(string viewString)
@@ -113,33 +113,32 @@ namespace FXStudio
         {
             toolStripEx.SetStyle(this.menuStripMain);
             toolStripEx.SetStyle(this.toolStripMain);
-            panelTop.Visible = true;
-            panelBottom.Visible = true;
-            panelTop.BackColor = panelAllView.Theme.Skin.ColorPalette.MainWindowActive.Background;
-            panelBottom.BackColor = panelAllView.Theme.Skin.ColorPalette.MainWindowActive.Background;
-            statusStripMain.BackColor = panelAllView.Theme.Skin.ColorPalette.MainWindowStatusBarDefault.Background;
+            topBar.Visible = true;
+            bottomBar.Visible = true;
+            topBar.BackColor = dockPanel.Theme.Skin.ColorPalette.MainWindowActive.Background;
+            bottomBar.BackColor = dockPanel.Theme.Skin.ColorPalette.MainWindowActive.Background;
+            statusStripMain.BackColor = dockPanel.Theme.Skin.ColorPalette.MainWindowStatusBarDefault.Background;
         }
 
         private void ResetLayout()
         {
-            panelAllView.SuspendLayout(true);
+            dockPanel.SuspendLayout(true);
             DestoryStandardViews();
             CreateStandardViews();
 
-            m_assetsView.Show(panelAllView, DockState.DockLeft);
-            m_projectView.Show(panelAllView, DockState.DockLeft);
-            m_propertiesView.Show(panelAllView, DockState.DockRight);
+            m_assetsView.Show(dockPanel, DockState.DockLeft);
+            m_projectView.Show(dockPanel, DockState.DockLeft);
+            m_propertiesView.Show(dockPanel, DockState.DockRight);
 
             EditorView doc1 = CreateNewDocument("Document1");
             EditorView doc2 = CreateNewDocument("Document2");
-            doc1.Show(panelAllView, DockState.Document);
+            doc1.Show(dockPanel, DockState.Document);
             doc2.Show(doc1.Pane, null);
 
-            m_renderViw.Show(panelAllView, DockState.Document);
-            m_outputView.Show(panelAllView, DockState.Float);
-            m_outputView.Show(m_renderViw.Pane, DockAlignment.Bottom, 0.35);
+//             m_renderViw.Show(dockPanel, DockState.Document);
+//             m_outputView.Show(m_propertiesView.Pane, DockAlignment.Bottom, 0.35);
 
-            panelAllView.ResumeLayout(true, true);
+            dockPanel.ResumeLayout(true, true);
         }
 
         private void FXStudioForm_Load(object sender, EventArgs e)
@@ -148,7 +147,7 @@ namespace FXStudio
 
             if (File.Exists(configFile))
             {
-                panelAllView.LoadFromXml(configFile, m_dockContent);
+                dockPanel.LoadFromXml(configFile, m_dockContent);
             }
             else
             {
@@ -158,7 +157,7 @@ namespace FXStudio
 
         private IDockContent FindDocument(string text)
         {
-            if (panelAllView.DocumentStyle == DocumentStyle.SystemMdi)
+            if (dockPanel.DocumentStyle == DocumentStyle.SystemMdi)
             {
                 foreach (Form form in MdiChildren)
                     if (form.Text == text)
@@ -168,7 +167,7 @@ namespace FXStudio
             }
             else
             {
-                foreach (IDockContent content in panelAllView.Documents)
+                foreach (IDockContent content in dockPanel.Documents)
                     if (content.DockHandler.TabText == text)
                         return content;
 
@@ -198,5 +197,6 @@ namespace FXStudio
             dummyDoc.Text = text;
             return dummyDoc;
         }
+
     }
 }

@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{5C2467D2-C4CE-4774-B51A-8A9A764BCC7D}</ProjectGuid>
+    <ProjectGuid>{D323036D-B49E-49F0-962E-B576E04689DF}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>FXStudio</RootNamespace>
@@ -34,6 +34,9 @@
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>application.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -46,25 +49,21 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-    <Reference Include="WeifenLuo.WinFormsUI.Docking">
+    <Reference Include="WeifenLuo.WinFormsUI.Docking, Version=2.11.0.0, Culture=neutral, PublicKeyToken=5cded1a1a0a7b481, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Lib\WeifenLuo.WinFormsUI.Docking.dll</HintPath>
     </Reference>
-    <Reference Include="WeifenLuo.WinFormsUI.Docking.ThemeVS2013">
+    <Reference Include="WeifenLuo.WinFormsUI.Docking.ThemeVS2013, Version=2.11.0.0, Culture=neutral, PublicKeyToken=5cded1a1a0a7b481, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Lib\WeifenLuo.WinFormsUI.Docking.ThemeVS2013.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AssetsView.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="AssetsView.designer.cs">
-      <DependentUpon>AssetsView.cs</DependentUpon>
-    </Compile>
     <Compile Include="CustomColorTable.cs" />
     <Compile Include="EditorView.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="EditorView.designer.cs">
+    <Compile Include="EditorView.Designer.cs">
       <DependentUpon>EditorView.cs</DependentUpon>
     </Compile>
     <Compile Include="FXStudioForm.cs">
@@ -73,61 +72,67 @@
     <Compile Include="FXStudioForm.Designer.cs">
       <DependentUpon>FXStudioForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="MessageHandler.cs" />
+    <Compile Include="AssetsView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AssetsView.Designer.cs">
+      <DependentUpon>AssetsView.cs</DependentUpon>
+    </Compile>
     <Compile Include="OutputView.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="OutputView.designer.cs">
+    <Compile Include="OutputView.Designer.cs">
       <DependentUpon>OutputView.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Program.cs" />
-    <Compile Include="ProjectView.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ProjectView.designer.cs">
-      <DependentUpon>ProjectView.cs</DependentUpon>
     </Compile>
     <Compile Include="PropertiesView.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="PropertiesView.designer.cs">
+    <Compile Include="PropertiesView.Designer.cs">
       <DependentUpon>PropertiesView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MessageHandler.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="ProjectView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ProjectView.Designer.cs">
+      <DependentUpon>ProjectView.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RenderMethods.cs" />
     <Compile Include="RenderView.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="RenderView.designer.cs">
+    <Compile Include="RenderView.Designer.cs">
       <DependentUpon>RenderView.cs</DependentUpon>
     </Compile>
     <Compile Include="ToolStripEx.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="ToolStripEx.designer.cs">
+    <Compile Include="ToolStripEx.Designer.cs">
       <DependentUpon>ToolStripEx.cs</DependentUpon>
     </Compile>
     <Compile Include="ToolStripExRenderer.cs" />
     <Compile Include="ViewWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ViewWindow.designer.cs">
+    <Compile Include="ViewWindow.Designer.cs">
       <DependentUpon>ViewWindow.cs</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="AssetsView.resx">
-      <DependentUpon>AssetsView.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="FXStudioForm.resx">
       <DependentUpon>FXStudioForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AssetsView.resx">
+      <DependentUpon>AssetsView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="OutputView.resx">
       <DependentUpon>OutputView.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ProjectView.resx">
-      <DependentUpon>ProjectView.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="PropertiesView.resx">
       <DependentUpon>PropertiesView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ProjectView.resx">
+      <DependentUpon>ProjectView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -156,6 +161,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="application.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

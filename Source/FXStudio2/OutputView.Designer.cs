@@ -1,6 +1,6 @@
 ﻿namespace FXStudio
 {
-    partial class ProjectView
+    partial class OutputView
     {
         /// <summary>
         /// Required designer variable.
@@ -30,14 +30,14 @@
         {
             this.SuspendLayout();
             // 
-            // ProjectView
+            // OutputView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(284, 261);
-            this.Name = "ProjectView";
-            this.TabText = "Project";
-            this.Text = "ProjectView";
+            this.Name = "OutputView";
+            this.TabText = "Output";
+            this.Text = "OutputView";
             this.ResumeLayout(false);
 
         }

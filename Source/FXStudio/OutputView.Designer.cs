@@ -1,6 +1,6 @@
 ﻿namespace FXStudio
 {
-    partial class HierarchyView
+    partial class OutputView
     {
         /// <summary>
         /// Required designer variable.
@@ -28,9 +28,23 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
+            this.SuspendLayout();
+            // 
+            // OutputView
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Text = "HierarchyView";
+            this.ClientSize = new System.Drawing.Size(284, 261);
+            this.DockAreas = ((WeifenLuo.WinFormsUI.Docking.DockAreas)((((((WeifenLuo.WinFormsUI.Docking.DockAreas.Float | WeifenLuo.WinFormsUI.Docking.DockAreas.DockLeft) 
+            | WeifenLuo.WinFormsUI.Docking.DockAreas.DockRight) 
+            | WeifenLuo.WinFormsUI.Docking.DockAreas.DockTop) 
+            | WeifenLuo.WinFormsUI.Docking.DockAreas.DockBottom) 
+            | WeifenLuo.WinFormsUI.Docking.DockAreas.Document)));
+            this.Name = "OutputView";
+            this.TabText = "Output";
+            this.Text = "OutputView";
+            this.ResumeLayout(false);
+
         }
 
         #endregion

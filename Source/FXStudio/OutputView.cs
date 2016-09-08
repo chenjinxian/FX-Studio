@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace FXStudio
 {
-    public partial class InspectorView : ViewWindow
+    public partial class OutputView : ViewWindow
     {
-        public InspectorView()
+        public OutputView()
         {
             InitializeComponent();
         }

@@ -1,6 +1,6 @@
 ﻿namespace FXStudio
 {
-    partial class ProjectView
+    partial class AssetsView
     {
         /// <summary>
         /// Required designer variable.
@@ -30,14 +30,14 @@
         {
             this.SuspendLayout();
             // 
-            // ProjectView
+            // AssetsView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(284, 261);
-            this.Name = "ProjectView";
-            this.TabText = "Project";
-            this.Text = "ProjectView";
+            this.Name = "AssetsView";
+            this.TabText = "Assets";
+            this.Text = "AssetsView";
             this.ResumeLayout(false);
 
         }

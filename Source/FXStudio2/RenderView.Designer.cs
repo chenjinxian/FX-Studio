@@ -1,6 +1,6 @@
 ﻿namespace FXStudio
 {
-    partial class ProjectView
+    partial class RenderView
     {
         /// <summary>
         /// Required designer variable.
@@ -30,14 +30,19 @@
         {
             this.SuspendLayout();
             // 
-            // ProjectView
+            // RenderView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(284, 261);
-            this.Name = "ProjectView";
-            this.TabText = "Project";
-            this.Text = "ProjectView";
+            this.DockAreas = ((WeifenLuo.WinFormsUI.Docking.DockAreas)((((((WeifenLuo.WinFormsUI.Docking.DockAreas.Float | WeifenLuo.WinFormsUI.Docking.DockAreas.DockLeft) 
+            | WeifenLuo.WinFormsUI.Docking.DockAreas.DockRight) 
+            | WeifenLuo.WinFormsUI.Docking.DockAreas.DockTop) 
+            | WeifenLuo.WinFormsUI.Docking.DockAreas.DockBottom) 
+            | WeifenLuo.WinFormsUI.Docking.DockAreas.Document)));
+            this.Name = "RenderView";
+            this.TabText = "Render";
+            this.Text = "RenderView";
             this.ResumeLayout(false);
 
         }

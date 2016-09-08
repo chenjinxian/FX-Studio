@@ -20,7 +20,7 @@ namespace FXStudio
 
         private void toolStripMenuItemFloat_Click(object sender, EventArgs e)
         {
-            this.FloatAt(new Rectangle(98, 133, 200, 383));
+
         }
 
         private void toolStripMenuItemDock_Click(object sender, EventArgs e)
@@ -35,7 +35,7 @@ namespace FXStudio
 
         private void toolStripMenuItemHide_Click(object sender, EventArgs e)
         {
-            this.Hide();
+
         }
     }
 }

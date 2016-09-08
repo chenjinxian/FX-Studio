@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace FXStudio
 {
-    public partial class HierarchyView : ViewWindow
+    public partial class ProjectView : ViewWindow
     {
-        public HierarchyView()
+        public ProjectView()
         {
             InitializeComponent();
         }

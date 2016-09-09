@@ -64,11 +64,11 @@
       <DependentUpon>AssetsView.cs</DependentUpon>
     </Compile>
     <Compile Include="CustomColorTable.cs" />
-    <Compile Include="EditorView.cs">
+    <Compile Include="DocumentView.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="EditorView.designer.cs">
-      <DependentUpon>EditorView.cs</DependentUpon>
+    <Compile Include="DocumentView.designer.cs">
+      <DependentUpon>DocumentView.cs</DependentUpon>
     </Compile>
     <Compile Include="FXStudioForm.cs">
       <SubType>Form</SubType>
@@ -77,6 +77,18 @@
       <DependentUpon>FXStudioForm.cs</DependentUpon>
     </Compile>
     <Compile Include="MessageHandler.cs" />
+    <Compile Include="EditorView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EditorView.designer.cs">
+      <DependentUpon>EditorView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TaskListView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TaskListView.designer.cs">
+      <DependentUpon>TaskListView.cs</DependentUpon>
+    </Compile>
     <Compile Include="OutputView.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -122,6 +134,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FXStudioForm.resx">
       <DependentUpon>FXStudioForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EditorView.resx">
+      <DependentUpon>EditorView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TaskListView.resx">
+      <DependentUpon>TaskListView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="OutputView.resx">
       <DependentUpon>OutputView.cs</DependentUpon>

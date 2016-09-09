@@ -45,33 +45,33 @@
             this.toolStripMenuItemAutoHide,
             this.toolStripMenuItemHide});
             this.contextMenuStripMode.Name = "contextMenuStripMode";
-            this.contextMenuStripMode.Size = new System.Drawing.Size(153, 114);
+            this.contextMenuStripMode.Size = new System.Drawing.Size(135, 92);
             // 
             // toolStripMenuItemFloat
             // 
             this.toolStripMenuItemFloat.Name = "toolStripMenuItemFloat";
-            this.toolStripMenuItemFloat.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItemFloat.Size = new System.Drawing.Size(134, 22);
             this.toolStripMenuItemFloat.Text = "Float";
             this.toolStripMenuItemFloat.Click += new System.EventHandler(this.toolStripMenuItemFloat_Click);
             // 
             // toolStripMenuItemDock
             // 
             this.toolStripMenuItemDock.Name = "toolStripMenuItemDock";
-            this.toolStripMenuItemDock.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItemDock.Size = new System.Drawing.Size(134, 22);
             this.toolStripMenuItemDock.Text = "Dock";
             this.toolStripMenuItemDock.Click += new System.EventHandler(this.toolStripMenuItemDock_Click);
             // 
             // toolStripMenuItemAutoHide
             // 
             this.toolStripMenuItemAutoHide.Name = "toolStripMenuItemAutoHide";
-            this.toolStripMenuItemAutoHide.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItemAutoHide.Size = new System.Drawing.Size(134, 22);
             this.toolStripMenuItemAutoHide.Text = "Auto Hide";
             this.toolStripMenuItemAutoHide.Click += new System.EventHandler(this.toolStripMenuItemAutoHide_Click);
             // 
             // toolStripMenuItemHide
             // 
             this.toolStripMenuItemHide.Name = "toolStripMenuItemHide";
-            this.toolStripMenuItemHide.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItemHide.Size = new System.Drawing.Size(134, 22);
             this.toolStripMenuItemHide.Text = "Hide";
             this.toolStripMenuItemHide.Click += new System.EventHandler(this.toolStripMenuItemHide_Click);
             // 
@@ -80,10 +80,6 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(284, 261);
-            this.DockAreas = ((WeifenLuo.WinFormsUI.Docking.DockAreas)(((((WeifenLuo.WinFormsUI.Docking.DockAreas.Float | WeifenLuo.WinFormsUI.Docking.DockAreas.DockLeft) 
-            | WeifenLuo.WinFormsUI.Docking.DockAreas.DockRight) 
-            | WeifenLuo.WinFormsUI.Docking.DockAreas.DockTop) 
-            | WeifenLuo.WinFormsUI.Docking.DockAreas.DockBottom)));
             this.Name = "ViewWindow";
             this.TabPageContextMenuStrip = this.contextMenuStripMode;
             this.TabText = "ViewWindow";

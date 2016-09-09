@@ -25,29 +25,31 @@ namespace FXStudio
         const int WM_SYSKEYUP = 0x0105;
         const int WM_CLOSE = 0x0010;
 
-        Panel m_displayPanel;
+        FXStudioForm m_formMain;
+        Panel m_renderPanel;
         IntPtr m_handle;
-        FXStudioForm m_parent;
         bool m_fakeFocus;
         System.Drawing.Point m_mouseDownPosition;
 
-        // We take both the FXStudioForm's handle and its displayPanel handle, since messages
-        // will sometimes be for the form, or the display panel.
-        public MessageHandler(Panel displayPanel, FXStudioForm parent)
+        public MessageHandler(FXStudioForm formMain)
         {
+            m_formMain = formMain;
             m_fakeFocus = false;
-            m_displayPanel = displayPanel;
-            m_handle = displayPanel.Handle;
-            m_parent = parent;
             m_mouseDownPosition = new System.Drawing.Point(0, 0);
+        }
+
+        public void SetRenderPanel(Panel renderPanel)
+        {
+            m_renderPanel = renderPanel;
+            m_handle = renderPanel.Handle;
         }
 
         void CheckFakeFocus()
         {
             System.Drawing.Point position = Cursor.Position;
-            System.Drawing.Point relativeToForm = m_displayPanel.PointToClient(position);
+            System.Drawing.Point relativeToForm = m_renderPanel.PointToClient(position);
             m_fakeFocus = (relativeToForm.X >= 0 && relativeToForm.Y >= 0 &&
-                relativeToForm.X < m_displayPanel.Width && relativeToForm.Y < m_displayPanel.Width);
+                relativeToForm.X < m_renderPanel.Width && relativeToForm.Y < m_renderPanel.Width);
             if (m_fakeFocus)
             {
                 m_mouseDownPosition = position;
@@ -56,64 +58,65 @@ namespace FXStudio
 
         public bool PreFilterMessage(ref Message m)
         {
-            // Intercept messages only if they occur for the FXStudioForm
-            // or its display panel.
-            if (m.Msg == WM_LBUTTONDOWN || m.Msg == WM_RBUTTONDOWN || m.Msg == WM_MBUTTONDOWN)
-                CheckFakeFocus();
-
-            if (m.HWnd == m_handle || (m_fakeFocus && (m.Msg == WM_KEYDOWN || m.Msg == WM_KEYUP)))
+            if (m_renderPanel != null && m_renderPanel.IsHandleCreated)
             {
-                switch (m.Msg)
+                if (m.Msg == WM_LBUTTONDOWN || m.Msg == WM_RBUTTONDOWN || m.Msg == WM_MBUTTONDOWN)
+                    CheckFakeFocus();
+
+                if (m.HWnd == m_handle || (m_fakeFocus && (m.Msg == WM_KEYDOWN || m.Msg == WM_KEYUP)))
                 {
-                    case WM_LBUTTONDOWN:
-                    case WM_RBUTTONDOWN:
-                    case WM_MBUTTONDOWN:
-                    case WM_KEYDOWN:
-                    case WM_KEYUP:
-                    case WM_SYSKEYDOWN:
-                    case WM_SYSKEYUP:
-                    case WM_LBUTTONUP:
-                    case WM_LBUTTONDBLCLK:
-                    case WM_RBUTTONUP:
-                    case WM_RBUTTONDBLCLK:
-                    case WM_MBUTTONUP:
-                    case WM_MBUTTONDBLCLK:
-                    case WM_CLOSE:
-                        {
-//                             NativeMethods.WndProc(m_handle, m.Msg, m.WParam.ToInt32(), m.LParam.ToInt32());
-//                             // If the left mouse button is up, try doing a 
-//                             // ray cast to see if it intersects with an actor
-//                             if (m_fakeFocus && m.Msg == WM_LBUTTONUP)
-//                             {
-//                                 System.Drawing.Point position = Cursor.Position;
-//                                 double distance = Math.Round(Math.Sqrt(Math.Pow((position.X - m_mouseDownPosition.X), 2) + Math.Pow((position.Y - m_mouseDownPosition.Y), 2)), 1);
-//                                 if (distance < 3)
+                    switch (m.Msg)
+                    {
+                        case WM_LBUTTONDOWN:
+                        case WM_RBUTTONDOWN:
+                        case WM_MBUTTONDOWN:
+                        case WM_KEYDOWN:
+                        case WM_KEYUP:
+                        case WM_SYSKEYDOWN:
+                        case WM_SYSKEYUP:
+                        case WM_LBUTTONUP:
+                        case WM_LBUTTONDBLCLK:
+                        case WM_RBUTTONUP:
+                        case WM_RBUTTONDBLCLK:
+                        case WM_MBUTTONUP:
+                        case WM_MBUTTONDBLCLK:
+                        case WM_CLOSE:
+                            {
+//                                 NativeMethods.WndProc(m_handle, m.Msg, m.WParam.ToInt32(), m.LParam.ToInt32());
+//                                 // If the left mouse button is up, try doing a 
+//                                 // ray cast to see if it intersects with an actor
+//                                 if (m_fakeFocus && m.Msg == WM_LBUTTONUP)
 //                                 {
-//                                     //                                     m_parent.PickActor();
+//                                     System.Drawing.Point position = Cursor.Position;
+//                                     double distance = Math.Round(Math.Sqrt(Math.Pow((position.X - m_mouseDownPosition.X), 2) + Math.Pow((position.Y - m_mouseDownPosition.Y), 2)), 1);
+//                                     if (distance < 3)
+//                                     {
+//                                         //                                     m_formMain.PickActor();
+//                                     }
 //                                 }
-//                             }
-                            return true;
-                        }
+                                return true;
+                            }
+                    }
                 }
             }
             return false;
         }
 
-        //
-        // Application_Idle                     - Chapter 22, page 7772
-        //
         public void Application_Idle(object sender, EventArgs e)
         {
-            try
+            if (m_formMain.WindowState != FormWindowState.Minimized)
             {
-                // Render the scene if we are idle
-                RenderMethods.RenderFrame();
+                try
+                {
+                    // Render the scene if we are idle
+                    RenderMethods.RenderFrame();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+                m_formMain.Invalidate();
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-            m_parent.Invalidate();
         }
     }
 }

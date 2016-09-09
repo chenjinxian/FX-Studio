@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -12,76 +11,52 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace FXStudio
 {
-    public partial class EditorView : DockContent
+    public partial class EditorView : ViewWindow
     {
         public EditorView()
         {
             InitializeComponent();
+
+            panelTop.BackColor = dockPanelEdit.Theme.Skin.ColorPalette.MainWindowActive.Background;
+            panelBottom.BackColor = dockPanelEdit.Theme.Skin.ColorPalette.MainWindowActive.Background;
+
+            DocumentView doc1 = CreateNewDocument("Document1");
+            DocumentView doc2 = CreateNewDocument("Document2");
+            doc1.Show(this.dockPanelEdit, DockState.Document);
+            doc2.Show(doc1.Pane, null);
         }
 
-        private string m_fileName = string.Empty;
-        public string FileName
+        private IDockContent FindDocument(string text)
         {
-            get { return m_fileName; }
-            set
+            foreach (IDockContent content in dockPanelEdit.Documents)
+                if (content.DockHandler.TabText == text)
+                    return content;
+
+            return null;
+        }
+
+        private DocumentView CreateNewDocument()
+        {
+            DocumentView dummyDoc = new DocumentView();
+
+            int count = 1;
+            string text = $"Document{count}";
+            while (FindDocument(text) != null)
             {
-                if (value != string.Empty)
-                {
-                    Stream s = new FileStream(value, FileMode.Open);
-
-                    FileInfo efInfo = new FileInfo(value);
-
-                    string fext = efInfo.Extension.ToUpper();
-
-                    if (fext.Equals(".RTF"))
-                        richTextBox1.LoadFile(s, RichTextBoxStreamType.RichText);
-                    else
-                        richTextBox1.LoadFile(s, RichTextBoxStreamType.PlainText);
-                    s.Close();
-                }
-
-                m_fileName = value;
-                this.ToolTipText = value;
+                count++;
+                text = $"Document{count}";
             }
+
+            dummyDoc.Text = text;
+            return dummyDoc;
         }
 
-        // workaround of RichTextbox control's bug:
-        // If load file before the control showed, all the text format will be lost
-        // re-load the file after it get showed.
-        private bool m_resetText = true;
-        protected override void OnPaint(PaintEventArgs e)
+        private DocumentView CreateNewDocument(string text)
         {
-            base.OnPaint(e);
-
-            if (m_resetText)
-            {
-                m_resetText = false;
-                FileName = FileName;
-            }
+            DocumentView dummyDoc = new DocumentView();
+            dummyDoc.Text = text;
+            return dummyDoc;
         }
 
-        protected override string GetPersistString()
-        {
-            // Add extra information into the persist string for this document
-            // so that it is available when deserialized.
-            return GetType().ToString() + "," + FileName + "," + Text;
-        }
-
-        private void menuItem2_Click(object sender, System.EventArgs e)
-        {
-            MessageBox.Show("This is to demostrate menu item has been successfully merged into the main form. Form Text=" + Text);
-        }
-
-        private void menuItemCheckTest_Click(object sender, System.EventArgs e)
-        {
-            menuItemCheckTest.Checked = !menuItemCheckTest.Checked;
-        }
-
-        protected override void OnTextChanged(EventArgs e)
-        {
-            base.OnTextChanged(e);
-            if (FileName == string.Empty)
-                this.richTextBox1.Text = Text;
-        }
     }
 }

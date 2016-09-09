@@ -117,27 +117,4 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <metadata name="toolStripOutput.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
-  </metadata>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="toolStripButtonClear.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAD/SURBVDhPYwCB79+/O3x8+fz/w0N7/n/79o0kDDbg69ev
-        DWf6mv4vVOP9f7AkBUXBkT27wGJP7935HxkZ+d/JyQmO4QYAXZDw7Pyp/8uMZcCGHGssBkte2Lnl/xoH
-        rf+n507+n5KSgqIZxQAQAHFe37n5f6OvJdwQkIHXVsyHuwYbhmqHGADCoLCAuWRblDuGBnQM1Y7pApDT
-        QTQu56N4ARiI+29vXQu3GRaQIOeDxG4f2Y8/DEDOBmlE1gzDoMAFuQpEI4vDMNgAIOM9SCMoKtEVEMJg
-        A758+WIA4uDyKy4MNwAEQBxsivBhDAPIwVDtVDIAmzPxYeobQDr+9h8ADTK14XwEZMAAAAAASUVORK5C
-        YII=
-</value>
-  </data>
-  <data name="richTextBox1.Text" xml:space="preserve">
-    <value>11:06:06 - ------------------------------------------------------------------
-11:06:06 - Compiling: C:/Users/alan/Documents/FX%20Composer%202/Projects/Project3/Blinn.fx
-11:06:06 - Compiling: C:\Users\alan\Documents\FX Composer 2\Projects\Project3\Blinn.fx
-11:06:06 - Compilation Succeeded
-11:06:06 - Compiling: C:\Users\alan\Documents\FX Composer 2\Projects\Project3\Blinn.fx
-11:06:06 - Compilation Succeeded</value>
-  </data>
 </root>

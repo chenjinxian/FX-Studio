@@ -10,9 +10,9 @@ namespace FXStudio
     class RenderMethods
     {
 #if DEBUG
-        const string editorDllName = "FX_StudioDlld.dll";
+        const string editorDllName = "FXStudioCored.dll";
 #else
-        const string editorDllName = "FX_StudioDll.dll";
+        const string editorDllName = "FXStudioCore.dll";
 #endif
 
         [DllImport(editorDllName, CallingConvention = CallingConvention.Cdecl)]

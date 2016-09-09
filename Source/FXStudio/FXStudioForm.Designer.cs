@@ -13,11 +13,12 @@
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
+            ShutDown();
             if (disposing && (components != null))
             {
                 components.Dispose();
             }
-            base.Dispose(disposing);
+//             base.Dispose(disposing);
         }
 
         #region Windows Form Designer generated code
@@ -385,15 +386,15 @@
             this.panelTop.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelTop.Location = new System.Drawing.Point(0, 89);
             this.panelTop.Name = "panelTop";
-            this.panelTop.Size = new System.Drawing.Size(1219, 3);
+            this.panelTop.Size = new System.Drawing.Size(1219, 4);
             this.panelTop.TabIndex = 3;
             // 
             // panelBottom
             // 
             this.panelBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panelBottom.Location = new System.Drawing.Point(0, 750);
+            this.panelBottom.Location = new System.Drawing.Point(0, 749);
             this.panelBottom.Name = "panelBottom";
-            this.panelBottom.Size = new System.Drawing.Size(1219, 3);
+            this.panelBottom.Size = new System.Drawing.Size(1219, 4);
             this.panelBottom.TabIndex = 4;
             // 
             // panelAllView
@@ -404,10 +405,10 @@
             this.panelAllView.DockRightPortion = 300D;
             this.panelAllView.DockTopPortion = 150D;
             this.panelAllView.DocumentStyle = WeifenLuo.WinFormsUI.Docking.DocumentStyle.DockingWindow;
-            this.panelAllView.Location = new System.Drawing.Point(0, 92);
+            this.panelAllView.Location = new System.Drawing.Point(0, 93);
             this.panelAllView.Name = "panelAllView";
             this.panelAllView.RightToLeftLayout = true;
-            this.panelAllView.Size = new System.Drawing.Size(1219, 658);
+            this.panelAllView.Size = new System.Drawing.Size(1219, 656);
             this.panelAllView.TabIndex = 5;
             this.panelAllView.Theme = this.blueTheme;
             // 
@@ -429,8 +430,9 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStripMain;
             this.Name = "FXStudioForm";
-            this.Text = "Form1";
+            this.Text = "FX Studio 1.0";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FXStudioForm_FormClosing);
             this.Load += new System.EventHandler(this.FXStudioForm_Load);
             this.menuStripMain.ResumeLayout(false);
             this.menuStripMain.PerformLayout();

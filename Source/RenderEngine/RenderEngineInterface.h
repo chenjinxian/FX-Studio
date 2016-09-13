@@ -24,15 +24,6 @@ typedef weak_ptr<Actor> WeakActorPtr;
 typedef shared_ptr<ActorComponent> StrongActorComponentPtr;
 typedef weak_ptr<ActorComponent> WeakActorComponentPtr;
 
-template<class T>
-struct SortBy_SharedPtr_Content
-{
-	bool operator()(const shared_ptr<T> &lhs, const shared_ptr<T> &rhs) const
-	{
-		return *lhs < *rhs;
-	}
-};
-
 class IScreenElement
 {
 public:
@@ -41,15 +32,12 @@ public:
 	virtual HRESULT VOnRender(double fTime, float fElapsedTime) = 0;
 	virtual void VOnUpdate(int deltaMilliseconds) = 0;
 
-	virtual int VGetZOrder() const = 0;
-	virtual void VSetZOrder(int const zOrder) = 0;
 	virtual bool VIsVisible() const = 0;
 	virtual void VSetVisible(bool visible) = 0;
 
 	virtual LRESULT CALLBACK VOnMsgProc(AppMsg msg) = 0;
 
 	virtual ~IScreenElement() { };
-	virtual bool const operator <(IScreenElement const &other) { return VGetZOrder() < other.VGetZOrder(); }
 };
 
 class IGameLogic
@@ -60,17 +48,6 @@ public:
 	virtual void VDestroyActor(const ActorId actorId) = 0;
 	virtual bool VLoadGame(const char* levelResource) = 0;
 	virtual void VOnUpdate(float time, float elapsedTime) = 0;
-	virtual void VChangeState(enum BaseGameState newState) = 0;
-	virtual void VMoveActor(const ActorId id, Matrix const &mat) = 0;
-};
-
-enum GameViewType
-{
-	GameView_Human,
-	GameView_Remote,
-	GameView_AI,
-	GameView_Recorder,
-	GameView_Other
 };
 
 typedef unsigned int GameViewId;
@@ -82,12 +59,11 @@ public:
 	virtual HRESULT VOnRestore() = 0;
 	virtual void VOnRender(double fTime, float fElapsedTime) = 0;
 	virtual HRESULT VOnLostDevice() = 0;
-	virtual GameViewType VGetType() = 0;
 	virtual GameViewId VGetId() const = 0;
 	virtual void VOnAttach(GameViewId vid, ActorId aid) = 0;
 
 	virtual LRESULT CALLBACK VOnMsgProc(AppMsg msg) = 0;
-	virtual void VOnUpdate(unsigned long deltaMs) = 0;
+	virtual void VOnUpdate(const int deltaMilliseconds) = 0;
 
 	virtual ~IGameView() { };
 };
@@ -110,13 +86,6 @@ public:
 	virtual bool VOnPointerMove(const Vector2 &pos, const int radius) = 0;
 	virtual bool VOnPointerButtonDown(const Vector2 &pos, const int radius, const std::string &buttonName) = 0;
 	virtual bool VOnPointerButtonUp(const Vector2 &pos, const int radius, const std::string &buttonName) = 0;
-};
-
-class IJoystickHandler
-{
-	virtual bool VOnButtonDown(const std::string &buttonName, int const pressure) = 0;
-	virtual bool VOnButtonUp(const std::string &buttonName) = 0;
-	virtual bool VOnJoystick(float const x, float const y) = 0;
 };
 
 class Resource;
@@ -160,7 +129,7 @@ enum RenderPass
 
 
 class Scene;
-class SceneNodeProperties;
+class SceneNodeProperty;
 class RayCast;
 class LightNode;
 
@@ -189,24 +158,23 @@ public:
 class ISceneNode
 {
 public:
-	virtual const SceneNodeProperties * const VGet() const = 0;
+	virtual const SceneNodeProperty* const VGet() const = 0;
 
-	virtual void VSetTransform(const Matrix *toWorld, const Matrix *fromWorld = NULL) = 0;
+	virtual void VSetTransform(const Matrix& toWorld, const Matrix& fromWorld) = 0;
 
-	virtual HRESULT VOnUpdate(Scene *pScene, DWORD const elapsedMs) = 0;
-	virtual HRESULT VOnRestore(Scene *pScene) = 0;
+	virtual HRESULT VOnUpdate(Scene* pScene, DWORD const elapsedMs) = 0;
+	virtual HRESULT VOnRestore(Scene* pScene) = 0;
 
-	virtual HRESULT VPreRender(Scene *pScene) = 0;
-	virtual bool VIsVisible(Scene *pScene) const = 0;
-	virtual HRESULT VRender(Scene *pScene) = 0;
-	virtual HRESULT VRenderChildren(Scene *pScene) = 0;
-	virtual HRESULT VPostRender(Scene *pScene) = 0;
+	virtual HRESULT VPreRender(Scene* pScene) = 0;
+	virtual bool VIsVisible(Scene* pScene) const = 0;
+	virtual HRESULT VRender(Scene* pScene) = 0;
+	virtual HRESULT VRenderChildren(Scene* pScene) = 0;
+	virtual HRESULT VPostRender(Scene* pScene) = 0;
 
 	virtual bool VAddChild(shared_ptr<ISceneNode> kid) = 0;
 	virtual bool VRemoveChild(ActorId id) = 0;
-	virtual HRESULT VOnLostDevice(Scene *pScene) = 0;
-	virtual HRESULT VPick(Scene *pScene, RayCast *pRayCast) = 0;
-
+	virtual HRESULT VOnLostDevice(Scene* pScene) = 0;
+	virtual HRESULT VPick(Scene* pScene, RayCast *pRayCast) = 0;
 
 	virtual ~ISceneNode() { };
 };

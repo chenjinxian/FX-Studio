@@ -4,7 +4,6 @@
 #include "../Mainloop/InitialOptions.h"
 
 class BaseGameLogic;
-class ResCache;
 
 class RenderEngineApp : public boost::noncopyable
 {
@@ -14,8 +13,6 @@ public:
 
 	HINSTANCE GetInstance() const { return m_Instance; }
 	HWND GetWindowHandle() const { return m_WindowHandle; }
-	virtual const std::wstring VGetWindowTitle() = 0;
-	virtual HICON VGetIcon() = 0;
 	int GetScreenWidth() const { return m_ScreenWidth; }
 	int GetScreenHeight() const { return m_ScreenHeight; }
 
@@ -25,8 +22,7 @@ public:
 
 	virtual bool VLoadGame();
 	virtual BaseGameLogic* VCreateGameAndView() = 0;
-	BaseGameLogic* GetGameLogic() const { return m_pGame; }
-	ResCache* GetResCache() const { return m_pResCache; }
+	BaseGameLogic* GetGameLogic() const { return m_pGameLogic; }
 
 	InitialOptions m_Options;
 	shared_ptr<IRenderer> m_pRenderer;
@@ -43,8 +39,7 @@ protected:
 	UINT m_ScreenWidth;
 	UINT m_ScreenHeight;
 
-	BaseGameLogic* m_pGame;
-	ResCache* m_pResCache;
+	BaseGameLogic* m_pGameLogic;
 
 private:
 	static bool CALLBACK ModifyDeviceSettings(

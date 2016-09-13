@@ -172,6 +172,8 @@
     <ClInclude Include="Debugging\MemoryWatcher.h" />
     <ClInclude Include="Debugging\MiniDump.h" />
     <ClInclude Include="Graphics3D\D3DRenderer.h" />
+    <ClInclude Include="Graphics3D\Scene.h" />
+    <ClInclude Include="Graphics3D\SceneNode.h" />
     <ClInclude Include="RenderEngineApp\BaseGameLogic.h" />
     <ClInclude Include="RenderEngineApp\GameClock.h" />
     <ClInclude Include="RenderEngineApp\GameTime.h" />
@@ -179,8 +181,6 @@
     <ClInclude Include="RenderEngineBase.h" />
     <ClInclude Include="RenderEngineInterface.h" />
     <ClInclude Include="Mainloop\InitialOptions.h" />
-    <ClInclude Include="Mainloop\Process.h" />
-    <ClInclude Include="Mainloop\ProcessManager.h" />
     <ClInclude Include="Multicore\CriticalSection.h" />
     <ClInclude Include="ResourceCache\ResCache.h" />
     <ClInclude Include="ResourceCache\XmlResource.h" />
@@ -196,9 +196,9 @@
     <ClCompile Include="Debugging\Logger.cpp" />
     <ClCompile Include="Debugging\MiniDump.cpp" />
     <ClCompile Include="Graphics3D\D3DRenderer.cpp" />
+    <ClCompile Include="Graphics3D\Scene.cpp" />
+    <ClCompile Include="Graphics3D\SceneNode.cpp" />
     <ClCompile Include="Mainloop\InitialOptions.cpp" />
-    <ClCompile Include="Mainloop\Process.cpp" />
-    <ClCompile Include="Mainloop\ProcessManager.cpp" />
     <ClCompile Include="RenderEngineApp\BaseGameLogic.cpp" />
     <ClCompile Include="RenderEngineApp\GameClock.cpp" />
     <ClCompile Include="RenderEngineApp\GameTime.cpp" />

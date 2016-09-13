@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "FXStudioApp.h"
+#include <direct.h>
 
 #ifdef _DEBUG
 #pragma comment(lib, "RenderEngined.lib")
@@ -19,32 +20,22 @@ FXStudioApp::~FXStudioApp()
 
 }
 
-const std::wstring FXStudioApp::VGetWindowTitle()
-{
-	return _T("FX Studio");
-}
-
-HICON FXStudioApp::VGetIcon()
-{
-	return LoadIcon(GetInstance(), MAKEINTRESOURCE(IDI_APPLICATION));
-}
-
 BaseGameLogic* FXStudioApp::VCreateGameAndView()
 {
-	BaseGameLogic *game = NULL;
-
-	game = GCC_NEW FXStudioLogic(this);
-	game->Init();
+	BaseGameLogic* gameLogic = GCC_NEW FXStudioLogic(this);
+	gameLogic->Init();
 
 	shared_ptr<IGameView> gameView(GCC_NEW FXStudioHumanView(m_pRenderer));
-	game->VAddView(gameView);
+	gameLogic->VAddView(gameView);
 
-	return game;
+	return gameLogic;
 }
 
 FXStudioLogic::FXStudioLogic(RenderEngineApp* pApp) : BaseGameLogic(pApp)
 {
-
+	m_ProjectDirectory = getcwd(NULL, 0);
+	int slashGamePos = m_ProjectDirectory.rfind("\\Game");
+	m_ProjectDirectory = m_ProjectDirectory.substr(0, slashGamePos);
 }
 
 FXStudioLogic::~FXStudioLogic()
@@ -65,7 +56,6 @@ bool FXStudioLogic::VLoadGame(const char* levelName)
 		return false;
 	}
 
-	VChangeState(BGS_Running);
 	return true;
 }
 

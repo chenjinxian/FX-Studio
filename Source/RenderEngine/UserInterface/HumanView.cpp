@@ -1,7 +1,7 @@
 #include "HumanView.h"
-#include "../MainLoop/Process.h"
-#include "../Mainloop/ProcessManager.h"
+#include "UserInterface.h"
 #include "../Utilities/String.h"
+#include "../Graphics3D/SceneNode.h"
 #include <DXUTGui.h>
 
 const unsigned int SCREEN_REFRESH_RATE(1000/60);
@@ -9,14 +9,11 @@ const GameViewId gc_InvalidGameViewId = 0xffffffff;
 
 HumanView::HumanView(shared_ptr<IRenderer> pRender) : m_pRender(pRender)
 {
-	m_pProcessManager = GCC_NEW ProcessManager;
-
 	m_PointerRadius = 1;	// we assume we are on a mouse enabled machine - if this were a tablet we should detect it here.
 	m_ViewId = gc_InvalidGameViewId;
 
 	// Added post press for move, new, and destroy actor events and others
 // 	RegisterAllDelegates();
-	m_BaseGameState = BGS_Initializing;		// what is the current game state
 
 	if (pRender)
 	{
@@ -42,7 +39,6 @@ HumanView::~HumanView()
 		m_ScreenElements.pop_front();		
 	}
 
-	SAFE_DELETE(m_pProcessManager);
 }
 
 bool HumanView::LoadGame(TiXmlElement* pLevelData)
@@ -61,7 +57,7 @@ void HumanView::VOnRender(double fTime, float fElapsedTime )
 		shared_ptr<IRenderer> pRender = MakeStrongPtr(m_pRender);
 		if (pRender->VPreRender())
 		{
-			m_ScreenElements.sort(SortBy_SharedPtr_Content<IScreenElement>());
+// 			m_ScreenElements.sort(SortBy_SharedPtr_Content<IScreenElement>());
 
 			for(ScreenElementList::iterator i=m_ScreenElements.begin(); i!=m_ScreenElements.end(); ++i)
 			{
@@ -194,8 +190,6 @@ LRESULT CALLBACK HumanView::VOnMsgProc( AppMsg msg )
 
 void HumanView::VOnUpdate(const int deltaMilliseconds)
 {
-	m_pProcessManager->UpdateProcesses(deltaMilliseconds);
-
 	for(ScreenElementList::iterator i=m_ScreenElements.begin(); i!=m_ScreenElements.end(); ++i)
 	{
 		(*i)->VOnUpdate(deltaMilliseconds);
@@ -210,6 +204,11 @@ void HumanView::VPushElement(shared_ptr<IScreenElement> pElement)
 void HumanView::VRemoveElement(shared_ptr<IScreenElement> pElement)
 {
 	m_ScreenElements.remove(pElement);
+}
+
+void HumanView::VSetCameraOffset(const Vector4& camOffset)
+{
+
 }
 
 // void HumanView::VSetCameraOffset(const Vec4 & camOffset )

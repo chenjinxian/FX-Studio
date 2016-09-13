@@ -9,7 +9,7 @@ public:
 	virtual ~FXStudioHumanView();
 
 	virtual void VOnUpdate(unsigned long deltaMilliseconds);
-// 	shared_ptr<ScreenElementScene> GetScene() { return m_pScene; }
+	shared_ptr<ScreenElementScene> GetScene() { return m_pScene; }
 
 protected:
 // 	shared_ptr<MovementController> m_pFreeCameraController;

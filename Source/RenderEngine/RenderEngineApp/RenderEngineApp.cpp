@@ -30,7 +30,7 @@ RenderEngineApp::RenderEngineApp(
 	: m_Options(), m_pRenderer(nullptr),
 	m_Instance(hInstance), m_CmdLine(lpCmdLine), m_WindowHandle(hWnd),
 	m_ScreenWidth(screenWidth), m_ScreenHeight(screenHeight),
-	m_pGame(nullptr), m_pResCache(nullptr)
+	m_pGameLogic(nullptr)
 {
 }
 
@@ -119,12 +119,6 @@ bool RenderEngineApp::InitializeOptions()
 
 	IResourceFile *zipFile = GCC_NEW DevelopmentResourceZipFile(L"Assets.zip", DevelopmentResourceZipFile::Editor);
 
-	m_pResCache = GCC_NEW ResCache(50, zipFile);
-	if (!m_pResCache->Init())
-	{
-		GCC_ERROR("Failed to initialize resource cache!  Are your paths set up correctly?");
-		return false;
-	}
 
 // 	extern shared_ptr<IResourceLoader> CreateWAVResourceLoader();
 // 	extern shared_ptr<IResourceLoader> CreateOGGResourceLoader();
@@ -155,21 +149,7 @@ bool RenderEngineApp::InitializeOptions()
 // 		return false;
 // 	}
 
-	if (m_WindowHandle == NULL)
-	{
-		DXUTCreateWindow(VGetWindowTitle().c_str(), m_Instance, VGetIcon());
-		m_WindowHandle = DXUTGetHWND();
-	}
-	else
-	{
-		DXUTSetWindow(m_WindowHandle, m_WindowHandle, m_WindowHandle);
-	}
-
-	if (!GetWindowHandle())
-	{
-		return false;
-	}
-	SetWindowText(GetWindowHandle(), VGetWindowTitle().c_str());
+	DXUTSetWindow(m_WindowHandle, m_WindowHandle, m_WindowHandle);
 
 // 	_tcscpy_s(m_saveGameDirectory, GetSaveGameDirectory(GetHwnd(), VGetGameAppDirectory()));
 
@@ -182,13 +162,9 @@ bool RenderEngineApp::InitializeOptions()
 // 	m_pRenderer->VSetBackgroundColor(Color(Colors::);
 	m_pRenderer->VOnRestore();
 
-	m_pGame = VCreateGameAndView();
-	if (nullptr == m_pGame)
+	m_pGameLogic = VCreateGameAndView();
+	if (nullptr == m_pGameLogic)
 		return false;
-
-	m_pResCache->Preload(m_pResCache, "*.ogg", nullptr);
-	m_pResCache->Preload(m_pResCache, "*.dds", nullptr);
-	m_pResCache->Preload(m_pResCache, "*.jpg", nullptr);
 
 	InitialOptions::CheckForJoystick(GetWindowHandle());
 
@@ -365,10 +341,10 @@ void CALLBACK RenderEngineApp::OnD3D11DestroyDevice(void* pUserContext)
 void CALLBACK RenderEngineApp::OnFrameMove(double fTime, float fElapsedTime, void *pUserContext)
 {
 	RenderEngineApp* pApp = reinterpret_cast<RenderEngineApp*>(pUserContext);
-	if (pApp->m_pGame)
+	if (pApp->m_pGameLogic)
 	{
 // 		IEventManager::Get()->VUpdate(20);
-		pApp->m_pGame->VOnUpdate(float(fTime), fElapsedTime);
+		pApp->m_pGameLogic->VOnUpdate(float(fTime), fElapsedTime);
 	}
 }
 
@@ -376,7 +352,7 @@ void CALLBACK RenderEngineApp::OnD3D11FrameRender(
 	ID3D11Device* pd3dDevice, ID3D11DeviceContext* pd3dImmediateContext, double fTime, float fElapsedTime, void* pUserContext)
 {
 	RenderEngineApp* pApp = reinterpret_cast<RenderEngineApp*>(pUserContext);
-	BaseGameLogic *pGame = pApp->m_pGame;
+	BaseGameLogic *pGame = pApp->m_pGameLogic;
 
 	for (auto it : pGame->m_GameViews)
 	{
@@ -394,13 +370,12 @@ void CALLBACK RenderEngineApp::OnD3D11FrameRender(
 
 bool RenderEngineApp::VLoadGame()
 {
-	return m_pGame->VLoadGame(m_Options.m_Level.c_str());
+	return m_pGameLogic->VLoadGame(m_Options.m_Level.c_str());
 }
 
 LRESULT RenderEngineApp::OnClose()
 {
-	SAFE_DELETE(m_pGame);
+	SAFE_DELETE(m_pGameLogic);
 	DestroyWindow(GetWindowHandle());
-	SAFE_DELETE(m_pResCache);
 	return 0;
 }

@@ -37,12 +37,6 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Mainloop\Process.h">
-      <Filter>Mainloop</Filter>
-    </ClInclude>
-    <ClInclude Include="Mainloop\ProcessManager.h">
-      <Filter>Mainloop</Filter>
-    </ClInclude>
     <ClInclude Include="Debugging\Logger.h">
       <Filter>Debugging</Filter>
     </ClInclude>
@@ -105,14 +99,12 @@
     <ClInclude Include="Graphics3D\D3DRenderer.h">
       <Filter>Graphics3D</Filter>
     </ClInclude>
+    <ClInclude Include="Graphics3D\Scene.h">
+      <Filter>Graphics3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics3D\SceneNode.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Mainloop\Process.cpp">
-      <Filter>Mainloop</Filter>
-    </ClCompile>
-    <ClCompile Include="Mainloop\ProcessManager.cpp">
-      <Filter>Mainloop</Filter>
-    </ClCompile>
     <ClCompile Include="Debugging\Logger.cpp">
       <Filter>Debugging</Filter>
     </ClCompile>
@@ -158,5 +150,9 @@
     <ClCompile Include="Graphics3D\D3DRenderer.cpp">
       <Filter>Graphics3D</Filter>
     </ClCompile>
+    <ClCompile Include="Graphics3D\Scene.cpp">
+      <Filter>Graphics3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics3D\SceneNode.cpp" />
   </ItemGroup>
 </Project>

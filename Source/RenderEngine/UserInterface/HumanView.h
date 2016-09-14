@@ -34,7 +34,7 @@ public:
 	virtual void VSetCameraOffset(const Vector4& camOffset);
 
 protected:
-	virtual bool VLoadGameDelegate(TiXmlElement* pLevelData) {   /*VPushElement(m_pScene);*/  return true; }
+	virtual bool VLoadGameDelegate(TiXmlElement* pLevelData) { /*VPushElement(m_pScene);*/  return true; }
 
 	GameViewId m_ViewId;
 	ActorId m_ActorId;

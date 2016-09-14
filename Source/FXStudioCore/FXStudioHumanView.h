@@ -12,7 +12,7 @@ public:
 	shared_ptr<ScreenElementScene> GetScene() { return m_pScene; }
 
 protected:
-// 	shared_ptr<MovementController> m_pFreeCameraController;
+	shared_ptr<MovementController> m_pCameraController;
 	virtual bool VLoadGameDelegate(TiXmlElement* pLevelData) override;
 };
 

@@ -82,6 +82,11 @@ public:
 	virtual HRESULT VOnRestore(Scene* pScene);
 	virtual bool VIsVisible(Scene* pScene) const { return m_IsActive; }
 
+	void SetTarget(shared_ptr<SceneNode> pTarget) { m_pTarget = pTarget; }
+	shared_ptr<SceneNode> GetTarget() { return m_pTarget; }
+	void ClearTarget() { m_pTarget = shared_ptr<SceneNode>(); }
+
 protected:
 	bool m_IsActive;
+	shared_ptr<SceneNode> m_pTarget;
 };

@@ -172,6 +172,7 @@
     <ClInclude Include="Debugging\MemoryWatcher.h" />
     <ClInclude Include="Debugging\MiniDump.h" />
     <ClInclude Include="Graphics3D\D3DRenderer.h" />
+    <ClInclude Include="Graphics3D\MovementController.h" />
     <ClInclude Include="Graphics3D\Scene.h" />
     <ClInclude Include="Graphics3D\SceneNode.h" />
     <ClInclude Include="RenderEngineApp\BaseGameLogic.h" />
@@ -196,6 +197,7 @@
     <ClCompile Include="Debugging\Logger.cpp" />
     <ClCompile Include="Debugging\MiniDump.cpp" />
     <ClCompile Include="Graphics3D\D3DRenderer.cpp" />
+    <ClCompile Include="Graphics3D\MovementController.cpp" />
     <ClCompile Include="Graphics3D\Scene.cpp" />
     <ClCompile Include="Graphics3D\SceneNode.cpp" />
     <ClCompile Include="Mainloop\InitialOptions.cpp" />

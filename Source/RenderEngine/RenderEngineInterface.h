@@ -182,3 +182,4 @@ public:
 #include "RenderEngineApp/RenderEngineApp.h"
 #include "RenderEngineApp/BaseGameLogic.h"
 #include "UserInterface/HumanView.h"
+#include "Graphics3D/MovementController.h"

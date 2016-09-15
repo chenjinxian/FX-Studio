@@ -183,3 +183,4 @@ public:
 #include "RenderEngineApp/BaseGameLogic.h"
 #include "UserInterface/HumanView.h"
 #include "Graphics3D/MovementController.h"
+#include "Graphics3D/SceneNode.h"

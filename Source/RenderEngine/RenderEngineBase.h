@@ -1,44 +1,38 @@
 #pragma once
 
-#define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
-
-// TODO: reference additional headers your program requires here
 #include <windows.h>
-#include <tchar.h>
-#include <mmsystem.h>
-
-#include <memory>
-#include <algorithm>
 #include <string>
 #include <list>
 #include <vector>
 #include <queue>
 #include <map>
-
+#include <algorithm>
+#include <memory>
 using std::tr1::shared_ptr;
 using std::tr1::weak_ptr;
 using std::tr1::static_pointer_cast;
 using std::tr1::dynamic_pointer_cast;
+
+#include "DXUT.h"
+#include "DXUTcamera.h"
+#include "DXUTgui.h"
+#include "DXUTsettingsDlg.h"
+#include "SDKmisc.h"
+#include "SDKmesh.h"
+#include "SimpleMath.h"
+using namespace DirectX;
+using namespace DirectX::SimpleMath;
+
+#include "tinyxml.h"
+#include "boost/noncopyable.hpp"
+
+#pragma warning( disable : 4100 )
 
 #if defined(_DEBUG)
 #	define GCC_NEW new(_NORMAL_BLOCK,__FILE__, __LINE__)
 #else
 #	define GCC_NEW new
 #endif
-
-#include "DXUT.h"
-#include "SDKmisc.h"
-#include "SimpleMath.h"
-using namespace DirectX;
-using namespace DirectX::SimpleMath;
-
-#include "boost/noncopyable.hpp"
-#include "tinyxml.h"
-
-#include "Debugging\Logger.h"
-#include "Utilities\templates.h"
-
-#pragma warning( disable : 4996 ) // 'function' declared deprecated - gets rid of all those 2005 warnings....
 
 #if !defined(SAFE_DELETE)
 #define SAFE_DELETE(x) if(x) delete x; x=NULL;

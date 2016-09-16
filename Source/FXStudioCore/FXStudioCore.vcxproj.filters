@@ -30,7 +30,7 @@
     <ClInclude Include="FXStudioApp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FXStudioHumanView.h">
+    <ClInclude Include="FXStudioView.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -47,7 +47,7 @@
     <ClCompile Include="FXStudioApp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="FXStudioHumanView.cpp">
+    <ClCompile Include="FXStudioView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

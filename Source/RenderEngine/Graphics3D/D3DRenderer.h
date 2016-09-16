@@ -1,37 +1,28 @@
 #pragma once
+#include "../RenderEngineBase.h"
 #include "../RenderEngineInterface.h"
-#include <DXUTGui.h>
 
 class D3DRenderer : public IRenderer
 {
 public:
-	static CDXUTDialogResourceManager g_DialogResourceManager;
-	static CDXUTTextHelper* g_pTextHelper;
+	D3DRenderer();
+	virtual ~D3DRenderer();
 
-	virtual HRESULT VOnRestore() { return S_OK; }
-	virtual void VShutdown() { SAFE_DELETE(g_pTextHelper); }
+	virtual void VShutdown() override { SAFE_DELETE(m_pTextHelper); }
+	static CDXUTTextHelper* m_pTextHelper;
 };
 
 class D3DRenderer11 : public D3DRenderer
 {
 public:
-	D3DRenderer11() : m_BackgroundColor(Colors::CornflowerBlue.f) {}
-	virtual void VShutdown() { D3DRenderer::VShutdown(); }
+	D3DRenderer11();
+	~D3DRenderer11();
 
-	virtual void VSetBackgroundColor(Color color)
-	{
-		m_BackgroundColor = color;
-	}
-
+	virtual void VSetBackgroundColor(const Color& color) override { m_backgroundColor = color; }
 	virtual bool VPreRender();
 	virtual bool VPostRender();
-	virtual HRESULT VOnRestore();
+	virtual void VShutdown() { D3DRenderer::VShutdown(); }
 
-	virtual void VSetWorldTransform(const Matrix *m) {  }
-	virtual void VSetViewTransform(const Matrix *m) {  }
-	virtual void VSetProjectionTransform(const Matrix *m) {  }
-
-protected:
-	Color m_BackgroundColor;
+private:
+	Color m_backgroundColor;
 };
-

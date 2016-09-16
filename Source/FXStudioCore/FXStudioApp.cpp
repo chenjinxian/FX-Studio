@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "FXStudioApp.h"
-#include <direct.h>
+#include "FXStudioView.h"
 
 #ifdef _DEBUG
 #pragma comment(lib, "RenderEngined.lib")
@@ -22,47 +22,21 @@ FXStudioApp::~FXStudioApp()
 
 BaseGameLogic* FXStudioApp::VCreateGameAndView()
 {
-	BaseGameLogic* gameLogic = GCC_NEW FXStudioLogic(this);
-	gameLogic->Init();
+	BaseGameLogic* pGameLogic = GCC_NEW FXStudioLogic();
+	pGameLogic->Init();
 
-	shared_ptr<IGameView> gameView(GCC_NEW FXStudioHumanView(m_pRenderer));
-	gameLogic->VAddView(gameView);
+	shared_ptr<IGameView> pGameView(GCC_NEW FXStudioView(m_pRenderer));
+	pGameLogic->VAddView(pGameView);
 
-	return gameLogic;
+	return pGameLogic;
 }
 
-FXStudioLogic::FXStudioLogic(RenderEngineApp* pApp) : BaseGameLogic(pApp)
+FXStudioLogic::FXStudioLogic()
 {
-	m_ProjectDirectory = getcwd(NULL, 0);
-	int slashGamePos = m_ProjectDirectory.rfind("\\Game");
-	m_ProjectDirectory = m_ProjectDirectory.substr(0, slashGamePos);
+
 }
 
 FXStudioLogic::~FXStudioLogic()
 {
 
-}
-
-bool FXStudioLogic::VLoadGame(const char* levelName)
-{
-	while (m_Actors.size() > 0)
-	{
-		ActorId id = m_Actors.begin()->first;
-		VDestroyActor(id);
-	}
-
-	if (!BaseGameLogic::VLoadGame(levelName))
-	{
-		return false;
-	}
-
-	return true;
-}
-
-shared_ptr<FXStudioHumanView> FXStudioLogic::GetHumanView()
-{
-	GCC_ASSERT(m_GameViews.size() == 1);
-	shared_ptr<IGameView> pGameView = *m_GameViews.begin();
-	shared_ptr<FXStudioHumanView> editorHumanView = static_pointer_cast<FXStudioHumanView>(pGameView);
-	return editorHumanView;
 }

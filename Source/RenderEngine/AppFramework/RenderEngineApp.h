@@ -1,10 +1,9 @@
 #pragma once
-
-#include "../Mainloop/InitialOptions.h"
-#include "BaseGameLogic.h"
+#include "../RenderEngineBase.h"
+#include "../RenderEngineInterface.h"
 
 class BaseGameLogic;
-class ResCache;
+class HumanView;
 
 class RenderEngineApp : public boost::noncopyable
 {
@@ -14,25 +13,18 @@ public:
 
 	HINSTANCE GetInstance() const { return m_Instance; }
 	HWND GetWindowHandle() const { return m_WindowHandle; }
-	virtual const std::wstring VGetWindowTitle() = 0;
-	virtual HICON VGetIcon() = 0;
 	int GetScreenWidth() const { return m_ScreenWidth; }
 	int GetScreenHeight() const { return m_ScreenHeight; }
 
-	virtual int Run();
-	virtual int Exit();
 	virtual bool Initialize();
+	virtual int Exit();
+	BaseGameLogic* GetGameLogic() const { return m_pGameLogic; }
 
-	virtual bool VLoadGame();
-	virtual BaseGameLogic* VCreateGameAndView() = 0;
-	BaseGameLogic* GetGameLogic() const { return m_pGame; }
-	ResCache* GetResCache() const { return m_pResCache; }
-
-	InitialOptions m_Options;
 	shared_ptr<IRenderer> m_pRenderer;
 
 protected:
-	virtual bool InitializeOptions();
+	virtual BaseGameLogic* VCreateGameAndView() = 0;
+	BaseGameLogic* m_pGameLogic;
 
 	static const UINT SCREEN_WIDTH;
 	static const UINT SCREEN_HEIGHT;
@@ -42,9 +34,6 @@ protected:
 	HWND m_WindowHandle;
 	UINT m_ScreenWidth;
 	UINT m_ScreenHeight;
-
-	BaseGameLogic* m_pGame;
-	ResCache* m_pResCache;
 
 private:
 	static bool CALLBACK ModifyDeviceSettings(
@@ -74,6 +63,5 @@ private:
 
 	static LRESULT CALLBACK MsgProc(
 		HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, bool* pbNoFurtherProcessing, void *pUserContext);
-
-	LRESULT OnClose();
 };
+

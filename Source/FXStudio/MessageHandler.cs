@@ -82,7 +82,7 @@ namespace FXStudio
                         case WM_MBUTTONDBLCLK:
                         case WM_CLOSE:
                             {
-//                                 NativeMethods.WndProc(m_handle, m.Msg, m.WParam.ToInt32(), m.LParam.ToInt32());
+                                RenderMethods.WndProc(m_handle, m.Msg, m.WParam.ToInt32(), m.LParam.ToInt32());
 //                                 // If the left mouse button is up, try doing a 
 //                                 // ray cast to see if it intersects with an actor
 //                                 if (m_fakeFocus && m.Msg == WM_LBUTTONUP)

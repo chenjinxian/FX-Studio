@@ -1,4 +1,5 @@
 #pragma once
+#include "../RenderEngineBase.h"
 #include "../RenderEngineInterface.h"
 
 class Scene
@@ -7,13 +8,12 @@ public:
 	Scene(shared_ptr<IRenderer> pRenderer);
 	virtual ~Scene();
 
-	HRESULT OnRender();
-	HRESULT OnRestore();
-	HRESULT OnLostDevice();
-	HRESULT OnUpdate(const int deltaMilliseconds);
+	void OnUpdate(uint32_t deltaMilliseconds);
+	void OnRender();
 
-	shared_ptr<ISceneNode> FindActor(ActorId id);
-	bool AddChild(ActorId id, shared_ptr<ISceneNode> kid);
-	bool RemoveChild(ActorId id);
+	shared_ptr<IRenderer> GetRenderder() { return m_pRenderer; }
+
+private:
+	shared_ptr<IRenderer> m_pRenderer;
 };
 

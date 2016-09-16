@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "FXStudioCore.h"
 #include "FXStudioApp.h"
+#include "FXStudioView.h"
 
 static std::unique_ptr<FXStudioApp> app = nullptr;
 

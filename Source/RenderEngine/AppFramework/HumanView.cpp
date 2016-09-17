@@ -24,11 +24,11 @@ HRESULT HumanView::VOnRestore()
 	return hr;
 }
 
-void HumanView::VOnUpdate(uint32_t deltaMilliseconds)
+void HumanView::VOnUpdate(uint32_t deltaMs)
 {
 	for (auto element : m_SceenElements)
 	{
-		element->VOnUpdate(deltaMilliseconds);
+		element->VOnUpdate(deltaMs);
 	}
 }
 

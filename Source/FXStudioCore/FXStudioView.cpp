@@ -11,7 +11,7 @@ FXStudioView::~FXStudioView()
 {
 }
 
-void FXStudioView::VOnUpdate(uint32_t deltaMilliseconds)
+void FXStudioView::VOnUpdate(uint32_t deltaMs)
 {
 
 }

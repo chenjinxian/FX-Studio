@@ -14,7 +14,7 @@ public:
 	virtual ~Actor();
 
 	void Destroy();
-	void Update(uint32_t deltaMilliseconds);
+	void Update(uint32_t deltaMs);
 
 private:
 	ActorId m_ActorId;

@@ -16,10 +16,10 @@ void Actor::Destroy()
 	m_ActorComponents.clear();
 }
 
-void Actor::Update(uint32_t deltaMilliseconds)
+void Actor::Update(uint32_t deltaMs)
 {
 	for (auto component : m_ActorComponents)
 	{
-		component.second->VUpdate(deltaMilliseconds);
+		component.second->VUpdate(deltaMs);
 	}
 }

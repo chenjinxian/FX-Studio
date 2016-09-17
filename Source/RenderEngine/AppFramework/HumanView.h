@@ -10,7 +10,7 @@ public:
 	virtual ~SceenElementScene() {}
 
 	virtual HRESULT VOnRestore() override { return OnRestore(); }
-	virtual void VOnUpdate(uint32_t deltaMilliseconds) override { OnUpdate(deltaMilliseconds); }
+	virtual void VOnUpdate(uint32_t deltaMs) override { OnUpdate(deltaMs); }
 	virtual void VOnRender(float totalTime, float elapsedTime) override { OnRender(); }
 	virtual bool VIsVisible() const override { return true; }
 };
@@ -24,7 +24,7 @@ public:
 	virtual ~HumanView();
 	
 	virtual HRESULT VOnRestore() override;
-	virtual void VOnUpdate(uint32_t deltaMilliseconds) override;
+	virtual void VOnUpdate(uint32_t deltaMs) override;
 	virtual void VOnRender(float totalTime, float elapsedTime) override;
 	virtual void VOnAttach(GameViewId viewId, ActorId actorId) override;
 

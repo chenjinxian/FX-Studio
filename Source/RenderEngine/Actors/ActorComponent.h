@@ -14,7 +14,7 @@ public:
 
 	virtual bool VInit(TiXmlElement* pData) = 0;
 	virtual void VPostInit() {}
-	virtual void VUpdate(uint32_t deltaMilliseconds) {}
+	virtual void VUpdate(uint32_t deltaMs) {}
 	virtual void VOnChanged() {}
 
 	virtual TiXmlElement* VGenerateXml() = 0;

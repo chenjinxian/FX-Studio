@@ -32,15 +32,15 @@ bool BaseGameLogic::Init()
 
 void BaseGameLogic::VOnUpdate(float totalTime, float elapsedTime)
 {
-	int deltaMilliseconds = int(elapsedTime * 1000.0f);
+	int deltaMs = int(elapsedTime * 1000.0f);
 	for (auto view : m_GameViews)
 	{
-		view->VOnUpdate(deltaMilliseconds);
+		view->VOnUpdate(deltaMs);
 	}
 
 	for (auto actor : m_Actors)
 	{
-		actor.second->Update(deltaMilliseconds);
+		actor.second->Update(deltaMs);
 	}
 }
 

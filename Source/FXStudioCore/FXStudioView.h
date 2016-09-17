@@ -7,7 +7,7 @@ public:
 	FXStudioView(shared_ptr<IRenderer> pRenderer);
 	virtual ~FXStudioView();
 
-	virtual void VOnUpdate(uint32_t deltaMilliseconds) override;
+	virtual void VOnUpdate(uint32_t deltaMs) override;
 	shared_ptr<SceenElementScene> GetScene() { return m_pScene; }
 
 protected:

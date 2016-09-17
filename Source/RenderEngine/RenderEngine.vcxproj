@@ -148,22 +148,36 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Actors\Actor.h" />
+    <ClInclude Include="Actors\ActorComponent.h" />
+    <ClInclude Include="Actors\ActorFactory.h" />
+    <ClInclude Include="Actors\RenderComponent.h" />
+    <ClInclude Include="Actors\RenderComponentInterface.h" />
+    <ClInclude Include="Actors\TransformComponent.h" />
     <ClInclude Include="AppFramework\BaseGameLogic.h" />
     <ClInclude Include="AppFramework\HumanView.h" />
     <ClInclude Include="AppFramework\RenderEngineApp.h" />
     <ClInclude Include="Graphics3D\D3DRenderer.h" />
     <ClInclude Include="Graphics3D\Scene.h" />
+    <ClInclude Include="Graphics3D\SceneNode.h" />
     <ClInclude Include="RenderEngine.h" />
     <ClInclude Include="RenderEngineBase.h" />
     <ClInclude Include="RenderEngineInterface.h" />
+    <ClInclude Include="Utilities\HashedString.h" />
     <ClInclude Include="Utilities\Templates.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Actors\Actor.cpp" />
+    <ClCompile Include="Actors\ActorFactory.cpp" />
+    <ClCompile Include="Actors\RenderComponent.cpp" />
+    <ClCompile Include="Actors\TransformComponent.cpp" />
     <ClCompile Include="AppFramework\BaseGameLogic.cpp" />
     <ClCompile Include="AppFramework\HumanView.cpp" />
     <ClCompile Include="AppFramework\RenderEngineApp.cpp" />
     <ClCompile Include="Graphics3D\D3DRenderer.cpp" />
     <ClCompile Include="Graphics3D\Scene.cpp" />
+    <ClCompile Include="Graphics3D\SceneNode.cpp" />
+    <ClCompile Include="Utilities\HashedString.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

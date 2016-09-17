@@ -9,8 +9,10 @@ public:
 	SceenElementScene(shared_ptr<IRenderer> pRenderer) : Scene(pRenderer) {}
 	virtual ~SceenElementScene() {}
 
+	virtual HRESULT VOnRestore() override { return OnRestore(); }
 	virtual void VOnUpdate(uint32_t deltaMilliseconds) override { OnUpdate(deltaMilliseconds); }
 	virtual void VOnRender(float totalTime, float elapsedTime) override { OnRender(); }
+	virtual bool VIsVisible() const override { return true; }
 };
 
 class HumanView : public IGameView
@@ -21,8 +23,10 @@ public:
 	HumanView(shared_ptr<IRenderer> pRenderer);
 	virtual ~HumanView();
 	
+	virtual HRESULT VOnRestore() override;
 	virtual void VOnUpdate(uint32_t deltaMilliseconds) override;
 	virtual void VOnRender(float totalTime, float elapsedTime) override;
+	virtual void VOnAttach(GameViewId viewId, ActorId actorId) override;
 
 	virtual void VPushElement(shared_ptr<ISceenElement> pElement);
 	virtual void VRemoveElement(shared_ptr<ISceenElement> pElement);
@@ -38,5 +42,7 @@ private:
 	uint32_t m_CurrentTick;
 	uint32_t m_LastDraw;
 	weak_ptr<IRenderer> m_pRenderer;
+	GameViewId m_ViewId;
+	ActorId m_ActorId;
 };
 

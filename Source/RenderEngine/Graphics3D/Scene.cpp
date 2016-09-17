@@ -17,3 +17,8 @@ void Scene::OnRender()
 {
 
 }
+
+HRESULT Scene::OnRestore()
+{
+	return S_OK;
+}

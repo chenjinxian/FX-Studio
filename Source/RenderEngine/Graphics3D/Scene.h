@@ -10,6 +10,7 @@ public:
 
 	void OnUpdate(uint32_t deltaMilliseconds);
 	void OnRender();
+	HRESULT OnRestore();
 
 	shared_ptr<IRenderer> GetRenderder() { return m_pRenderer; }
 

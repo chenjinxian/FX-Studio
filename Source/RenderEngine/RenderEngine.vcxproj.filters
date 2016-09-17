@@ -14,6 +14,9 @@
     <Filter Include="Utilities">
       <UniqueIdentifier>{9b72dd54-96c6-4267-a025-80b782341160}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Actors">
+      <UniqueIdentifier>{79b26296-9981-4cce-b660-a315fbb097a1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -40,6 +43,30 @@
     <ClInclude Include="Utilities\Templates.h">
       <Filter>Utilities</Filter>
     </ClInclude>
+    <ClInclude Include="Actors\Actor.h">
+      <Filter>Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="Actors\ActorComponent.h">
+      <Filter>Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="Actors\ActorFactory.h">
+      <Filter>Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="Actors\RenderComponent.h">
+      <Filter>Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="Actors\RenderComponentInterface.h">
+      <Filter>Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="Actors\TransformComponent.h">
+      <Filter>Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="Utilities\HashedString.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics3D\SceneNode.h">
+      <Filter>Graphics3D</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppFramework\RenderEngineApp.cpp">
@@ -55,6 +82,24 @@
       <Filter>AppFramework</Filter>
     </ClCompile>
     <ClCompile Include="Graphics3D\D3DRenderer.cpp">
+      <Filter>Graphics3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Actors\Actor.cpp">
+      <Filter>Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="Actors\ActorFactory.cpp">
+      <Filter>Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="Actors\RenderComponent.cpp">
+      <Filter>Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="Actors\TransformComponent.cpp">
+      <Filter>Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="Utilities\HashedString.cpp">
+      <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics3D\SceneNode.cpp">
       <Filter>Graphics3D</Filter>
     </ClCompile>
   </ItemGroup>

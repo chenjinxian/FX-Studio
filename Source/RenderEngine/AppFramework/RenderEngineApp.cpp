@@ -144,7 +144,7 @@ void CALLBACK RenderEngineApp::OnD3D11FrameRender(
 	ID3D11Device* pd3dDevice, ID3D11DeviceContext* pd3dImmediateContext, double fTime, float fElapsedTime, void* pUserContext)
 {
 	RenderEngineApp* pApp = reinterpret_cast<RenderEngineApp*>(pUserContext);
-	for (auto view : pApp->m_pGameLogic->m_gameViews)
+	for (auto view : pApp->m_pGameLogic->m_GameViews)
 	{
 		view->VOnRender(static_cast<float>(fTime), fElapsedTime);
 	}

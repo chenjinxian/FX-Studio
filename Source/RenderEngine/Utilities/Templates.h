@@ -42,7 +42,7 @@ public:
 		auto findIt = m_creationFunctions.find(id);
 		if (findIt == m_creationFunctions.end())
 		{
-			m_creationFunctions[id] = &GenericObjectCreationFunction<BaseClass, SubClass>;  // insert() is giving me compiler errors
+			m_creationFunctions[id] = &GenericObjectCreationFunction<BaseClass, SubClass>;
 			return true;
 		}
 

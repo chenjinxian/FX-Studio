@@ -22,11 +22,12 @@ class IEventData
 {
 public:
 	virtual ~IEventData() {}
+	virtual EventType VGetEventType() const = 0;
 	virtual float GetTimeStamp() const = 0;
 	virtual void VSerialize(std::ostrstream& out) const = 0;
 	virtual void VDeserialize(std::istrstream& in) = 0;
 	virtual IEventDataPtr VCopy() const = 0;
-	virtual const char* GetName() const = 0;
+	virtual const char* VGetName() const = 0;
 };
 
 class BaseEventData : public IEventData

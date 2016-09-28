@@ -22,14 +22,14 @@ public:
 	virtual bool VUpdate(uint32_t maxMillis = kINFINITE) override;
 
 private:
-	
-	typedef std::list<boost::signals2::connection> EventListenerList;
-	typedef std::map<EventType, EventListenerList> EventListenerMap;
+	typedef std::list<boost::signals2::connection> EventConnectionList;
+	typedef std::map<void*, boost::signals2::connection> EventConnectionMap;
+	typedef std::map<EventType, EventListenerSignal> EventSingalMap;
 	typedef std::list<IEventDataPtr> EventQueue;
 
-	EventListenerMap m_EventListener;
+	EventSingalMap m_EventSignals;
+	EventConnectionMap m_EventConnections;
 	EventQueue m_EventQueues[EVENTMANAGER_NUM_QUEUES];
 	int m_ActiveQueue;
 	ThreadSafeEventQueue m_RealtimeEventQueue;
-	EventListenerSignal m_Signal;
 };

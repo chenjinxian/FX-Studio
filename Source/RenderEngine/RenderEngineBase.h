@@ -1,6 +1,9 @@
 #pragma once
 
 #include <windows.h>
+#include <tchar.h>
+#include <stdio.h>
+#include <cctype>
 #include <string>
 #include <list>
 #include <vector>
@@ -27,6 +30,8 @@ using namespace DirectX::SimpleMath;
 #include "boost/noncopyable.hpp"
 
 #pragma warning( disable : 4100 )
+
+#include "Debugging/Logger.h"
 
 #if defined(_DEBUG)
 #	define GCC_NEW new(_NORMAL_BLOCK,__FILE__, __LINE__)

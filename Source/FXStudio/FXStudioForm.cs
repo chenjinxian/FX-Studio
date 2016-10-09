@@ -163,5 +163,10 @@ namespace FXStudio
             string configFile = Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), "FXStudio.Layout.config");
             panelAllView.SaveAsXml(configFile);
         }
+
+        private void toolStripButtonOpen_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

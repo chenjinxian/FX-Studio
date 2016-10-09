@@ -14,6 +14,6 @@ protected:
 class FXStudioLogic : public BaseGameLogic
 {
 public:
-	FXStudioLogic();
+	FXStudioLogic(RenderEngineApp* pApp);
 	~FXStudioLogic();
 };

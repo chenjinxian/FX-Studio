@@ -175,6 +175,7 @@
             this.toolStripButtonOpen.Size = new System.Drawing.Size(44, 61);
             this.toolStripButtonOpen.Text = "Open";
             this.toolStripButtonOpen.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.toolStripButtonOpen.Click += new System.EventHandler(this.toolStripButtonOpen_Click);
             // 
             // toolStripButtonImport
             // 

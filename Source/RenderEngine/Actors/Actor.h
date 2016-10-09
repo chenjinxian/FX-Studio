@@ -10,15 +10,62 @@ class Actor
 	friend class ActorFactory;
 
 public:
-	Actor(ActorId id);
+	explicit Actor(ActorId actorId);
 	virtual ~Actor();
 
+	bool Init(TiXmlElement* pData);
+	void PostInit();
 	void Destroy();
 	void Update(uint32_t deltaMs);
+
+	std::string ToXml();
+
+	ActorId GetId(void) const { return m_ActorId; }
+	ActorType GetType(void) const { return m_ActorType; }
+
+	template <class ComponentType>
+	weak_ptr<ComponentType> GetComponent(ComponentId componentId)
+	{
+		auto findIt = m_ActorComponents.find(componentId);
+		if (findIt != m_ActorComponents.end())
+		{
+			StrongActorComponentPtr pBase(findIt->second);
+			shared_ptr<ComponentType> pSub(static_pointer_cast<ComponentType>(pBase));
+			weak_ptr<ComponentType> pWeakSub(pSub);
+			return pWeakSub;
+		}
+		else
+		{
+			return weak_ptr<ComponentType>();
+		}
+	}
+
+	template <class ComponentType>
+	weak_ptr<ComponentType> GetComponent(const char *name)
+	{
+		ComponentId componentId = ActorComponent::GetIdFromName(name);
+		auto findIt = m_ActorComponents.find(componentId);
+		if (findIt != m_ActorComponents.end())
+		{
+			StrongActorComponentPtr pBase(findIt->second);
+			shared_ptr<ComponentType> pSub(static_pointer_cast<ComponentType>(pBase));
+			weak_ptr<ComponentType> pWeakSub(pSub);
+			return pWeakSub;
+		}
+		else
+		{
+			return weak_ptr<ComponentType>();
+		}
+	}
+
+	const ActorCompoentMap* GetComponents() { return &m_ActorComponents; }
+
+	void AddComponent(StrongActorComponentPtr pComponent);
 
 private:
 	ActorId m_ActorId;
 	ActorCompoentMap m_ActorComponents;
 	ActorType m_ActorType;
+	std::string m_ActorResource;
 };
 

@@ -159,6 +159,9 @@
     <ClInclude Include="AppFramework\BaseGameLogic.h" />
     <ClInclude Include="AppFramework\HumanView.h" />
     <ClInclude Include="AppFramework\RenderEngineApp.h" />
+    <ClInclude Include="Debugging\Logger.h" />
+    <ClInclude Include="Debugging\MemoryWatcher.h" />
+    <ClInclude Include="Debugging\MiniDump.h" />
     <ClInclude Include="EventManager\EventManager.h" />
     <ClInclude Include="EventManager\EventManagerImpl.h" />
     <ClInclude Include="EventManager\Events.h" />
@@ -168,6 +171,9 @@
     <ClInclude Include="RenderEngine.h" />
     <ClInclude Include="RenderEngineBase.h" />
     <ClInclude Include="RenderEngineInterface.h" />
+    <ClInclude Include="ResourceCache\ResCache.h" />
+    <ClInclude Include="ResourceCache\XmlResource.h" />
+    <ClInclude Include="ResourceCache\ZipFile.h" />
     <ClInclude Include="Utilities\ConcurrentQueue.h" />
     <ClInclude Include="Utilities\HashedString.h" />
     <ClInclude Include="Utilities\Templates.h" />
@@ -180,12 +186,18 @@
     <ClCompile Include="AppFramework\BaseGameLogic.cpp" />
     <ClCompile Include="AppFramework\HumanView.cpp" />
     <ClCompile Include="AppFramework\RenderEngineApp.cpp" />
+    <ClCompile Include="Debugging\Debugging.cpp" />
+    <ClCompile Include="Debugging\Logger.cpp" />
+    <ClCompile Include="Debugging\MiniDump.cpp" />
     <ClCompile Include="EventManager\EventManager.cpp" />
     <ClCompile Include="EventManager\EventManagerImpl.cpp" />
     <ClCompile Include="EventManager\Events.cpp" />
     <ClCompile Include="Graphics3D\D3DRenderer.cpp" />
     <ClCompile Include="Graphics3D\Scene.cpp" />
     <ClCompile Include="Graphics3D\SceneNode.cpp" />
+    <ClCompile Include="ResourceCache\ResCache.cpp" />
+    <ClCompile Include="ResourceCache\XmlResource.cpp" />
+    <ClCompile Include="ResourceCache\ZipFile.cpp" />
     <ClCompile Include="Utilities\HashedString.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

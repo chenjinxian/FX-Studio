@@ -20,6 +20,12 @@
     <Filter Include="EventManager">
       <UniqueIdentifier>{7534956d-10ad-4e5f-ad6e-99a808728c0c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Debugging">
+      <UniqueIdentifier>{1b34d319-349a-43bd-970e-f3d7392a4858}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ResourceCache">
+      <UniqueIdentifier>{0448200a-138a-46c1-80c0-082320a8154c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -82,6 +88,24 @@
     <ClInclude Include="Utilities\ConcurrentQueue.h">
       <Filter>Utilities</Filter>
     </ClInclude>
+    <ClInclude Include="Debugging\Logger.h">
+      <Filter>Debugging</Filter>
+    </ClInclude>
+    <ClInclude Include="Debugging\MemoryWatcher.h">
+      <Filter>Debugging</Filter>
+    </ClInclude>
+    <ClInclude Include="Debugging\MiniDump.h">
+      <Filter>Debugging</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceCache\ResCache.h">
+      <Filter>ResourceCache</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceCache\XmlResource.h">
+      <Filter>ResourceCache</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceCache\ZipFile.h">
+      <Filter>ResourceCache</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppFramework\RenderEngineApp.cpp">
@@ -125,6 +149,24 @@
     </ClCompile>
     <ClCompile Include="EventManager\Events.cpp">
       <Filter>EventManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Debugging\Debugging.cpp">
+      <Filter>Debugging</Filter>
+    </ClCompile>
+    <ClCompile Include="Debugging\Logger.cpp">
+      <Filter>Debugging</Filter>
+    </ClCompile>
+    <ClCompile Include="Debugging\MiniDump.cpp">
+      <Filter>Debugging</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceCache\ResCache.cpp">
+      <Filter>ResourceCache</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceCache\XmlResource.cpp">
+      <Filter>ResourceCache</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceCache\ZipFile.cpp">
+      <Filter>ResourceCache</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

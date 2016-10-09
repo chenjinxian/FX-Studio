@@ -1,6 +1,8 @@
 #include "RenderEngineApp.h"
 #include "BaseGameLogic.h"
 #include "../Graphics3D/D3DRenderer.h"
+#include "../ResourceCache/ResCache.h"
+#include "../ResourceCache/XmlResource.h"
 
 #ifdef _DEBUG
 #pragma comment(lib, "DirectXTKd.lib")
@@ -25,7 +27,7 @@ RenderEngineApp::RenderEngineApp(
 	HINSTANCE hInstance, LPWSTR lpCmdLine, HWND hWnd /*= NULL*/, int screenWidth /*= SCREEN_WIDTH*/, int screenHeight /*= SCREEN_HEIGHT*/)
 	: m_Instance(hInstance), m_CmdLine(lpCmdLine), m_WindowHandle(hWnd),
 	m_ScreenWidth(screenWidth), m_ScreenHeight(screenHeight),
-	m_pGameLogic(nullptr), m_pRenderer(nullptr)
+	m_pGameLogic(nullptr), m_pRenderer(nullptr), m_pResCache(nullptr)
 {
 }
 
@@ -52,6 +54,16 @@ bool RenderEngineApp::Initialize()
 	DXUTSetCallbackD3D11DeviceDestroyed(RenderEngineApp::OnD3D11DestroyDevice, reinterpret_cast<void*>(this));
 	DXUTSetCallbackD3D11FrameRender(RenderEngineApp::OnD3D11FrameRender, reinterpret_cast<void*>(this));
 
+	IResourceFile *zipFile = GCC_NEW DevelopmentResourceZipFile(L"Assets.zip", DevelopmentResourceZipFile::Editor);
+	m_pResCache = GCC_NEW ResCache(50, zipFile);
+	if (!m_pResCache->Init())
+	{
+		GCC_ERROR("Failed to initialize resource cache!  Are your paths set up correctly?");
+		return false;
+	}
+
+	m_pResCache->RegisterLoader(CreateXmlResourceLoader());
+
 	DXUTInit(true, true, m_CmdLine, true);
 	DXUTSetCursorSettings(true, true);
 
@@ -67,7 +79,16 @@ bool RenderEngineApp::Initialize()
 		return false;
 	}
 
+	m_pResCache->Preload("*.ogg", NULL);
+	m_pResCache->Preload("*.dds", NULL);
+	m_pResCache->Preload("*.jpg", NULL);
+
 	return true;
+}
+
+bool RenderEngineApp::VLoadGame(const std::string& projectPath)
+{
+	return m_pGameLogic->VLoadGame(projectPath);
 }
 
 LRESULT CALLBACK RenderEngineApp::MsgProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, bool* pbNoFurtherProcessing, void *pUserContext)

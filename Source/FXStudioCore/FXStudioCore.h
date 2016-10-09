@@ -27,6 +27,9 @@ extern "C" {
 
 	FXSTUDIOCORE_API void RenderFrame();
 
+	FXSTUDIOCORE_API void OpenLevel(BSTR lFileName);
+
+
 #ifdef __cplusplus
 }
 #endif //__cplusplus

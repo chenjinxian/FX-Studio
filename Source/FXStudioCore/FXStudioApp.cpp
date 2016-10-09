@@ -22,7 +22,7 @@ FXStudioApp::~FXStudioApp()
 
 BaseGameLogic* FXStudioApp::VCreateGameAndView()
 {
-	BaseGameLogic* pGameLogic = GCC_NEW FXStudioLogic();
+	BaseGameLogic* pGameLogic = GCC_NEW FXStudioLogic(this);
 	pGameLogic->Init();
 
 	shared_ptr<IGameView> pGameView(GCC_NEW FXStudioView(m_pRenderer));
@@ -31,7 +31,7 @@ BaseGameLogic* FXStudioApp::VCreateGameAndView()
 	return pGameLogic;
 }
 
-FXStudioLogic::FXStudioLogic()
+FXStudioLogic::FXStudioLogic(RenderEngineApp* pApp) : BaseGameLogic(pApp)
 {
 
 }

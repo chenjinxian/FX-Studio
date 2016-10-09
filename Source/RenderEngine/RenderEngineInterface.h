@@ -1,5 +1,4 @@
 #pragma once
-#include <stdint.h>
 
 class Actor;
 class ActorComponent;
@@ -7,7 +6,7 @@ class ActorComponent;
 typedef uint32_t ActorId;
 typedef uint32_t ComponentId;
 
-const ActorId INVALID_ACTOR_ID = 0;
+ActorId INVALID_ACTOR_ID = 0;
 const ComponentId INVALID_COMPONENT_ID = 0;
 
 typedef shared_ptr<Actor> StrongActorPtr;
@@ -33,8 +32,14 @@ public:
 	IGameLogic() {}
 	~IGameLogic() {}
 
+	virtual WeakActorPtr VGetActor(ActorId id) = 0;
+	virtual StrongActorPtr VCreateActor(
+		const std::string& actorResource, TiXmlElement *overrides, const Matrix& initialTransform) = 0;
+	virtual void VDestroyActor(ActorId actorId) = 0;
+	virtual void VMoveActor(ActorId id, const Matrix& mat) = 0;
+
 	virtual void VOnUpdate(float totalTime, float elapsedTime) = 0;
-	virtual void VLoadGame(const std::string& projectXml) = 0;
+	virtual bool VLoadGame(const std::string& projectXml) = 0;
 };
 
 typedef uint32_t GameViewId;
@@ -87,4 +92,31 @@ public:
 
 	virtual void VAddChild(shared_ptr<ISceneNode> child) = 0;
 	virtual void VRemoveChild(ActorId actorId) = 0;
+};
+
+class Resource;
+class IResourceFile;
+class ResHandle;
+
+class IResourceLoader
+{
+public:
+	virtual std::string VGetPattern() = 0;
+	virtual bool VUseRawFile() = 0;
+	virtual bool VDiscardRawBufferAfterLoad() = 0;
+	virtual bool VAddNullZero() { return false; }
+	virtual uint32_t VGetLoadedResourceSize(char *rawBuffer, uint32_t rawSize) = 0;
+	virtual bool VLoadResource(char *rawBuffer, uint32_t rawSize, shared_ptr<ResHandle> handle) = 0;
+};
+
+class IResourceFile
+{
+public:
+	virtual bool VOpen() = 0;
+	virtual int VGetRawResourceSize(const Resource &r) = 0;
+	virtual int VGetRawResource(const Resource &r, char *buffer) = 0;
+	virtual int VGetNumResources() const = 0;
+	virtual std::string VGetResourceName(int num) const = 0;
+	virtual bool VIsUsingDevelopmentDirectories(void) const = 0;
+	virtual ~IResourceFile() { }
 };

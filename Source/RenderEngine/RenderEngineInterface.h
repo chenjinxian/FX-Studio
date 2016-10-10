@@ -6,7 +6,7 @@ class ActorComponent;
 typedef uint32_t ActorId;
 typedef uint32_t ComponentId;
 
-ActorId INVALID_ACTOR_ID = 0;
+const ActorId INVALID_ACTOR_ID = 0;
 const ComponentId INVALID_COMPONENT_ID = 0;
 
 typedef shared_ptr<Actor> StrongActorPtr;
@@ -32,11 +32,11 @@ public:
 	IGameLogic() {}
 	~IGameLogic() {}
 
-	virtual WeakActorPtr VGetActor(ActorId id) = 0;
+	virtual WeakActorPtr VGetActor(ActorId actorId) = 0;
 	virtual StrongActorPtr VCreateActor(
 		const std::string& actorResource, TiXmlElement *overrides, const Matrix& initialTransform) = 0;
 	virtual void VDestroyActor(ActorId actorId) = 0;
-	virtual void VMoveActor(ActorId id, const Matrix& mat) = 0;
+	virtual void VMoveActor(ActorId actorId, const Matrix& mat) = 0;
 
 	virtual void VOnUpdate(float totalTime, float elapsedTime) = 0;
 	virtual bool VLoadGame(const std::string& projectXml) = 0;

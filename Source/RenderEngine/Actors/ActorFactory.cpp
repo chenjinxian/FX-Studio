@@ -61,7 +61,6 @@ StrongActorPtr ActorFactory::CreateActor(
 		pTransformComponent->SetPosition(initialTransform.Backward());
 	}
 
-	// Now that the actor has been fully created, run the post init phase
 	pActor->PostInit();
 
 	return pActor;
@@ -69,13 +68,45 @@ StrongActorPtr ActorFactory::CreateActor(
 
 void ActorFactory::ModifyActor(StrongActorPtr pActor, TiXmlElement* overrides)
 {
-
+	for (TiXmlElement* pNode = overrides->FirstChildElement(); pNode; pNode = pNode->NextSiblingElement())
+	{
+		ComponentId componentId = ActorComponent::GetIdFromName(pNode->Value());
+		StrongActorComponentPtr pComponent = MakeStrongPtr(pActor->GetComponent<ActorComponent>(componentId));
+		if (pComponent)
+		{
+			pComponent->VInit(pNode);
+			pComponent->VOnChanged();
+		}
+		else
+		{
+			pComponent = VCreateComponent(pNode);
+			if (pComponent)
+			{
+				pActor->AddComponent(pComponent);
+				pComponent->SetOwner(pActor);
+			}
+		}
+	}
 }
 
 StrongActorComponentPtr ActorFactory::VCreateComponent(TiXmlElement* pData)
 {
 	const char* name = pData->Value();
 	StrongActorComponentPtr pComponent(m_ComponentFactory.Create(ActorComponent::GetIdFromName(name)));
+	if (pComponent != nullptr)
+	{
+		if (!pComponent->VInit(pData))
+		{
+			GCC_ERROR("Component failed to initialize: " + std::string(name));
+			return StrongActorComponentPtr();
+		}
+	}
+	else
+	{
+		GCC_ERROR("Couldn't find ActorComponent named " + std::string(name));
+		return StrongActorComponentPtr();
+	}
+
 	return pComponent;
 }
 

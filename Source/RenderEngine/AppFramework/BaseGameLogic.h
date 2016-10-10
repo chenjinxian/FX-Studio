@@ -22,15 +22,15 @@ public:
 	virtual void VRemoveView(shared_ptr<IGameView> pView);
 
 	virtual StrongActorPtr VCreateActor(
-		const std::string& actorResource, TiXmlElement *overrides, const Matrix& initialTransform) = 0;
+		const std::string& actorResource, TiXmlElement *overrides, const Matrix& initialTransform) override;
 	virtual void VDestroyActor(ActorId actorId) override;
-	virtual WeakActorPtr VGetActor(ActorId id) override;
-	virtual void VMoveActor(ActorId id, const Matrix& mat) override;
+	virtual WeakActorPtr VGetActor(ActorId actorId) override;
+	virtual void VMoveActor(ActorId actorId, const Matrix& mat) override;
 
 protected:
 	virtual ActorFactory* VCreateActorFactory();
+	virtual bool VLoadGameDelegate(TiXmlElement* pData) { return true; }
 
-private:
 	RenderEngineApp* m_pApp;
 	GameViewList m_GameViews;
 	ActorFactory* m_pActorFactory;

@@ -40,3 +40,19 @@ FXStudioLogic::~FXStudioLogic()
 {
 
 }
+
+bool FXStudioLogic::VLoadGame(const std::string& projectXml)
+{
+	while (m_Actors.size() > 0)
+	{
+		ActorId id = m_Actors.begin()->first;
+		VDestroyActor(id);
+	}
+
+	if (!BaseGameLogic::VLoadGame(projectXml))
+	{
+		return false;
+	}
+
+	return true;
+}

@@ -31,5 +31,8 @@ namespace FXStudio
 
         [DllImport(editorDllName, CallingConvention = CallingConvention.Cdecl)]
         public static extern void RenderFrame();
+
+        [DllImport(editorDllName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern void OpenLevel([MarshalAs(UnmanagedType.BStr)] string lFileName);
     }
 }

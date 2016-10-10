@@ -31,6 +31,8 @@ public:
 	virtual void VPushElement(shared_ptr<ISceenElement> pElement);
 	virtual void VRemoveElement(shared_ptr<ISceenElement> pElement);
 
+	bool LoadGame(TiXmlElement* pData);
+
 protected:
 	virtual bool VLoadGameDelegate(TiXmlElement* pProjectData) { VPushElement(m_pScene); return true; }
 

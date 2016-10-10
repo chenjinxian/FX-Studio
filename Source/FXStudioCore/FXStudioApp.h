@@ -16,4 +16,6 @@ class FXStudioLogic : public BaseGameLogic
 public:
 	FXStudioLogic(RenderEngineApp* pApp);
 	~FXStudioLogic();
+
+	virtual bool VLoadGame(const std::string& projectXml) override;
 };

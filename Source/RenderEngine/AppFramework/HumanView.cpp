@@ -71,3 +71,8 @@ void HumanView::VRemoveElement(shared_ptr<ISceenElement> pElement)
 {
 	m_SceenElements.remove(pElement);
 }
+
+bool HumanView::LoadGame(TiXmlElement* pData)
+{
+	return VLoadGameDelegate(pData);
+}

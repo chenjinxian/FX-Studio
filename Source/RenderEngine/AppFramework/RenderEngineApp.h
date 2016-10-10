@@ -19,13 +19,13 @@ public:
 	virtual bool Initialize();
 	virtual int Exit();
 	BaseGameLogic* GetGameLogic() const { return m_pGameLogic; }
+	virtual bool VLoadGame(const std::string& projectPath);
 
 	shared_ptr<IRenderer> m_pRenderer;
 	class ResCache* m_pResCache;
 
 protected:
 	virtual BaseGameLogic* VCreateGameAndView() = 0;
-	virtual bool VLoadGame(const std::string& projectPath);
 	BaseGameLogic* m_pGameLogic;
 
 	static const UINT SCREEN_WIDTH;

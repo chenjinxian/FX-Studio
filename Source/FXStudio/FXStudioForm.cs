@@ -166,7 +166,19 @@ namespace FXStudio
 
         private void toolStripButtonOpen_Click(object sender, EventArgs e)
         {
+            OpenFileDialog dialog = new OpenFileDialog();
 
+            var currentDirectory = Directory.GetCurrentDirectory();
+            var parentDirectory = Directory.GetParent(currentDirectory);
+            dialog.InitialDirectory = parentDirectory.FullName;
+            dialog.Filter = "XML files (*.xml)|*.xml";
+            dialog.FilterIndex = 1;
+            dialog.RestoreDirectory = true;
+
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                RenderMethods.OpenLevel(dialog.FileName);
+            }
         }
     }
 }

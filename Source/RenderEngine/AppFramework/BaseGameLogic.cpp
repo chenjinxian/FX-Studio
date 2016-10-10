@@ -1,5 +1,6 @@
 #include "BaseGameLogic.h"
 #include "RenderEngineApp.h"
+#include "HumanView.h"
 #include "../Actors/ActorFactory.h"
 #include "../Actors/Actor.h"
 #include "../ResourceCache/XmlResource.h"
@@ -78,7 +79,7 @@ bool BaseGameLogic::VLoadGame(const std::string& projectXml)
 		{
 			const char* actorResource = pNode->Attribute("resource");
 
-			StrongActorPtr pActor = VCreateActor(actorResource, pNode);
+			StrongActorPtr pActor = VCreateActor(actorResource, pNode, Matrix());
 			if (pActor)
 			{
 				shared_ptr<EvtData_New_Actor> pNewActorEvent(GCC_NEW EvtData_New_Actor(pActor->GetId()));
@@ -87,14 +88,10 @@ bool BaseGameLogic::VLoadGame(const std::string& projectXml)
 		}
 	}
 
-	for (auto it = m_gameViews.begin(); it != m_gameViews.end(); ++it)
+	for (auto gameView : m_GameViews)
 	{
-		shared_ptr<IGameView> pView = *it;
-		if (pView->VGetType() == GameView_Human)
-		{
-			shared_ptr<HumanView> pHumanView = static_pointer_cast<HumanView, IGameView>(pView);
-			pHumanView->LoadGame(pRoot);
-		}
+		shared_ptr<HumanView> pHumanView = static_pointer_cast<HumanView, IGameView>(gameView);
+		pHumanView->LoadGame(pRoot);
 	}
 
 	if (!VLoadGameDelegate(pRoot))
@@ -129,15 +126,10 @@ StrongActorPtr BaseGameLogic::VCreateActor(
 {
 	GCC_ASSERT(m_pActorFactory);
 
-	StrongActorPtr pActor = m_pActorFactory->CreateActor(actorResource.c_str(), overrides, initialTransform, serversActorId);
+	StrongActorPtr pActor = m_pActorFactory->CreateActor(actorResource.c_str(), overrides, initialTransform);
 	if (pActor)
 	{
-		m_actors.insert(std::make_pair(pActor->GetId(), pActor));
-		if (!m_bProxy && (m_State == BGS_SpawningPlayersActors || m_State == BGS_Running))
-		{
-			shared_ptr<EvtData_Request_New_Actor> pNewActor(GCC_NEW EvtData_Request_New_Actor(actorResource, initialTransform, pActor->GetId()));
-			IEventManager::Get()->VTriggerEvent(pNewActor);
-		}
+		m_Actors.insert(std::make_pair(pActor->GetId(), pActor));
 		return pActor;
 	}
 	else
@@ -148,20 +140,31 @@ StrongActorPtr BaseGameLogic::VCreateActor(
 
 void BaseGameLogic::VDestroyActor(ActorId actorId)
 {
+	shared_ptr<EvtData_Destroy_Actor> pEvent(GCC_NEW EvtData_Destroy_Actor(actorId));
+	IEventManager::Get()->VTriggerEvent(pEvent);
 
+	auto findIt = m_Actors.find(actorId);
+	if (findIt != m_Actors.end())
+	{
+		findIt->second->Destroy();
+		m_Actors.erase(findIt);
+	}
 }
 
-WeakActorPtr BaseGameLogic::VGetActor(ActorId id)
+WeakActorPtr BaseGameLogic::VGetActor(ActorId actorId)
 {
-
+	auto findIt = m_Actors.find(actorId);
+	if (findIt != m_Actors.end())
+		return findIt->second;
+	return WeakActorPtr();
 }
 
-void BaseGameLogic::VMoveActor(ActorId id, const Matrix& mat)
+void BaseGameLogic::VMoveActor(ActorId actorId, const Matrix& mat)
 {
 
 }
 
 ActorFactory* BaseGameLogic::VCreateActorFactory()
 {
-	return GCC_NEW ActorFactory();
+	return GCC_NEW ActorFactory(m_pApp);
 }

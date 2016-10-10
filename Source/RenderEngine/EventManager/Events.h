@@ -8,7 +8,7 @@ class EvtData_New_Actor : public BaseEventData
 {
 public:
 	EvtData_New_Actor() : m_ActorId(INVALID_ACTOR_ID), m_ViewId(INVALID_GAME_VIEW_ID) {}
-	explicit EvtData_New_Actor(ActorId actorId, GameViewId viewId)
+	explicit EvtData_New_Actor(ActorId actorId, GameViewId viewId = INVALID_GAME_VIEW_ID)
 		: m_ActorId(actorId), m_ViewId(viewId)
 	{
 

@@ -4,6 +4,9 @@
 // that uses this DLL. This way any other project whose source files include this file see 
 // FXSTUDIOCORE_API functions as being imported from a DLL, whereas this DLL sees symbols
 // defined with this macro as being exported.
+
+#include <wtypes.h>
+
 #ifdef FXSTUDIOCORE_EXPORTS
 #define FXSTUDIOCORE_API __declspec(dllexport)
 #else

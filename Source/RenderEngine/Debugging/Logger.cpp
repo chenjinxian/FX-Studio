@@ -1,5 +1,4 @@
 #include "Logger.h"
-#include "../Utilities/HashedString.h"
 #include "../Utilities/ConcurrentQueue.h"
 
 using std::string;

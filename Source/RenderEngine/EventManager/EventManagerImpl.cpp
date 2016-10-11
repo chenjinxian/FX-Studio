@@ -1,6 +1,5 @@
 #include "EventManagerImpl.h"
 #include "../Debugging/Logger.h"
-#include "../Utilities/HashedString.h"
 
 EventManager::EventManager(const char* name, bool setAsGlobal)
 	: IEventManager(nullptr, setAsGlobal), m_ActiveQueue(0)

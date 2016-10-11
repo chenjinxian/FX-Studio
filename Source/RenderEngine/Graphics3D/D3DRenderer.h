@@ -8,7 +8,9 @@ public:
 	D3DRenderer();
 	virtual ~D3DRenderer();
 
+	virtual HRESULT VOnRestore() override { return S_OK; }
 	virtual void VShutdown() override { SAFE_DELETE(m_pTextHelper); }
+	static CDXUTDialogResourceManager m_DialogResourceManager;
 	static CDXUTTextHelper* m_pTextHelper;
 };
 
@@ -21,6 +23,7 @@ public:
 	virtual void VSetBackgroundColor(const Color& color) override { m_backgroundColor = color; }
 	virtual bool VPreRender();
 	virtual bool VPostRender();
+	virtual HRESULT VOnRestore();
 	virtual void VShutdown() { D3DRenderer::VShutdown(); }
 
 private:

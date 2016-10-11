@@ -4,9 +4,8 @@
 #include "TransformComponent.h"
 #include "Actor.h"
 #include "../ResourceCache/XmlResource.h"
-#include "../AppFramework/RenderEngineApp.h"
 
-ActorFactory::ActorFactory(RenderEngineApp* pApp) : m_pApp(pApp), m_LastActorId(INVALID_ACTOR_ID)
+ActorFactory::ActorFactory() : m_LastActorId(INVALID_ACTOR_ID)
 {
 	m_ComponentFactory.Register<TransformComponent>(ActorComponent::GetIdFromName(TransformComponent::m_Name));
 	m_ComponentFactory.Register<GridRenderComponent>(ActorComponent::GetIdFromName(GridRenderComponent::m_Name));
@@ -18,19 +17,20 @@ ActorFactory::~ActorFactory()
 }
 
 StrongActorPtr ActorFactory::CreateActor(
-	const std::string& actorResource, TiXmlElement *overrides, const Matrix& initialTransform)
+	const std::string& actorResource, TiXmlElement *overrides,
+	const Matrix& initialTransform, const ActorId serversActorId)
 {
-	TiXmlElement* pRoot = XmlResourceLoader::LoadAndReturnRootXmlElement(m_pApp->m_pResCache, actorResource.c_str());
+	TiXmlElement* pRoot = XmlResourceLoader::LoadAndReturnRootXmlElement(actorResource.c_str());
 	if (!pRoot)
 	{
-		GCC_ERROR("Failed to create actor from resource: " + std::string(actorResource));
+		GCC_ERROR("Failed to create actor from resource: " + actorResource);
 		return StrongActorPtr();
 	}
 
 	StrongActorPtr pActor(GCC_NEW Actor(GetNextActorId()));
 	if (!pActor->Init(pRoot))
 	{
-		GCC_ERROR("Failed to initialize actor: " + std::string(actorResource));
+		GCC_ERROR("Failed to initialize actor: " + actorResource);
 		return StrongActorPtr();
 	}
 

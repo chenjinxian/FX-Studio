@@ -26,6 +26,12 @@
     <Filter Include="ResourceCache">
       <UniqueIdentifier>{0448200a-138a-46c1-80c0-082320a8154c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Mainloop">
+      <UniqueIdentifier>{58256360-13c9-4a50-8668-67da4836d648}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UserInterface">
+      <UniqueIdentifier>{a3de8915-20c1-4897-b067-1cd71fb8b38c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -35,9 +41,6 @@
     <ClInclude Include="RenderEngineInterface.h" />
     <ClInclude Include="RenderEngine.h" />
     <ClInclude Include="AppFramework\RenderEngineApp.h">
-      <Filter>AppFramework</Filter>
-    </ClInclude>
-    <ClInclude Include="AppFramework\HumanView.h">
       <Filter>AppFramework</Filter>
     </ClInclude>
     <ClInclude Include="Graphics3D\Scene.h">
@@ -69,9 +72,6 @@
     </ClInclude>
     <ClInclude Include="Actors\TransformComponent.h">
       <Filter>Actors</Filter>
-    </ClInclude>
-    <ClInclude Include="Utilities\HashedString.h">
-      <Filter>Utilities</Filter>
     </ClInclude>
     <ClInclude Include="Graphics3D\SceneNode.h">
       <Filter>Graphics3D</Filter>
@@ -106,12 +106,30 @@
     <ClInclude Include="ResourceCache\ZipFile.h">
       <Filter>ResourceCache</Filter>
     </ClInclude>
+    <ClInclude Include="Mainloop\Initialization.h">
+      <Filter>Mainloop</Filter>
+    </ClInclude>
+    <ClInclude Include="Mainloop\Process.h">
+      <Filter>Mainloop</Filter>
+    </ClInclude>
+    <ClInclude Include="Mainloop\ProcessManager.h">
+      <Filter>Mainloop</Filter>
+    </ClInclude>
+    <ClInclude Include="Utilities\UtilityString.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="UserInterface\HumanView.h">
+      <Filter>UserInterface</Filter>
+    </ClInclude>
+    <ClInclude Include="UserInterface\MessageBox.h">
+      <Filter>UserInterface</Filter>
+    </ClInclude>
+    <ClInclude Include="UserInterface\UserInterface.h">
+      <Filter>UserInterface</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppFramework\RenderEngineApp.cpp">
-      <Filter>AppFramework</Filter>
-    </ClCompile>
-    <ClCompile Include="AppFramework\HumanView.cpp">
       <Filter>AppFramework</Filter>
     </ClCompile>
     <ClCompile Include="Graphics3D\Scene.cpp">
@@ -134,9 +152,6 @@
     </ClCompile>
     <ClCompile Include="Actors\TransformComponent.cpp">
       <Filter>Actors</Filter>
-    </ClCompile>
-    <ClCompile Include="Utilities\HashedString.cpp">
-      <Filter>Utilities</Filter>
     </ClCompile>
     <ClCompile Include="Graphics3D\SceneNode.cpp">
       <Filter>Graphics3D</Filter>
@@ -167,6 +182,27 @@
     </ClCompile>
     <ClCompile Include="ResourceCache\ZipFile.cpp">
       <Filter>ResourceCache</Filter>
+    </ClCompile>
+    <ClCompile Include="Mainloop\Initialization.cpp">
+      <Filter>Mainloop</Filter>
+    </ClCompile>
+    <ClCompile Include="Mainloop\Process.cpp">
+      <Filter>Mainloop</Filter>
+    </ClCompile>
+    <ClCompile Include="Mainloop\ProcessManager.cpp">
+      <Filter>Mainloop</Filter>
+    </ClCompile>
+    <ClCompile Include="Utilities\UtilityString.cpp">
+      <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="UserInterface\HumanView.cpp">
+      <Filter>UserInterface</Filter>
+    </ClCompile>
+    <ClCompile Include="UserInterface\MessageBox.cpp">
+      <Filter>UserInterface</Filter>
+    </ClCompile>
+    <ClCompile Include="AppFramework\RenderEngine.cpp">
+      <Filter>AppFramework</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

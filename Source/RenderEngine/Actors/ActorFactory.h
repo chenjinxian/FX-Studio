@@ -3,15 +3,15 @@
 #include "../RenderEngineInterface.h"
 #include "../Utilities/Templates.h"
 
-class RenderEngineApp;
 class ActorFactory
 {
 public:
-	ActorFactory(RenderEngineApp* pApp);
+	ActorFactory();
 	virtual ~ActorFactory();
 
 	StrongActorPtr CreateActor(
-		const std::string& actorResource, TiXmlElement *overrides, const Matrix& initialTransform);
+		const std::string& actorResource, TiXmlElement *overrides,
+		const Matrix& initialTransform, const ActorId serversActorId);
 	void ModifyActor(StrongActorPtr pActor, TiXmlElement* overrides);
 
 protected:
@@ -21,7 +21,6 @@ protected:
 private:
 	ActorId GetNextActorId();
 
-	RenderEngineApp* m_pApp;
 	ActorId m_LastActorId;
 };
 

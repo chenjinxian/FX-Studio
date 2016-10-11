@@ -35,3 +35,13 @@ bool D3DRenderer11::VPostRender()
 {
 	return true;
 }
+
+HRESULT D3DRenderer11::VOnRestore()
+{
+	HRESULT hr;
+	V_RETURN(D3DRenderer::VOnRestore());
+	SAFE_DELETE(D3DRenderer::m_pTextHelper);
+	D3DRenderer::m_pTextHelper = GCC_NEW CDXUTTextHelper(DXUTGetD3D11Device(), DXUTGetD3D11DeviceContext(), &m_DialogResourceManager, 15);
+
+	return S_OK;
+}

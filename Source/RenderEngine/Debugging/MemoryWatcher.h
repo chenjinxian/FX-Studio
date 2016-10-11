@@ -1,7 +1,7 @@
 #pragma once
 
 #ifdef _DEBUG
-#include "../Utilities/HashedString.h"
+#include "../Utilities/UtilityString.h"
 
 #define GCC_MEMORY_WATCHER_DECLARATION() \
     public: \

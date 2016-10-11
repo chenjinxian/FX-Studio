@@ -1,42 +1,50 @@
 #include "SceneNode.h"
+#include "../Actors/RenderComponent.h"
 
-SceneNode::SceneNode()
+SceneNode::SceneNode(ActorId actorId, WeakBaseRenderComponentPtr renderComponent, RenderPass renderPass)
+	: m_pParent(nullptr), m_pRenderComponent(renderComponent)
 {
+	m_Properties.m_ActorId = actorId;
+	m_Properties.m_ActorName = (renderComponent != nullptr) ? renderComponent->VGetName() : "SceneNode";
 }
-
 
 SceneNode::~SceneNode()
 {
 }
 
-void SceneNode::VOnUpdate(Scene* pScene, uint32_t elapsedMs)
+HRESULT SceneNode::VOnUpdate(Scene* pScene, uint32_t elapsedMs)
 {
-
+	return S_OK;
 }
 
-void SceneNode::VOnRestore(Scene* pScene)
+HRESULT SceneNode::VOnRestore(Scene* pScene)
 {
-
+	return S_OK;
 }
 
-void SceneNode::VPreRender(Scene* pScene)
+HRESULT SceneNode::VOnLostDevice(Scene *pScene)
 {
-
+	return S_OK;
 }
 
-void SceneNode::VRender(Scene* pScene)
+HRESULT SceneNode::VPreRender(Scene* pScene)
 {
-
+	return S_OK;
 }
 
-void SceneNode::VRenderChildren(Scene* pScene)
+HRESULT SceneNode::VRender(Scene* pScene)
 {
-
+	return S_OK;
 }
 
-void SceneNode::VPostRender(Scene* pScene)
+HRESULT SceneNode::VRenderChildren(Scene* pScene)
 {
+	return S_OK;
+}
 
+HRESULT SceneNode::VPostRender(Scene* pScene)
+{
+	return S_OK;
 }
 
 bool SceneNode::VIsVisible(Scene* pScene) const
@@ -44,17 +52,17 @@ bool SceneNode::VIsVisible(Scene* pScene) const
 	return true;
 }
 
-void SceneNode::VAddChild(shared_ptr<ISceneNode> child)
+bool SceneNode::VAddChild(shared_ptr<ISceneNode> child)
 {
-
+	return true;
 }
 
-void SceneNode::VRemoveChild(ActorId actorId)
+bool SceneNode::VRemoveChild(ActorId actorId)
 {
-
+	return true;
 }
 
-RootNode::RootNode()
+RootNode::RootNode() : SceneNode(INVALID_ACTOR_ID, WeakBaseRenderComponentPtr(), RenderPass_0)
 {
 
 }
@@ -64,22 +72,22 @@ RootNode::~RootNode()
 
 }
 
-void RootNode::VRenderChildren(Scene* pScene)
+HRESULT RootNode::VRenderChildren(Scene* pScene)
 {
-
+	return S_OK;
 }
 
-void RootNode::VAddChild(shared_ptr<ISceneNode> child)
+bool RootNode::VAddChild(shared_ptr<ISceneNode> child)
 {
-
+	return true;
 }
 
-void RootNode::VRemoveChild(ActorId actorId)
+bool RootNode::VRemoveChild(ActorId actorId)
 {
-
+	return true;
 }
 
-CameraNode::CameraNode()
+CameraNode::CameraNode() : SceneNode(INVALID_ACTOR_ID, WeakBaseRenderComponentPtr(), RenderPass_0)
 {
 
 }
@@ -89,12 +97,12 @@ CameraNode::~CameraNode()
 
 }
 
-void CameraNode::VRender(Scene* pScene)
+HRESULT CameraNode::VRender(Scene* pScene)
 {
-
+	return S_OK;
 }
 
-void CameraNode::VOnRestore(Scene* pScene)
+HRESULT CameraNode::VOnRestore(Scene* pScene)
 {
-
+	return S_OK;
 }

@@ -1,20 +1,36 @@
 #pragma once
 
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
 #include <windows.h>
+#include <windowsx.h>
+
+#include <crtdbg.h>
+
+#include <stdlib.h>
+#include <malloc.h>
+#include <memory.h>
 #include <tchar.h>
-#include <stdio.h>
-#include <cctype>
+
+#include <mmsystem.h>
+
+#include <algorithm>
 #include <string>
 #include <list>
 #include <vector>
 #include <queue>
 #include <map>
-#include <algorithm>
 #include <memory>
 using std::tr1::shared_ptr;
 using std::tr1::weak_ptr;
 using std::tr1::static_pointer_cast;
 using std::tr1::dynamic_pointer_cast;
+
+#if defined(_DEBUG)
+#	define GCC_NEW new(_NORMAL_BLOCK,__FILE__, __LINE__)
+#else
+#	define GCC_NEW new
+#endif
 
 #include "DXUT.h"
 #include "DXUTcamera.h"
@@ -28,16 +44,13 @@ using namespace DirectX::SimpleMath;
 
 #include "tinyxml.h"
 #include "boost/noncopyable.hpp"
+#include "boost/optional.hpp"
 
 #pragma warning( disable : 4100 )
-
+#pragma warning( disable : 4996 )
 #include "Debugging/Logger.h"
-
-#if defined(_DEBUG)
-#	define GCC_NEW new(_NORMAL_BLOCK,__FILE__, __LINE__)
-#else
-#	define GCC_NEW new
-#endif
+#include "Utilities/Templates.h"
+#include "Utilities/UtilityString.h"
 
 #if !defined(SAFE_DELETE)
 #define SAFE_DELETE(x) if(x) delete x; x=NULL;

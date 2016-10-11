@@ -1,7 +1,6 @@
 #pragma once
 #include "../RenderEngineBase.h"
 #include "../RenderEngineInterface.h"
-#include "../Utilities/HashedString.h"
 #include "../Graphics3D/SceneNode.h"
 
 class ActorComponent

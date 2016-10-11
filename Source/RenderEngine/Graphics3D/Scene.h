@@ -12,12 +12,18 @@ public:
 	Scene(shared_ptr<IRenderer> pRenderer);
 	virtual ~Scene();
 
-	void OnUpdate(uint32_t deltaMs);
-	void OnRender();
+	HRESULT OnUpdate(uint32_t deltaMs);
+	HRESULT OnRender();
 	HRESULT OnRestore();
+	HRESULT OnLostDevice();
 	shared_ptr<ISceneNode> FindActor(ActorId actorId);
-	void AddChild(ActorId actorId, shared_ptr<ISceneNode> child);
-	void RemoveChild(ActorId actorId);
+	bool AddChild(ActorId actorId, shared_ptr<ISceneNode> pChild);
+	bool RemoveChild(ActorId actorId);
+
+	void NewRenderComponentDelegate(IEventDataPtr pEventData);
+	void ModifiedRenderComponentDelegate(IEventDataPtr pEventData);
+	void DestroyActorDelegate(IEventDataPtr pEventData);
+	void MoveActorDelegate(IEventDataPtr pEventData);
 
 	void SetCamera(shared_ptr<CameraNode> pCamera) { m_pCamera = pCamera; }
 	const shared_ptr<CameraNode> GetCamera() const { return m_pCamera; }

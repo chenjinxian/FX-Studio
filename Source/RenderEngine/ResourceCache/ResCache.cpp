@@ -1,6 +1,5 @@
 #include "ResCache.h"
-#include "../Utilities/HashedString.h"
-#include "../boost/boost/optional.hpp"
+#include "boost/optional.hpp"
 
 Resource::Resource(const std::string &name) 
 { 

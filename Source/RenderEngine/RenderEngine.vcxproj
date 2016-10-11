@@ -157,7 +157,6 @@
     <ClInclude Include="Actors\RenderComponentInterface.h" />
     <ClInclude Include="Actors\TransformComponent.h" />
     <ClInclude Include="AppFramework\BaseGameLogic.h" />
-    <ClInclude Include="AppFramework\HumanView.h" />
     <ClInclude Include="AppFramework\RenderEngineApp.h" />
     <ClInclude Include="Debugging\Logger.h" />
     <ClInclude Include="Debugging\MemoryWatcher.h" />
@@ -168,14 +167,20 @@
     <ClInclude Include="Graphics3D\D3DRenderer.h" />
     <ClInclude Include="Graphics3D\Scene.h" />
     <ClInclude Include="Graphics3D\SceneNode.h" />
+    <ClInclude Include="Mainloop\Initialization.h" />
+    <ClInclude Include="Mainloop\Process.h" />
+    <ClInclude Include="Mainloop\ProcessManager.h" />
     <ClInclude Include="RenderEngine.h" />
     <ClInclude Include="RenderEngineBase.h" />
     <ClInclude Include="RenderEngineInterface.h" />
     <ClInclude Include="ResourceCache\ResCache.h" />
     <ClInclude Include="ResourceCache\XmlResource.h" />
     <ClInclude Include="ResourceCache\ZipFile.h" />
+    <ClInclude Include="UserInterface\HumanView.h" />
+    <ClInclude Include="UserInterface\MessageBox.h" />
+    <ClInclude Include="UserInterface\UserInterface.h" />
     <ClInclude Include="Utilities\ConcurrentQueue.h" />
-    <ClInclude Include="Utilities\HashedString.h" />
+    <ClInclude Include="Utilities\UtilityString.h" />
     <ClInclude Include="Utilities\Templates.h" />
   </ItemGroup>
   <ItemGroup>
@@ -184,7 +189,7 @@
     <ClCompile Include="Actors\RenderComponent.cpp" />
     <ClCompile Include="Actors\TransformComponent.cpp" />
     <ClCompile Include="AppFramework\BaseGameLogic.cpp" />
-    <ClCompile Include="AppFramework\HumanView.cpp" />
+    <ClCompile Include="AppFramework\RenderEngine.cpp" />
     <ClCompile Include="AppFramework\RenderEngineApp.cpp" />
     <ClCompile Include="Debugging\Debugging.cpp" />
     <ClCompile Include="Debugging\Logger.cpp" />
@@ -195,10 +200,15 @@
     <ClCompile Include="Graphics3D\D3DRenderer.cpp" />
     <ClCompile Include="Graphics3D\Scene.cpp" />
     <ClCompile Include="Graphics3D\SceneNode.cpp" />
+    <ClCompile Include="Mainloop\Initialization.cpp" />
+    <ClCompile Include="Mainloop\Process.cpp" />
+    <ClCompile Include="Mainloop\ProcessManager.cpp" />
     <ClCompile Include="ResourceCache\ResCache.cpp" />
     <ClCompile Include="ResourceCache\XmlResource.cpp" />
     <ClCompile Include="ResourceCache\ZipFile.cpp" />
-    <ClCompile Include="Utilities\HashedString.cpp" />
+    <ClCompile Include="UserInterface\HumanView.cpp" />
+    <ClCompile Include="UserInterface\MessageBox.cpp" />
+    <ClCompile Include="Utilities\UtilityString.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

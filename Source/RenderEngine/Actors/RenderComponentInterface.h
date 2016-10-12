@@ -6,9 +6,6 @@
 class RenderComponentInterface : public ActorComponent
 {
 public:
-	RenderComponentInterface() {}
-	virtual ~RenderComponentInterface() {}
-
 	virtual shared_ptr<SceneNode> VGetSceneNode() = 0;
 };
 

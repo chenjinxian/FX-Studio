@@ -28,7 +28,7 @@ class BaseUI : public IScreenElement
 {
 public:
 	BaseUI() : m_bIsVisible(true), m_PosX(0), m_PosY(0), m_Width(100), m_Height(100) {}
-	virtual void VOnUpdate(int) {}
+	virtual void VOnUpdate(uint32_t deltaMs) {}
 	virtual HRESULT VOnLostDevice() { return S_OK; }
 	virtual bool VIsVisible() const { return m_bIsVisible; }
 	virtual void VSetVisible(bool visible) { m_bIsVisible = visible; }
@@ -49,15 +49,15 @@ public:
 		GCC_WARNING("~ScreenElementScene()");
 	}
 
-	virtual void VOnUpdate(int deltaMS) { OnUpdate(deltaMS); };
+	virtual void VOnUpdate(uint32_t deltaMS) { OnUpdate(deltaMS); };
 	virtual HRESULT VOnRestore() 
 		{ OnRestore(); return S_OK; }
-	virtual HRESULT VOnRender(double fTime, float fElapsedTime)
+	virtual HRESULT VOnRender(float fTime, float fElapsedTime)
 		{ OnRender(); return S_OK; }
 	virtual HRESULT VOnLostDevice()
 		{ OnLostDevice(); return S_OK; } 
 	virtual int VGetZOrder() const { return 0; }
-	virtual void VSetZOrder(int const zOrder) { }
+	virtual void VSetZOrder(int zOrder) { }
 
 	virtual LRESULT CALLBACK VOnMsgProc( AppMsg msg ) { return 0; }
 

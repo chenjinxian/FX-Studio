@@ -1,4 +1,4 @@
-#include "HashedString.h"
+#include "UtilityString.h"
 using std::string;
 
 std::string ws2s(const std::wstring& s)
@@ -54,6 +54,90 @@ test_match:
 	if (!star) return 0;
 	str++;
 	goto test_match;
+}
+
+HRESULT AnsiToWideCch(WCHAR* wstrDestination, const CHAR* strSource, int cchDestChar)
+{
+	if (wstrDestination == NULL || strSource == NULL || cchDestChar < 1)
+		return E_INVALIDARG;
+
+	int nResult = MultiByteToWideChar(CP_ACP, 0, strSource, -1,
+		wstrDestination, cchDestChar);
+	wstrDestination[cchDestChar - 1] = 0;
+
+	if (nResult == 0)
+		return E_FAIL;
+	return S_OK;
+}
+
+HRESULT WideToAnsiCch(CHAR* strDestination, const WCHAR* wstrSource, int cchDestChar)
+{
+	if (strDestination == NULL || wstrSource == NULL || cchDestChar < 1)
+		return E_INVALIDARG;
+
+	int nResult = WideCharToMultiByte(CP_ACP, 0, wstrSource, -1, strDestination,
+		cchDestChar*sizeof(CHAR), NULL, NULL);
+	strDestination[cchDestChar - 1] = 0;
+
+	if (nResult == 0)
+		return E_FAIL;
+	return S_OK;
+}
+
+HRESULT GenericToAnsiCch(CHAR* strDestination, const TCHAR* tstrSource, int cchDestChar)
+{
+	if (strDestination == NULL || tstrSource == NULL || cchDestChar < 1)
+		return E_INVALIDARG;
+
+#ifdef _UNICODE
+	return WideToAnsiCch(strDestination, tstrSource, cchDestChar);
+#else
+	strncpy(strDestination, tstrSource, cchDestChar);
+	strDestination[cchDestChar - 1] = '\0';
+	return S_OK;
+#endif   
+}
+
+HRESULT GenericToWideCch(WCHAR* wstrDestination, const TCHAR* tstrSource, int cchDestChar)
+{
+	if (wstrDestination == NULL || tstrSource == NULL || cchDestChar < 1)
+		return E_INVALIDARG;
+
+#ifdef _UNICODE
+	wcsncpy(wstrDestination, tstrSource, cchDestChar);
+	wstrDestination[cchDestChar - 1] = L'\0';
+	return S_OK;
+#else
+	return AnsiToWideCch(wstrDestination, tstrSource, cchDestChar);
+#endif    
+}
+
+HRESULT AnsiToGenericCch(TCHAR* tstrDestination, const CHAR* strSource, int cchDestChar)
+{
+	if (tstrDestination == NULL || strSource == NULL || cchDestChar < 1)
+		return E_INVALIDARG;
+
+#ifdef _UNICODE
+	return AnsiToWideCch(tstrDestination, strSource, cchDestChar);
+#else
+	strncpy(tstrDestination, strSource, cchDestChar);
+	tstrDestination[cchDestChar - 1] = '\0';
+	return S_OK;
+#endif    
+}
+
+HRESULT WideToGenericCch(TCHAR* tstrDestination, const WCHAR* wstrSource, int cchDestChar)
+{
+	if (tstrDestination == NULL || wstrSource == NULL || cchDestChar < 1)
+		return E_INVALIDARG;
+
+#ifdef _UNICODE
+	wcsncpy(tstrDestination, wstrSource, cchDestChar);
+	tstrDestination[cchDestChar - 1] = L'\0';
+	return S_OK;
+#else
+	return WideToAnsiCch(tstrDestination, wstrSource, cchDestChar);
+#endif
 }
 
 string ToStr(int num, int base)

@@ -1,6 +1,7 @@
 #pragma once
 #include "../RenderEngineBase.h"
 #include "../RenderEngineInterface.h"
+#include "../EventManager/EventManager.h"
 
 class SceneNode;
 class CameraNode;

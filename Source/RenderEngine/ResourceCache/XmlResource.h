@@ -8,12 +8,13 @@ extern shared_ptr<IResourceLoader> CreateXmlResourceLoader();
 
 class XmlResourceExtraData : public IResourceExtraData
 {
-	TiXmlDocument m_xmlDocument;
-
 public:
 	virtual std::string VToString() { return "XmlResourceExtraData"; }
 	void ParseXml(char* pRawBuffer);
 	TiXmlElement* GetRoot(void) { return m_xmlDocument.RootElement(); }
+
+private:
+	TiXmlDocument m_xmlDocument;
 };
 
 
@@ -26,7 +27,7 @@ public:
 	virtual bool VLoadResource(char *rawBuffer, uint32_t rawSize, shared_ptr<ResHandle> handle);
 	virtual std::string VGetPattern() { return "*.xml"; }
 
-	static TiXmlElement* LoadAndReturnRootXmlElement(ResCache* pResCache, const char* resourceString);
+	static TiXmlElement* LoadAndReturnRootXmlElement(const char* resourceString);
 };
 
 

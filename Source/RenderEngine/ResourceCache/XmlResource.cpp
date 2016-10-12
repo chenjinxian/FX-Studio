@@ -1,12 +1,12 @@
 #include "XmlResource.h"
+#include "../AppFramework/RenderEngineApp.h"
 
 void XmlResourceExtraData::ParseXml(char* pRawBuffer)
 {
 	m_xmlDocument.Parse(pRawBuffer);
 }
 
-
-bool XmlResourceLoader::VLoadResource(char *rawBuffer, unsigned int rawSize, shared_ptr<ResHandle> handle)
+bool XmlResourceLoader::VLoadResource(char *rawBuffer, uint32_t rawSize, shared_ptr<ResHandle> handle)
 {
 	if (rawSize <= 0)
 		return false;
@@ -19,18 +19,16 @@ bool XmlResourceLoader::VLoadResource(char *rawBuffer, unsigned int rawSize, sha
 	return true;
 }
 
-
 shared_ptr<IResourceLoader> CreateXmlResourceLoader()
 {
 	return shared_ptr<IResourceLoader>(GCC_NEW XmlResourceLoader());
 }
 
 
-TiXmlElement* XmlResourceLoader::LoadAndReturnRootXmlElement(ResCache* pResCache, const char* resourceString)
+TiXmlElement* XmlResourceLoader::LoadAndReturnRootXmlElement(const char* resourceString)
 {
-	GCC_ASSERT(pResCache);
 	Resource resource(resourceString);
-	shared_ptr<ResHandle> pResourceHandle = pResCache->GetHandle(&resource);  // this actually loads the XML file from the zip file
+	shared_ptr<ResHandle> pResourceHandle = g_pApp->m_pResCache->GetHandle(&resource);
 	shared_ptr<XmlResourceExtraData> pExtraData = static_pointer_cast<XmlResourceExtraData>(pResourceHandle->GetExtra());
 	return pExtraData->GetRoot();
 }

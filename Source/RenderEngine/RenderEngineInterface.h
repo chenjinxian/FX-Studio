@@ -62,7 +62,7 @@ public:
 	virtual WeakActorPtr VGetActor(ActorId actorId) = 0;
 	virtual StrongActorPtr VCreateActor(
 		const std::string& actorResource, TiXmlElement *overrides,
-		const Matrix& initialTransform, const ActorId serversActorId = INVALID_ACTOR_ID) = 0;
+		const Matrix& initialTransform, ActorId serversActorId = INVALID_ACTOR_ID) = 0;
 	virtual void VDestroyActor(ActorId actorId) = 0;
 	virtual void VMoveActor(ActorId actorId, const Matrix& mat) = 0;
 
@@ -101,7 +101,7 @@ public:
 	virtual LRESULT CALLBACK VOnMsgProc(AppMsg msg) = 0;
 };
 
-typedef std::list<shared_ptr<ISceenElement> > SceenElementList;
+typedef std::list<shared_ptr<IScreenElement> > ScreenElementList;
 typedef std::list<shared_ptr<IGameView> > GameViewList;
 
 class IKeyboardHandler
@@ -200,3 +200,13 @@ public:
 	virtual bool VRemoveChild(ActorId actorId) = 0;
 };
 
+class IGamePhysics
+{
+public:
+	IGamePhysics() {}
+	~IGamePhysics() {}
+
+	virtual bool VInitialize() = 0;
+	virtual void VSyncVisibleScene() = 0;
+	virtual void VOnUpdate(float deltaSeconds) = 0;
+};

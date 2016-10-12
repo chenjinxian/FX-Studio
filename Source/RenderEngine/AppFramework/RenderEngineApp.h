@@ -2,6 +2,7 @@
 #include "../RenderEngineBase.h"
 #include "../RenderEngineInterface.h"
 #include "../UserInterface/UserInterface.h"
+#include "../Mainloop/Initialization.h"
 
 class BaseGameLogic;
 class HumanView;
@@ -31,11 +32,9 @@ public:
 	LRESULT OnClose();
 
 	LRESULT OnAltEnter();
-	LRESULT OnNcCreate(LPCREATESTRUCT cs);
 
 	bool LoadStrings(std::string language);
 	std::wstring GetString(std::wstring sID);
-	int GetHotKeyForString(std::wstring sID);
 	UINT MapCharToKeycode(const char pHotkey);
 
 	int Modal(shared_ptr<IScreenElement> pModalScreen, int defaultAnswer);
@@ -49,7 +48,7 @@ public:
 		Renderer_D3D11
 	};
 
-	shared_ptr<IRenderer> m_Renderer;
+	shared_ptr<IRenderer> m_pRenderer;
 
 	static Renderer GetRendererImpl();
 

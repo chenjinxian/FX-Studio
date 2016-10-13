@@ -8,7 +8,7 @@ public:
 	~MessageBox();
 
 	virtual HRESULT VOnRestore();
-	virtual HRESULT VOnRender(float fTime, float fElapsedTime);
+	virtual HRESULT VOnRender(double fTime, float fElapsedTime);
 	virtual int VGetZOrder() const { return 99; }
 	virtual void VSetZOrder(int zOrder) { }
 

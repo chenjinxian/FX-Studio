@@ -1,5 +1,6 @@
 #include "ResCache.h"
 #include "boost/optional.hpp"
+#include <cctype>
 
 Resource::Resource(const std::string &name) 
 { 

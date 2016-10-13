@@ -7,26 +7,26 @@ Scene::Scene(shared_ptr<IRenderer> pRenderer) : m_pRenderer(pRenderer), m_pRootN
 {
 	IEventManager* pEventMgr = IEventManager::Get();
 	pEventMgr->VAddListener(
-		boost::bind(&Scene::NewRenderComponentDelegate, this, std::placeholders::_1), EvtData_New_Render_Component::sk_EventType);
+		boost::bind(&Scene::NewRenderComponentDelegate, this, _1), EvtData_New_Render_Component::sk_EventType);
 	pEventMgr->VAddListener(
-		boost::bind(&Scene::DestroyActorDelegate, this, std::placeholders::_1), EvtData_Destroy_Actor::sk_EventType);
+		boost::bind(&Scene::DestroyActorDelegate, this, _1), EvtData_Destroy_Actor::sk_EventType);
 	pEventMgr->VAddListener(
-		boost::bind(&Scene::MoveActorDelegate, this, std::placeholders::_1), EvtData_Move_Actor::sk_EventType);
+		boost::bind(&Scene::MoveActorDelegate, this, _1), EvtData_Move_Actor::sk_EventType);
 	pEventMgr->VAddListener(
-		boost::bind(&Scene::ModifiedRenderComponentDelegate, this, std::placeholders::_1), EvtData_Modified_Render_Component::sk_EventType);
+		boost::bind(&Scene::ModifiedRenderComponentDelegate, this, _1), EvtData_Modified_Render_Component::sk_EventType);
 }
 
 Scene::~Scene()
 {
 	IEventManager* pEventMgr = IEventManager::Get();
 	pEventMgr->VRemoveListener(
-		boost::bind(&Scene::NewRenderComponentDelegate, this, std::placeholders::_1), EvtData_New_Render_Component::sk_EventType);
+		boost::bind(&Scene::NewRenderComponentDelegate, this, _1), EvtData_New_Render_Component::sk_EventType);
 	pEventMgr->VRemoveListener(
-		boost::bind(&Scene::DestroyActorDelegate, this, std::placeholders::_1), EvtData_Destroy_Actor::sk_EventType);
+		boost::bind(&Scene::DestroyActorDelegate, this, _1), EvtData_Destroy_Actor::sk_EventType);
 	pEventMgr->VRemoveListener(
-		boost::bind(&Scene::MoveActorDelegate, this, std::placeholders::_1), EvtData_Move_Actor::sk_EventType);
+		boost::bind(&Scene::MoveActorDelegate, this, _1), EvtData_Move_Actor::sk_EventType);
 	pEventMgr->VRemoveListener(
-		boost::bind(&Scene::ModifiedRenderComponentDelegate, this, std::placeholders::_1), EvtData_Modified_Render_Component::sk_EventType);
+		boost::bind(&Scene::ModifiedRenderComponentDelegate, this, _1), EvtData_Modified_Render_Component::sk_EventType);
 }
 
 HRESULT Scene::OnUpdate(uint32_t deltaMs)

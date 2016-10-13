@@ -52,7 +52,7 @@ public:
 	virtual void VOnUpdate(uint32_t deltaMS) { OnUpdate(deltaMS); };
 	virtual HRESULT VOnRestore() 
 		{ OnRestore(); return S_OK; }
-	virtual HRESULT VOnRender(float fTime, float fElapsedTime)
+	virtual HRESULT VOnRender(double fTime, float fElapsedTime)
 		{ OnRender(); return S_OK; }
 	virtual HRESULT VOnLostDevice()
 		{ OnLostDevice(); return S_OK; } 

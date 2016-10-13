@@ -1,6 +1,7 @@
 #include "D3DRenderer.h"
 
-CDXUTTextHelper* D3DRenderer::m_pTextHelper = nullptr;
+CDXUTDialogResourceManager D3DRenderer::m_DialogResourceManager;
+CDXUTTextHelper *D3DRenderer::m_pTextHelper = nullptr;
 
 D3DRenderer::D3DRenderer()
 {

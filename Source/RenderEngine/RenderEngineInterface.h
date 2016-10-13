@@ -39,7 +39,7 @@ public:
 
 	virtual HRESULT VOnRestore() = 0;
 	virtual HRESULT VOnLostDevice() = 0;
-	virtual HRESULT VOnRender(float totalTime, float elapsedTime) = 0;
+	virtual HRESULT VOnRender(double fTime, float fElapsedTime) = 0;
 	virtual void VOnUpdate(uint32_t deltaMs) = 0;
 
 	virtual int VGetZOrder() const = 0;
@@ -94,7 +94,7 @@ public:
 	virtual HRESULT VOnRestore() = 0;
 	virtual HRESULT VOnLostDevice() = 0;
 	virtual void VOnUpdate(uint32_t deltaMs) = 0;
-	virtual void VOnRender(float totalTime, float elapsedTime) = 0;
+	virtual void VOnRender(double fTime, float fElapsedTime) = 0;
 	virtual void VOnAttach(GameViewId viewId, ActorId actorId) = 0;
 	virtual GameViewType VGetType() = 0;
 	virtual GameViewId VGetId() const = 0;

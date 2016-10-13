@@ -1,6 +1,7 @@
 #include "ZipFile.h"
 #include <zlib.h>
 #include <string.h>
+#include <cctype>
 
 // --------------------------------------------------------------------------
 // Basic types.

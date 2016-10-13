@@ -55,7 +55,7 @@ bool HumanView::LoadGame(TiXmlElement* pLevelData)
 	return VLoadGameDelegate(pLevelData);
 }
 
-void HumanView::VOnRender(float fTime, float fElapsedTime )
+void HumanView::VOnRender(double fTime, float fElapsedTime)
 {
 	m_currTick = timeGetTime();
 	if (m_currTick == m_lastDraw)
@@ -189,7 +189,7 @@ LRESULT CALLBACK HumanView::VOnMsgProc( AppMsg msg )
 	return 0;
 }
 
-void HumanView::VOnUpdate(const int deltaMilliseconds)
+void HumanView::VOnUpdate(uint32_t deltaMilliseconds)
 {
 	m_pProcessManager->UpdateProcesses(deltaMilliseconds);
 

@@ -93,6 +93,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)..\ThirdParty\DXUT\Core;$(SolutionDir)..\ThirdParty\DXUT\Optional;$(SolutionDir)..\ThirdParty\Effects11\inc;$(SolutionDir)..\ThirdParty\DirectXTK\inc;$(SolutionDir)..\ThirdParty\tinyxml;$(SolutionDir)..\ThirdParty\zlib;$(SolutionDir)..\ThirdParty\boost;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>-D_SCL_SECURE_NO_WARNINGS %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -161,6 +162,11 @@
   <ItemGroup>
     <ClCompile Include="ShootGameView.cpp" />
     <ClCompile Include="ThirdPersonShoot.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\RenderEngine\RenderEngine.vcxproj">
+      <Project>{5fab9993-98a7-47e6-a02b-e5ab9e3f2bb5}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

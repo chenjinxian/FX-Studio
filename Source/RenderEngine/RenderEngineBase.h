@@ -64,6 +64,17 @@ using namespace DirectX::SimpleMath;
 #define SAFE_RELEASE(x) if(x) x->Release(); x=NULL;
 #endif
 
+//DXUT中的宏 V 与boost冲突，使用boost mutex时需要undef V
+#if defined(DEBUG) || defined(_DEBUG)
+#ifndef VTrace
+#define VTrace(x)           { hr = (x); if( FAILED(hr) ) { DXUTTrace( __FILE__, (DWORD)__LINE__, hr, L#x, true ); } }
+#endif
+#else
+#ifndef VTrace
+#define VTrace(x)           { hr = (x); }
+#endif
+#endif
+
 #ifdef UNICODE
 #define _tcssprintf wsprintf
 #define tcsplitpath _wsplitpath

@@ -3,22 +3,6 @@
 #include "../AppFramework/RenderEngineApp.h"
 #include "../Graphics3D/D3DRenderer.h"
 
-#if defined(DEBUG) || defined(_DEBUG)
-#ifndef V
-#define V(x)           { hr = (x); if( FAILED(hr) ) { DXUTTrace( __FILE__, (DWORD)__LINE__, hr, L#x, true ); } }
-#endif
-#ifndef V_RETURN
-#define V_RETURN(x)    { hr = (x); if( FAILED(hr) ) { return DXUTTrace( __FILE__, (DWORD)__LINE__, hr, L#x, true ); } }
-#endif
-#else
-#ifndef V
-#define V(x)           { hr = (x); }
-#endif
-#ifndef V_RETURN
-#define V_RETURN(x)    { hr = (x); if( FAILED(hr) ) { return hr; } }
-#endif
-#endif
-
 void CALLBACK MessageBox::OnGUIEvent( UINT nEvent, int nControlID, CDXUTControl* pControl, void *pUserContext )
 {
 	PostMessage(g_pApp->GetHwnd(), g_MsgEndModal, 0, nControlID);
@@ -119,10 +103,10 @@ HRESULT MessageBox::VOnRestore()
 	return S_OK;
 }
 
-HRESULT MessageBox::VOnRender(float fTime, float fElapsedTime)
+HRESULT MessageBox::VOnRender(double fTime, float fElapsedTime)
 {
 	HRESULT hr;
-	V(m_UI.OnRender(fElapsedTime));
+	VTrace(m_UI.OnRender(fElapsedTime));
 	return S_OK;
 };
 

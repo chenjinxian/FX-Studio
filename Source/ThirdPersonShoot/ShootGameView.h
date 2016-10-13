@@ -8,7 +8,7 @@ public:
 	virtual ~MainMenuUI();
 
 	virtual HRESULT VOnRestore();
-	virtual HRESULT VOnRender(float fTime, float fElapsedTime);
+	virtual HRESULT VOnRender(double fTime, float fElapsedTime);
 	virtual int VGetZOrder() const { return 1; }
 	virtual void VSetZOrder(int zOrder) { }
 
@@ -38,9 +38,9 @@ public:
 	virtual ~StandardHUD();
 
 	virtual HRESULT VOnRestore();
-	virtual HRESULT VOnRender(float fTime, float fElapsedTime);
+	virtual HRESULT VOnRender(double fTime, float fElapsedTime);
 	virtual int VGetZOrder() const { return 1; }
-	virtual void VSetZOrder(int const zOrder) { }
+	virtual void VSetZOrder(int zOrder) { }
 
 	virtual LRESULT CALLBACK VOnMsgProc(AppMsg msg);
 	static void CALLBACK OnGUIEvent(UINT nEvent, int nControlID, CDXUTControl* pControl, void *pUserContext);

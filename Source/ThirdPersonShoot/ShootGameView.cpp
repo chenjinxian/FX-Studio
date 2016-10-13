@@ -171,15 +171,15 @@ void ShootGameView::VOnAttach(GameViewId vid, ActorId aid)
 
 void ShootGameView::VSetControlledActor(ActorId actorId)
 {
-	m_pTeapot = static_pointer_cast<SceneNode>(m_pScene->FindActor(actorId));
-	if (!m_pTeapot)
-	{
-		GCC_ERROR("Invalid teapot");
-		return;
-	}
-
-	HumanView::VSetControlledActor(actorId);
-
+// 	m_pTeapot = static_pointer_cast<SceneNode>(m_pScene->FindActor(actorId));
+// 	if (!m_pTeapot)
+// 	{
+// 		GCC_ERROR("Invalid teapot");
+// 		return;
+// 	}
+// 
+// 	HumanView::VSetControlledActor(actorId);
+// 
 // 	m_pTeapotController.reset(GCC_NEW TeapotController(m_pTeapot));
 // 	m_KeyboardHandler = m_pTeapotController;
 // 	m_PointerHandler = m_pTeapotController;
@@ -323,11 +323,11 @@ HRESULT MainMenuUI::VOnRestore()
 	return S_OK;
 }
 
-HRESULT MainMenuUI::VOnRender(float fTime, float fElapsedTime)
+HRESULT MainMenuUI::VOnRender(double fTime, float fElapsedTime)
 {
 	HRESULT hr;
 	DXUT_BeginPerfEvent(DXUT_PERFEVENTCOLOR, L"ShootGameHUD");
-	V(m_SampleUI.OnRender(fElapsedTime));
+	VTrace(m_SampleUI.OnRender(fElapsedTime));
 	DXUT_EndPerfEvent();
 	return S_OK;
 }
@@ -474,11 +474,11 @@ HRESULT StandardHUD::VOnRestore()
 	return S_OK;
 }
 
-HRESULT StandardHUD::VOnRender(float fTime, float fElapsedTime)
+HRESULT StandardHUD::VOnRender(double fTime, float fElapsedTime)
 {
 	HRESULT hr;
 	DXUT_BeginPerfEvent(DXUT_PERFEVENTCOLOR, L"StandardUI");
-	V(m_HUD.OnRender(fElapsedTime));
+	VTrace(m_HUD.OnRender(fElapsedTime));
 	DXUT_EndPerfEvent();
 	return S_OK;
 }

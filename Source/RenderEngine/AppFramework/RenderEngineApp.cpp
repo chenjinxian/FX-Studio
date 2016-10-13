@@ -6,6 +6,8 @@
 #include "../Graphics3D/D3DRenderer.h"
 #include "../ResourceCache/ResCache.h"
 #include "../ResourceCache/XmlResource.h"
+#include "../UserInterface/HumanView.h"
+#include "../UserInterface/MessageBox.h"
 
 #define MAX_LOADSTRING 100
 
@@ -80,21 +82,21 @@ bool RenderEngineApp::InitInstance(HINSTANCE hInstance, LPWSTR lpCmdLine, HWND h
 		return false;
 	}
 
-	extern shared_ptr<IResourceLoader> CreateWAVResourceLoader();
-	extern shared_ptr<IResourceLoader> CreateOGGResourceLoader();
-	extern shared_ptr<IResourceLoader> CreateDDSResourceLoader();
-	extern shared_ptr<IResourceLoader> CreateJPGResourceLoader();
-	extern shared_ptr<IResourceLoader> CreateXmlResourceLoader();
-	extern shared_ptr<IResourceLoader> CreateSdkMeshResourceLoader();
-	extern shared_ptr<IResourceLoader> CreateScriptResourceLoader();
+// 	extern shared_ptr<IResourceLoader> CreateWAVResourceLoader();
+// 	extern shared_ptr<IResourceLoader> CreateOGGResourceLoader();
+// 	extern shared_ptr<IResourceLoader> CreateDDSResourceLoader();
+// 	extern shared_ptr<IResourceLoader> CreateJPGResourceLoader();
+// 	extern shared_ptr<IResourceLoader> CreateXmlResourceLoader();
+// 	extern shared_ptr<IResourceLoader> CreateSdkMeshResourceLoader();
+// 	extern shared_ptr<IResourceLoader> CreateScriptResourceLoader();
 
-	m_pResCache->RegisterLoader(CreateWAVResourceLoader());
-	m_pResCache->RegisterLoader(CreateOGGResourceLoader());
-	m_pResCache->RegisterLoader(CreateDDSResourceLoader());
-	m_pResCache->RegisterLoader(CreateJPGResourceLoader());
+// 	m_pResCache->RegisterLoader(CreateWAVResourceLoader());
+// 	m_pResCache->RegisterLoader(CreateOGGResourceLoader());
+// 	m_pResCache->RegisterLoader(CreateDDSResourceLoader());
+// 	m_pResCache->RegisterLoader(CreateJPGResourceLoader());
 	m_pResCache->RegisterLoader(CreateXmlResourceLoader());
-	m_pResCache->RegisterLoader(CreateSdkMeshResourceLoader());
-	m_pResCache->RegisterLoader(CreateScriptResourceLoader());
+// 	m_pResCache->RegisterLoader(CreateSdkMeshResourceLoader());
+// 	m_pResCache->RegisterLoader(CreateScriptResourceLoader());
 
 	if (!LoadStrings("English"))
 	{
@@ -318,6 +320,7 @@ LRESULT CALLBACK RenderEngineApp::MsgProc(HWND hWnd, UINT uMsg, WPARAM wParam, L
 			}
 		}
 		break;
+	}
 	}
 
 	return result;
@@ -564,7 +567,7 @@ int RenderEngineApp::PumpUntilMessage(UINT msgEnd, WPARAM* pWParam, LPARAM* pLPa
 	return 0;
 }
 
-int	RenderEngineApp::EatSpecificMessages(UINT msgType, optional<LPARAM> lParam, optional<WPARAM> wParam)
+int	RenderEngineApp::EatSpecificMessages(UINT msgType, boost::optional<LPARAM> lParam, boost::optional<WPARAM> wParam)
 {
 	bool done = false;
 
@@ -576,12 +579,12 @@ int	RenderEngineApp::EatSpecificMessages(UINT msgType, optional<LPARAM> lParam, 
 		{
 			bool valid = true;
 
-			if (lParam.valid())
+			if (lParam.is_initialized())
 			{
 				valid &= (*lParam == msg.lParam);
 			}
 
-			if (wParam.valid())
+			if (wParam.is_initialized())
 			{
 				valid &= (*wParam == msg.wParam);
 			}
@@ -648,8 +651,8 @@ HRESULT CALLBACK RenderEngineApp::OnD3D11ResizedSwapChain(
 }
 
 void CALLBACK RenderEngineApp::OnD3D11FrameRender(
-	ID3D11Device* pd3dDevice, ID3D11DeviceContext* pd3dImmediateContext, double fTime,
-	float fElapsedTime, void* pUserContext)
+	ID3D11Device* pd3dDevice, ID3D11DeviceContext* pd3dImmediateContext,
+	double fTime, float fElapsedTime, void* pUserContext)
 {
 	BaseGameLogic *pGame = g_pApp->m_pGameLogic;
 

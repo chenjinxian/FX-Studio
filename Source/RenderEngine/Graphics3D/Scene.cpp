@@ -3,8 +3,10 @@
 #include "../EventManager/EventManager.h"
 #include "../EventManager/Events.h"
 
-Scene::Scene(shared_ptr<IRenderer> pRenderer) : m_pRenderer(pRenderer), m_pRootNode(nullptr), m_pCamera(nullptr)
+Scene::Scene(shared_ptr<IRenderer> pRenderer) : m_pRenderer(pRenderer), m_pCamera(nullptr)
 {
+	m_pRootNode.reset(GCC_NEW RootNode());
+
 	IEventManager* pEventMgr = IEventManager::Get();
 	pEventMgr->VAddListener(
 		boost::bind(&Scene::NewRenderComponentDelegate, this, _1), EvtData_New_Render_Component::sk_EventType);

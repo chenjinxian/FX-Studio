@@ -120,12 +120,12 @@ void ShootGameLogic::VChangeState(BaseGameState gameState)
 			shared_ptr<IGameView> pView = *it;
 			if (pView->VGetType() == GameView_Human)
 			{
-				StrongActorPtr pActor = VCreateActor("actors\\player_teapot.xml", NULL, Matrix());
-				if (pActor)
-				{
-					shared_ptr<EvtData_New_Actor> pNewActorEvent(GCC_NEW EvtData_New_Actor(pActor->GetId(), pView->VGetId()));
-					IEventManager::Get()->VTriggerEvent(pNewActorEvent);  // [rez] This needs to happen asap because the constructor function for Lua (which is called in through VCreateActor()) queues an event that expects this event to have been handled
-				}
+// 				StrongActorPtr pActor = VCreateActor("actors\\player_teapot.xml", NULL, Matrix());
+// 				if (pActor)
+// 				{
+// 					shared_ptr<EvtData_New_Actor> pNewActorEvent(GCC_NEW EvtData_New_Actor(pActor->GetId(), pView->VGetId()));
+// 					IEventManager::Get()->VTriggerEvent(pNewActorEvent);
+// 				}
 			}
 			else if (pView->VGetType() == GameView_Remote)
 			{
@@ -177,6 +177,11 @@ void ShootGameLogic::RemoteClientDelegate(IEventDataPtr pEventData)
 
 }
 
+void ShootGameLogic::NetworkPlayerActorAssignmentDelegate(IEventDataPtr pEventData)
+{
+
+}
+
 void ShootGameLogic::EnvironmentLoadedDelegate(IEventDataPtr pEventData)
 {
 	++m_HumanGamesLoaded;
@@ -219,12 +224,51 @@ bool ShootGameLogic::VLoadGameDelegate(TiXmlElement* pLevelData)
 
 void ShootGameLogic::RegisterAllDelegates(void)
 {
+	IEventManager* pGlobalEventManager = IEventManager::Get();
+	pGlobalEventManager->VAddListener(
+		boost::bind(&ShootGameLogic::RemoteClientDelegate, this, _1), EvtData_Remote_Client::sk_EventType);
+	pGlobalEventManager->VAddListener(
+		boost::bind(&ShootGameLogic::MoveActorDelegate, this, _1), EvtData_Move_Actor::sk_EventType);
+	pGlobalEventManager->VAddListener(
+		boost::bind(&ShootGameLogic::RequestStartGameDelegate, this, _1), EvtData_Request_Start_Game::sk_EventType);
+	pGlobalEventManager->VAddListener(
+		boost::bind(&ShootGameLogic::NetworkPlayerActorAssignmentDelegate, this, _1), EvtData_Network_Player_Actor_Assignment::sk_EventType);
+	pGlobalEventManager->VAddListener(
+		boost::bind(&ShootGameLogic::EnvironmentLoadedDelegate, this, _1), EvtData_Environment_Loaded::sk_EventType);
+	pGlobalEventManager->VAddListener(
+		boost::bind(&ShootGameLogic::EnvironmentLoadedDelegate, this, _1), EvtData_Remote_Environment_Loaded::sk_EventType);
 
+// 	pGlobalEventManager->VAddListener(boost::bind(&ShootGameLogic::StartThrustDelegate, this, _1), EvtData_StartThrust::sk_EventType);
+// 	pGlobalEventManager->VAddListener(boost::bind(&ShootGameLogic::EndThrustDelegate, this, _1), EvtData_EndThrust::sk_EventType);
+// 	pGlobalEventManager->VAddListener(boost::bind(&ShootGameLogic::StartSteerDelegate, this, _1), EvtData_StartSteer::sk_EventType);
+// 	pGlobalEventManager->VAddListener(boost::bind(&ShootGameLogic::EndSteerDelegate, this, _1), EvtData_EndSteer::sk_EventType);
 }
 
 void ShootGameLogic::RemoveAllDelegates(void)
 {
+	IEventManager* pGlobalEventManager = IEventManager::Get();
+	pGlobalEventManager->VRemoveListener(
+		boost::bind(&ShootGameLogic::RemoteClientDelegate, this, _1), EvtData_Remote_Client::sk_EventType);
+	pGlobalEventManager->VRemoveListener(
+		boost::bind(&ShootGameLogic::MoveActorDelegate, this, _1), EvtData_Move_Actor::sk_EventType);
+	pGlobalEventManager->VRemoveListener(
+		boost::bind(&ShootGameLogic::RequestStartGameDelegate, this, _1), EvtData_Request_Start_Game::sk_EventType);
+	pGlobalEventManager->VRemoveListener(
+		boost::bind(&ShootGameLogic::NetworkPlayerActorAssignmentDelegate, this, _1), EvtData_Network_Player_Actor_Assignment::sk_EventType);
+	pGlobalEventManager->VRemoveListener(
+		boost::bind(&ShootGameLogic::EnvironmentLoadedDelegate, this, _1), EvtData_Environment_Loaded::sk_EventType);
+	pGlobalEventManager->VRemoveListener(
+		boost::bind(&ShootGameLogic::EnvironmentLoadedDelegate, this, _1), EvtData_Remote_Environment_Loaded::sk_EventType);
+	if (m_IsProxy)
+	{
+		pGlobalEventManager->VRemoveListener(
+			boost::bind(&ShootGameLogic::RequestNewActorDelegate, this, _1), EvtData_Request_New_Actor::sk_EventType);
+	}
 
+// 	pGlobalEventManager->VRemoveListener(boost::bind(&ShootGameLogic::StartThrustDelegate, _1), EvtData_StartThrust::sk_EventType);
+// 	pGlobalEventManager->VRemoveListener(boost::bind(&ShootGameLogic::EndThrustDelegate, _1), EvtData_EndThrust::sk_EventType);
+// 	pGlobalEventManager->VRemoveListener(boost::bind(&ShootGameLogic::StartSteerDelegate, _1), EvtData_StartSteer::sk_EventType);
+// 	pGlobalEventManager->VRemoveListener(boost::bind(&ShootGameLogic::EndSteerDelegate, _1), EvtData_EndSteer::sk_EventType);
 }
 
 INT WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)

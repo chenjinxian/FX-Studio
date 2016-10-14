@@ -133,10 +133,11 @@ bool BaseGameLogic::VLoadGame(const std::string& projectXml)
 
 void BaseGameLogic::VSetProxy()
 {
-// 	m_IsProxy = true;
-// 
-// 	IEventManager::Get()->VAddListener(MakeDelegate(this, &BaseGameLogic::RequestNewActorDelegate), EvtData_Request_New_Actor::sk_EventType);
-// 
+	m_IsProxy = true;
+
+	IEventManager::Get()->VAddListener(
+		boost::bind(&BaseGameLogic::RequestNewActorDelegate, this, _1), EvtData_Request_New_Actor::sk_EventType);
+
 // 	m_pPhysics.reset(CreateNullPhysics());
 }
 

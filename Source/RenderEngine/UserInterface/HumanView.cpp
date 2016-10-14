@@ -9,7 +9,6 @@
 #include <DXUTGui.h>
 
 const unsigned int SCREEN_REFRESH_RATE(1000/60);
-const GameViewId gc_InvalidGameViewId = 0xffffffff;
 
 HumanView::HumanView(shared_ptr<IRenderer> renderer)
 {
@@ -18,7 +17,7 @@ HumanView::HumanView(shared_ptr<IRenderer> renderer)
 	m_pProcessManager = GCC_NEW ProcessManager;
 
 	m_PointerRadius = 1;
-	m_ViewId = gc_InvalidGameViewId;
+	m_ViewId = INVALID_GAME_VIEW_ID;
 
 	RegisterAllDelegates();
 	m_GameState = BGS_Initializing;

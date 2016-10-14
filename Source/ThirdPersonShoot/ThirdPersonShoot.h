@@ -33,6 +33,7 @@ public:
 
 	void RequestStartGameDelegate(IEventDataPtr pEventData);
 	void RemoteClientDelegate(IEventDataPtr pEventData);
+	void NetworkPlayerActorAssignmentDelegate(IEventDataPtr pEventData);
 	void EnvironmentLoadedDelegate(IEventDataPtr pEventData);
 	void ThrustDelegate(IEventDataPtr pEventData);
 	void SteerDelegate(IEventDataPtr pEventData);

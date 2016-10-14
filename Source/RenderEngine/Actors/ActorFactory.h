@@ -11,7 +11,7 @@ public:
 
 	StrongActorPtr CreateActor(
 		const std::string& actorResource, TiXmlElement *overrides,
-		const Matrix& initialTransform, const ActorId serversActorId);
+		const Matrix& initialTransform, ActorId serversActorId);
 	void ModifyActor(StrongActorPtr pActor, TiXmlElement* overrides);
 
 protected:

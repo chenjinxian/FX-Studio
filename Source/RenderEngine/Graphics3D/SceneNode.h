@@ -17,15 +17,17 @@ class SceneNodeProperties
 	friend class SceneNode;
 
 public:
-	SceneNodeProperties() : m_ActorId(INVALID_ACTOR_ID) {}
+	SceneNodeProperties() : m_ActorId(INVALID_ACTOR_ID), m_RenderPass(RenderPass_0) {}
 	~SceneNodeProperties() {}
 
 	ActorId GetActorId() const { return m_ActorId; }
 	const std::string& GetActorName() const { return m_ActorName; }
+	RenderPass GetRenderPass() const { return m_RenderPass; }
 
 protected:
 	ActorId m_ActorId;
 	std::string m_ActorName;
+	RenderPass m_RenderPass;
 };
 
 typedef std::vector<shared_ptr<ISceneNode> > SceneNodeList;

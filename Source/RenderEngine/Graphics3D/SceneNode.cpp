@@ -1,4 +1,5 @@
 #include "SceneNode.h"
+#include "Scene.h"
 #include "../Actors/RenderComponent.h"
 
 SceneNode::SceneNode(ActorId actorId, WeakBaseRenderComponentPtr renderComponent, RenderPass renderPass)
@@ -64,7 +65,19 @@ bool SceneNode::VRemoveChild(ActorId actorId)
 
 RootNode::RootNode() : SceneNode(INVALID_ACTOR_ID, WeakBaseRenderComponentPtr(), RenderPass_0)
 {
+	m_Children.reserve(RenderPass_Last);
 
+	shared_ptr<SceneNode> staticGroup(GCC_NEW SceneNode(INVALID_ACTOR_ID, WeakBaseRenderComponentPtr(), RenderPass_Static));
+	m_Children.push_back(staticGroup);
+
+	shared_ptr<SceneNode> actorGroup(GCC_NEW SceneNode(INVALID_ACTOR_ID, WeakBaseRenderComponentPtr(), RenderPass_Actor));
+	m_Children.push_back(actorGroup);
+
+	shared_ptr<SceneNode> skyGroup(GCC_NEW SceneNode(INVALID_ACTOR_ID, WeakBaseRenderComponentPtr(), RenderPass_Sky));
+	m_Children.push_back(skyGroup);
+
+	shared_ptr<SceneNode> invisibleGroup(GCC_NEW SceneNode(INVALID_ACTOR_ID, WeakBaseRenderComponentPtr(), RenderPass_NotRendered));
+	m_Children.push_back(invisibleGroup);
 }
 
 RootNode::~RootNode()
@@ -74,17 +87,50 @@ RootNode::~RootNode()
 
 HRESULT RootNode::VRenderChildren(Scene* pScene)
 {
+	for (int pass = RenderPass_0; pass < RenderPass_Last; ++pass)
+	{
+		switch (pass)
+		{
+		case RenderPass_Static:
+		case RenderPass_Actor:
+			m_Children[pass]->VRenderChildren(pScene);
+			break;
+
+		case RenderPass_Sky:
+		{
+// 			shared_ptr<IRenderState> skyPass = pScene->GetRenderder()->
+			m_Children[pass]->VRenderChildren(pScene);
+			break;
+		}
+		}
+	}
+
 	return S_OK;
 }
 
 bool RootNode::VAddChild(shared_ptr<ISceneNode> child)
 {
-	return true;
+	RenderPass pass = child->VGet()->GetRenderPass();
+	if ((unsigned)pass >= m_Children.size() || !m_Children[pass])
+	{
+		GCC_ASSERT(0 && _T("There is no such render pass"));
+		return false;
+	}
+
+	return m_Children[pass]->VAddChild(child);
 }
 
 bool RootNode::VRemoveChild(ActorId actorId)
 {
-	return true;
+	bool anythingRemoved = false;
+	for (int i = RenderPass_0; i < RenderPass_Last; ++i)
+	{
+		if (m_Children[i]->VRemoveChild(actorId))
+		{
+			anythingRemoved = true;
+		}
+	}
+	return anythingRemoved;
 }
 
 CameraNode::CameraNode() : SceneNode(INVALID_ACTOR_ID, WeakBaseRenderComponentPtr(), RenderPass_0)

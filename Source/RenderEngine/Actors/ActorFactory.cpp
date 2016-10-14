@@ -27,10 +27,15 @@ StrongActorPtr ActorFactory::CreateActor(
 		return StrongActorPtr();
 	}
 
-	StrongActorPtr pActor(GCC_NEW Actor(GetNextActorId()));
+	ActorId nextActorId = serversActorId;
+	if (nextActorId == INVALID_ACTOR_ID)
+	{
+		nextActorId = GetNextActorId();
+	}
+	StrongActorPtr pActor(GCC_NEW Actor(nextActorId));
 	if (!pActor->Init(pRoot))
 	{
-		GCC_ERROR("Failed to initialize actor: " + actorResource);
+		GCC_ERROR("Failed to initialize actor: " + std::string(actorResource));
 		return StrongActorPtr();
 	}
 

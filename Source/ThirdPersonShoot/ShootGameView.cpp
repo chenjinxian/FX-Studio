@@ -255,7 +255,7 @@ MainMenuUI::MainMenuUI()
 
 	m_SampleUI.SetFont(0, L"Ariel", height, 0);
 
-	m_SampleUI.AddStatic(0, L"Teapot Wars Main Menu", iX - 20, iY, g_SampleUIWidth, height * 2);
+	m_SampleUI.AddStatic(0, L"Main Menu", iX - 20, iY, g_SampleUIWidth, height * 2);
 	iY += (lineHeight * 3);
 
 	m_SampleUI.AddRadioButton(CID_CREATE_GAME_RADIO, 1, L"Create Game", iX, iY, g_SampleUIWidth, height);
@@ -266,7 +266,7 @@ MainMenuUI::MainMenuUI()
 	std::vector<Level> levels = g_pApp->GetGameLogic()->GetLevelManager()->GetLevels();
 	m_Levels.reserve(levels.size());
 	int count = 0;
-	for (std::vector<Level>::iterator i = levels.begin(); i != levels.end(); ++i, ++count)
+	for (auto i = levels.begin(); i != levels.end(); ++i, ++count)
 	{
 		m_Levels.push_back(s2ws(*i));
 		m_SampleUI.GetListBox(CID_LEVEL_LISTBOX)->AddItem(m_Levels[count].c_str(), NULL);
@@ -391,8 +391,8 @@ void CALLBACK MainMenuUI::_OnGUIEvent(UINT nEvent, int nControlID, CDXUTControl*
 
 		VSetVisible(false);
 
-// 		shared_ptr<EvtData_Request_Start_Game> pRequestStartGameEvent(GCC_NEW EvtData_Request_Start_Game());
-// 		IEventManager::Get()->VQueueEvent(pRequestStartGameEvent);
+		shared_ptr<EvtData_Request_Start_Game> pRequestStartGameEvent(GCC_NEW EvtData_Request_Start_Game());
+		IEventManager::Get()->VQueueEvent(pRequestStartGameEvent);
 
 		break;
 	}

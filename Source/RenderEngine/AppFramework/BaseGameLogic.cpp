@@ -94,7 +94,7 @@ bool BaseGameLogic::VLoadGame(const std::string& projectXml)
 			StrongActorPtr pActor = VCreateActor(actorResource, pNode, Matrix());
 			if (pActor)
 			{
-				shared_ptr<EvtData_New_Actor> pNewActorEvent(GCC_NEW EvtData_New_Actor(pActor->GetId()));
+				shared_ptr<EvtData_New_Actor> pNewActorEvent(GCC_NEW EvtData_New_Actor(pActor->GetActorId()));
 				IEventManager::Get()->VQueueEvent(pNewActorEvent);
 			}
 		}
@@ -169,7 +169,7 @@ StrongActorPtr BaseGameLogic::VCreateActor(
 	StrongActorPtr pActor = m_pActorFactory->CreateActor(actorResource.c_str(), overrides, initialTransform, serversActorId);
 	if (pActor)
 	{
-		m_Actors.insert(std::make_pair(pActor->GetId(), pActor));
+		m_Actors.insert(std::make_pair(pActor->GetActorId(), pActor));
 		if (!m_IsProxy && (m_GameState == BGS_SpawningPlayersActors || m_GameState == BGS_Running))
 		{
 // 			shared_ptr<EvtData_Request_New_Actor> pNewActor(GCC_NEW EvtData_Request_New_Actor(actorResource, initialTransform, pActor->GetId()));

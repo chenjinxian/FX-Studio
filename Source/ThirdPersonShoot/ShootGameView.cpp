@@ -154,12 +154,12 @@ void ShootGameView::VOnUpdate(uint32_t deltaMs)
 // 	{
 // 		m_pFreeCameraController->OnUpdate(deltaMs);
 // 	}
-
+// 
 // 	if (m_pTeapotController)
 // 	{
 // 		m_pTeapotController->OnUpdate(deltaMs);
 // 	}
-
+// 
 // 	shared_ptr<EvtData_Update_Tick> pTickEvent(GCC_NEW EvtData_Update_Tick(deltaMs));
 // 	IEventManager::Get()->VTriggerEvent(pTickEvent);
 }

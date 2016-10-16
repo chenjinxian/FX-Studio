@@ -152,3 +152,33 @@ HRESULT CameraNode::VOnRestore(Scene* pScene)
 {
 	return S_OK;
 }
+
+GridNode::GridNode(ActorId actorId, WeakBaseRenderComponentPtr renderComponent)
+	: SceneNode(actorId, renderComponent, RenderPass_0)
+{
+
+}
+
+GridNode::~GridNode()
+{
+
+}
+
+HRESULT GridNode::VOnRestore(Scene* pScene)
+{
+	HRESULT hr;
+
+	V_RETURN(SceneNode::VOnRestore(pScene));
+
+	return hr;
+}
+
+HRESULT GridNode::VRender(Scene* pScene)
+{
+	return S_OK;
+}
+
+HRESULT GridNode::VOnUpdate(Scene* pScene, uint32_t elapsedMs)
+{
+	return S_OK;
+}

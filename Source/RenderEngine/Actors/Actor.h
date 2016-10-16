@@ -20,8 +20,8 @@ public:
 
 	std::string ToXml();
 
-	ActorId GetId(void) const { return m_ActorId; }
-	ActorType GetType(void) const { return m_ActorType; }
+	ActorId GetActorId(void) const { return m_ActorId; }
+	ActorType GetActorType(void) const { return m_ActorType; }
 
 	template <class ComponentType>
 	weak_ptr<ComponentType> GetComponent(ComponentId componentId)
@@ -64,8 +64,8 @@ public:
 
 private:
 	ActorId m_ActorId;
-	ActorCompoentMap m_ActorComponents;
 	ActorType m_ActorType;
+	ActorCompoentMap m_ActorComponents;
 	std::string m_ActorResource;
 };
 

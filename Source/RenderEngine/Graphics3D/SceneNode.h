@@ -84,3 +84,15 @@ public:
 	virtual HRESULT VOnRestore(Scene* pScene);
 	virtual bool VIsVisible(Scene* pScene) const { return true; }
 };
+
+class GridNode : public SceneNode
+{
+public:
+	GridNode(ActorId actorId, WeakBaseRenderComponentPtr renderComponent);
+	virtual ~GridNode();
+
+	virtual HRESULT VOnRestore(Scene* pScene);
+	virtual HRESULT VRender(Scene* pScene);
+	virtual HRESULT VOnUpdate(Scene* pScene, uint32_t elapsedMs);
+
+};

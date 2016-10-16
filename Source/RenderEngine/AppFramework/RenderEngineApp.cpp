@@ -638,14 +638,14 @@ HRESULT CALLBACK RenderEngineApp::OnD3D11ResizedSwapChain(
 
 	V_RETURN(D3DRenderer::m_DialogResourceManager.OnD3D11ResizedSwapChain(pd3dDevice, pBackBufferSurfaceDesc));
 
-	if (g_pApp->m_pGameLogic)
-	{
-		BaseGameLogic *pGame = g_pApp->m_pGameLogic;
-		for (GameViewList::iterator i = pGame->m_GameViews.begin(); i != pGame->m_GameViews.end(); ++i)
-		{
-			(*i)->VOnRestore();
-		}
-	}
+// 	if (g_pApp->m_pGameLogic)
+// 	{
+// 		BaseGameLogic *pGame = g_pApp->m_pGameLogic;
+// 		for (GameViewList::iterator i = pGame->m_GameViews.begin(); i != pGame->m_GameViews.end(); ++i)
+// 		{
+// 			(*i)->VOnRestore();
+// 		}
+// 	}
 
 	return S_OK;
 }

@@ -171,7 +171,7 @@ void ShootGameView::VOnAttach(GameViewId vid, ActorId aid)
 
 void ShootGameView::VSetControlledActor(ActorId actorId)
 {
-// 	m_pTeapot = static_pointer_cast<SceneNode>(m_pScene->FindActor(actorId));
+	m_pTeapot = static_pointer_cast<SceneNode>(m_pScene->FindActor(actorId));
 // 	if (!m_pTeapot)
 // 	{
 // 		GCC_ERROR("Invalid teapot");

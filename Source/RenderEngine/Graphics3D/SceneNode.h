@@ -1,6 +1,7 @@
 #pragma once
 #include "../RenderEngineBase.h"
 #include "../RenderEngineInterface.h"
+#include "d3dx11effect.h"
 
 class SceneNode;
 class Scene;
@@ -80,9 +81,16 @@ public:
 	CameraNode();
 	~CameraNode();
 
+	virtual HRESULT VOnUpdate(Scene* pScene, uint32_t elapsedMs);
 	virtual HRESULT VRender(Scene* pScene);
 	virtual HRESULT VOnRestore(Scene* pScene);
 	virtual bool VIsVisible(Scene* pScene) const { return true; }
+
+	Matrix GetViewMatrix() { return m_ModelViewer.GetViewMatrix(); }
+	Matrix GetProjectMatrix() { return m_ModelViewer.GetProjMatrix(); }
+
+private:
+	CModelViewerCamera m_ModelViewer;
 };
 
 class GridNode : public SceneNode
@@ -95,4 +103,18 @@ public:
 	virtual HRESULT VRender(Scene* pScene);
 	virtual HRESULT VOnUpdate(Scene* pScene, uint32_t elapsedMs);
 
+private:
+	XMMATRIX                            g_World;
+	float                               g_fModelWaviness = 0.0f;
+	bool                                g_bSpinning;
+	ID3DX11Effect*                      g_pEffect;
+	ID3D11InputLayout*                  g_pVertexLayout;
+	ID3DX11EffectTechnique*             g_pTechnique;
+	CDXUTSDKMesh                        g_Mesh;
+	ID3DX11EffectShaderResourceVariable* g_ptxDiffuseVariable;
+	ID3DX11EffectMatrixVariable*        g_pWorldVariable;
+	ID3DX11EffectMatrixVariable*        g_pViewVariable;
+	ID3DX11EffectMatrixVariable*        g_pProjectionVariable;
+	ID3DX11EffectScalarVariable*        g_pWavinessVariable;
+	ID3DX11EffectScalarVariable*        g_pTimeVariable;
 };

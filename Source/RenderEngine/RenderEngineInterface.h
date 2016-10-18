@@ -189,6 +189,7 @@ public:
 	virtual HRESULT VOnUpdate(Scene* pScene, double fTime, float fElapsedTime) = 0;
 	virtual HRESULT VOnRestore(Scene* pScene) = 0;
 	virtual HRESULT VOnLostDevice(Scene *pScene) = 0;
+	virtual LRESULT CALLBACK VOnMsgProc(Scene *pScene, AppMsg msg) = 0;
 
 	virtual HRESULT VPreRender(Scene* pScene) = 0;
 	virtual HRESULT VRender(Scene* pScene, double fTime, float fElapsedTime) = 0;

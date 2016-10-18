@@ -33,6 +33,15 @@ HRESULT SceneNode::VOnLostDevice(Scene *pScene)
 	return S_OK;
 }
 
+LRESULT CALLBACK SceneNode::VOnMsgProc(Scene *pScene, AppMsg msg)
+{
+	for (auto& child : m_Children)
+	{
+		child->VOnMsgProc(pScene, msg);
+	}
+	return S_OK;
+}
+
 HRESULT SceneNode::VOnUpdate(Scene* pScene, double fTime, float fElapsedTime)
 {
 	for (auto& child : m_Children)
@@ -196,8 +205,8 @@ HRESULT CameraNode::VRender(Scene* pScene, double fTime, float fElapsedTime)
 
 HRESULT CameraNode::VOnRestore(Scene* pScene)
 {
-	static const XMVECTORF32 s_Eye = { 0.0f, 3.0f, -800.0f, 0.f };
-	static const XMVECTORF32 s_At = { 0.0f, 1.0f, 0.0f, 0.f };
+	static const XMVECTORF32 s_Eye = { 0.0f, 0.0f, -100.0f, 0.f };
+	static const XMVECTORF32 s_At = { 0.0f, 0.0f, 60.0f, 0.f };
 	m_ModelViewer.SetViewParams(s_Eye, s_At);
 
 	const DXGI_SURFACE_DESC* pBackBufferSurfaceDesc = DXUTGetDXGIBackBufferSurfaceDesc();
@@ -209,33 +218,26 @@ HRESULT CameraNode::VOnRestore(Scene* pScene)
 	return S_OK;
 }
 
+LRESULT CALLBACK CameraNode::VOnMsgProc(Scene *pScene, AppMsg msg)
+{
+	return m_ModelViewer.HandleMessages(msg.m_hWnd, msg.m_uMsg, msg.m_wParam, msg.m_lParam);
+}
+
 GridNode::GridNode(ActorId actorId, WeakBaseRenderComponentPtr renderComponent)
-	: SceneNode(actorId, renderComponent, RenderPass_0)
-{
-	g_fModelWaviness = 0.0f;
-	g_bSpinning = true;
-	g_pEffect = nullptr;
-	g_pVertexLayout = nullptr;
-	g_pTechnique = nullptr;
-	g_ptxDiffuseVariable = nullptr;
-	g_pWorldVariable = nullptr;
-	g_pViewVariable = nullptr;
-	g_pProjectionVariable = nullptr;
-	g_pWavinessVariable = nullptr;
-	g_pTimeVariable = nullptr;
-}
-
-GridNode::~GridNode()
-{
-
-}
-
-HRESULT GridNode::VOnRestore(Scene* pScene)
+	: SceneNode(actorId, renderComponent, RenderPass_0),
+	mEffect(nullptr),
+	mTechnique(nullptr),
+	mPass(nullptr), 
+	mWvpVariable(nullptr),
+	mInputLayout(nullptr),
+	mVertexBuffer(nullptr),
+	mPosition(0, 0, 0),
+	mWorldMatrix(Matrix::Identity),
+	mSize(16),
+	mScale(16),
+	mColor(0.961f, 0.871f, 0.702f, 1.0f)
 {
 	HRESULT hr;
-
-	V_RETURN(SceneNode::VOnRestore(pScene));
-
 	auto pd3dImmediateContext = DXUTGetD3D11DeviceContext();
 	ID3D11Device* pd3dDevice = DXUTGetD3D11Device();
 	DWORD dwShaderFlags = D3DCOMPILE_ENABLE_STRICTNESS;
@@ -247,119 +249,115 @@ HRESULT GridNode::VOnRestore(Scene* pScene)
 #if D3D_COMPILER_VERSION >= 46
 
 	WCHAR str[MAX_PATH];
-	V_RETURN(DXUTFindDXSDKMediaFileCch(str, MAX_PATH, L"Tutorial11.fx"));
+	VTrace(DXUTFindDXSDKMediaFileCch(str, MAX_PATH, L"BasicEffect.fx"));
 
-	V_RETURN(D3DX11CompileEffectFromFile(str, nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, dwShaderFlags, 0, pd3dDevice, &g_pEffect, nullptr));
+	VTrace(D3DX11CompileEffectFromFile(str, nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, dwShaderFlags, 0, pd3dDevice, &mEffect, nullptr));
 
 #else
 
 	ID3DBlob* pEffectBuffer = nullptr;
-	V_RETURN(DXUTCompileFromFile(L"Tutorial11.fx", nullptr, "none", "fx_5_0", dwShaderFlags, 0, &pEffectBuffer));
-	hr = D3DX11CreateEffectFromMemory(pEffectBuffer->GetBufferPointer(), pEffectBuffer->GetBufferSize(), 0, pd3dDevice, &g_pEffect);
+	V_RETURN(DXUTCompileFromFile(L"BasicEffect.fx", nullptr, "none", "fx_5_0", dwShaderFlags, 0, &pEffectBuffer));
+	hr = D3DX11CreateEffectFromMemory(pEffectBuffer->GetBufferPointer(), pEffectBuffer->GetBufferSize(), 0, pd3dDevice, &mEffect);
 	SAFE_RELEASE(pEffectBuffer);
 	if (FAILED(hr))
 		return hr;
 
 #endif
 
-	g_pTechnique = g_pEffect->GetTechniqueByName("Render");
+	mTechnique = mEffect->GetTechniqueByName("main11");
+	mPass = mTechnique->GetPassByName("p0");
+	ID3DX11EffectVariable* variable = mEffect->GetVariableByName("WorldViewProjection");
+	mWvpVariable = variable->AsMatrix();
 
-	g_ptxDiffuseVariable = g_pEffect->GetVariableByName("g_txDiffuse")->AsShaderResource();
-	g_pWorldVariable = g_pEffect->GetVariableByName("World")->AsMatrix();
-	g_pViewVariable = g_pEffect->GetVariableByName("View")->AsMatrix();
-	g_pProjectionVariable = g_pEffect->GetVariableByName("Projection")->AsMatrix();
-	g_pWavinessVariable = g_pEffect->GetVariableByName("Waviness")->AsScalar();
-	g_pTimeVariable = g_pEffect->GetVariableByName("Time")->AsScalar();
+	D3DX11_PASS_DESC passDesc;
+	mPass->GetDesc(&passDesc);
 
-	g_pWavinessVariable->SetFloat(g_fModelWaviness);
-
-	D3D11_INPUT_ELEMENT_DESC layout[] =
+	D3D11_INPUT_ELEMENT_DESC inputElementDescriptions[] =
 	{
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	};
-	UINT numElements = ARRAYSIZE(layout);
+	VTrace(pd3dDevice->CreateInputLayout(inputElementDescriptions, ARRAYSIZE(inputElementDescriptions),
+		passDesc.pIAInputSignature, passDesc.IAInputSignatureSize, &mInputLayout));
+}
 
-	D3DX11_PASS_DESC PassDesc;
-	V_RETURN(g_pTechnique->GetPassByIndex(0)->GetDesc(&PassDesc));
-	V_RETURN(pd3dDevice->CreateInputLayout(layout, numElements, PassDesc.pIAInputSignature,
-		PassDesc.IAInputSignatureSize, &g_pVertexLayout));
+GridNode::~GridNode()
+{
+	SAFE_RELEASE(mWvpVariable);
+	SAFE_RELEASE(mPass);
+	SAFE_RELEASE(mTechnique);
+	SAFE_RELEASE(mEffect);
+	SAFE_RELEASE(mInputLayout);
+	SAFE_RELEASE(mVertexBuffer);
+}
 
-	pd3dImmediateContext->IASetInputLayout(g_pVertexLayout);
+HRESULT GridNode::VOnRestore(Scene* pScene)
+{
+	HRESULT hr;
 
-	V_RETURN(g_Mesh.Create(pd3dDevice, L"Tiny\\tiny.sdkmesh"));
+	V_RETURN(SceneNode::VOnRestore(pScene));
 
-	g_World = XMMatrixIdentity();
+	SAFE_RELEASE(mVertexBuffer);
+
+	auto pd3dImmediateContext = DXUTGetD3D11DeviceContext();
+	ID3D11Device* pd3dDevice = DXUTGetD3D11Device();
+	int length = 4 * (mSize + 1);
+	int size = sizeof(VertexPositionColor) * length;
+	std::unique_ptr<VertexPositionColor> vertexData(new VertexPositionColor[length]);
+	VertexPositionColor* vertices = vertexData.get();
+
+	float adjustedScale = mScale * 0.1f;
+	float maxPosition = mSize * adjustedScale / 2;
+
+	for (unsigned int i = 0, j = 0; i < mSize + 1; i++, j = 4 * i)
+	{
+		float position = maxPosition - (i * adjustedScale);
+
+		// Vertical line
+		vertices[j] = VertexPositionColor(XMFLOAT4(position, 0.0f, maxPosition, 1.0f), mColor);
+		vertices[j + 1] = VertexPositionColor(XMFLOAT4(position, 0.0f, -maxPosition, 1.0f), mColor);
+
+		// Horizontal line
+		vertices[j + 2] = VertexPositionColor(XMFLOAT4(maxPosition, 0.0f, position, 1.0f), mColor);
+		vertices[j + 3] = VertexPositionColor(XMFLOAT4(-maxPosition, 0.0f, position, 1.0f), mColor);
+	}
+
+	D3D11_BUFFER_DESC vertexBufferDesc;
+	ZeroMemory(&vertexBufferDesc, sizeof(vertexBufferDesc));
+	vertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	vertexBufferDesc.ByteWidth = size;
+	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+
+	D3D11_SUBRESOURCE_DATA vertexSubResourceData;
+	ZeroMemory(&vertexSubResourceData, sizeof(vertexSubResourceData));
+	vertexSubResourceData.pSysMem = vertices;
+
+	V_RETURN(pd3dDevice->CreateBuffer(&vertexBufferDesc, &vertexSubResourceData, &mVertexBuffer));
 
 	return hr;
 }
 
 HRESULT GridNode::VRender(Scene* pScene, double fTime, float fElapsedTime)
 {
-	XMMATRIX mView = pScene->GetCamera()->GetViewMatrix();
-	XMMATRIX mProj = pScene->GetCamera()->GetProjectMatrix();
-	XMMATRIX mWorldViewProjection = g_World * mView * mProj;
-
-	//
-	// Update variables that change once per frame
-	//
-	g_pProjectionVariable->SetMatrix((float*)&mProj);
-	g_pViewVariable->SetMatrix((float*)&mView);
-	g_pWorldVariable->SetMatrix((float*)&g_World);
-// 	g_pTimeVariable->SetFloat((float)fTime);
-
 	auto pd3dImmediateContext = DXUTGetD3D11DeviceContext();
-	pd3dImmediateContext->IASetInputLayout(g_pVertexLayout);
+	pd3dImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
+	pd3dImmediateContext->IASetInputLayout(mInputLayout);
 
-	//
-	// Render the mesh
-	//
-	UINT Strides[1];
-	UINT Offsets[1];
-	ID3D11Buffer* pVB[1];
-	pVB[0] = g_Mesh.GetVB11(0, 0);
-	Strides[0] = (UINT)g_Mesh.GetVertexStride(0, 0);
-	Offsets[0] = 0;
-	pd3dImmediateContext->IASetVertexBuffers(0, 1, pVB, Strides, Offsets);
-	pd3dImmediateContext->IASetIndexBuffer(g_Mesh.GetIB11(0), g_Mesh.GetIBFormat11(0), 0);
+	UINT stride = sizeof(VertexPositionColor);
+	UINT offset = 0;
+	pd3dImmediateContext->IASetVertexBuffers(0, 1, &mVertexBuffer, &stride, &offset);
 
-	D3DX11_TECHNIQUE_DESC techDesc;
-	HRESULT hr;
-	VTrace(g_pTechnique->GetDesc(&techDesc));
+	XMMATRIX wvp = mWorldMatrix * pScene->GetCamera()->GetViewMatrix() * pScene->GetCamera()->GetProjectMatrix();
+	mWvpVariable->SetMatrix(reinterpret_cast<const float*>(&wvp));
 
-	for (UINT p = 0; p < techDesc.Passes; ++p)
-	{
-		for (UINT subset = 0; subset < g_Mesh.GetNumSubsets(0); ++subset)
-		{
-			auto pSubset = g_Mesh.GetSubset(0, subset);
+	mPass->Apply(0, pd3dImmediateContext);
 
-			auto PrimType = g_Mesh.GetPrimitiveType11((SDKMESH_PRIMITIVE_TYPE)pSubset->PrimitiveType);
-			pd3dImmediateContext->IASetPrimitiveTopology(PrimType);
-
-			auto pDiffuseRV = g_Mesh.GetMaterial(pSubset->MaterialID)->pDiffuseRV11;
-			g_ptxDiffuseVariable->SetResource(pDiffuseRV);
-
-			g_pTechnique->GetPassByIndex(p)->Apply(0, pd3dImmediateContext);
-			pd3dImmediateContext->DrawIndexed((UINT)pSubset->IndexCount, 0, (UINT)pSubset->VertexStart);
-		}
-	}
+	pd3dImmediateContext->Draw((mSize + 1) * 4, 0);
 
 	return S_OK;
 }
 
 HRESULT GridNode::VOnUpdate(Scene* pScene, double fTime, float fElapsedTime)
 {
-	if (g_bSpinning)
-	{
-		g_World = XMMatrixRotationY(60.0f * XMConvertToRadians((float)fTime));
-	}
-	else
-	{
-		g_World = XMMatrixRotationY(XMConvertToRadians(180.f));
-	}
-
-	XMMATRIX mRot = XMMatrixRotationX(XMConvertToRadians(-90.0f));
-	g_World = mRot * g_World;
 	return S_OK;
 }

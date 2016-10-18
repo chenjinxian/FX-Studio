@@ -17,6 +17,7 @@ public:
 	HRESULT OnRender(double fTime, float fElapsedTime);
 	HRESULT OnRestore();
 	HRESULT OnLostDevice();
+	LRESULT CALLBACK OnMsgProc(AppMsg msg);
 	shared_ptr<ISceneNode> FindActor(ActorId actorId);
 	bool AddChild(ActorId actorId, shared_ptr<ISceneNode> pChild);
 	bool RemoveChild(ActorId actorId);

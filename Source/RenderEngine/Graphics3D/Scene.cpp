@@ -82,6 +82,15 @@ HRESULT Scene::OnLostDevice()
 	return S_OK;
 }
 
+LRESULT CALLBACK Scene::OnMsgProc(AppMsg msg)
+{
+	if (m_pRootNode != nullptr)
+	{
+		return m_pRootNode->VOnMsgProc(this, msg);
+	}
+	return S_OK;
+}
+
 shared_ptr<ISceneNode> Scene::FindActor(ActorId actorId)
 {
 	auto actor = m_ActorMap.find(actorId);

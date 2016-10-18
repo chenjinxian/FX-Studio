@@ -30,9 +30,10 @@ INT WINAPI GameMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
 	g_pApp->m_Options.Init("PlayerOptions.xml", lpCmdLine);
 
+	DXUTSetCallbackFrameMove(RenderEngineApp::OnFrameMove);
 	DXUTSetCallbackMsgProc(RenderEngineApp::MsgProc);
-	DXUTSetCallbackFrameMove(RenderEngineApp::OnUpdateGame);
 	DXUTSetCallbackDeviceChanging(RenderEngineApp::ModifyDeviceSettings);
+	DXUTSetCallbackDeviceRemoved(RenderEngineApp::OnDeviceRemoved);
 
 	if (g_pApp->m_Options.m_Renderer == "Direct3D 11")
 	{

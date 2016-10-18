@@ -22,7 +22,6 @@ public:
 	HINSTANCE GetInstance() { return m_hInstance; }
 	virtual bool InitInstance(HINSTANCE hInstance, LPWSTR lpCmdLine, HWND hWnd = NULL, int screenWidth = SCREEN_WIDTH, int screenHeight = SCREEN_HEIGHT);
 
-	static LRESULT CALLBACK MsgProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, bool* pbNoFurtherProcessing, void *pUserContext);
 	bool HasModalDialog() { return m_HasModalDialog != 0; }
 	void ForceModalExit() { PostMessage(GetHwnd(), g_MsgEndModal, 0, g_QuitNoPrompt); }
 
@@ -52,15 +51,22 @@ public:
 
 	static Renderer GetRendererImpl();
 
-	static bool CALLBACK IsD3D11DeviceAcceptable(const CD3D11EnumAdapterInfo *AdapterInfo, UINT Output, const CD3D11EnumDeviceInfo *DeviceInfo, DXGI_FORMAT BackBufferFormat, bool bWindowed, void* pUserContext);
-	static HRESULT CALLBACK OnD3D11CreateDevice(ID3D11Device* pd3dDevice, const DXGI_SURFACE_DESC* pBackBufferSurfaceDesc, void* pUserContext);
-	static HRESULT CALLBACK OnD3D11ResizedSwapChain(ID3D11Device* pd3dDevice, IDXGISwapChain* pSwapChain, const DXGI_SURFACE_DESC* pBackBufferSurfaceDesc, void* pUserContext);
+	static bool CALLBACK OnDeviceRemoved(void* pUserContext);
+	static bool CALLBACK ModifyDeviceSettings(DXUTDeviceSettings* pDeviceSettings, void* pUserContext);
+	static void CALLBACK OnFrameMove(double fTime, float fElapsedTime, void *pUserContext);
+	static LRESULT CALLBACK MsgProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, bool* pbNoFurtherProcessing, void *pUserContext);
+
+	static bool CALLBACK IsD3D11DeviceAcceptable(
+		const CD3D11EnumAdapterInfo *AdapterInfo, UINT Output, const CD3D11EnumDeviceInfo *DeviceInfo,
+		DXGI_FORMAT BackBufferFormat, bool bWindowed, void* pUserContext);
+	static HRESULT CALLBACK OnD3D11CreateDevice(
+		ID3D11Device* pd3dDevice, const DXGI_SURFACE_DESC* pBackBufferSurfaceDesc, void* pUserContext);
+	static HRESULT CALLBACK OnD3D11ResizedSwapChain(
+		ID3D11Device* pd3dDevice, IDXGISwapChain* pSwapChain, const DXGI_SURFACE_DESC* pBackBufferSurfaceDesc, void* pUserContext);
 	static void CALLBACK OnD3D11ReleasingSwapChain(void* pUserContext);
 	static void CALLBACK OnD3D11DestroyDevice(void* pUserContext);
-	static void CALLBACK OnD3D11FrameRender(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pd3dImmediateContext, double fTime, float fElapsedTime, void* pUserContext);
-
-	static bool CALLBACK ModifyDeviceSettings(DXUTDeviceSettings* pDeviceSettings, void* pUserContext);
-	static void CALLBACK OnUpdateGame(double fTime, float fElapsedTime, void *pUserContext);
+	static void CALLBACK OnD3D11FrameRender(
+		ID3D11Device* pd3dDevice, ID3D11DeviceContext* pd3dImmediateContext, double fTime, float fElapsedTime, void* pUserContext);
 
 	BaseGameLogic *m_pGameLogic;
 	struct GameOptions m_Options;

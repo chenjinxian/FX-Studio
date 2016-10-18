@@ -13,7 +13,7 @@ public:
 	Scene(shared_ptr<IRenderer> pRenderer);
 	virtual ~Scene();
 
-	HRESULT OnUpdate(uint32_t deltaMs);
+	HRESULT OnUpdate(float fElapsedTime);
 	HRESULT OnRender();
 	HRESULT OnRestore();
 	HRESULT OnLostDevice();

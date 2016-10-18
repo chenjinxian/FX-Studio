@@ -59,9 +59,9 @@ public:
 	MainMenuView();
 	~MainMenuView();
 
-	virtual void VRenderText();
-	virtual void VOnUpdate(uint32_t deltaMs);
-	virtual LRESULT CALLBACK VOnMsgProc(AppMsg msg);
+	virtual void VRenderText() override;
+	virtual void VOnUpdate(float fElapsedTime) override;
+	virtual LRESULT CALLBACK VOnMsgProc(AppMsg msg) override;
 
 protected:
 	shared_ptr<MainMenuUI> m_MainMenuUI;
@@ -74,9 +74,9 @@ public:
 	virtual ~ShootGameView();
 
 	virtual LRESULT CALLBACK VOnMsgProc(AppMsg msg);
-	virtual void VRenderText();
-	virtual void VOnUpdate(uint32_t deltaMs);
-	virtual void VOnAttach(GameViewId vid, ActorId aid);
+	virtual void VRenderText() override;
+	virtual void VOnUpdate(float fElapsedTime) override;
+	virtual void VOnAttach(GameViewId vid, ActorId aid) override;
 
 	virtual void VSetControlledActor(ActorId actorId);
 	virtual bool VLoadGameDelegate(TiXmlElement* pLevelData) override;

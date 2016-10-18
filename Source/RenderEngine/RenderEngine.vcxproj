@@ -165,6 +165,7 @@
     <ClInclude Include="EventManager\EventManagerImpl.h" />
     <ClInclude Include="EventManager\Events.h" />
     <ClInclude Include="Graphics3D\D3DRenderer.h" />
+    <ClInclude Include="Graphics3D\Mesh.h" />
     <ClInclude Include="Graphics3D\Scene.h" />
     <ClInclude Include="Graphics3D\SceneNode.h" />
     <ClInclude Include="Mainloop\Initialization.h" />
@@ -198,6 +199,7 @@
     <ClCompile Include="EventManager\EventManagerImpl.cpp" />
     <ClCompile Include="EventManager\Events.cpp" />
     <ClCompile Include="Graphics3D\D3DRenderer.cpp" />
+    <ClCompile Include="Graphics3D\Mesh.cpp" />
     <ClCompile Include="Graphics3D\Scene.cpp" />
     <ClCompile Include="Graphics3D\SceneNode.cpp" />
     <ClCompile Include="Mainloop\Initialization.cpp" />

@@ -552,7 +552,7 @@ int RenderEngineApp::PumpUntilMessage(UINT msgEnd, WPARAM* pWParam, LPARAM* pLPa
 				int deltaMilliseconds = timeNow - currentTime;
 				for (GameViewList::iterator i = m_pGameLogic->m_GameViews.begin(); i != m_pGameLogic->m_GameViews.end(); ++i)
 				{
-					(*i)->VOnUpdate(deltaMilliseconds);
+					(*i)->VOnUpdate(static_cast<float>(deltaMilliseconds));
 				}
 				currentTime = timeNow;
 				DXUTRender3DEnvironment();
@@ -612,6 +612,49 @@ RenderEngineApp::Renderer RenderEngineApp::GetRendererImpl()
 	return Renderer_D3D11;
 };
 
+bool CALLBACK RenderEngineApp::ModifyDeviceSettings(DXUTDeviceSettings* pDeviceSettings, void* pUserContext)
+{
+	static bool s_bFirstTime = true;
+	if (s_bFirstTime)
+	{
+		s_bFirstTime = false;
+		if (pDeviceSettings->d3d11.DriverType == D3D_DRIVER_TYPE_REFERENCE)
+		{
+			DXUTDisplaySwitchingToREFWarning();
+		}
+	}
+
+	return true;
+}
+
+bool CALLBACK RenderEngineApp::OnDeviceRemoved(void* pUserContext)
+{
+	return true;
+}
+
+void CALLBACK RenderEngineApp::OnFrameMove(double fTime, float fElapsedTime, void* pUserContext)
+{
+	if (g_pApp->HasModalDialog())
+	{
+		return;
+	}
+
+	if (g_pApp->m_IsQuitting)
+	{
+		PostMessage(g_pApp->GetHwnd(), WM_CLOSE, 0, 0);
+	}
+
+	if (g_pApp->m_pGameLogic)
+	{
+		IEventManager::Get()->VUpdate(20);
+
+		// 		if (g_pApp->m_pBaseSocketManager)
+		// 			g_pApp->m_pBaseSocketManager->DoSelect(0);
+
+		g_pApp->m_pGameLogic->VOnUpdate(float(fTime), fElapsedTime);
+	}
+}
+
 bool CALLBACK RenderEngineApp::IsD3D11DeviceAcceptable(
 	const CD3D11EnumAdapterInfo *AdapterInfo, UINT Output, const CD3D11EnumDeviceInfo *DeviceInfo,
 	DXGI_FORMAT BackBufferFormat, bool bWindowed, void* pUserContext)
@@ -630,6 +673,16 @@ HRESULT CALLBACK RenderEngineApp::OnD3D11CreateDevice(
 	return S_OK;
 }
 
+void CALLBACK RenderEngineApp::OnD3D11DestroyDevice(void* pUserContext)
+{
+	if (g_pApp->m_pRenderer)
+		g_pApp->m_pRenderer->VShutdown();
+	D3DRenderer::m_DialogResourceManager.OnD3D11DestroyDevice();
+	g_pApp->m_pRenderer = shared_ptr<IRenderer>(NULL);
+
+	DXUTGetGlobalResourceCache().OnDestroyDevice();
+}
+
 HRESULT CALLBACK RenderEngineApp::OnD3D11ResizedSwapChain(
 	ID3D11Device* pd3dDevice, IDXGISwapChain* pSwapChain,
 	const DXGI_SURFACE_DESC* pBackBufferSurfaceDesc, void* pUserContext)
@@ -638,16 +691,21 @@ HRESULT CALLBACK RenderEngineApp::OnD3D11ResizedSwapChain(
 
 	V_RETURN(D3DRenderer::m_DialogResourceManager.OnD3D11ResizedSwapChain(pd3dDevice, pBackBufferSurfaceDesc));
 
-// 	if (g_pApp->m_pGameLogic)
-// 	{
-// 		BaseGameLogic *pGame = g_pApp->m_pGameLogic;
-// 		for (GameViewList::iterator i = pGame->m_GameViews.begin(); i != pGame->m_GameViews.end(); ++i)
-// 		{
-// 			(*i)->VOnRestore();
-// 		}
-// 	}
+	if (g_pApp->m_pGameLogic)
+	{
+		BaseGameLogic *pGame = g_pApp->m_pGameLogic;
+		for (GameViewList::iterator i = pGame->m_GameViews.begin(); i != pGame->m_GameViews.end(); ++i)
+		{
+			(*i)->VOnRestore();
+		}
+	}
 
 	return S_OK;
+}
+
+void CALLBACK RenderEngineApp::OnD3D11ReleasingSwapChain(void* pUserContext)
+{
+	D3DRenderer::m_DialogResourceManager.OnD3D11ReleasingSwapChain();
 }
 
 void CALLBACK RenderEngineApp::OnD3D11FrameRender(
@@ -663,59 +721,6 @@ void CALLBACK RenderEngineApp::OnD3D11FrameRender(
 	}
 
 	g_pApp->m_pGameLogic->VRenderDiagnostics();
-}
-
-void CALLBACK RenderEngineApp::OnD3D11ReleasingSwapChain(void* pUserContext)
-{
-	D3DRenderer::m_DialogResourceManager.OnD3D11ReleasingSwapChain();
-}
-
-void CALLBACK RenderEngineApp::OnD3D11DestroyDevice(void* pUserContext)
-{
-	if (g_pApp->m_pRenderer)
-		g_pApp->m_pRenderer->VShutdown();
-	D3DRenderer::m_DialogResourceManager.OnD3D11DestroyDevice();
-	g_pApp->m_pRenderer = shared_ptr<IRenderer>(NULL);
-
-	DXUTGetGlobalResourceCache().OnDestroyDevice();
-}
-
-bool CALLBACK RenderEngineApp::ModifyDeviceSettings(DXUTDeviceSettings* pDeviceSettings, void* pUserContext)
-{
-	static bool s_bFirstTime = true;
-	if (s_bFirstTime)
-	{
-		s_bFirstTime = false;
-		if (pDeviceSettings->d3d11.DriverType == D3D_DRIVER_TYPE_REFERENCE)
-		{
-			DXUTDisplaySwitchingToREFWarning();
-		}
-	}
-
-	return true;
-}
-
-void CALLBACK RenderEngineApp::OnUpdateGame(double fTime, float fElapsedTime, void* pUserContext)
-{
-	if (g_pApp->HasModalDialog())
-	{
-		return;
-	}
-
-	if (g_pApp->m_IsQuitting)
-	{
-		PostMessage(g_pApp->GetHwnd(), WM_CLOSE, 0, 0);
-	}
-
-	if (g_pApp->m_pGameLogic)
-	{
-		IEventManager::Get()->VUpdate(20);
-
-// 		if (g_pApp->m_pBaseSocketManager)
-// 			g_pApp->m_pBaseSocketManager->DoSelect(0);
-
-		g_pApp->m_pGameLogic->VOnUpdate(float(fTime), fElapsedTime);
-	}
 }
 
 bool RenderEngineApp::AttachAsClient()

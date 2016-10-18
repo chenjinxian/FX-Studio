@@ -33,11 +33,11 @@ HRESULT SceneNode::VOnLostDevice(Scene *pScene)
 	return S_OK;
 }
 
-HRESULT SceneNode::VOnUpdate(Scene* pScene, uint32_t elapsedMs)
+HRESULT SceneNode::VOnUpdate(Scene* pScene, float fElapsedTime)
 {
 	for (auto& child : m_Children)
 	{
-		child->VOnUpdate(pScene, elapsedMs);
+		child->VOnUpdate(pScene, fElapsedTime);
 	}
 	return S_OK;
 }
@@ -183,9 +183,9 @@ CameraNode::~CameraNode()
 
 }
 
-HRESULT CameraNode::VOnUpdate(Scene* pScene, uint32_t elapsedMs)
+HRESULT CameraNode::VOnUpdate(Scene* pScene, float fElapsedTime)
 {
-	m_ModelViewer.FrameMove(elapsedMs);
+	m_ModelViewer.FrameMove(fElapsedTime);
 	return S_OK;
 }
 
@@ -348,7 +348,24 @@ HRESULT GridNode::VRender(Scene* pScene)
 	return S_OK;
 }
 
-HRESULT GridNode::VOnUpdate(Scene* pScene, uint32_t elapsedMs)
+HRESULT GridNode::VOnUpdate(Scene* pScene, float fElapsedTime)
 {
+	if (g_bSpinning)
+	{
+		static float t = 0.0f;
+		static ULONGLONG timeStart = 0;
+		ULONGLONG timeCur = GetTickCount64();
+		if (timeStart == 0)
+			timeStart = timeCur;
+		t = (timeCur - timeStart) / 1000.0f;
+		g_World = XMMatrixRotationY(t);
+	}
+	else
+	{
+		g_World = XMMatrixRotationY(XMConvertToRadians(180.f));
+	}
+
+	XMMATRIX mRot = XMMatrixRotationX(XMConvertToRadians(-90.0f));
+	g_World = mRot * g_World;
 	return S_OK;
 }

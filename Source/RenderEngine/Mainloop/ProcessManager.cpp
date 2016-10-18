@@ -10,7 +10,7 @@ ProcessManager::~ProcessManager(void)
 // The process update tick.  Called every logic tick.  This function returns the number of process chains that 
 // succeeded in the upper 32 bits and the number of process chains that failed or were aborted in the lower 32 bits.
 //---------------------------------------------------------------------------------------------------------------------
-unsigned int ProcessManager::UpdateProcesses(unsigned long deltaMs)
+unsigned int ProcessManager::UpdateProcesses(float fElapsedTime)
 {
 	unsigned short int successCount = 0;
 	unsigned short int failCount = 0;
@@ -31,7 +31,7 @@ unsigned int ProcessManager::UpdateProcesses(unsigned long deltaMs)
 
 		// give the process an update tick if it's running
 		if (pCurrProcess->GetState() == Process::RUNNING)
-			pCurrProcess->VOnUpdate(deltaMs);
+			pCurrProcess->VOnUpdate(fElapsedTime);
 
 		// check to see if the process is dead
 		if (pCurrProcess->IsDead())

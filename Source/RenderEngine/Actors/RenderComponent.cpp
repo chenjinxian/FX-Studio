@@ -6,6 +6,8 @@
 
 const char* GridRenderComponent::m_Name = "GridRenderComponent";
 const char* MeshRenderComponent::m_Name = "MeshRenderComponent";
+const char* SkyRenderComponent::m_Name = "SkyRenderComponent";
+const char* LightRenderComponent::m_Name = "LightRenderComponent";
 
 BaseRenderComponent::BaseRenderComponent() : m_pSceneNode(nullptr)
 {
@@ -143,4 +145,54 @@ shared_ptr<SceneNode> MeshRenderComponent::VCreateSceneNode()
 
 void MeshRenderComponent::VCreateInheritedXmlElement(TiXmlElement* pBaseElement)
 {
+}
+
+SkyRenderComponent::SkyRenderComponent()
+{
+
+}
+
+SkyRenderComponent::~SkyRenderComponent()
+{
+
+}
+
+bool SkyRenderComponent::VDelegateInit(TiXmlElement* pData)
+{
+	return true;
+}
+
+shared_ptr<SceneNode> SkyRenderComponent::VCreateSceneNode()
+{
+	return shared_ptr<SceneNode>();
+}
+
+void SkyRenderComponent::VCreateInheritedXmlElement(TiXmlElement* pBaseElement)
+{
+
+}
+
+LightRenderComponent::LightRenderComponent()
+{
+
+}
+
+LightRenderComponent::~LightRenderComponent()
+{
+
+}
+
+bool LightRenderComponent::VDelegateInit(TiXmlElement* pData)
+{
+	return true;
+}
+
+shared_ptr<SceneNode> LightRenderComponent::VCreateSceneNode()
+{
+	return shared_ptr<SceneNode>();
+}
+
+void LightRenderComponent::VCreateInheritedXmlElement(TiXmlElement* pBaseElement)
+{
+
 }

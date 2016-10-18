@@ -28,7 +28,7 @@ class BaseUI : public IScreenElement
 {
 public:
 	BaseUI() : m_bIsVisible(true), m_PosX(0), m_PosY(0), m_Width(100), m_Height(100) {}
-	virtual void VOnUpdate(uint32_t deltaMs) {}
+	virtual void VOnUpdate(float fElapsedTime) {}
 	virtual HRESULT VOnLostDevice() { return S_OK; }
 	virtual bool VIsVisible() const { return m_bIsVisible; }
 	virtual void VSetVisible(bool visible) { m_bIsVisible = visible; }
@@ -49,7 +49,7 @@ public:
 		GCC_WARNING("~ScreenElementScene()");
 	}
 
-	virtual void VOnUpdate(uint32_t deltaMS) { OnUpdate(deltaMS); };
+	virtual void VOnUpdate(float fElapsedTime) { OnUpdate(fElapsedTime); };
 	virtual HRESULT VOnRestore() 
 		{ OnRestore(); return S_OK; }
 	virtual HRESULT VOnRender(double fTime, float fElapsedTime)

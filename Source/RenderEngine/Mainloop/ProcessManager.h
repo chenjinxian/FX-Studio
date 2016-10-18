@@ -13,7 +13,7 @@ public:
 	~ProcessManager(void);
 
 	// interface
-	unsigned int UpdateProcesses(unsigned long deltaMs);  // updates all attached processes
+	unsigned int UpdateProcesses(float fElapsedTime);  // updates all attached processes
 	WeakProcessPtr AttachProcess(StrongProcessPtr pProcess);  // attaches a process to the process mgr
 	void AbortAllProcesses(bool immediate);
 

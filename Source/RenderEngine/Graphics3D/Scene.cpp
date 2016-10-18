@@ -31,7 +31,7 @@ Scene::~Scene()
 		boost::bind(&Scene::ModifiedRenderComponentDelegate, this, _1), EvtData_Modified_Render_Component::sk_EventType);
 }
 
-HRESULT Scene::OnUpdate(uint32_t deltaMs)
+HRESULT Scene::OnUpdate(float fElapsedTime)
 {
 	if (m_pRootNode != nullptr)
 	{
@@ -41,7 +41,7 @@ HRESULT Scene::OnUpdate(uint32_t deltaMs)
 		elapsedTime = currentTime - lastTime;
 		lastTime = currentTime;
 
-		return m_pRootNode->VOnUpdate(this, elapsedTime);
+		return m_pRootNode->VOnUpdate(this, fElapsedTime);
 	}
 
 	return S_OK;

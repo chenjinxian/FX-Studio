@@ -39,8 +39,8 @@ public:
 
 	virtual HRESULT VOnRestore() = 0;
 	virtual HRESULT VOnLostDevice() = 0;
+	virtual void VOnUpdate(float fElapsedTime) = 0;
 	virtual HRESULT VOnRender(double fTime, float fElapsedTime) = 0;
-	virtual void VOnUpdate(uint32_t deltaMs) = 0;
 
 	virtual int VGetZOrder() const = 0;
 	virtual void VSetZOrder(int zOrder) = 0;
@@ -66,7 +66,7 @@ public:
 	virtual void VDestroyActor(ActorId actorId) = 0;
 	virtual void VMoveActor(ActorId actorId, const Matrix& mat) = 0;
 
-	virtual void VOnUpdate(float totalTime, float elapsedTime) = 0;
+	virtual void VOnUpdate(double fTime, float fElapsedTime) = 0;
 	virtual bool VLoadGame(const std::string& projectXml) = 0;
 	virtual void VSetProxy() = 0;
 	virtual void VChangeState(enum BaseGameState newState) = 0;
@@ -93,7 +93,7 @@ public:
 
 	virtual HRESULT VOnRestore() = 0;
 	virtual HRESULT VOnLostDevice() = 0;
-	virtual void VOnUpdate(uint32_t deltaMs) = 0;
+	virtual void VOnUpdate(float fElapsedTime) = 0;
 	virtual void VOnRender(double fTime, float fElapsedTime) = 0;
 	virtual void VOnAttach(GameViewId viewId, ActorId actorId) = 0;
 	virtual GameViewType VGetType() = 0;
@@ -186,7 +186,7 @@ public:
 
 	virtual const SceneNodeProperties* VGet() const = 0;
 
-	virtual HRESULT VOnUpdate(Scene* pScene, uint32_t elapsedMs) = 0;
+	virtual HRESULT VOnUpdate(Scene* pScene, float fElapsedTime) = 0;
 	virtual HRESULT VOnRestore(Scene* pScene) = 0;
 	virtual HRESULT VOnLostDevice(Scene *pScene) = 0;
 
@@ -208,5 +208,5 @@ public:
 
 	virtual bool VInitialize() = 0;
 	virtual void VSyncVisibleScene() = 0;
-	virtual void VOnUpdate(float deltaSeconds) = 0;
+	virtual void VOnUpdate(float fElapsedTime) = 0;
 };

@@ -127,6 +127,9 @@
     <ClInclude Include="UserInterface\UserInterface.h">
       <Filter>UserInterface</Filter>
     </ClInclude>
+    <ClInclude Include="Graphics3D\Mesh.h">
+      <Filter>Graphics3D</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppFramework\RenderEngineApp.cpp">
@@ -203,6 +206,9 @@
     </ClCompile>
     <ClCompile Include="AppFramework\RenderEngine.cpp">
       <Filter>AppFramework</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics3D\Mesh.cpp">
+      <Filter>Graphics3D</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

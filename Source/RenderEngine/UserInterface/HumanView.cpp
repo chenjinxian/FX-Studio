@@ -188,13 +188,13 @@ LRESULT CALLBACK HumanView::VOnMsgProc( AppMsg msg )
 	return 0;
 }
 
-void HumanView::VOnUpdate(uint32_t deltaMilliseconds)
+void HumanView::VOnUpdate(float fElapsedTime)
 {
-	m_pProcessManager->UpdateProcesses(deltaMilliseconds);
+	m_pProcessManager->UpdateProcesses(fElapsedTime);
 
 	for(ScreenElementList::iterator i=m_ScreenElements.begin(); i!=m_ScreenElements.end(); ++i)
 	{
-		(*i)->VOnUpdate(deltaMilliseconds);
+		(*i)->VOnUpdate(fElapsedTime);
 	}
 }
 

@@ -58,3 +58,33 @@ protected:
 	virtual shared_ptr<SceneNode> VCreateSceneNode() override;
 	virtual void VCreateInheritedXmlElement(TiXmlElement* pBaseElement);
 };
+
+class LightRenderComponent : public BaseRenderComponent
+{
+public:
+	LightRenderComponent();
+	~LightRenderComponent();
+
+	virtual const char* VGetName() const { return m_Name; }
+	static const char* m_Name;
+
+protected:
+	virtual bool VDelegateInit(TiXmlElement* pData) override;
+	virtual shared_ptr<SceneNode> VCreateSceneNode() override;
+	virtual void VCreateInheritedXmlElement(TiXmlElement* pBaseElement);
+};
+
+class SkyRenderComponent : public BaseRenderComponent
+{
+public:
+	SkyRenderComponent();
+	~SkyRenderComponent();
+
+	virtual const char* VGetName() const { return m_Name; }
+	static const char* m_Name;
+
+protected:
+	virtual bool VDelegateInit(TiXmlElement* pData) override;
+	virtual shared_ptr<SceneNode> VCreateSceneNode() override;
+	virtual void VCreateInheritedXmlElement(TiXmlElement* pBaseElement);
+};

@@ -227,10 +227,10 @@ ActorFactory* BaseGameLogic::VCreateActorFactory()
 	return GCC_NEW ActorFactory();
 }
 
-void BaseGameLogic::VOnUpdate(float time, float elapsedTime)
+void BaseGameLogic::VOnUpdate(double fTime, float fElapsedTime)
 {
-	int deltaMilliseconds = int(elapsedTime * 1000.0f);
-	m_LifeTime += elapsedTime;
+	float deltaMilliseconds = fElapsedTime * 1000.0f;
+	m_LifeTime += fElapsedTime;
 
 	switch (m_GameState)
 	{
@@ -270,7 +270,7 @@ void BaseGameLogic::VOnUpdate(float time, float elapsedTime)
 
 		if (m_pPhysics && !m_IsProxy)
 		{
-			m_pPhysics->VOnUpdate(elapsedTime);
+			m_pPhysics->VOnUpdate(fElapsedTime);
 			m_pPhysics->VSyncVisibleScene();
 		}
 
@@ -282,12 +282,12 @@ void BaseGameLogic::VOnUpdate(float time, float elapsedTime)
 
 	for (auto& gameView : m_GameViews)
 	{
-		gameView->VOnUpdate(deltaMilliseconds);
+		gameView->VOnUpdate(fElapsedTime);
 	}
 
 	for (auto& actor : m_Actors)
 	{
-		actor.second->Update(deltaMilliseconds);
+		actor.second->Update(fElapsedTime);
 	}
 }
 

@@ -34,11 +34,11 @@ void Actor::Destroy()
 	m_ActorComponents.clear();
 }
 
-void Actor::Update(uint32_t deltaMs)
+void Actor::Update(float fElapsedTime)
 {
 	for (auto& component : m_ActorComponents)
 	{
-		component.second->VUpdate(deltaMs);
+		component.second->VUpdate(fElapsedTime);
 	}
 }
 

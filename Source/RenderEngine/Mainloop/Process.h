@@ -38,7 +38,7 @@ public:
 protected:
 	// interface; these functions should be overridden by the subclass as needed
 	virtual void VOnInit(void) { m_state = RUNNING; }  // called during the first update; responsible for setting the initial state (typically RUNNING)
-	virtual void VOnUpdate(unsigned long deltaMs) = 0;  // called every frame
+	virtual void VOnUpdate(float fElapsedTime) = 0;  // called every frame
 	virtual void VOnSuccess(void) { }  // called if the process succeeds (see below)
 	virtual void VOnFail(void) { }  // called if the process fails (see below)
 	virtual void VOnAbort(void) { }  // called if the process is aborted (see below)

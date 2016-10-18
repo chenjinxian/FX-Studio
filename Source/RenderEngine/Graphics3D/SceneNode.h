@@ -43,7 +43,7 @@ public:
 
 	virtual const SceneNodeProperties* VGet() const override { return &m_Properties; }
 
-	virtual HRESULT VOnUpdate(Scene* pScene, uint32_t elapsedMs) override;
+	virtual HRESULT VOnUpdate(Scene* pScene, float fElapsedTime) override;
 	virtual HRESULT VOnRestore(Scene* pScene) override;
 	virtual HRESULT VOnLostDevice(Scene *pScene);
 
@@ -81,7 +81,7 @@ public:
 	CameraNode();
 	~CameraNode();
 
-	virtual HRESULT VOnUpdate(Scene* pScene, uint32_t elapsedMs);
+	virtual HRESULT VOnUpdate(Scene* pScene, float fElapsedTime);
 	virtual HRESULT VRender(Scene* pScene);
 	virtual HRESULT VOnRestore(Scene* pScene);
 	virtual bool VIsVisible(Scene* pScene) const { return true; }
@@ -101,7 +101,7 @@ public:
 
 	virtual HRESULT VOnRestore(Scene* pScene);
 	virtual HRESULT VRender(Scene* pScene);
-	virtual HRESULT VOnUpdate(Scene* pScene, uint32_t elapsedMs);
+	virtual HRESULT VOnUpdate(Scene* pScene, float fElapsedTime);
 
 private:
 	XMMATRIX                            g_World;

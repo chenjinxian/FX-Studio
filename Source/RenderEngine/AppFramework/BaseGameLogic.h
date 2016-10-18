@@ -96,7 +96,6 @@ protected:
 	void MoveActorDelegate(IEventDataPtr pEventData);
 	void RequestNewActorDelegate(IEventDataPtr pEventData);
 
-	float m_LifeTime;
 	ProcessManager* m_pProcessManager;
 	ActorMap m_Actors;
 	ActorId m_LastActorId;

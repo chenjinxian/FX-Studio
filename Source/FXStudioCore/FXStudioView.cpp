@@ -11,9 +11,9 @@ FXStudioView::~FXStudioView()
 {
 }
 
-void FXStudioView::VOnUpdate(uint32_t deltaMs)
+void FXStudioView::VOnUpdate(double fTime, float fElapsedTime)
 {
-	HumanView::VOnUpdate(deltaMs);
+	HumanView::VOnUpdate(fTime, fElapsedTime);
 
 // 	if (m_pFreeCameraController)
 // 	{

@@ -146,9 +146,9 @@ void ShootGameView::VRenderText()
 	D3DRenderer::m_pTextHelper->End();
 }
 
-void ShootGameView::VOnUpdate(float fElapsedTime)
+void ShootGameView::VOnUpdate(double fTime, float fElapsedTime)
 {
-	HumanView::VOnUpdate(fElapsedTime);
+	HumanView::VOnUpdate(fTime, fElapsedTime);
 
 // 	if (m_pFreeCameraController)
 // 	{
@@ -513,9 +513,9 @@ void MainMenuView::VRenderText()
 	HumanView::VRenderText();
 }
 
-void MainMenuView::VOnUpdate(float fElapsedTime)
+void MainMenuView::VOnUpdate(double fTime, float fElapsedTime)
 {
-	HumanView::VOnUpdate(fElapsedTime);
+	HumanView::VOnUpdate(fTime, fElapsedTime);
 }
 
 LRESULT CALLBACK MainMenuView::VOnMsgProc(AppMsg msg)

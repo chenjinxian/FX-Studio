@@ -16,7 +16,7 @@ public:
 	bool Init(TiXmlElement* pData);
 	void PostInit();
 	void Destroy();
-	void Update(float fElapsedTime);
+	void Update(double fTime, float fElapsedTime);
 
 	std::string ToXml();
 

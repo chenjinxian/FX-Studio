@@ -13,8 +13,8 @@ public:
 	Scene(shared_ptr<IRenderer> pRenderer);
 	virtual ~Scene();
 
-	HRESULT OnUpdate(float fElapsedTime);
-	HRESULT OnRender();
+	HRESULT OnUpdate(double fTime, float fElapsedTime);
+	HRESULT OnRender(double fTime, float fElapsedTime);
 	HRESULT OnRestore();
 	HRESULT OnLostDevice();
 	shared_ptr<ISceneNode> FindActor(ActorId actorId);

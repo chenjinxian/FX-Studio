@@ -7,7 +7,7 @@
 #include "../UserInterface/HumanView.h"
 
 BaseGameLogic::BaseGameLogic()
-	: m_LifeTime(0.0f), m_LastActorId(0),m_GameState(BGS_Initializing),
+	: m_LastActorId(0),m_GameState(BGS_Initializing),
 	m_IsProxy(false), m_IsRenderDiagnostics(false),
 	m_ExpectedPlayers(0), m_ExpectedRemotePlayers(0), m_ExpectedAI(0),
 	m_HumanPlayersAttached(0), m_HumanGamesLoaded(0), m_AIPlayersAttached(0),
@@ -229,9 +229,6 @@ ActorFactory* BaseGameLogic::VCreateActorFactory()
 
 void BaseGameLogic::VOnUpdate(double fTime, float fElapsedTime)
 {
-	float deltaMilliseconds = fElapsedTime * 1000.0f;
-	m_LifeTime += fElapsedTime;
-
 	switch (m_GameState)
 	{
 	case BGS_Initializing:
@@ -266,11 +263,11 @@ void BaseGameLogic::VOnUpdate(double fTime, float fElapsedTime)
 		break;
 
 	case BGS_Running:
-		m_pProcessManager->UpdateProcesses(deltaMilliseconds);
+		m_pProcessManager->UpdateProcesses(fTime, fElapsedTime);
 
 		if (m_pPhysics && !m_IsProxy)
 		{
-			m_pPhysics->VOnUpdate(fElapsedTime);
+			m_pPhysics->VOnUpdate(fTime, fElapsedTime);
 			m_pPhysics->VSyncVisibleScene();
 		}
 
@@ -282,12 +279,12 @@ void BaseGameLogic::VOnUpdate(double fTime, float fElapsedTime)
 
 	for (auto& gameView : m_GameViews)
 	{
-		gameView->VOnUpdate(fElapsedTime);
+		gameView->VOnUpdate(fTime, fElapsedTime);
 	}
 
 	for (auto& actor : m_Actors)
 	{
-		actor.second->Update(fElapsedTime);
+		actor.second->Update(fTime, fElapsedTime);
 	}
 }
 

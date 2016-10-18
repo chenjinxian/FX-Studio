@@ -520,7 +520,7 @@ int RenderEngineApp::Modal(shared_ptr<IScreenElement> pModalScreen, int defaultA
 
 int RenderEngineApp::PumpUntilMessage(UINT msgEnd, WPARAM* pWParam, LPARAM* pLParam)
 {
-	int currentTime = timeGetTime();
+	uint32_t timeCurrent = GetTickCount();
 	MSG msg;
 	for (;; )
 	{
@@ -549,12 +549,19 @@ int RenderEngineApp::PumpUntilMessage(UINT msgEnd, WPARAM* pWParam, LPARAM* pLPa
 			if (m_pGameLogic)
 			{
 				int timeNow = timeGetTime();
-				int deltaMilliseconds = timeNow - currentTime;
+				int deltaMilliseconds = timeNow - timeCurrent;
+
+				static float fTime = 0.0f;
+				static uint32_t timeStart = 0;
+				if (timeStart == 0)
+					timeStart = timeCurrent;
+				fTime = static_cast<float>(timeCurrent - timeStart) / 1000.0f;
+
 				for (GameViewList::iterator i = m_pGameLogic->m_GameViews.begin(); i != m_pGameLogic->m_GameViews.end(); ++i)
 				{
-					(*i)->VOnUpdate(static_cast<float>(deltaMilliseconds));
+					(*i)->VOnUpdate(fTime, static_cast<float>(deltaMilliseconds));
 				}
-				currentTime = timeNow;
+				timeCurrent = timeNow;
 				DXUTRender3DEnvironment();
 			}
 		}
@@ -651,7 +658,7 @@ void CALLBACK RenderEngineApp::OnFrameMove(double fTime, float fElapsedTime, voi
 		// 		if (g_pApp->m_pBaseSocketManager)
 		// 			g_pApp->m_pBaseSocketManager->DoSelect(0);
 
-		g_pApp->m_pGameLogic->VOnUpdate(float(fTime), fElapsedTime);
+		g_pApp->m_pGameLogic->VOnUpdate(fTime, fElapsedTime);
 	}
 }
 

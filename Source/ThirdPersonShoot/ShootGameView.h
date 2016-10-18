@@ -60,7 +60,7 @@ public:
 	~MainMenuView();
 
 	virtual void VRenderText() override;
-	virtual void VOnUpdate(float fElapsedTime) override;
+	virtual void VOnUpdate(double fTime, float fElapsedTime) override;
 	virtual LRESULT CALLBACK VOnMsgProc(AppMsg msg) override;
 
 protected:
@@ -75,7 +75,7 @@ public:
 
 	virtual LRESULT CALLBACK VOnMsgProc(AppMsg msg);
 	virtual void VRenderText() override;
-	virtual void VOnUpdate(float fElapsedTime) override;
+	virtual void VOnUpdate(double fTime, float fElapsedTime) override;
 	virtual void VOnAttach(GameViewId vid, ActorId aid) override;
 
 	virtual void VSetControlledActor(ActorId actorId);

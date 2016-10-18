@@ -33,11 +33,11 @@ HRESULT SceneNode::VOnLostDevice(Scene *pScene)
 	return S_OK;
 }
 
-HRESULT SceneNode::VOnUpdate(Scene* pScene, float fElapsedTime)
+HRESULT SceneNode::VOnUpdate(Scene* pScene, double fTime, float fElapsedTime)
 {
 	for (auto& child : m_Children)
 	{
-		child->VOnUpdate(pScene, fElapsedTime);
+		child->VOnUpdate(pScene, fTime, fElapsedTime);
 	}
 	return S_OK;
 }
@@ -47,12 +47,12 @@ HRESULT SceneNode::VPreRender(Scene* pScene)
 	return S_OK;
 }
 
-HRESULT SceneNode::VRender(Scene* pScene)
+HRESULT SceneNode::VRender(Scene* pScene, double fTime, float fElapsedTime)
 {
 	return S_OK;
 }
 
-HRESULT SceneNode::VRenderChildren(Scene* pScene)
+HRESULT SceneNode::VRenderChildren(Scene* pScene, double fTime, float fElapsedTime)
 {
 	for (auto& child : m_Children)
 	{
@@ -60,8 +60,8 @@ HRESULT SceneNode::VRenderChildren(Scene* pScene)
 		{
 			if (child->VIsVisible(pScene))
 			{
-				child->VRender(pScene);
-				child->VRenderChildren(pScene);
+				child->VRender(pScene, fTime, fElapsedTime);
+				child->VRenderChildren(pScene, fTime, fElapsedTime);
 			}
 		}
 		child->VPostRender(pScene);
@@ -125,7 +125,7 @@ RootNode::~RootNode()
 
 }
 
-HRESULT RootNode::VRenderChildren(Scene* pScene)
+HRESULT RootNode::VRenderChildren(Scene* pScene, double fTime, float fElapsedTime)
 {
 	for (int pass = RenderPass_0; pass < RenderPass_Last; ++pass)
 	{
@@ -133,13 +133,13 @@ HRESULT RootNode::VRenderChildren(Scene* pScene)
 		{
 		case RenderPass_Static:
 		case RenderPass_Actor:
-			m_Children[pass]->VRenderChildren(pScene);
+			m_Children[pass]->VRenderChildren(pScene, fTime, fElapsedTime);
 			break;
 
 		case RenderPass_Sky:
 		{
 // 			shared_ptr<IRenderState> skyPass = pScene->GetRenderder()->
-			m_Children[pass]->VRenderChildren(pScene);
+			m_Children[pass]->VRenderChildren(pScene, fTime, fElapsedTime);
 			break;
 		}
 		}
@@ -183,13 +183,13 @@ CameraNode::~CameraNode()
 
 }
 
-HRESULT CameraNode::VOnUpdate(Scene* pScene, float fElapsedTime)
+HRESULT CameraNode::VOnUpdate(Scene* pScene, double fTime, float fElapsedTime)
 {
 	m_ModelViewer.FrameMove(fElapsedTime);
 	return S_OK;
 }
 
-HRESULT CameraNode::VRender(Scene* pScene)
+HRESULT CameraNode::VRender(Scene* pScene, double fTime, float fElapsedTime)
 {
 	return S_OK;
 }
@@ -295,7 +295,7 @@ HRESULT GridNode::VOnRestore(Scene* pScene)
 	return hr;
 }
 
-HRESULT GridNode::VRender(Scene* pScene)
+HRESULT GridNode::VRender(Scene* pScene, double fTime, float fElapsedTime)
 {
 	XMMATRIX mView = pScene->GetCamera()->GetViewMatrix();
 	XMMATRIX mProj = pScene->GetCamera()->GetProjectMatrix();
@@ -348,17 +348,11 @@ HRESULT GridNode::VRender(Scene* pScene)
 	return S_OK;
 }
 
-HRESULT GridNode::VOnUpdate(Scene* pScene, float fElapsedTime)
+HRESULT GridNode::VOnUpdate(Scene* pScene, double fTime, float fElapsedTime)
 {
 	if (g_bSpinning)
 	{
-		static float t = 0.0f;
-		static ULONGLONG timeStart = 0;
-		ULONGLONG timeCur = GetTickCount64();
-		if (timeStart == 0)
-			timeStart = timeCur;
-		t = (timeCur - timeStart) / 1000.0f;
-		g_World = XMMatrixRotationY(t);
+		g_World = XMMatrixRotationY(60.0f * XMConvertToRadians((float)fTime));
 	}
 	else
 	{

@@ -30,6 +30,8 @@ extern "C" {
 
 	FXSTUDIOCORE_API void RenderFrame();
 
+	FXSTUDIOCORE_API bool IsGameRunning();
+
 	FXSTUDIOCORE_API void OpenLevel(BSTR lFileName);
 
 

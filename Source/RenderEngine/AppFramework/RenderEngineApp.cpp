@@ -297,10 +297,13 @@ LRESULT CALLBACK RenderEngineApp::MsgProc(HWND hWnd, UINT uMsg, WPARAM wParam, L
 	case WM_KEYUP:
 	case WM_CHAR:
 	case WM_MOUSEMOVE:
+	case WM_MOUSEWHEEL:
 	case WM_LBUTTONDOWN:
 	case WM_LBUTTONUP:
 	case WM_RBUTTONDOWN:
 	case WM_RBUTTONUP:
+	case WM_LBUTTONDBLCLK:
+	case WM_RBUTTONDBLCLK:
 	{
 		if (g_pApp->m_pGameLogic)
 		{
@@ -398,7 +401,15 @@ LRESULT RenderEngineApp::OnSysCommand(WPARAM wParam, LPARAM lParam)
 
 LRESULT RenderEngineApp::OnClose()
 {
-	SAFE_DELETE(m_pGameLogic);
+	if (g_pApp->m_pGameLogic)
+	{
+		BaseGameLogic *pGame = g_pApp->m_pGameLogic;
+		for (GameViewList::iterator i = pGame->m_GameViews.begin(); i != pGame->m_GameViews.end(); ++i)
+		{
+			(*i)->VOnDestoryDevice();
+		}
+	}
+	SAFE_DELETE(g_pApp->m_pGameLogic);
 
 	DestroyWindow(GetHwnd());
 
@@ -688,6 +699,15 @@ void CALLBACK RenderEngineApp::OnD3D11DestroyDevice(void* pUserContext)
 	g_pApp->m_pRenderer = shared_ptr<IRenderer>(NULL);
 
 	DXUTGetGlobalResourceCache().OnDestroyDevice();
+
+	if (g_pApp->m_pGameLogic)
+	{
+		BaseGameLogic *pGame = g_pApp->m_pGameLogic;
+		for (GameViewList::iterator i = pGame->m_GameViews.begin(); i != pGame->m_GameViews.end(); ++i)
+		{
+			(*i)->VOnDestoryDevice();
+		}
+	}
 }
 
 HRESULT CALLBACK RenderEngineApp::OnD3D11ResizedSwapChain(

@@ -82,6 +82,15 @@ HRESULT Scene::OnLostDevice()
 	return S_OK;
 }
 
+HRESULT Scene::OnDestoryDevice()
+{
+	if (m_pRootNode != nullptr)
+	{
+		return m_pRootNode->VOnDestoryDevice(this);
+	}
+	return S_OK;
+}
+
 LRESULT CALLBACK Scene::OnMsgProc(AppMsg msg)
 {
 	if (m_pRootNode != nullptr)

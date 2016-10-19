@@ -46,6 +46,7 @@ public:
 	virtual HRESULT VOnUpdate(Scene* pScene, double fTime, float fElapsedTime) override;
 	virtual HRESULT VOnRestore(Scene* pScene) override;
 	virtual HRESULT VOnLostDevice(Scene *pScene) override;
+	virtual HRESULT VOnDestoryDevice(Scene *pScene) override;
 	virtual LRESULT CALLBACK VOnMsgProc(Scene *pScene, AppMsg msg) override;
 
 	virtual HRESULT VPreRender(Scene* pScene) override;
@@ -115,6 +116,7 @@ public:
 	virtual HRESULT VOnRestore(Scene* pScene);
 	virtual HRESULT VRender(Scene* pScene, double fTime, float fElapsedTime);
 	virtual HRESULT VOnUpdate(Scene* pScene, double fTime, float fElapsedTime);
+	virtual HRESULT VOnDestoryDevice(Scene *pScene);
 
 private:
 	ID3DX11Effect* mEffect;
@@ -130,4 +132,18 @@ private:
 	UINT mSize;
 	UINT mScale;
 	Color mColor;
+
+// 	XMMATRIX                            g_World;
+// 	float                               g_fModelWaviness;
+// 	bool                                g_bSpinning;
+// 	ID3DX11Effect*                      g_pEffect;
+// 	ID3D11InputLayout*                  g_pVertexLayout;
+// 	ID3DX11EffectTechnique*             g_pTechnique;
+// 	CDXUTSDKMesh                        g_Mesh;
+// 	ID3DX11EffectShaderResourceVariable* g_ptxDiffuseVariable;
+// 	ID3DX11EffectMatrixVariable*        g_pWorldVariable;
+// 	ID3DX11EffectMatrixVariable*        g_pViewVariable;
+// 	ID3DX11EffectMatrixVariable*        g_pProjectionVariable;
+// 	ID3DX11EffectScalarVariable*        g_pWavinessVariable;
+// 	ID3DX11EffectScalarVariable*        g_pTimeVariable;
 };

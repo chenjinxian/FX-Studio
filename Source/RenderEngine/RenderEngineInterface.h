@@ -39,6 +39,7 @@ public:
 
 	virtual HRESULT VOnRestore() = 0;
 	virtual HRESULT VOnLostDevice() = 0;
+	virtual HRESULT VOnDestoryDevice() = 0;
 	virtual void VOnUpdate(double fTime, float fElapsedTime) = 0;
 	virtual HRESULT VOnRender(double fTime, float fElapsedTime) = 0;
 
@@ -93,6 +94,7 @@ public:
 
 	virtual HRESULT VOnRestore() = 0;
 	virtual HRESULT VOnLostDevice() = 0;
+	virtual HRESULT VOnDestoryDevice() = 0;
 	virtual void VOnUpdate(double fTime, float fElapsedTime) = 0;
 	virtual void VOnRender(double fTime, float fElapsedTime) = 0;
 	virtual void VOnAttach(GameViewId viewId, ActorId actorId) = 0;
@@ -188,7 +190,8 @@ public:
 
 	virtual HRESULT VOnUpdate(Scene* pScene, double fTime, float fElapsedTime) = 0;
 	virtual HRESULT VOnRestore(Scene* pScene) = 0;
-	virtual HRESULT VOnLostDevice(Scene *pScene) = 0;
+	virtual HRESULT VOnLostDevice(Scene* pScene) = 0;
+	virtual HRESULT VOnDestoryDevice(Scene* pScene) = 0;
 	virtual LRESULT CALLBACK VOnMsgProc(Scene *pScene, AppMsg msg) = 0;
 
 	virtual HRESULT VPreRender(Scene* pScene) = 0;

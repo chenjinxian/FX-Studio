@@ -33,6 +33,15 @@ HRESULT SceneNode::VOnLostDevice(Scene *pScene)
 	return S_OK;
 }
 
+HRESULT SceneNode::VOnDestoryDevice(Scene *pScene)
+{
+	for (auto& child : m_Children)
+	{
+		child->VOnDestoryDevice(pScene);
+	}
+	return S_OK;
+}
+
 LRESULT CALLBACK SceneNode::VOnMsgProc(Scene *pScene, AppMsg msg)
 {
 	for (auto& child : m_Children)
@@ -205,15 +214,15 @@ HRESULT CameraNode::VRender(Scene* pScene, double fTime, float fElapsedTime)
 
 HRESULT CameraNode::VOnRestore(Scene* pScene)
 {
-	static const XMVECTORF32 s_Eye = { 0.0f, 0.0f, -100.0f, 0.f };
-	static const XMVECTORF32 s_At = { 0.0f, 0.0f, 60.0f, 0.f };
+	static const XMVECTORF32 s_Eye = { 0.0f, 3.0f, -10.0f, 0.f };
+	static const XMVECTORF32 s_At = { 0.0f, 1.0f, 0.0f, 0.f };
 	m_ModelViewer.SetViewParams(s_Eye, s_At);
 
 	const DXGI_SURFACE_DESC* pBackBufferSurfaceDesc = DXUTGetDXGIBackBufferSurfaceDesc();
 	float fAspectRatio = pBackBufferSurfaceDesc->Width / (FLOAT)pBackBufferSurfaceDesc->Height;
 	m_ModelViewer.SetProjParams(XM_PI / 4, fAspectRatio, 0.1f, 5000.0f);
 	m_ModelViewer.SetWindow(pBackBufferSurfaceDesc->Width, pBackBufferSurfaceDesc->Height);
-	m_ModelViewer.SetButtonMasks(MOUSE_LEFT_BUTTON, MOUSE_WHEEL, MOUSE_MIDDLE_BUTTON);
+	m_ModelViewer.SetButtonMasks(MOUSE_LEFT_BUTTON, MOUSE_WHEEL, MOUSE_LEFT_BUTTON);
 
 	return S_OK;
 }
@@ -289,6 +298,11 @@ GridNode::~GridNode()
 	SAFE_RELEASE(mEffect);
 	SAFE_RELEASE(mInputLayout);
 	SAFE_RELEASE(mVertexBuffer);
+}
+
+HRESULT GridNode::VOnDestoryDevice(Scene *pScene)
+{
+	return S_OK;
 }
 
 HRESULT GridNode::VOnRestore(Scene* pScene)

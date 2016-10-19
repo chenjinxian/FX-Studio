@@ -15,6 +15,7 @@ public:
 
 	virtual HRESULT VOnRestore();
 	virtual HRESULT VOnLostDevice();
+	virtual HRESULT VOnDestoryDevice();
 	virtual void VOnUpdate(double fTime, float fElapsedTime);
 	virtual void VOnRender(double fTime, float fElapsedTime);
 	virtual GameViewType VGetType() { return GameView_Human; }

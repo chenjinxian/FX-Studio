@@ -106,6 +106,18 @@ HRESULT HumanView::VOnLostDevice()
 	return S_OK;
 }
 
+HRESULT HumanView::VOnDestoryDevice()
+{
+	HRESULT hr;
+
+	for (ScreenElementList::iterator i = m_ScreenElements.begin(); i != m_ScreenElements.end(); ++i)
+	{
+		V_RETURN((*i)->VOnDestoryDevice());
+	}
+
+	return S_OK;
+}
+
 bool HumanView::InitAudio()
 {
 	return true;

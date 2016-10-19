@@ -39,6 +39,7 @@ using std::tr1::dynamic_pointer_cast;
 #include "SDKmisc.h"
 #include "SDKmesh.h"
 #include "SimpleMath.h"
+#include "d3dx11effect.h"
 using namespace DirectX;
 using namespace DirectX::SimpleMath;
 

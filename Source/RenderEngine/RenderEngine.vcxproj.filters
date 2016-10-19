@@ -130,6 +130,18 @@
     <ClInclude Include="Graphics3D\Mesh.h">
       <Filter>Graphics3D</Filter>
     </ClInclude>
+    <ClInclude Include="Graphics3D\Material.h">
+      <Filter>Graphics3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics3D\VertexDeclarations.h">
+      <Filter>Graphics3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics3D\Model.h">
+      <Filter>Graphics3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics3D\ModelMaterial.h">
+      <Filter>Graphics3D</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppFramework\RenderEngineApp.cpp">
@@ -208,6 +220,15 @@
       <Filter>AppFramework</Filter>
     </ClCompile>
     <ClCompile Include="Graphics3D\Mesh.cpp">
+      <Filter>Graphics3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics3D\Material.cpp">
+      <Filter>Graphics3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics3D\Model.cpp">
+      <Filter>Graphics3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics3D\ModelMaterial.cpp">
       <Filter>Graphics3D</Filter>
     </ClCompile>
   </ItemGroup>

@@ -91,7 +91,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;FXSTUDIOCORE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\ThirdParty\DXUT\Core;$(SolutionDir)..\ThirdParty\DXUT\Optional;$(SolutionDir)..\ThirdParty\Effects11\inc;$(SolutionDir)..\ThirdParty\DirectXTK\inc;$(SolutionDir)..\ThirdParty\tinyxml;$(SolutionDir)..\ThirdParty\zlib;$(SolutionDir)..\ThirdParty\boost;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\ThirdParty\DXUT\Core;$(SolutionDir)..\ThirdParty\DXUT\Optional;$(SolutionDir)..\ThirdParty\Effects11\inc;$(SolutionDir)..\ThirdParty\DirectXTK\inc;$(SolutionDir)..\ThirdParty\tinyxml;$(SolutionDir)..\ThirdParty\zlib;$(SolutionDir)..\ThirdParty\boost;$(SolutionDir)..\ThirdParty\assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>-D_SCL_SECURE_NO_WARNINGS %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
@@ -123,7 +123,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;FXSTUDIOCORE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\ThirdParty\DXUT\Core;$(SolutionDir)..\ThirdParty\DXUT\Optional;$(SolutionDir)..\ThirdParty\Effects11\inc;$(SolutionDir)..\ThirdParty\DirectXTK\inc;$(SolutionDir)..\ThirdParty\tinyxml;$(SolutionDir)..\ThirdParty\zlib;$(SolutionDir)..\ThirdParty\boost;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\ThirdParty\DXUT\Core;$(SolutionDir)..\ThirdParty\DXUT\Optional;$(SolutionDir)..\ThirdParty\Effects11\inc;$(SolutionDir)..\ThirdParty\DirectXTK\inc;$(SolutionDir)..\ThirdParty\tinyxml;$(SolutionDir)..\ThirdParty\zlib;$(SolutionDir)..\ThirdParty\boost;$(SolutionDir)..\ThirdParty\assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

@@ -84,7 +84,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\ThirdParty\DXUT\Core;$(SolutionDir)..\ThirdParty\DXUT\Optional;$(SolutionDir)..\ThirdParty\Effects11\inc;$(SolutionDir)..\ThirdParty\DirectXTK\inc;$(SolutionDir)..\ThirdParty\tinyxml;$(SolutionDir)..\ThirdParty\zlib;$(SolutionDir)..\ThirdParty\boost;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\ThirdParty\DXUT\Core;$(SolutionDir)..\ThirdParty\DXUT\Optional;$(SolutionDir)..\ThirdParty\Effects11\inc;$(SolutionDir)..\ThirdParty\DirectXTK\inc;$(SolutionDir)..\ThirdParty\tinyxml;$(SolutionDir)..\ThirdParty\zlib;$(SolutionDir)..\ThirdParty\boost;$(SolutionDir)..\ThirdParty\assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>-D_SCL_SECURE_NO_WARNINGS %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
@@ -117,7 +117,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\ThirdParty\DXUT\Core;$(SolutionDir)..\ThirdParty\DXUT\Optional;$(SolutionDir)..\ThirdParty\Effects11\inc;$(SolutionDir)..\ThirdParty\DirectXTK\inc;$(SolutionDir)..\ThirdParty\tinyxml;$(SolutionDir)..\ThirdParty\zlib;$(SolutionDir)..\ThirdParty\boost;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\ThirdParty\DXUT\Core;$(SolutionDir)..\ThirdParty\DXUT\Optional;$(SolutionDir)..\ThirdParty\Effects11\inc;$(SolutionDir)..\ThirdParty\DirectXTK\inc;$(SolutionDir)..\ThirdParty\tinyxml;$(SolutionDir)..\ThirdParty\zlib;$(SolutionDir)..\ThirdParty\boost;$(SolutionDir)..\ThirdParty\assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>-D_SCL_SECURE_NO_WARNINGS %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
@@ -165,9 +165,13 @@
     <ClInclude Include="EventManager\EventManagerImpl.h" />
     <ClInclude Include="EventManager\Events.h" />
     <ClInclude Include="Graphics3D\D3DRenderer.h" />
+    <ClInclude Include="Graphics3D\Material.h" />
     <ClInclude Include="Graphics3D\Mesh.h" />
+    <ClInclude Include="Graphics3D\Model.h" />
+    <ClInclude Include="Graphics3D\ModelMaterial.h" />
     <ClInclude Include="Graphics3D\Scene.h" />
     <ClInclude Include="Graphics3D\SceneNode.h" />
+    <ClInclude Include="Graphics3D\VertexDeclarations.h" />
     <ClInclude Include="Mainloop\Initialization.h" />
     <ClInclude Include="Mainloop\Process.h" />
     <ClInclude Include="Mainloop\ProcessManager.h" />
@@ -199,7 +203,10 @@
     <ClCompile Include="EventManager\EventManagerImpl.cpp" />
     <ClCompile Include="EventManager\Events.cpp" />
     <ClCompile Include="Graphics3D\D3DRenderer.cpp" />
+    <ClCompile Include="Graphics3D\Material.cpp" />
     <ClCompile Include="Graphics3D\Mesh.cpp" />
+    <ClCompile Include="Graphics3D\Model.cpp" />
+    <ClCompile Include="Graphics3D\ModelMaterial.cpp" />
     <ClCompile Include="Graphics3D\Scene.cpp" />
     <ClCompile Include="Graphics3D\SceneNode.cpp" />
     <ClCompile Include="Mainloop\Initialization.cpp" />

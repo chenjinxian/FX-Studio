@@ -34,7 +34,7 @@ BaseGameLogic::~BaseGameLogic()
 	SAFE_DELETE(m_pProcessManager);
 	SAFE_DELETE(m_pLevelManager);
 
-	for (auto actor : m_Actors)
+	for (auto& actor : m_Actors)
 	{
 		actor.second->Destroy();
 	}
@@ -100,7 +100,7 @@ bool BaseGameLogic::VLoadGame(const std::string& projectXml)
 		}
 	}
 
-	for (auto gameView : m_GameViews)
+	for (auto& gameView : m_GameViews)
 	{
 		if (gameView->VGetType() == GameView_Human)
 		{

@@ -2,18 +2,29 @@
 #include "Model.h"
 
 Material::Material()
+	: m_pEffect(nullptr),
+	m_pCurrentTechnique(nullptr),
+	m_DefaultTechniqueName(),
+	m_InputLayouts()
 {
 
 }
 
 Material::Material(const std::string& defaultTechniqueName)
+	: m_pEffect(nullptr),
+	m_pCurrentTechnique(nullptr),
+	m_DefaultTechniqueName(defaultTechniqueName),
+	m_InputLayouts()
 {
 
 }
 
 Material::~Material()
 {
-
+	for (auto& inputLayout : m_InputLayouts)
+	{
+		SAFE_RELEASE(inputLayout.second);
+	}
 }
 
 Variable* Material::operator[](const std::string& variableName)
@@ -40,9 +51,9 @@ Technique* Material::GetCurrentTechnique() const
 	return m_pCurrentTechnique;
 }
 
-void Material::SetCurrentTechnique(Technique* currentTechnique)
+void Material::SetCurrentTechnique(Technique* pTechnique)
 {
-
+	m_pCurrentTechnique = pTechnique;
 }
 
 const std::map<Pass*, ID3D11InputLayout*>& Material::GetInputLayouts() const
@@ -50,24 +61,64 @@ const std::map<Pass*, ID3D11InputLayout*>& Material::GetInputLayouts() const
 	return m_InputLayouts;
 }
 
-void Material::Initialize(Effect* effect)
+void Material::Initialize(Effect* pEffect)
 {
+	m_pEffect = pEffect;
+	GCC_ASSERT(m_pEffect != nullptr);
 
+	Technique* defaultTechnique = nullptr;
+	GCC_ASSERT(m_pEffect->GetTechniques().size() > 0);
+	if (!m_DefaultTechniqueName.empty())
+	{
+		defaultTechnique = m_pEffect->GetTechniquesByName().at(m_DefaultTechniqueName);
+		GCC_ASSERT(defaultTechnique != nullptr);
+	}
+	else
+	{
+		defaultTechnique = m_pEffect->GetTechniques().at(0);
+	}
+
+	SetCurrentTechnique(defaultTechnique);
 }
 
-void Material::CreateVertexBuffer(ID3D11Device* device, const Model& model, std::vector<ID3D11Buffer*>& vertexBuffers) const
+void Material::CreateVertexBuffer(const Model*pModel, std::vector<ID3D11Buffer*>& vertexBuffers) const
 {
-
+	if (pModel != nullptr)
+	{
+		auto meshhes = pModel->GetMeshes();
+		vertexBuffers.reserve(meshhes.size());
+		for (auto mesh : meshhes)
+		{
+			ID3D11Buffer* vertexBuffer;
+			CreateVertexBuffer(mesh, &vertexBuffer);
+			vertexBuffers.push_back(vertexBuffer);
+		}
+	}
 }
 
-void Material::CreateInputLayout(const std::string& techniqueName, const std::string& passName, D3D11_INPUT_ELEMENT_DESC* inputElementDescriptions, UINT inputElementDescriptionCount)
+void Material::CreateInputLayout(
+	const std::string& techniqueName, const std::string& passName,
+	D3D11_INPUT_ELEMENT_DESC* inputElementDescriptions, uint32_t inputElementDescriptionCount)
 {
+	Technique* technique = m_pEffect->GetTechniquesByName().at(techniqueName);
+	assert(technique != nullptr);
 
+	Pass* pass = technique->GetPassesByName().at(passName);
+	assert(pass != nullptr);
+
+	ID3D11InputLayout* inputLayout;
+	pass->CreateInputLayout(inputElementDescriptions, inputElementDescriptionCount, &inputLayout);
+
+	m_InputLayouts.insert(std::make_pair(pass, inputLayout));
 }
 
-void Material::CreateInputLayout(Pass& pass, D3D11_INPUT_ELEMENT_DESC* inputElementDescriptions, UINT inputElementDescriptionCount)
+void Material::CreateInputLayout(
+	Pass* pPass, D3D11_INPUT_ELEMENT_DESC* inputElementDescriptions, uint32_t inputElementDescriptionCount)
 {
+	ID3D11InputLayout* inputLayout;
+	pPass->CreateInputLayout(inputElementDescriptions, inputElementDescriptionCount, &inputLayout);
 
+	m_InputLayouts.insert(std::make_pair(pPass, inputLayout));
 }
 
 Effect::Effect()
@@ -98,19 +149,44 @@ Effect::~Effect()
 	SAFE_RELEASE(m_pD3DX11Effect);
 }
 
-void Effect::CompileEffectFromFile(ID3D11Device* direct3DDevice, ID3DX11Effect** effect, const std::wstring& filename)
+void Effect::CompileEffectFromFile(ID3DX11Effect** ppEffect, const std::wstring& filename)
 {
+	uint32_t shaderFlags = 0;
 
+#if defined( DEBUG ) || defined( _DEBUG )
+	shaderFlags |= D3DCOMPILE_DEBUG;
+	shaderFlags |= D3DCOMPILE_SKIP_OPTIMIZATION;
+#endif
+
+	ID3D10Blob* compiledShader = nullptr;
+	ID3D10Blob* errorMessages = nullptr;
+	HRESULT hr = D3DCompileFromFile(filename.c_str(), nullptr, nullptr, nullptr, "fx_5_0", shaderFlags, 0, &compiledShader, &errorMessages);
+	if (FAILED(hr))
+	{
+		char* errorMessage = (errorMessages != nullptr ? (char*)errorMessages->GetBufferPointer() : "D3DX11CompileFromFile() failed");
+		GCC_ERROR(errorMessage);
+		SAFE_RELEASE(errorMessages);
+	}
+
+	hr = D3DX11CreateEffectFromMemory(compiledShader->GetBufferPointer(), compiledShader->GetBufferSize(), NULL, DXUTGetD3D11Device(), ppEffect);
+	if (FAILED(hr))
+	{
+		GCC_ERROR("D3DX11CreateEffectFromMemory() failed.");
+	}
+
+	SAFE_RELEASE(compiledShader);
 }
 
-void Effect::LoadCompiledEffect(ID3D11Device* direct3DDevice, ID3DX11Effect** effect, const std::wstring& filename)
+void Effect::LoadCompiledEffect(ID3DX11Effect** ppEffect, const std::wstring& filename)
 {
+	std::vector<char> compiledShader;
+	Utility::LoadBinaryFile(filename, compiledShader);
 
-}
-
-void Effect::LoadCompiledEffect(const std::wstring& filename)
-{
-
+	HRESULT hr = D3DX11CreateEffectFromMemory(&compiledShader.front(), compiledShader.size(), NULL, DXUTGetD3D11Device(), ppEffect);
+	if (FAILED(hr))
+	{
+		GCC_ERROR("D3DX11CreateEffectFromMemory() failed.");
+	}
 }
 
 ID3DX11Effect* Effect::GetD3DX11Effect() const
@@ -166,12 +242,37 @@ const std::map<std::string, Variable*>& Effect::GetVariablesByName() const
 
 void Effect::CompileFromFile(const std::wstring& filename)
 {
+	CompileEffectFromFile(&m_pD3DX11Effect, filename);
+	Initialize();
+}
 
+void Effect::LoadCompiledEffect(const std::wstring& filename)
+{
+	LoadCompiledEffect(&m_pD3DX11Effect, filename);
+	Initialize();
 }
 
 void Effect::Initialize()
 {
+	HRESULT hr = m_pD3DX11Effect->GetDesc(&m_D3DX11EffectDesc);
+	if (FAILED(hr))
+	{
+		GCC_ERROR("ID3DX11Effect::GetDesc() failed.");
+	}
 
+	for (uint32_t i = 0; i < m_D3DX11EffectDesc.Techniques; i++)
+	{
+		Technique* technique = new Technique(this, m_pD3DX11Effect->GetTechniqueByIndex(i));
+		m_Techniques.push_back(technique);
+		m_TechniquesByName.insert(std::make_pair(technique->GetTechniqueName(), technique));
+	}
+
+	for (uint32_t i = 0; i < m_D3DX11EffectDesc.GlobalVariables; i++)
+	{
+		Variable* variable = new Variable(this, m_pD3DX11Effect->GetVariableByIndex(i));
+		m_Variables.push_back(variable);
+		m_VariablesByName.insert(std::make_pair(variable->GetVariableName(), variable));
+	}
 }
 
 Technique::Technique(Effect* pEffect, ID3DX11EffectTechnique* pD3DX11EffectTechnique)
@@ -261,7 +362,7 @@ const std::string& Pass::GetPassName() const
 	return m_PassName;
 }
 
-HRESULT Pass::CreateInputLayout(const D3D11_INPUT_ELEMENT_DESC* inputElementDesc, UINT numElements, ID3D11InputLayout **inputLayout)
+HRESULT Pass::CreateInputLayout(const D3D11_INPUT_ELEMENT_DESC* inputElementDesc, uint32_t numElements, ID3D11InputLayout **inputLayout)
 {
 	HRESULT hr;
 	V_RETURN(DXUTGetD3D11Device()->CreateInputLayout(
@@ -269,14 +370,23 @@ HRESULT Pass::CreateInputLayout(const D3D11_INPUT_ELEMENT_DESC* inputElementDesc
 	return S_OK;
 }
 
-void Pass::Apply(UINT flags, ID3D11DeviceContext* context)
+void Pass::Apply(uint32_t flags)
 {
-
+	m_pD3DX11EffectPass->Apply(flags, DXUTGetD3D11DeviceContext());
 }
 
 Variable::Variable(Effect* pEffect, ID3DX11EffectVariable* pD3DX11EffectVariable)
+	: m_pEffect(pEffect),
+	m_pD3DX11EffectVariable(pD3DX11EffectVariable),
+	m_D3DX11EffectVariableDesc(),
+	m_pD3DX11EffectType(nullptr),
+	m_D3DX11EffectTypeDesc(),
+	m_VariableName()
 {
-
+	m_pD3DX11EffectVariable->GetDesc(&m_D3DX11EffectVariableDesc);
+	m_VariableName = m_D3DX11EffectVariableDesc.Name;
+	m_pD3DX11EffectType = m_pD3DX11EffectVariable->GetType();
+	m_pD3DX11EffectType->GetDesc(&m_D3DX11EffectTypeDesc);
 }
 
 Effect* Variable::GetEffect()
@@ -311,45 +421,117 @@ const std::string& Variable::GetVariableName() const
 
 Variable& Variable::operator<<(CXMMATRIX value)
 {
+	ID3DX11EffectMatrixVariable* variable = m_pD3DX11EffectVariable->AsMatrix();
+	if (!variable->IsValid())
+	{
+		GCC_ERROR("Invalid effect variable cast.");
+	}
+
+	variable->SetMatrix(reinterpret_cast<const float*>(&value));
+
 	return *this;
 }
 
 Variable& Variable::operator<<(ID3D11ShaderResourceView* value)
 {
+	ID3DX11EffectShaderResourceVariable* variable = m_pD3DX11EffectVariable->AsShaderResource();
+	if (!variable->IsValid())
+	{
+		GCC_ERROR("Invalid effect variable cast.");
+	}
+
+	variable->SetResource(value);
+
 	return *this;
 }
 
 Variable& Variable::operator<<(ID3D11UnorderedAccessView* value)
 {
+	ID3DX11EffectUnorderedAccessViewVariable* variable = m_pD3DX11EffectVariable->AsUnorderedAccessView();
+	if (!variable->IsValid())
+	{
+		GCC_ERROR("Invalid effect variable cast.");
+	}
+
+	variable->SetUnorderedAccessView(value);
+
 	return *this;
 }
 
 Variable& Variable::operator<<(FXMVECTOR value)
 {
+	ID3DX11EffectVectorVariable* variable = m_pD3DX11EffectVariable->AsVector();
+	if (!variable->IsValid())
+	{
+		GCC_ERROR("Invalid effect variable cast.");
+	}
+
+	variable->SetFloatVector(reinterpret_cast<const float*>(&value));
+
 	return *this;
 }
 
 Variable& Variable::operator<<(int value)
 {
+	ID3DX11EffectScalarVariable* variable = m_pD3DX11EffectVariable->AsScalar();
+	if (!variable->IsValid())
+	{
+		GCC_ERROR("Invalid effect variable cast.");
+	}
+
+	variable->SetInt(value);
+
 	return *this;
 }
 
 Variable& Variable::operator<<(float value)
 {
+	ID3DX11EffectScalarVariable* variable = m_pD3DX11EffectVariable->AsScalar();
+	if (!variable->IsValid())
+	{
+		GCC_ERROR("Invalid effect variable cast.");
+	}
+
+	variable->SetFloat(value);
+
 	return *this;
 }
 
 Variable& Variable::operator<<(const std::vector<float>& values)
 {
+	ID3DX11EffectScalarVariable* variable = m_pD3DX11EffectVariable->AsScalar();
+	if (!variable->IsValid())
+	{
+		GCC_ERROR("Invalid effect variable cast.");
+	}
+
+	variable->SetFloatArray(&values[0], 0, values.size());
+
 	return *this;
 }
 
 Variable& Variable::operator<<(const std::vector<XMFLOAT2>& values)
 {
+	ID3DX11EffectVectorVariable* variable = m_pD3DX11EffectVariable->AsVector();
+	if (!variable->IsValid())
+	{
+		GCC_ERROR("Invalid effect variable cast.");
+	}
+
+	variable->SetFloatVectorArray(reinterpret_cast<const float*>(&values[0]), 0, values.size());
+
 	return *this;
 }
 
 Variable& Variable::operator<<(const std::vector<XMFLOAT4X4>& values)
 {
+	ID3DX11EffectMatrixVariable* variable = m_pD3DX11EffectVariable->AsMatrix();
+	if (!variable->IsValid())
+	{
+		GCC_ERROR("Invalid effect variable cast.");
+	}
+
+	variable->SetMatrixArray(reinterpret_cast<const float*>(&values[0]), 0, values.size());
+
 	return *this;
 }

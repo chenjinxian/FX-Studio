@@ -2,8 +2,9 @@
 #include "../RenderEngineBase.h"
 #include "../RenderEngineInterface.h"
 
-struct aiNode;
+struct aiMesh;
 class Mesh;
+class Material;
 class ModelMaterial;
 
 class Model : public boost::noncopyable
@@ -25,17 +26,12 @@ private:
 	std::vector<ModelMaterial*> m_Materials;
 };
 
-struct aiMesh;
-
-class Material;
-class ModelMaterial;
-class BoneVertexWeights;
-
 class Mesh : public boost::noncopyable
 {
 	friend class Model;
 
 public:
+	Mesh(Model* pModel, aiMesh* mesh);
 	~Mesh();
 
 	Model* GetModel();
@@ -51,7 +47,7 @@ public:
 	UINT FaceCount() const;
 	const std::vector<UINT>& Indices() const;
 
-	void CreateIndexBuffer(ID3D11Buffer** indexBuffer);
+	void CreateIndexBuffer(ID3D11Buffer** ppIndexBuffer);
 
 private:
 	Model* m_pModel;

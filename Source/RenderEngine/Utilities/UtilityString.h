@@ -24,6 +24,22 @@ extern std::string ToStr(const Vector3& vec);
 extern std::string ws2s(const std::wstring& s);
 extern std::wstring s2ws(const std::string &s);
 
+class Utility : public boost::noncopyable
+{
+public:
+	static std::string CurrentDirectory();
+	static std::wstring ExecutableDirectory();
+	static void GetFileName(const std::string& inputPath, std::string& filename);
+	static void GetDirectory(const std::string& inputPath, std::string& directory);
+	static void GetFileNameAndDirectory(const std::string& inputPath, std::string& directory, std::string& filename);
+	static void LoadBinaryFile(const std::wstring& filename, std::vector<char>& data);
+	static void PathJoin(std::wstring& dest, const std::wstring& sourceDirectory, const std::wstring& sourceFile);
+	static void GetPathExtension(const std::wstring& source, std::wstring& dest);
+
+	static void Clamp(long& value, long lower, long upper);
+};
+
+
 #pragma warning(push)
 #pragma warning(disable : 4311)
 

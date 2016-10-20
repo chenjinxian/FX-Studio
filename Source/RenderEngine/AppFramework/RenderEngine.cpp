@@ -18,6 +18,8 @@
 #pragma comment(lib, "zlibstatic.lib")
 #endif
 
+#pragma comment(lib, "Shlwapi.lib")
+
 MiniDumper g_MiniDump(false);
 
 INT WINAPI GameMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)

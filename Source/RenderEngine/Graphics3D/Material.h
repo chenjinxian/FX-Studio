@@ -19,17 +19,20 @@ public:
 	Variable* operator[](const std::string& variableName);
 	Effect* GetEffect() const;
 	Technique* GetCurrentTechnique() const;
-	void SetCurrentTechnique(Technique* currentTechnique);
+	void SetCurrentTechnique(Technique* pTechnique);
 	const std::map<Pass*, ID3D11InputLayout*>& GetInputLayouts() const;
 
-	virtual void Initialize(Effect* effect);
-	virtual void CreateVertexBuffer(ID3D11Device* device, const Model& model, std::vector<ID3D11Buffer*>& vertexBuffers) const;
-	virtual void CreateVertexBuffer(ID3D11Device* device, const Mesh& mesh, ID3D11Buffer** vertexBuffer) const = 0;
-	virtual UINT VertexSize() const = 0;
+	virtual void Initialize(Effect* pEffect);
+	virtual void CreateVertexBuffer(const Model* pModel, std::vector<ID3D11Buffer*>& vertexBuffers) const;
+	virtual void CreateVertexBuffer(const Mesh* pMesh, ID3D11Buffer** ppVertexBuffer) const = 0;
+	virtual uint32_t VertexSize() const = 0;
 
 protected:
-	virtual void CreateInputLayout(const std::string& techniqueName, const std::string& passName, D3D11_INPUT_ELEMENT_DESC* inputElementDescriptions, UINT inputElementDescriptionCount);
-	virtual void Material::CreateInputLayout(Pass& pass, D3D11_INPUT_ELEMENT_DESC* inputElementDescriptions, UINT inputElementDescriptionCount);
+	virtual void CreateInputLayout(
+		const std::string& techniqueName, const std::string& passName,
+		D3D11_INPUT_ELEMENT_DESC* inputElementDescriptions, uint32_t inputElementDescriptionCount);
+	virtual void Material::CreateInputLayout(
+		Pass* pPass, D3D11_INPUT_ELEMENT_DESC* inputElementDescriptions, uint32_t inputElementDescriptionCount);
 
 	Effect* m_pEffect;
 	Technique* m_pCurrentTechnique;
@@ -43,8 +46,8 @@ public:
 	Effect();
 	virtual ~Effect();
 
-	static void CompileEffectFromFile(ID3D11Device* direct3DDevice, ID3DX11Effect** effect, const std::wstring& filename);
-	static void LoadCompiledEffect(ID3D11Device* direct3DDevice, ID3DX11Effect** effect, const std::wstring& filename);
+	static void CompileEffectFromFile(ID3DX11Effect** ppEffect, const std::wstring& filename);
+	static void LoadCompiledEffect(ID3DX11Effect** ppEffect, const std::wstring& filename);
 
 	ID3DX11Effect* GetD3DX11Effect() const;
 	void SetD3DX11Effect(ID3DX11Effect* pD3DX11Effect);
@@ -100,8 +103,8 @@ public:
 	const D3DX11_PASS_DESC& GetD3DX11PassDesc() const;
 	const std::string& GetPassName() const;
 
-	HRESULT CreateInputLayout(const D3D11_INPUT_ELEMENT_DESC* inputElementDesc, UINT numElements, ID3D11InputLayout **inputLayout);
-	void Apply(UINT flags, ID3D11DeviceContext* context);
+	HRESULT CreateInputLayout(const D3D11_INPUT_ELEMENT_DESC* inputElementDesc, uint32_t numElements, ID3D11InputLayout **inputLayout);
+	void Apply(uint32_t flags);
 
 private:
 	Technique* m_pTechnique;

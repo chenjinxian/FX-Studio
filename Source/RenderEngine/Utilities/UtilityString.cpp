@@ -3,6 +3,8 @@
 #include <fstream>
 using std::string;
 
+#pragma comment(lib, "Shlwapi.lib")
+
 std::string ws2s(const std::wstring& s)
 {
 	int slength = (int)s.length() + 1;

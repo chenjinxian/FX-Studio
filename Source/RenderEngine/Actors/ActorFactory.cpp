@@ -9,6 +9,7 @@ ActorFactory::ActorFactory() : m_LastActorId(INVALID_ACTOR_ID)
 {
 	m_ComponentFactory.Register<TransformComponent>(ActorComponent::GetIdFromName(TransformComponent::m_Name));
 	m_ComponentFactory.Register<GridRenderComponent>(ActorComponent::GetIdFromName(GridRenderComponent::m_Name));
+	m_ComponentFactory.Register<SkyRenderComponent>(ActorComponent::GetIdFromName(SkyRenderComponent::m_Name));
 }
 
 

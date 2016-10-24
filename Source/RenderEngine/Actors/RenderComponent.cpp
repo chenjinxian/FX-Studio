@@ -1,6 +1,7 @@
 #include "RenderComponent.h"
 #include "Actor.h"
 #include "TransformComponent.h"
+#include "../Graphics3D/Skybox.h"
 #include "../EventManager/Events.h"
 #include "../AppFramework/RenderEngineApp.h"
 
@@ -159,17 +160,34 @@ SkyRenderComponent::~SkyRenderComponent()
 
 bool SkyRenderComponent::VDelegateInit(TiXmlElement* pData)
 {
+	TiXmlElement* pTexture = pData->FirstChildElement("Texture");
+	if (pTexture)
+	{
+// 		m_textureResource = pTexture->FirstChild()->Value();
+	}
 	return true;
 }
 
 shared_ptr<SceneNode> SkyRenderComponent::VCreateSceneNode()
 {
-	return shared_ptr<SceneNode>();
+	shared_ptr<SkyboxNode> sky;
+	if (RenderEngineApp::GetRendererImpl() == RenderEngineApp::Renderer_D3D11)
+	{
+		sky = shared_ptr<SkyboxNode>(GCC_NEW SkyboxNode(L"Assets\\Textures\\Maskonaive2_1024.dds"));
+	}
+	else
+	{
+		GCC_ERROR("Unknown Renderer Implementation in VLoadGameDelegate");
+	}
+	return sky;
 }
 
 void SkyRenderComponent::VCreateInheritedXmlElement(TiXmlElement* pBaseElement)
 {
-
+// 	TiXmlElement* pTextureNode = GCC_NEW TiXmlElement("Texture");
+// 	TiXmlText* pTextureText = GCC_NEW TiXmlText(m_textureResource.c_str());
+// 	pTextureNode->LinkEndChild(pTextureText);
+// 	pBaseElement->LinkEndChild(pTextureNode);
 }
 
 LightRenderComponent::LightRenderComponent()

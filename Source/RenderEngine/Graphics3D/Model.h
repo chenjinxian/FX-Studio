@@ -44,8 +44,8 @@ public:
 	const std::vector<Vector3>& GetBiNormals() const;
 	const std::vector<std::vector<Vector3>*>& GetTextureCoordinates() const;
 	const std::vector<std::vector<Vector4>*>& GetVertexColors() const;
-	UINT FaceCount() const;
-	const std::vector<UINT>& Indices() const;
+	uint32_t GetFaceCount() const;
+	const std::vector<uint32_t>& GetIndices() const;
 
 	void CreateIndexBuffer(ID3D11Buffer** ppIndexBuffer);
 
@@ -59,6 +59,6 @@ private:
 	std::vector<Vector3> m_BiNormals;
 	std::vector<std::vector<Vector3>*> m_TextureCoordinates;
 	std::vector<std::vector<Vector4>*> m_VertexColors;
-	UINT m_FaceCount;
-	std::vector<UINT> m_Indices;
+	uint32_t m_FaceCount;
+	std::vector<uint32_t> m_Indices;
 };

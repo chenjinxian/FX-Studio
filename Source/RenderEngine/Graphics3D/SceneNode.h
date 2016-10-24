@@ -33,7 +33,7 @@ protected:
 
 typedef std::vector<shared_ptr<ISceneNode> > SceneNodeList;
 
-class SceneNode : public ISceneNode
+class SceneNode : public ISceneNode, public boost::noncopyable
 {
 	friend class Scene;
 
@@ -91,9 +91,10 @@ public:
 
 	Matrix GetViewMatrix() { return m_ModelViewer.GetViewMatrix(); }
 	Matrix GetProjectMatrix() { return m_ModelViewer.GetProjMatrix(); }
+	Vector3 GetPostion() { return m_ModelViewer.GetEyePt(); }
 
 private:
-	CModelViewerCamera m_ModelViewer;
+	CFirstPersonCamera m_ModelViewer;
 };
 
 typedef struct _VertexPositionColor

@@ -4,12 +4,14 @@
 #include "assimp/scene.h"
 #include "assimp/postprocess.h"
 
+#pragma comment(lib, "assimp-vc140-mt.lib")
+
 Model::Model(const std::string& filename, bool flipUVs /*= false*/)
 	: m_Meshes(), m_Materials()
 {
 	Assimp::Importer importer;
 
-	UINT flags = aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType | aiProcess_FlipWindingOrder;
+	uint32_t flags = aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType | aiProcess_FlipWindingOrder;
 	if (flipUVs)
 	{
 		flags |= aiProcess_FlipUVs;
@@ -23,7 +25,7 @@ Model::Model(const std::string& filename, bool flipUVs /*= false*/)
 
 	if (scene->HasMaterials())
 	{
-		for (UINT i = 0; i < scene->mNumMaterials; i++)
+		for (uint32_t i = 0; i < scene->mNumMaterials; i++)
 		{
 			m_Materials.push_back(GCC_NEW ModelMaterial(*this, scene->mMaterials[i]));
 		}
@@ -31,7 +33,7 @@ Model::Model(const std::string& filename, bool flipUVs /*= false*/)
 
 	if (scene->HasMeshes())
 	{
-		for (UINT i = 0; i < scene->mNumMeshes; i++)
+		for (uint32_t i = 0; i < scene->mNumMeshes; i++)
 		{
 			Mesh* mesh = GCC_NEW Mesh(this, (scene->mMeshes[i]));
 			m_Meshes.push_back(mesh);
@@ -91,7 +93,7 @@ Mesh::Mesh(Model* pModel, aiMesh* mesh)
 	m_pModelMaterial = m_pModel->GetMaterials().at(mesh->mMaterialIndex);
 
 	m_Vertices.reserve(mesh->mNumVertices);
-	for (UINT i = 0; i < mesh->mNumVertices; i++)
+	for (uint32_t i = 0; i < mesh->mNumVertices; i++)
 	{
 		m_Vertices.push_back(Vector3(reinterpret_cast<const float*>(&mesh->mVertices[i])));
 	}
@@ -99,7 +101,7 @@ Mesh::Mesh(Model* pModel, aiMesh* mesh)
 	if (mesh->HasNormals())
 	{
 		m_Normals.reserve(mesh->mNumVertices);
-		for (UINT i = 0; i < mesh->mNumVertices; i++)
+		for (uint32_t i = 0; i < mesh->mNumVertices; i++)
 		{
 			m_Normals.push_back(Vector3(reinterpret_cast<const float*>(&mesh->mNormals[i])));
 		}
@@ -109,36 +111,36 @@ Mesh::Mesh(Model* pModel, aiMesh* mesh)
 	{
 		m_Tangents.reserve(mesh->mNumVertices);
 		m_BiNormals.reserve(mesh->mNumVertices);
-		for (UINT i = 0; i < mesh->mNumVertices; i++)
+		for (uint32_t i = 0; i < mesh->mNumVertices; i++)
 		{
 			m_Tangents.push_back(Vector3(reinterpret_cast<const float*>(&mesh->mTangents[i])));
 			m_BiNormals.push_back(Vector3(reinterpret_cast<const float*>(&mesh->mBitangents[i])));
 		}
 	}
 
-	UINT uvChannelCount = mesh->GetNumUVChannels();
-	for (UINT i = 0; i < uvChannelCount; i++)
+	uint32_t uvChannelCount = mesh->GetNumUVChannels();
+	for (uint32_t i = 0; i < uvChannelCount; i++)
 	{
 		std::vector<Vector3>* textureCoordinates = GCC_NEW std::vector<Vector3>();
 		textureCoordinates->reserve(mesh->mNumVertices);
 		m_TextureCoordinates.push_back(textureCoordinates);
 
 		aiVector3D* aiTextureCoordinates = mesh->mTextureCoords[i];
-		for (UINT j = 0; j < mesh->mNumVertices; j++)
+		for (uint32_t j = 0; j < mesh->mNumVertices; j++)
 		{
 			textureCoordinates->push_back(Vector3(reinterpret_cast<const float*>(&aiTextureCoordinates[j])));
 		}
 	}
 
-	UINT colorChannelCount = mesh->GetNumColorChannels();
-	for (UINT i = 0; i < colorChannelCount; i++)
+	uint32_t colorChannelCount = mesh->GetNumColorChannels();
+	for (uint32_t i = 0; i < colorChannelCount; i++)
 	{
 		std::vector<Vector4>* vertexColors = GCC_NEW std::vector<Vector4>();
 		vertexColors->reserve(mesh->mNumVertices);
 		m_VertexColors.push_back(vertexColors);
 
 		aiColor4D* aiVertexColors = mesh->mColors[i];
-		for (UINT j = 0; j < mesh->mNumVertices; j++)
+		for (uint32_t j = 0; j < mesh->mNumVertices; j++)
 		{
 			vertexColors->push_back(Vector4(reinterpret_cast<const float*>(&aiVertexColors[j])));
 		}
@@ -147,11 +149,11 @@ Mesh::Mesh(Model* pModel, aiMesh* mesh)
 	if (mesh->HasFaces())
 	{
 		m_FaceCount = mesh->mNumFaces;
-		for (UINT i = 0; i < m_FaceCount; i++)
+		for (uint32_t i = 0; i < m_FaceCount; i++)
 		{
 			aiFace* face = &mesh->mFaces[i];
 
-			for (UINT j = 0; j < face->mNumIndices; j++)
+			for (uint32_t j = 0; j < face->mNumIndices; j++)
 			{
 				m_Indices.push_back(face->mIndices[j]);
 			}
@@ -217,12 +219,12 @@ const std::vector<std::vector<Vector4>*>& Mesh::GetVertexColors() const
 	return m_VertexColors;
 }
 
-UINT Mesh::FaceCount() const
+uint32_t Mesh::GetFaceCount() const
 {
 	return m_FaceCount;
 }
 
-const std::vector<UINT>& Mesh::Indices() const
+const std::vector<uint32_t>& Mesh::GetIndices() const
 {
 	return m_Indices;
 }
@@ -233,7 +235,7 @@ void Mesh::CreateIndexBuffer(ID3D11Buffer** ppIndexBuffer)
 
 	D3D11_BUFFER_DESC indexBufferDesc;
 	ZeroMemory(&indexBufferDesc, sizeof(indexBufferDesc));
-	indexBufferDesc.ByteWidth = sizeof(UINT) * m_Indices.size();
+	indexBufferDesc.ByteWidth = sizeof(uint32_t) * m_Indices.size();
 	indexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
 	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 

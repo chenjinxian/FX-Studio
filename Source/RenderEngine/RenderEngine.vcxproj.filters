@@ -32,6 +32,9 @@
     <Filter Include="UserInterface">
       <UniqueIdentifier>{a3de8915-20c1-4897-b067-1cd71fb8b38c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Effect Files">
+      <UniqueIdentifier>{289d8c16-99ab-4493-b67a-2864aaf74356}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -142,6 +145,9 @@
     <ClInclude Include="Graphics3D\ModelMaterial.h">
       <Filter>Graphics3D</Filter>
     </ClInclude>
+    <ClInclude Include="Graphics3D\Skybox.h">
+      <Filter>Graphics3D</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppFramework\RenderEngineApp.cpp">
@@ -229,6 +235,9 @@
       <Filter>Graphics3D</Filter>
     </ClCompile>
     <ClCompile Include="Graphics3D\ModelMaterial.cpp">
+      <Filter>Graphics3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics3D\Skybox.cpp">
       <Filter>Graphics3D</Filter>
     </ClCompile>
   </ItemGroup>

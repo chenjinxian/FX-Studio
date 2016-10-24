@@ -171,6 +171,7 @@
     <ClInclude Include="Graphics3D\ModelMaterial.h" />
     <ClInclude Include="Graphics3D\Scene.h" />
     <ClInclude Include="Graphics3D\SceneNode.h" />
+    <ClInclude Include="Graphics3D\Skybox.h" />
     <ClInclude Include="Graphics3D\VertexDeclarations.h" />
     <ClInclude Include="Mainloop\Initialization.h" />
     <ClInclude Include="Mainloop\Process.h" />
@@ -209,6 +210,7 @@
     <ClCompile Include="Graphics3D\ModelMaterial.cpp" />
     <ClCompile Include="Graphics3D\Scene.cpp" />
     <ClCompile Include="Graphics3D\SceneNode.cpp" />
+    <ClCompile Include="Graphics3D\Skybox.cpp" />
     <ClCompile Include="Mainloop\Initialization.cpp" />
     <ClCompile Include="Mainloop\Process.cpp" />
     <ClCompile Include="Mainloop\ProcessManager.cpp" />

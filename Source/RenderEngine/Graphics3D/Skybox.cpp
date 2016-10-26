@@ -1,6 +1,5 @@
 #include "Skybox.h"
 #include "Model.h"
-#include "Mesh.h"
 #include "Scene.h"
 #include "../Utilities/UtilityString.h"
 #include <DDSTextureLoader.h>

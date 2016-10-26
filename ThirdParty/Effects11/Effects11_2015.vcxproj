@@ -160,8 +160,8 @@
       </Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>
-      </Command>
+      <Command>mkdir "$(SolutionDir)..\Lib\"
+copy "$(TargetPath)" "$(SolutionDir)..\Lib\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|X64'">
@@ -245,8 +245,8 @@
       </Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>
-      </Command>
+      <Command>mkdir "$(SolutionDir)..\Lib\"
+copy "$(TargetPath)" "$(SolutionDir)..\Lib\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|X64'">

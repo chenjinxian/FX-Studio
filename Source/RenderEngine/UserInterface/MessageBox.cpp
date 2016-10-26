@@ -44,8 +44,8 @@ MessageBox::MessageBox(std::wstring msg, std::wstring title, int buttonFlags)
 
 	m_UI.SetSize( m_Width, m_Height );
 
-	D3DCOLOR red = D3DCOLOR_ARGB(0xc0,0xff,0x00,0x00);
-	m_UI.SetBackgroundColors(red);
+	D3DCOLOR color = D3DCOLOR_RGBA(100, 100, 35, 100);
+	m_UI.SetBackgroundColors(color);
 
 	int iY = border; 
 	int iX = (m_Width - msgWidth) / 2; 

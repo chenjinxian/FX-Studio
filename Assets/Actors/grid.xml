@@ -1,0 +1,14 @@
+<Actor type="Grid" resource="actors\grid.xml">
+
+	<TransformComponent>
+		<Position x="0" y="0" z="0"/>
+		<YawPitchRoll x="0" y="0" z="0"/>
+	</TransformComponent>
+		
+    <GridRenderComponent>
+        <Color r="0.4" g="0.4" b="0.4" a="1.0"/>
+        <Texture>art\grid.dds</Texture>
+		<Division>100</Division>
+    </GridRenderComponent>
+
+</Actor>

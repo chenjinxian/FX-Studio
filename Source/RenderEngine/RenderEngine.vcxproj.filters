@@ -130,9 +130,6 @@
     <ClInclude Include="UserInterface\UserInterface.h">
       <Filter>UserInterface</Filter>
     </ClInclude>
-    <ClInclude Include="Graphics3D\Mesh.h">
-      <Filter>Graphics3D</Filter>
-    </ClInclude>
     <ClInclude Include="Graphics3D\Material.h">
       <Filter>Graphics3D</Filter>
     </ClInclude>
@@ -146,6 +143,12 @@
       <Filter>Graphics3D</Filter>
     </ClInclude>
     <ClInclude Include="Graphics3D\Skybox.h">
+      <Filter>Graphics3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics3D\D3DSdkMesh.h">
+      <Filter>Graphics3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics3D\TextureResourceLoader.h">
       <Filter>Graphics3D</Filter>
     </ClInclude>
   </ItemGroup>
@@ -225,9 +228,6 @@
     <ClCompile Include="AppFramework\RenderEngine.cpp">
       <Filter>AppFramework</Filter>
     </ClCompile>
-    <ClCompile Include="Graphics3D\Mesh.cpp">
-      <Filter>Graphics3D</Filter>
-    </ClCompile>
     <ClCompile Include="Graphics3D\Material.cpp">
       <Filter>Graphics3D</Filter>
     </ClCompile>
@@ -238,6 +238,12 @@
       <Filter>Graphics3D</Filter>
     </ClCompile>
     <ClCompile Include="Graphics3D\Skybox.cpp">
+      <Filter>Graphics3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics3D\D3DSdkMesh.cpp">
+      <Filter>Graphics3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics3D\TextureResourceLoader.cpp">
       <Filter>Graphics3D</Filter>
     </ClCompile>
   </ItemGroup>

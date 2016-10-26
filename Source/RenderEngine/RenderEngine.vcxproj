@@ -166,12 +166,13 @@
     <ClInclude Include="EventManager\Events.h" />
     <ClInclude Include="Graphics3D\D3DRenderer.h" />
     <ClInclude Include="Graphics3D\Material.h" />
-    <ClInclude Include="Graphics3D\Mesh.h" />
+    <ClInclude Include="Graphics3D\D3DSdkMesh.h" />
     <ClInclude Include="Graphics3D\Model.h" />
     <ClInclude Include="Graphics3D\ModelMaterial.h" />
     <ClInclude Include="Graphics3D\Scene.h" />
     <ClInclude Include="Graphics3D\SceneNode.h" />
     <ClInclude Include="Graphics3D\Skybox.h" />
+    <ClInclude Include="Graphics3D\TextureResourceLoader.h" />
     <ClInclude Include="Graphics3D\VertexDeclarations.h" />
     <ClInclude Include="Mainloop\Initialization.h" />
     <ClInclude Include="Mainloop\Process.h" />
@@ -205,12 +206,13 @@
     <ClCompile Include="EventManager\Events.cpp" />
     <ClCompile Include="Graphics3D\D3DRenderer.cpp" />
     <ClCompile Include="Graphics3D\Material.cpp" />
-    <ClCompile Include="Graphics3D\Mesh.cpp" />
+    <ClCompile Include="Graphics3D\D3DSdkMesh.cpp" />
     <ClCompile Include="Graphics3D\Model.cpp" />
     <ClCompile Include="Graphics3D\ModelMaterial.cpp" />
     <ClCompile Include="Graphics3D\Scene.cpp" />
     <ClCompile Include="Graphics3D\SceneNode.cpp" />
     <ClCompile Include="Graphics3D\Skybox.cpp" />
+    <ClCompile Include="Graphics3D\TextureResourceLoader.cpp" />
     <ClCompile Include="Mainloop\Initialization.cpp" />
     <ClCompile Include="Mainloop\Process.cpp" />
     <ClCompile Include="Mainloop\ProcessManager.cpp" />
@@ -220,6 +222,20 @@
     <ClCompile Include="UserInterface\HumanView.cpp" />
     <ClCompile Include="UserInterface\MessageBox.cpp" />
     <ClCompile Include="Utilities\UtilityString.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\ThirdParty\DirectXTK\DirectXTK_Desktop_2015.vcxproj">
+      <Project>{e0b52ae7-e160-4d32-bf3f-910b785e5a8e}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ThirdParty\DXUT\Core\DXUT_2015.vcxproj">
+      <Project>{85344b7f-5aa0-4e12-a065-d1333d11f6ca}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ThirdParty\DXUT\Optional\DXUTOpt_2015.vcxproj">
+      <Project>{61b333c2-c4f7-4cc1-a9bf-83f6d95588eb}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ThirdParty\Effects11\Effects11_2015.vcxproj">
+      <Project>{df460eab-570d-4b50-9089-2e2fc801bf38}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

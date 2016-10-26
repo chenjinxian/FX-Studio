@@ -5397,7 +5397,7 @@ void CDXUTListBox::Render( _In_ float fElapsedTime )
         // Find out the height of a single line of text
         RECT rc = m_rcText;
         RECT rcSel = m_rcSelection;
-        rc.bottom = rc.top + m_pDialog->GetManager()->GetFontNode( pElement->iFont )->nHeight;
+        rc.bottom = rc.top + m_pDialog->GetManager()->GetFontNode( pElement->iFont )->nHeight + 10;
 
         // Update the line height formation
         m_nTextHeight = rc.bottom - rc.top;

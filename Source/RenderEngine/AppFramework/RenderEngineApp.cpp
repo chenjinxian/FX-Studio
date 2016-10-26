@@ -82,21 +82,10 @@ bool RenderEngineApp::InitInstance(HINSTANCE hInstance, LPWSTR lpCmdLine, HWND h
 		return false;
 	}
 
-// 	extern shared_ptr<IResourceLoader> CreateWAVResourceLoader();
-// 	extern shared_ptr<IResourceLoader> CreateOGGResourceLoader();
-// 	extern shared_ptr<IResourceLoader> CreateDDSResourceLoader();
-// 	extern shared_ptr<IResourceLoader> CreateJPGResourceLoader();
-// 	extern shared_ptr<IResourceLoader> CreateXmlResourceLoader();
-// 	extern shared_ptr<IResourceLoader> CreateSdkMeshResourceLoader();
-// 	extern shared_ptr<IResourceLoader> CreateScriptResourceLoader();
-
-// 	m_pResCache->RegisterLoader(CreateWAVResourceLoader());
-// 	m_pResCache->RegisterLoader(CreateOGGResourceLoader());
 // 	m_pResCache->RegisterLoader(CreateDDSResourceLoader());
 // 	m_pResCache->RegisterLoader(CreateJPGResourceLoader());
 	m_pResCache->RegisterLoader(CreateXmlResourceLoader());
 // 	m_pResCache->RegisterLoader(CreateSdkMeshResourceLoader());
-// 	m_pResCache->RegisterLoader(CreateScriptResourceLoader());
 
 	if (!LoadStrings("English"))
 	{
@@ -111,11 +100,12 @@ bool RenderEngineApp::InitInstance(HINSTANCE hInstance, LPWSTR lpCmdLine, HWND h
 		return false;
 	}
 
-	DXUTInit(true, true, lpCmdLine, true);
-
 	m_pGameLogic = VCreateGameAndView();
 	if (m_pGameLogic == nullptr)
 		return false;
+
+	DXUTInit(true, true, lpCmdLine, true);
+	DXUTSetCursorSettings(true, true);
 
 	if (hWnd == NULL)
 	{

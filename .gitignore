@@ -253,3 +253,6 @@ paket-files/
 *.sln.iml
 Lib/RenderEngine.lib
 Lib/RenderEngined.lib
+Lib/DirectXTKd.lib
+Lib/DXUTd.lib
+Lib/Effects11d.lib

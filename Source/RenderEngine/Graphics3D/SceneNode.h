@@ -94,7 +94,7 @@ public:
 	Vector3 GetPostion() { return m_ModelViewer.GetEyePt(); }
 
 private:
-	CFirstPersonCamera m_ModelViewer;
+	CModelViewerCamera m_ModelViewer;
 };
 
 typedef struct _VertexPositionColor

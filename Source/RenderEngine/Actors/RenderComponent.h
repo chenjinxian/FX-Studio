@@ -55,8 +55,12 @@ public:
 	static const char* m_Name;
 
 protected:
+	virtual bool VDelegateInit(TiXmlElement* pData) override;
 	virtual shared_ptr<SceneNode> VCreateSceneNode() override;
 	virtual void VCreateInheritedXmlElement(TiXmlElement* pBaseElement);
+
+private:
+	std::string m_MeshFileName;
 };
 
 class LightRenderComponent : public BaseRenderComponent

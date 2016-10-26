@@ -37,9 +37,19 @@ public:
 	virtual HRESULT VOnRestore(Scene *pScene);
 	virtual HRESULT VOnLostDevice(Scene *pScene) { return S_OK; }
 	virtual HRESULT VOnDestoryDevice() { return S_OK; }
-	virtual HRESULT VRender(Scene *pScene);
+	virtual HRESULT VRender(Scene* pScene, double fTime, float fElapsedTime) override;
 
-protected:
-	float CalcBoundingSphere(CDXUTSDKMesh *mesh11);
+private:
 	std::string m_MeshFileName;
+	XMMATRIX                            g_World;
+	ID3DX11Effect*                      g_pEffect;
+	ID3D11InputLayout*                  g_pVertexLayout;
+	ID3DX11EffectTechnique*             g_pTechnique;
+	CDXUTSDKMesh                        g_Mesh;
+	ID3DX11EffectShaderResourceVariable* g_ptxDiffuseVariable;
+	ID3DX11EffectMatrixVariable*        g_pWorldVariable;
+	ID3DX11EffectMatrixVariable*        g_pViewVariable;
+	ID3DX11EffectMatrixVariable*        g_pProjectionVariable;
+	ID3DX11EffectScalarVariable*        g_pWavinessVariable;
+	ID3DX11EffectScalarVariable*        g_pTimeVariable;
 };

@@ -2,6 +2,7 @@
 #include "Actor.h"
 #include "TransformComponent.h"
 #include "../Graphics3D/Skybox.h"
+#include "../Graphics3D/D3DSdkMesh.h"
 #include "../EventManager/Events.h"
 #include "../AppFramework/RenderEngineApp.h"
 
@@ -105,7 +106,8 @@ bool GridRenderComponent::VDelegateInit(TiXmlElement* pData)
 
 shared_ptr<SceneNode> GridRenderComponent::VCreateSceneNode()
 {
-	shared_ptr<TransformComponent> pTransformComponent = MakeStrongPtr(m_pOwner->GetComponent<TransformComponent>(TransformComponent::m_Name));
+	shared_ptr<TransformComponent> pTransformComponent =
+		MakeStrongPtr(m_pOwner->GetComponent<TransformComponent>(TransformComponent::m_Name));
 	if (pTransformComponent)
 	{
 		WeakBaseRenderComponentPtr weakThis(this);
@@ -113,7 +115,6 @@ shared_ptr<SceneNode> GridRenderComponent::VCreateSceneNode()
 		switch (RenderEngineApp::GetRendererImpl())
 		{
 		case RenderEngineApp::Renderer_D3D11:
-// 			return shared_ptr<SceneNode>(GCC_NEW D3DGrid11(m_pOwner->GetId(), weakThis, &(pTransformComponent->GetTransform())));
 			return shared_ptr<SceneNode>(GCC_NEW GridNode(m_pOwner->GetActorId(), weakThis));
 
 		default:
@@ -130,6 +131,7 @@ void GridRenderComponent::VCreateInheritedXmlElement(TiXmlElement* pBaseElement)
 }
 
 MeshRenderComponent::MeshRenderComponent()
+	: m_MeshFileName()
 {
 
 }
@@ -139,13 +141,47 @@ MeshRenderComponent::~MeshRenderComponent()
 
 }
 
+bool MeshRenderComponent::VDelegateInit(TiXmlElement* pData)
+{
+	TiXmlElement* pSdkMeshName = pData->FirstChildElement("SdkMesh");
+	if (pSdkMeshName != nullptr)
+	{
+		m_MeshFileName = pSdkMeshName->FirstChild()->Value();
+	}
+
+	return true;
+}
+
 shared_ptr<SceneNode> MeshRenderComponent::VCreateSceneNode()
 {
+	shared_ptr<TransformComponent> pTransformComponent =
+		MakeStrongPtr(m_pOwner->GetComponent<TransformComponent>(TransformComponent::m_Name));
+	if (pTransformComponent)
+	{
+		WeakBaseRenderComponentPtr weakThis(this);
+
+		switch (RenderEngineApp::GetRendererImpl())
+		{
+		case RenderEngineApp::Renderer_D3D11:
+		{
+			return shared_ptr<SceneNode>(GCC_NEW D3DShaderMeshNode11(
+				m_pOwner->GetActorId(), weakThis, m_MeshFileName, RenderPass_Actor, pTransformComponent->GetTransform()));
+		}
+
+		default:
+			GCC_ERROR("Unknown Renderer Implementation in TeapotRenderComponent");
+		}
+	}
+
 	return shared_ptr<SceneNode>();
 }
 
 void MeshRenderComponent::VCreateInheritedXmlElement(TiXmlElement* pBaseElement)
 {
+	TiXmlElement* pMeshNode = GCC_NEW TiXmlElement("SdkMesh");
+	TiXmlText* pSdkMeshName = GCC_NEW TiXmlText(m_MeshFileName.c_str());
+	pMeshNode->LinkEndChild(pSdkMeshName);
+	pBaseElement->LinkEndChild(pMeshNode);
 }
 
 SkyRenderComponent::SkyRenderComponent()

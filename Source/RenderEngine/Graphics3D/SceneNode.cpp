@@ -221,9 +221,9 @@ HRESULT CameraNode::VOnRestore(Scene* pScene)
 	const DXGI_SURFACE_DESC* pBackBufferSurfaceDesc = DXUTGetDXGIBackBufferSurfaceDesc();
 	float fAspectRatio = pBackBufferSurfaceDesc->Width / (FLOAT)pBackBufferSurfaceDesc->Height;
 	m_ModelViewer.SetProjParams(XM_PI / 4, fAspectRatio, 0.1f, 5000.0f);
-// 	m_ModelViewer.SetWindow(pBackBufferSurfaceDesc->Width, pBackBufferSurfaceDesc->Height);
-// 	m_ModelViewer.SetRotateButtons(MOUSE_LEFT_BUTTON, MOUSE_WHEEL, MOUSE_LEFT_BUTTON);
-	m_ModelViewer.SetRotateButtons(true, false, true);
+	m_ModelViewer.SetWindow(pBackBufferSurfaceDesc->Width, pBackBufferSurfaceDesc->Height);
+	m_ModelViewer.SetButtonMasks(MOUSE_LEFT_BUTTON, MOUSE_WHEEL, MOUSE_LEFT_BUTTON);
+// 	m_ModelViewer.SetRotateButtons(true, false, true);
 
 	return S_OK;
 }

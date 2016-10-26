@@ -18,7 +18,7 @@ public:
 	virtual std::string VGetPattern() { return "*.jpg"; }
 };
 
-shared_ptr<IResourceLoader> CreateJPGResourceLoader()
+shared_ptr<IResourceLoader> CreateWICResourceLoader()
 {
 	return shared_ptr<IResourceLoader>(GCC_NEW JpgResourceLoader());
 }
@@ -40,8 +40,8 @@ bool TextureResourceLoader::VLoadResource(char *rawBuffer, unsigned int rawSize,
 	{
 		shared_ptr<D3DTextureResourceExtraData11> extra = shared_ptr<D3DTextureResourceExtraData11>(GCC_NEW D3DTextureResourceExtraData11());
 
-		CreateDDSTextureFromMemory();
-		CreateWICTextureFromMemory()
+// 		CreateDDSTextureFromMemory();
+// 		CreateWICTextureFromMemory()
 // 		if ( FAILED (D3DX11CreateShaderResourceViewFromMemory( DXUTGetD3D11Device(), rawBuffer, rawSize, NULL, NULL, &extra->m_pTexture, NULL ) ) )
 // 			return false;
 

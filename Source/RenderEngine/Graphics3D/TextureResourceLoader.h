@@ -3,6 +3,9 @@
 #include "../RenderEngineInterface.h"
 #include "../ResourceCache/ResCache.h"
 
+shared_ptr<IResourceLoader> CreateDDSResourceLoader();
+shared_ptr<IResourceLoader> CreateWICResourceLoader();
+
 class D3DTextureResourceExtraData11 : public IResourceExtraData
 {
 	friend class TextureResourceLoader;

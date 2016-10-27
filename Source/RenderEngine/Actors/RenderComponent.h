@@ -62,6 +62,7 @@ protected:
 private:
 	std::string m_SdkMeshName;
 	std::string m_TextureName;
+	std::string m_EffectName;
 };
 
 class LightRenderComponent : public BaseRenderComponent

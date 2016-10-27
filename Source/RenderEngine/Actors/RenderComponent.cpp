@@ -156,6 +156,12 @@ bool MeshRenderComponent::VDelegateInit(TiXmlElement* pData)
 		m_TextureName = pTexture->FirstChild()->Value();
 	}
 
+	TiXmlElement* pEffect = pData->FirstChildElement("Effect");
+	if (pEffect != nullptr)
+	{
+		m_EffectName = pEffect->FirstChild()->Value();
+	}
+
 	return true;
 }
 
@@ -189,6 +195,16 @@ void MeshRenderComponent::VCreateInheritedXmlElement(TiXmlElement* pBaseElement)
 	TiXmlText* pSdkMeshName = GCC_NEW TiXmlText(m_SdkMeshName.c_str());
 	pSdkMesh->LinkEndChild(pSdkMeshName);
 	pBaseElement->LinkEndChild(pSdkMesh);
+
+	TiXmlElement* pTexture = GCC_NEW TiXmlElement("Texture");
+	TiXmlText* pTextureName = GCC_NEW TiXmlText(m_TextureName.c_str());
+	pTexture->LinkEndChild(pTextureName);
+	pBaseElement->LinkEndChild(pTexture);
+
+	TiXmlElement* pEffect = GCC_NEW TiXmlElement("Effect");
+	TiXmlText* pEffectName = GCC_NEW TiXmlText(m_EffectName.c_str());
+	pEffect->LinkEndChild(pEffectName);
+	pBaseElement->LinkEndChild(pEffect);
 }
 
 SkyRenderComponent::SkyRenderComponent()

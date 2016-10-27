@@ -15,7 +15,7 @@ namespace Logger
 
 	public:
 		ErrorMessenger(void);
-		void Show(const std::string& errorMessage, bool isFatal, const char* funcName, const char* sourceFile, unsigned int lineNum);
+		void Show(const std::string& errorMessage, bool isFatal, const char* funcName, const char* sourceFile, uint32_t lineNum);
 	};
 
 	// construction; must be called at the beginning and end of the program
@@ -23,7 +23,7 @@ namespace Logger
 	void Destroy(void);
 	
 	// logging functions
-	void Log(const std::string& tag, const std::string& message, const char* funcName, const char* sourceFile, unsigned int lineNum);
+	void Log(const std::string& tag, const std::string& message, const char* funcName, const char* sourceFile, uint32_t lineNum);
 	void SetDisplayFlags(const std::string& tag, unsigned char flags);
 }
 

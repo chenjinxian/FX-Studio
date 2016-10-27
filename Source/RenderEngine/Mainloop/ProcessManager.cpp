@@ -10,7 +10,7 @@ ProcessManager::~ProcessManager(void)
 // The process update tick.  Called every logic tick.  This function returns the number of process chains that 
 // succeeded in the upper 32 bits and the number of process chains that failed or were aborted in the lower 32 bits.
 //---------------------------------------------------------------------------------------------------------------------
-unsigned int ProcessManager::UpdateProcesses(double fTime, float fElapsedTime)
+uint32_t ProcessManager::UpdateProcesses(double fTime, float fElapsedTime)
 {
 	unsigned short int successCount = 0;
 	unsigned short int failCount = 0;

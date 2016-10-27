@@ -214,7 +214,7 @@ HRESULT CameraNode::VRender(Scene* pScene, double fTime, float fElapsedTime)
 
 HRESULT CameraNode::VOnRestore(Scene* pScene)
 {
-	static const XMVECTORF32 s_Eye = { 0.0f, 3.0f, -10.0f, 0.f };
+	static const XMVECTORF32 s_Eye = { 0.0f, 3.0f, -800.0f, 0.f };
 	static const XMVECTORF32 s_At = { 0.0f, 1.0f, 0.0f, 0.f };
 	m_ModelViewer.SetViewParams(s_Eye, s_At);
 
@@ -324,7 +324,7 @@ HRESULT GridNode::VOnRestore(Scene* pScene)
 	float adjustedScale = mScale * 0.1f;
 	float maxPosition = mSize * adjustedScale / 2;
 
-	for (unsigned int i = 0, j = 0; i < mSize + 1; i++, j = 4 * i)
+	for (uint32_t i = 0, j = 0; i < mSize + 1; i++, j = 4 * i)
 	{
 		float position = maxPosition - (i * adjustedScale);
 

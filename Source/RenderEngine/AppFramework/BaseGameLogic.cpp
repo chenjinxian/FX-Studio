@@ -89,9 +89,7 @@ bool BaseGameLogic::VLoadGame(const std::string& projectXml)
 	{
 		for (TiXmlElement* pNode = pActorsNode->FirstChildElement(); pNode; pNode = pNode->NextSiblingElement())
 		{
-			const char* actorResource = pNode->Attribute("resource");
-
-			StrongActorPtr pActor = VCreateActor(actorResource, pNode, Matrix());
+			StrongActorPtr pActor = VCreateActor(pNode);
 			if (pActor)
 			{
 				shared_ptr<EvtData_New_Actor> pNewActorEvent(GCC_NEW EvtData_New_Actor(pActor->GetActorId()));
@@ -120,8 +118,8 @@ bool BaseGameLogic::VLoadGame(const std::string& projectXml)
 
 	if (m_IsProxy)
 	{
-// 		shared_ptr<EvtData_Remote_Environment_Loaded> pNewGameEvent(GCC_NEW EvtData_Remote_Environment_Loaded);
-// 		IEventManager::Get()->VTriggerEvent(pNewGameEvent);
+		shared_ptr<EvtData_Remote_Environment_Loaded> pNewGameEvent(GCC_NEW EvtData_Remote_Environment_Loaded);
+		IEventManager::Get()->VTriggerEvent(pNewGameEvent);
 	}
 	else
 	{
@@ -155,10 +153,10 @@ void BaseGameLogic::VRemoveView(shared_ptr<IGameView> pView)
 }
 
 StrongActorPtr BaseGameLogic::VCreateActor(
-	const std::string& actorResource, TiXmlElement *overrides,
-	const Matrix& initialTransform, ActorId serversActorId)
+	TiXmlElement *pActorRoot, const Matrix& initialTransform, ActorId serversActorId)
 {
-	GCC_ASSERT(m_pActorFactory);
+	GCC_ASSERT(m_pActorFactory != nullptr);
+	GCC_ASSERT(pActorRoot != nullptr);
 
 	if (!m_IsProxy && serversActorId != INVALID_ACTOR_ID)
 		return StrongActorPtr();
@@ -166,7 +164,7 @@ StrongActorPtr BaseGameLogic::VCreateActor(
 	if (m_IsProxy && serversActorId == INVALID_ACTOR_ID)
 		return StrongActorPtr();
 
-	StrongActorPtr pActor = m_pActorFactory->CreateActor(actorResource.c_str(), overrides, initialTransform, serversActorId);
+	StrongActorPtr pActor = m_pActorFactory->CreateActor(pActorRoot, initialTransform, serversActorId);
 	if (pActor)
 	{
 		m_Actors.insert(std::make_pair(pActor->GetActorId(), pActor));

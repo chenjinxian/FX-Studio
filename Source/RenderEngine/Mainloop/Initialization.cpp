@@ -36,7 +36,7 @@ bool CheckMemory(const DWORDLONG physicalRAMNeeded, const DWORDLONG virtualRAMNe
 		return false;
 	}
 
-	char *buff = GCC_NEW char[(unsigned int)virtualRAMNeeded];
+	char *buff = GCC_NEW char[(uint32_t)virtualRAMNeeded];
 	if (buff)
 		delete[] buff;
 	else

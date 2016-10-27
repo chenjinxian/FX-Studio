@@ -152,7 +152,7 @@ string ToStr(int num, int base)
 	return (string(str));
 }  // end ToStr()
 
-string ToStr(unsigned int num, int base)
+string ToStr(uint32_t num, int base)
 {
 	char str[MAX_DIGITS_IN_INT];
 	memset(str, 0, MAX_DIGITS_IN_INT);

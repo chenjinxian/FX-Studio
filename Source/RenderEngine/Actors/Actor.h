@@ -66,6 +66,5 @@ private:
 	ActorId m_ActorId;
 	ActorType m_ActorType;
 	ActorCompoentMap m_ActorComponents;
-	std::string m_ActorResource;
 };
 

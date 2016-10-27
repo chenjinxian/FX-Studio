@@ -24,7 +24,7 @@ using namespace DirectX;
 //--------------------------------------------------------------------------------------
 _Use_decl_annotations_
 void CDXUTSDKMesh::LoadMaterials( ID3D11Device* pd3dDevice, SDKMESH_MATERIAL* pMaterials, UINT numMaterials,
-                                  SDKMESH_CALLBACKS11* pLoaderCallbacks )
+                                  SDKMESH_CALLBACKS11* pLoaderCallbacks)
 {
     char strPath[MAX_PATH];
 
@@ -236,7 +236,8 @@ HRESULT CDXUTSDKMesh::CreateFromMemory( ID3D11Device* pDev11,
                                         BYTE* pData,
                                         size_t DataBytes,
                                         bool bCopyStatic,
-                                        SDKMESH_CALLBACKS11* pLoaderCallbacks11 )
+                                        SDKMESH_CALLBACKS11* pLoaderCallbacks11,
+										bool bLoadMaterials)
 {
     HRESULT hr = E_FAIL;
     XMFLOAT3 lower; 
@@ -341,7 +342,11 @@ HRESULT CDXUTSDKMesh::CreateFromMemory( ID3D11Device* pDev11,
         m_ppIndices[i] = pIndices;
     }
 
-    // Load Materials
+	// This will set to skip Materials Loading
+	if (!bLoadMaterials)
+		m_pMeshHeader->NumMaterials = 0;
+
+	// Load Materials
     if( pDev11 )
         LoadMaterials( pDev11, m_pMaterialArray, m_pMeshHeader->NumMaterials, pLoaderCallbacks11 );
 
@@ -750,9 +755,10 @@ HRESULT CDXUTSDKMesh::Create( ID3D11Device* pDev11, LPCWSTR szFileName, SDKMESH_
 
 //--------------------------------------------------------------------------------------
 _Use_decl_annotations_
-HRESULT CDXUTSDKMesh::Create( ID3D11Device* pDev11, BYTE* pData, size_t DataBytes, bool bCopyStatic, SDKMESH_CALLBACKS11* pLoaderCallbacks )
+HRESULT CDXUTSDKMesh::Create( ID3D11Device* pDev11, BYTE* pData, size_t DataBytes, bool bCopyStatic,
+							  SDKMESH_CALLBACKS11* pLoaderCallbacks, bool bLoadMaterials )
 {
-    return CreateFromMemory( pDev11, pData, DataBytes, bCopyStatic, pLoaderCallbacks );
+    return CreateFromMemory( pDev11, pData, DataBytes, bCopyStatic, pLoaderCallbacks, bLoadMaterials );
 }
 
 

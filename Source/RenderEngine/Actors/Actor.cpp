@@ -1,7 +1,9 @@
 #include "Actor.h"
 #include "ActorComponent.h"
 
-Actor::Actor(ActorId actorId) : m_ActorId(actorId), m_ActorType("Unknown"), m_ActorResource("Unknown")
+Actor::Actor(ActorId actorId)
+	: m_ActorId(actorId),
+	m_ActorType("Unknown")
 {
 }
 
@@ -17,7 +19,6 @@ bool Actor::Init(TiXmlElement* pData)
 	GCC_LOG("Actor", std::string("Initializing Actor ") + ToStr(m_ActorId));
 
 	m_ActorType = pData->Attribute("type");
-	m_ActorResource = pData->Attribute("resource");
 	return true;
 }
 
@@ -48,7 +49,6 @@ std::string Actor::ToXml()
 
 	TiXmlElement* pActorElement = GCC_NEW TiXmlElement("Actor");
 	pActorElement->SetAttribute("type", m_ActorType.c_str());
-	pActorElement->SetAttribute("resource", m_ActorResource.c_str());
 
 	for (auto& component : m_ActorComponents)
 	{

@@ -359,7 +359,8 @@ protected:
                                       _In_reads_(DataBytes) BYTE* pData,
                                       _In_ size_t DataBytes,
                                       _In_ bool bCopyStatic,
-                                      _In_opt_ SDKMESH_CALLBACKS11* pLoaderCallbacks11 = nullptr );
+                                      _In_opt_ SDKMESH_CALLBACKS11* pLoaderCallbacks11 = nullptr,
+									  _In_opt_ bool bLoadMaterials = true);
 
     //frame manipulation
     void TransformBindPoseFrame( _In_ UINT iFrame, _In_ DirectX::CXMMATRIX parentWorld );
@@ -386,8 +387,9 @@ public:
 
     virtual HRESULT Create( _In_ ID3D11Device* pDev11, _In_z_ LPCWSTR szFileName, _In_opt_ SDKMESH_CALLBACKS11* pLoaderCallbacks = nullptr );
     virtual HRESULT Create( _In_ ID3D11Device* pDev11, BYTE* pData, size_t DataBytes, _In_ bool bCopyStatic=false,
-                            _In_opt_ SDKMESH_CALLBACKS11* pLoaderCallbacks = nullptr );
-    virtual HRESULT LoadAnimation( _In_z_ const WCHAR* szFileName );
+                            _In_opt_ SDKMESH_CALLBACKS11* pLoaderCallbacks = nullptr, _In_opt_ bool bLoadMaterials = true);
+
+	virtual HRESULT LoadAnimation(_In_z_ const WCHAR* szFileName);
     virtual void Destroy();
 
     //Frame manipulation

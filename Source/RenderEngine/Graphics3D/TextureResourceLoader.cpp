@@ -1,60 +1,27 @@
 #include "TextureResourceLoader.h"
 #include "../AppFramework/RenderEngineApp.h"
-
-class DdsResourceLoader : public TextureResourceLoader
-{
-public:
-	virtual std::string VGetPattern() { return "*.dds"; }
-};
-
-shared_ptr<IResourceLoader> CreateDDSResourceLoader()
-{
-	return shared_ptr<IResourceLoader>(GCC_NEW DdsResourceLoader());
-}
-
-class JpgResourceLoader : public TextureResourceLoader
-{
-public:
-	virtual std::string VGetPattern() { return "*.jpg"; }
-};
-
-shared_ptr<IResourceLoader> CreateWICResourceLoader()
-{
-	return shared_ptr<IResourceLoader>(GCC_NEW JpgResourceLoader());
-}
+#include "DDSTextureLoader.h"
+#include "WICTextureLoader.h"
 
 D3DTextureResourceExtraData11::D3DTextureResourceExtraData11()
-: m_pTexture(NULL), m_pSamplerLinear(NULL)
-{	
-}
-
-unsigned int TextureResourceLoader::VGetLoadedResourceSize(char *rawBuffer, unsigned int rawSize)
+	: m_pTexture(nullptr)
 {
-	return 0;
 }
 
-bool TextureResourceLoader::VLoadResource(char *rawBuffer, unsigned int rawSize, shared_ptr<ResHandle> handle)
+D3DTextureResourceExtraData11::~D3DTextureResourceExtraData11()
+{
+	SAFE_RELEASE(m_pTexture);
+}
+
+bool DdsResourceLoader::VLoadResource(char *rawBuffer, uint32_t rawSize, shared_ptr<ResHandle> handle)
 {
 	RenderEngineApp::Renderer renderer = RenderEngineApp::GetRendererImpl();
 	if (renderer == RenderEngineApp::Renderer_D3D11)
 	{
 		shared_ptr<D3DTextureResourceExtraData11> extra = shared_ptr<D3DTextureResourceExtraData11>(GCC_NEW D3DTextureResourceExtraData11());
 
-// 		CreateDDSTextureFromMemory();
-// 		CreateWICTextureFromMemory()
-// 		if ( FAILED (D3DX11CreateShaderResourceViewFromMemory( DXUTGetD3D11Device(), rawBuffer, rawSize, NULL, NULL, &extra->m_pTexture, NULL ) ) )
-// 			return false;
-
-		D3D11_SAMPLER_DESC sampDesc;
-		ZeroMemory( &sampDesc, sizeof(sampDesc) );
-		sampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-		sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-		sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-		sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-		sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
-		sampDesc.MinLOD = 0;
-		sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
-		if( FAILED( DXUTGetD3D11Device()->CreateSamplerState( &sampDesc, &extra->m_pSamplerLinear ) ) ) 
+		if (FAILED(CreateDDSTextureFromMemory(
+			DXUTGetD3D11Device(), DXUTGetD3D11DeviceContext(), (uint8_t*)rawBuffer, rawSize, nullptr, &extra->m_pTexture)))
 			return false;
 
 		handle->SetExtra(shared_ptr<D3DTextureResourceExtraData11>(extra));
@@ -65,3 +32,71 @@ bool TextureResourceLoader::VLoadResource(char *rawBuffer, unsigned int rawSize,
 	return false;
 }
 
+bool WicResourceLoader::VLoadResource(char *rawBuffer, uint32_t rawSize, shared_ptr<ResHandle> handle)
+{
+	RenderEngineApp::Renderer renderer = RenderEngineApp::GetRendererImpl();
+	if (renderer == RenderEngineApp::Renderer_D3D11)
+	{
+		shared_ptr<D3DTextureResourceExtraData11> extra =
+			shared_ptr<D3DTextureResourceExtraData11>(GCC_NEW D3DTextureResourceExtraData11());
+
+		if (FAILED(CreateWICTextureFromMemory(
+			DXUTGetD3D11Device(), DXUTGetD3D11DeviceContext(), (uint8_t*)rawBuffer, rawSize, nullptr, &extra->m_pTexture)))
+			return false;
+
+		handle->SetExtra(shared_ptr<D3DTextureResourceExtraData11>(extra));
+		return true;
+	}
+
+	GCC_ASSERT(0 && "Unsupported Renderer in TextureResourceLoader::VLoadResource");
+	return false;
+}
+
+class JpgResourceLoader : public WicResourceLoader
+{
+public:
+	virtual std::string VGetPattern() { return "*.jpg"; }
+};
+
+class PngResourceLoader : public WicResourceLoader
+{
+public:
+	virtual std::string VGetPattern() { return "*.png"; }
+};
+
+class BmpResourceLoader : public WicResourceLoader
+{
+public:
+	virtual std::string VGetPattern() { return "*.bmp"; }
+};
+
+class TiffResourceLoader : public WicResourceLoader
+{
+public:
+	virtual std::string VGetPattern() { return "*.tiff"; }
+};
+
+shared_ptr<IResourceLoader> CreateDdsResourceLoader()
+{
+	return shared_ptr<IResourceLoader>(GCC_NEW DdsResourceLoader());
+}
+
+shared_ptr<IResourceLoader> CreateJpgResourceLoader()
+{
+	return shared_ptr<IResourceLoader>(GCC_NEW JpgResourceLoader());
+}
+
+shared_ptr<IResourceLoader> CreatePngResourceLoader()
+{
+	return shared_ptr<IResourceLoader>(GCC_NEW PngResourceLoader());
+}
+
+shared_ptr<IResourceLoader> CreateBmpResourceLoader()
+{
+	return shared_ptr<IResourceLoader>(GCC_NEW BmpResourceLoader());
+}
+
+shared_ptr<IResourceLoader> CreateTiffResourceLoader()
+{
+	return shared_ptr<IResourceLoader>(GCC_NEW TiffResourceLoader());
+}

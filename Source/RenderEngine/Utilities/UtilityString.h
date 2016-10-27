@@ -14,7 +14,7 @@ extern HRESULT AnsiToGenericCch(TCHAR* dest, const CHAR* src, int charCount);
 extern HRESULT WideToGenericCch(TCHAR* dest, const WCHAR* src, int charCount);
 
 extern std::string ToStr(int num, int base = 10);
-extern std::string ToStr(unsigned int num, int base = 10);
+extern std::string ToStr(uint32_t num, int base = 10);
 extern std::string ToStr(unsigned long num, int base = 10);
 extern std::string ToStr(float num);
 extern std::string ToStr(double num);

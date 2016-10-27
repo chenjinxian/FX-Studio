@@ -60,7 +60,8 @@ protected:
 	virtual void VCreateInheritedXmlElement(TiXmlElement* pBaseElement);
 
 private:
-	std::string m_MeshFileName;
+	std::string m_SdkMeshName;
+	std::string m_TextureName;
 };
 
 class LightRenderComponent : public BaseRenderComponent

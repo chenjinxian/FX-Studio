@@ -199,7 +199,7 @@ void DevelopmentResourceZipFile::ReadAssetsDirectory(std::wstring fileSpec)
 	  FindClose( fileHandle );
 }
 
-ResHandle::ResHandle(Resource & resource, char *buffer, unsigned int size, ResCache *pResCache)
+ResHandle::ResHandle(Resource & resource, char *buffer, uint32_t size, ResCache *pResCache)
 : m_resource(resource)
 {
 	m_buffer = buffer;
@@ -214,7 +214,7 @@ ResHandle::~ResHandle()
 	m_pResCache->MemoryHasBeenFreed(m_size);
 }
 
-ResCache::ResCache(const unsigned int sizeInMb, IResourceFile *resFile )
+ResCache::ResCache(const uint32_t sizeInMb, IResourceFile *resFile )
 {
 	m_cacheSize = sizeInMb * 1024 * 1024;				// total memory size
 	m_allocated = 0;									// total memory allocated
@@ -301,7 +301,7 @@ shared_ptr<ResHandle> ResCache::Load(Resource *r)
 	}
 	
 	char *buffer = NULL;
-	unsigned int size = 0;
+	uint32_t size = 0;
 
 	if (loader->VUseRawFile())
 	{
@@ -356,7 +356,7 @@ void ResCache::Update(shared_ptr<ResHandle> handle)
 	m_lru.push_front(handle);
 }
 
-char *ResCache::Allocate(unsigned int size)
+char *ResCache::Allocate(uint32_t size)
 {
 	if (!MakeRoom(size))
 		return NULL;
@@ -391,7 +391,7 @@ void ResCache::Flush()
 	}
 }
 
-bool ResCache::MakeRoom(unsigned int size)
+bool ResCache::MakeRoom(uint32_t size)
 {
 	if (size > m_cacheSize)
 	{
@@ -415,7 +415,7 @@ void ResCache::Free(shared_ptr<ResHandle> gonner)
 	m_resources.erase(gonner->m_resource.m_name);
 }
 
-void ResCache::MemoryHasBeenFreed(unsigned int size)
+void ResCache::MemoryHasBeenFreed(uint32_t size)
 {
 	m_allocated -= size;
 }

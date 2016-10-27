@@ -1,6 +1,7 @@
 #include "D3DSdkMesh.h"
 #include "SceneNode.h"
 #include "D3DRenderer.h"
+#include "TextureResourceLoader.h"
 #include "../ResourceCache/ResCache.h"
 #include "../AppFramework/RenderEngineApp.h"
 #include <SDKmisc.h>
@@ -11,12 +12,12 @@ shared_ptr<IResourceLoader> CreateSdkMeshResourceLoader()
 	return shared_ptr<IResourceLoader>(GCC_NEW SdkMeshResourceLoader());
 }
 
-unsigned int SdkMeshResourceLoader::VGetLoadedResourceSize(char *rawBuffer, unsigned int rawSize)
+uint32_t SdkMeshResourceLoader::VGetLoadedResourceSize(char *rawBuffer, uint32_t rawSize)
 {
 	return rawSize;
 }
 
-bool SdkMeshResourceLoader::VLoadResource(char *rawBuffer, unsigned int rawSize, shared_ptr<ResHandle> handle)
+bool SdkMeshResourceLoader::VLoadResource(char *rawBuffer, uint32_t rawSize, shared_ptr<ResHandle> handle)
 {
 	RenderEngineApp::Renderer renderer = RenderEngineApp::GetRendererImpl();
 	if (renderer == RenderEngineApp::Renderer_D3D11)
@@ -24,7 +25,7 @@ bool SdkMeshResourceLoader::VLoadResource(char *rawBuffer, unsigned int rawSize,
 		shared_ptr<D3DSdkMeshResourceExtraData11> extra =
 			shared_ptr<D3DSdkMeshResourceExtraData11>(GCC_NEW D3DSdkMeshResourceExtraData11());
 
-		if (SUCCEEDED ( extra->m_Mesh11.Create( DXUTGetD3D11Device(), (BYTE *)rawBuffer, (UINT)rawSize, true ) ) )
+		if (SUCCEEDED(extra->m_Mesh11.Create(DXUTGetD3D11Device(), (BYTE*)rawBuffer, rawSize, true, nullptr, false)))
 		{
 			handle->SetExtra(shared_ptr<D3DSdkMeshResourceExtraData11>(extra));
 		}
@@ -37,8 +38,10 @@ bool SdkMeshResourceLoader::VLoadResource(char *rawBuffer, unsigned int rawSize,
 }
 
 D3DShaderMeshNode11::D3DShaderMeshNode11(ActorId actorId, WeakBaseRenderComponentPtr renderComponent,
-	std::string meshFileName, RenderPass renderPass, const Matrix& mat)
-	: SceneNode(actorId, renderComponent, renderPass), m_MeshFileName(meshFileName)
+	const std::string& sdkMeshName, const std::string& textureName, RenderPass renderPass, const Matrix& mat)
+	: SceneNode(actorId, renderComponent, renderPass),
+	m_SdkMeshName(sdkMeshName),
+	m_TextureName(textureName)
 {
 	g_pEffect = nullptr;
 	g_pVertexLayout = nullptr;
@@ -96,26 +99,47 @@ D3DShaderMeshNode11::D3DShaderMeshNode11(ActorId actorId, WeakBaseRenderComponen
 	pd3dDevice->CreateInputLayout(layout, numElements, PassDesc.pIAInputSignature,
 		PassDesc.IAInputSignatureSize, &g_pVertexLayout);
 
-	// Set the input layout
 	pd3dImmediateContext->IASetInputLayout(g_pVertexLayout);
 
-	// Initialize the world matrices
-	g_World = Matrix::CreateTranslation(1.0f, 1.0f, 800.0f);
+	g_World = Matrix::Identity;
+}
+
+D3DShaderMeshNode11::~D3DShaderMeshNode11()
+{
+
 }
 
 HRESULT D3DShaderMeshNode11::VOnRestore(Scene *pScene)
 {
 	HRESULT hr;
 
-	V_RETURN(SceneNode::VOnRestore(pScene) );
+	V_RETURN(SceneNode::VOnRestore(pScene));
 
-// 	V_RETURN (m_VertexShader.OnRestore(pScene) );
-// 	V_RETURN (m_PixelShader.OnRestore(pScene) );
+	// 	V_RETURN (m_VertexShader.OnRestore(pScene) );
+	// 	V_RETURN (m_PixelShader.OnRestore(pScene) );
 
-	Resource resource(m_MeshFileName);
-	shared_ptr<ResHandle> pResourceHandle = g_pApp->m_pResCache->GetHandle(&resource);  	
-	shared_ptr<D3DSdkMeshResourceExtraData11> extra = static_pointer_cast<D3DSdkMeshResourceExtraData11>(pResourceHandle->GetExtra());
-	g_Mesh = extra->m_Mesh11;
+
+	return S_OK;
+}
+
+HRESULT D3DShaderMeshNode11::VOnDestoryDevice(Scene* pScene)
+{
+	SAFE_RELEASE(g_ptxDiffuseVariable);
+	SAFE_RELEASE(g_pWorldVariable);
+	SAFE_RELEASE(g_pViewVariable);
+	SAFE_RELEASE(g_pProjectionVariable);
+	SAFE_RELEASE(g_pWavinessVariable);
+	SAFE_RELEASE(g_pVertexLayout);
+	SAFE_RELEASE(g_pTechnique);
+	SAFE_RELEASE(g_pEffect);
+	
+	return S_OK;
+}
+
+HRESULT D3DShaderMeshNode11::VOnUpdate(Scene* pScene, double fTime, float fElapsedTime)
+{
+	g_World = Matrix::CreateRotationX(XMConvertToRadians(-90.0f)) *
+		Matrix::CreateRotationY(60.0f * XMConvertToRadians((float)fTime));
 
 	return S_OK;
 }
@@ -141,17 +165,21 @@ HRESULT D3DShaderMeshNode11::VRender(Scene *pScene, double fTime, float fElapsed
 	//
 	pd3dImmediateContext->IASetInputLayout(g_pVertexLayout);
 
+
+	Resource resource(m_SdkMeshName);
+	shared_ptr<ResHandle> pResourceHandle = g_pApp->m_pResCache->GetHandle(&resource);
+	shared_ptr<D3DSdkMeshResourceExtraData11> extra = static_pointer_cast<D3DSdkMeshResourceExtraData11>(pResourceHandle->GetExtra());
 	//
 	// Render the mesh
 	//
 	UINT Strides[1];
 	UINT Offsets[1];
 	ID3D11Buffer* pVB[1];
-	pVB[0] = g_Mesh.GetVB11(0, 0);
-	Strides[0] = (UINT)g_Mesh.GetVertexStride(0, 0);
+	pVB[0] = extra->m_Mesh11.GetVB11(0, 0);
+	Strides[0] = (UINT)extra->m_Mesh11.GetVertexStride(0, 0);
 	Offsets[0] = 0;
 	pd3dImmediateContext->IASetVertexBuffers(0, 1, pVB, Strides, Offsets);
-	pd3dImmediateContext->IASetIndexBuffer(g_Mesh.GetIB11(0), g_Mesh.GetIBFormat11(0), 0);
+	pd3dImmediateContext->IASetIndexBuffer(extra->m_Mesh11.GetIB11(0), extra->m_Mesh11.GetIBFormat11(0), 0);
 
 	D3DX11_TECHNIQUE_DESC techDesc;
 	HRESULT hr;
@@ -159,15 +187,23 @@ HRESULT D3DShaderMeshNode11::VRender(Scene *pScene, double fTime, float fElapsed
 
 	for (UINT p = 0; p < techDesc.Passes; ++p)
 	{
-		for (UINT subset = 0; subset < g_Mesh.GetNumSubsets(0); ++subset)
+		for (UINT subset = 0; subset < extra->m_Mesh11.GetNumSubsets(0); ++subset)
 		{
-			auto pSubset = g_Mesh.GetSubset(0, subset);
+			auto pSubset = extra->m_Mesh11.GetSubset(0, subset);
 
-			auto PrimType = g_Mesh.GetPrimitiveType11((SDKMESH_PRIMITIVE_TYPE)pSubset->PrimitiveType);
+			auto PrimType = extra->m_Mesh11.GetPrimitiveType11((SDKMESH_PRIMITIVE_TYPE)pSubset->PrimitiveType);
 			pd3dImmediateContext->IASetPrimitiveTopology(PrimType);
 
-			auto pDiffuseRV = g_Mesh.GetMaterial(pSubset->MaterialID)->pDiffuseRV11;
-			g_ptxDiffuseVariable->SetResource(pDiffuseRV);
+			Resource resource(m_TextureName);
+			shared_ptr<ResHandle> texture = g_pApp->m_pResCache->GetHandle(&resource);
+			if (texture != nullptr)
+			{
+				shared_ptr<D3DTextureResourceExtraData11> extra = static_pointer_cast<D3DTextureResourceExtraData11>(texture->GetExtra());
+				if (extra != nullptr)
+				{
+					g_ptxDiffuseVariable->SetResource(extra->GetTexture());
+				}
+			}
 
 			g_pTechnique->GetPassByIndex(p)->Apply(0, pd3dImmediateContext);
 			pd3dImmediateContext->DrawIndexed((UINT)pSubset->IndexCount, 0, (UINT)pSubset->VertexStart);

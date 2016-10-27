@@ -72,17 +72,17 @@ class ResHandle
 protected:
 	Resource m_resource;
 	char *m_buffer;	
-	unsigned int m_size;
+	uint32_t m_size;
 	shared_ptr<IResourceExtraData> m_extra;
 	ResCache *m_pResCache;
 
 public:
-	ResHandle(Resource & resource, char *buffer, unsigned int size, ResCache *pResCache);
+	ResHandle(Resource & resource, char *buffer, uint32_t size, ResCache *pResCache);
 
 	virtual ~ResHandle();
 
 	const std::string GetName() { return m_resource.m_name; }
-	unsigned int Size() const { return m_size; } 
+	uint32_t Size() const { return m_size; } 
 	char *Buffer() const { return m_buffer; }
 	char *WritableBuffer() { return m_buffer; }
 
@@ -95,8 +95,8 @@ class DefaultResourceLoader : public IResourceLoader
 public:
 	virtual bool VUseRawFile() { return true; }
 	virtual bool VDiscardRawBufferAfterLoad() { return true; }
-	virtual unsigned int VGetLoadedResourceSize(char *rawBuffer, unsigned int rawSize) { return rawSize; }
-	virtual bool VLoadResource(char *rawBuffer, unsigned int rawSize, shared_ptr<ResHandle> handle) { return true; }
+	virtual uint32_t VGetLoadedResourceSize(char *rawBuffer, uint32_t rawSize) { return rawSize; }
+	virtual bool VLoadResource(char *rawBuffer, uint32_t rawSize, shared_ptr<ResHandle> handle) { return true; }
 	virtual std::string VGetPattern() { return "*"; }
 
 };
@@ -115,13 +115,13 @@ class ResCache
 
 	IResourceFile *m_file;
 
-	unsigned int			m_cacheSize;
-	unsigned int			m_allocated;
+	uint32_t			m_cacheSize;
+	uint32_t			m_allocated;
 
 protected:
 
-	bool MakeRoom(unsigned int size);
-	char *Allocate(unsigned int size);
+	bool MakeRoom(uint32_t size);
+	char *Allocate(uint32_t size);
 	void Free(shared_ptr<ResHandle> gonner);
 
 	shared_ptr<ResHandle> Load(Resource * r);
@@ -129,10 +129,10 @@ protected:
 	void Update(shared_ptr<ResHandle> handle);
 
 	void FreeOneResource();
-	void MemoryHasBeenFreed(unsigned int size);
+	void MemoryHasBeenFreed(uint32_t size);
 
 public:
-	ResCache(const unsigned int sizeInMb, IResourceFile *file);
+	ResCache(const uint32_t sizeInMb, IResourceFile *file);
 	virtual ~ResCache();
 
 	bool Init(); 

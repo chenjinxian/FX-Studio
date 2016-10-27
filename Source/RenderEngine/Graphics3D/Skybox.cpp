@@ -2,7 +2,7 @@
 #include "Model.h"
 #include "Scene.h"
 #include "../Utilities/UtilityString.h"
-#include <DDSTextureLoader.h>
+#include "DDSTextureLoader.h"
 
 SkyboxMaterial::SkyboxMaterial()
 	: Material("main11"),

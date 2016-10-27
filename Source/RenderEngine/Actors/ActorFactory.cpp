@@ -10,6 +10,7 @@ ActorFactory::ActorFactory() : m_LastActorId(INVALID_ACTOR_ID)
 	m_ComponentFactory.Register<TransformComponent>(ActorComponent::GetIdFromName(TransformComponent::m_Name));
 	m_ComponentFactory.Register<GridRenderComponent>(ActorComponent::GetIdFromName(GridRenderComponent::m_Name));
 	m_ComponentFactory.Register<SkyRenderComponent>(ActorComponent::GetIdFromName(SkyRenderComponent::m_Name));
+	m_ComponentFactory.Register<MeshRenderComponent>(ActorComponent::GetIdFromName(MeshRenderComponent::m_Name));
 }
 
 
@@ -18,15 +19,9 @@ ActorFactory::~ActorFactory()
 }
 
 StrongActorPtr ActorFactory::CreateActor(
-	const std::string& actorResource, TiXmlElement *overrides,
-	const Matrix& initialTransform, const ActorId serversActorId)
+	TiXmlElement *pActorRoot, const Matrix& initialTransform, ActorId serversActorId)
 {
-	TiXmlElement* pRoot = XmlResourceLoader::LoadAndReturnRootXmlElement(actorResource.c_str());
-	if (!pRoot)
-	{
-		GCC_ERROR("Failed to create actor from resource: " + actorResource);
-		return StrongActorPtr();
-	}
+	GCC_ASSERT(pActorRoot != nullptr);
 
 	ActorId nextActorId = serversActorId;
 	if (nextActorId == INVALID_ACTOR_ID)
@@ -34,15 +29,15 @@ StrongActorPtr ActorFactory::CreateActor(
 		nextActorId = GetNextActorId();
 	}
 	StrongActorPtr pActor(GCC_NEW Actor(nextActorId));
-	if (!pActor->Init(pRoot))
+	if (!pActor->Init(pActorRoot))
 	{
-		GCC_ERROR("Failed to initialize actor: " + std::string(actorResource));
+		GCC_ERROR("Failed to initialize actor: " + std::string(pActorRoot->Attribute("type")));
 		return StrongActorPtr();
 	}
 
 	bool initialTransformSet = false;
 
-	for (TiXmlElement* pNode = pRoot->FirstChildElement(); pNode; pNode = pNode->NextSiblingElement())
+	for (TiXmlElement* pNode = pActorRoot->FirstChildElement(); pNode; pNode = pNode->NextSiblingElement())
 	{
 		StrongActorComponentPtr pComponent(VCreateComponent(pNode));
 		if (pComponent)
@@ -54,11 +49,6 @@ StrongActorPtr ActorFactory::CreateActor(
 		{
 			return StrongActorPtr();
 		}
-	}
-
-	if (overrides)
-	{
-		ModifyActor(pActor, overrides);
 	}
 
 	shared_ptr<TransformComponent> pTransformComponent = MakeStrongPtr(pActor->GetComponent<TransformComponent>(TransformComponent::m_Name));

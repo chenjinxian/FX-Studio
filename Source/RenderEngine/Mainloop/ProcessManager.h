@@ -13,12 +13,12 @@ public:
 	~ProcessManager(void);
 
 	// interface
-	unsigned int UpdateProcesses(double fTime, float fElapsedTime);  // updates all attached processes
+	uint32_t UpdateProcesses(double fTime, float fElapsedTime);  // updates all attached processes
 	WeakProcessPtr AttachProcess(StrongProcessPtr pProcess);  // attaches a process to the process mgr
 	void AbortAllProcesses(bool immediate);
 
 	// accessors
-	unsigned int GetProcessCount(void) const { return m_processList.size(); }
+	uint32_t GetProcessCount(void) const { return m_processList.size(); }
 
 private:
 	void ClearAllProcesses(void);  // should only be called by the destructor

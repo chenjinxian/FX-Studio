@@ -4,6 +4,8 @@
 #include "../EventManager/EventManagerImpl.h"
 #include "../EventManager/Events.h"
 #include "../Graphics3D/D3DRenderer.h"
+#include "../Graphics3D/D3DSdkMesh.h"
+#include "../Graphics3D/TextureResourceLoader.h"
 #include "../ResourceCache/ResCache.h"
 #include "../ResourceCache/XmlResource.h"
 #include "../UserInterface/HumanView.h"
@@ -82,10 +84,13 @@ bool RenderEngineApp::InitInstance(HINSTANCE hInstance, LPWSTR lpCmdLine, HWND h
 		return false;
 	}
 
-// 	m_pResCache->RegisterLoader(CreateDDSResourceLoader());
-// 	m_pResCache->RegisterLoader(CreateJPGResourceLoader());
+	m_pResCache->RegisterLoader(CreateDdsResourceLoader());
+	m_pResCache->RegisterLoader(CreateJpgResourceLoader());
+	m_pResCache->RegisterLoader(CreatePngResourceLoader());
+	m_pResCache->RegisterLoader(CreateBmpResourceLoader());
+	m_pResCache->RegisterLoader(CreateTiffResourceLoader());
 	m_pResCache->RegisterLoader(CreateXmlResourceLoader());
-// 	m_pResCache->RegisterLoader(CreateSdkMeshResourceLoader());
+	m_pResCache->RegisterLoader(CreateSdkMeshResourceLoader());
 
 	if (!LoadStrings("English"))
 	{
@@ -136,9 +141,11 @@ bool RenderEngineApp::InitInstance(HINSTANCE hInstance, LPWSTR lpCmdLine, HWND h
 	m_pRenderer->VOnRestore();
 
 
-	m_pResCache->Preload("*.ogg", NULL);
 	m_pResCache->Preload("*.dds", NULL);
 	m_pResCache->Preload("*.jpg", NULL);
+	m_pResCache->Preload("*.png", NULL);
+	m_pResCache->Preload("*.bmp", NULL);
+	m_pResCache->Preload("*.tiff", NULL);
 
 	if (GetRendererImpl() == Renderer_D3D11)
 		m_pResCache->Preload("*.sdkmesh", NULL);

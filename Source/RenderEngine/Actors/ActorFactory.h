@@ -10,8 +10,7 @@ public:
 	virtual ~ActorFactory();
 
 	StrongActorPtr CreateActor(
-		const std::string& actorResource, TiXmlElement *overrides,
-		const Matrix& initialTransform, ActorId serversActorId);
+		TiXmlElement *pActorRoot, const Matrix& initialTransform, ActorId serversActorId);
 	void ModifyActor(StrongActorPtr pActor, TiXmlElement* overrides);
 
 protected:

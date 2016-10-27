@@ -63,18 +63,18 @@ public:
 	void Init(const char* loggingConfigFilename);
 
 	// logs
-	void Log(const string& tag, const string& message, const char* funcName, const char* sourceFile, unsigned int lineNum);
+	void Log(const string& tag, const string& message, const char* funcName, const char* sourceFile, uint32_t lineNum);
 	void SetDisplayFlags(const std::string& tag, unsigned char flags);
 
 	// error messengers
 	void AddErrorMessenger(Logger::ErrorMessenger* pMessenger);
-	LogMgr::ErrorDialogResult Error(const std::string& errorMessage, bool isFatal, const char* funcName, const char* sourceFile, unsigned int lineNum);
+	LogMgr::ErrorDialogResult Error(const std::string& errorMessage, bool isFatal, const char* funcName, const char* sourceFile, uint32_t lineNum);
 
 private:
 	// log helpers
 	void OutputFinalBufferToLogs(const string& finalBuffer, unsigned char flags);
 	void WriteToLogFile(const string& data);
-	void GetOutputBuffer(std::string& outOutputBuffer, const string& tag, const string& message, const char* funcName, const char* sourceFile, unsigned int lineNum);
+	void GetOutputBuffer(std::string& outOutputBuffer, const string& tag, const string& message, const char* funcName, const char* sourceFile, uint32_t lineNum);
 };
 #pragma endregion
 
@@ -146,7 +146,7 @@ void LogMgr::Init(const char* loggingConfigFilename)
 //------------------------------------------------------------------------------------------------------------------------------------
 // This function builds up the log string and outputs it to various places based on the display flags (m_displayFlags).
 //------------------------------------------------------------------------------------------------------------------------------------
-void LogMgr::Log(const string& tag, const string& message, const char* funcName, const char* sourceFile, unsigned int lineNum)
+void LogMgr::Log(const string& tag, const string& message, const char* funcName, const char* sourceFile, uint32_t lineNum)
 {
 	boost::mutex::scoped_lock lock(m_tagCriticalSection);
 	Tags::iterator findIt = m_tags.find(tag);
@@ -198,7 +198,7 @@ void LogMgr::AddErrorMessenger(Logger::ErrorMessenger* pMessenger)
 //------------------------------------------------------------------------------------------------------------------------------------
 // Helper for ErrorMessenger.
 //------------------------------------------------------------------------------------------------------------------------------------
-LogMgr::ErrorDialogResult LogMgr::Error(const std::string& errorMessage, bool isFatal, const char* funcName, const char* sourceFile, unsigned int lineNum)
+LogMgr::ErrorDialogResult LogMgr::Error(const std::string& errorMessage, bool isFatal, const char* funcName, const char* sourceFile, uint32_t lineNum)
 {
 	string tag = ((isFatal) ? ("FATAL") : ("ERROR"));
 
@@ -262,7 +262,7 @@ void LogMgr::WriteToLogFile(const string& data)
 //------------------------------------------------------------------------------------------------------------------------------------
 // Fills outOutputBuffer with the find error string.
 //------------------------------------------------------------------------------------------------------------------------------------
-void LogMgr::GetOutputBuffer(std::string& outOutputBuffer, const string& tag, const string& message, const char* funcName, const char* sourceFile, unsigned int lineNum)
+void LogMgr::GetOutputBuffer(std::string& outOutputBuffer, const string& tag, const string& message, const char* funcName, const char* sourceFile, uint32_t lineNum)
 {
 	if (!tag.empty())
 		outOutputBuffer = "[" + tag + "] " + message;
@@ -302,7 +302,7 @@ Logger::ErrorMessenger::ErrorMessenger(void)
 	m_enabled = true;
 }
 
-void Logger::ErrorMessenger::Show(const std::string& errorMessage, bool isFatal, const char* funcName, const char* sourceFile, unsigned int lineNum)
+void Logger::ErrorMessenger::Show(const std::string& errorMessage, bool isFatal, const char* funcName, const char* sourceFile, uint32_t lineNum)
 {
 	if (m_enabled)
 	{
@@ -334,7 +334,7 @@ void Destroy(void)
 	s_pLogMgr = NULL;
 }
 
-void Log(const string& tag, const string& message, const char* funcName, const char* sourceFile, unsigned int lineNum)
+void Log(const string& tag, const string& message, const char* funcName, const char* sourceFile, uint32_t lineNum)
 {
 	GCC_ASSERT(s_pLogMgr);
 	s_pLogMgr->Log(tag, message, funcName, sourceFile, lineNum);

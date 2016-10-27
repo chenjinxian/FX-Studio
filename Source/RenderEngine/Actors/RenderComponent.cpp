@@ -131,7 +131,8 @@ void GridRenderComponent::VCreateInheritedXmlElement(TiXmlElement* pBaseElement)
 }
 
 MeshRenderComponent::MeshRenderComponent()
-	: m_MeshFileName()
+	: m_SdkMeshName(),
+	m_TextureName()
 {
 
 }
@@ -143,10 +144,16 @@ MeshRenderComponent::~MeshRenderComponent()
 
 bool MeshRenderComponent::VDelegateInit(TiXmlElement* pData)
 {
-	TiXmlElement* pSdkMeshName = pData->FirstChildElement("SdkMesh");
-	if (pSdkMeshName != nullptr)
+	TiXmlElement* pSdkMesh = pData->FirstChildElement("SdkMesh");
+	if (pSdkMesh != nullptr)
 	{
-		m_MeshFileName = pSdkMeshName->FirstChild()->Value();
+		m_SdkMeshName = pSdkMesh->FirstChild()->Value();
+	}
+
+	TiXmlElement* pTexture = pData->FirstChildElement("Texture");
+	if (pTexture != nullptr)
+	{
+		m_TextureName = pTexture->FirstChild()->Value();
 	}
 
 	return true;
@@ -165,7 +172,7 @@ shared_ptr<SceneNode> MeshRenderComponent::VCreateSceneNode()
 		case RenderEngineApp::Renderer_D3D11:
 		{
 			return shared_ptr<SceneNode>(GCC_NEW D3DShaderMeshNode11(
-				m_pOwner->GetActorId(), weakThis, m_MeshFileName, RenderPass_Actor, pTransformComponent->GetTransform()));
+				m_pOwner->GetActorId(), weakThis, m_SdkMeshName, m_TextureName, RenderPass_Actor, pTransformComponent->GetTransform()));
 		}
 
 		default:
@@ -178,10 +185,10 @@ shared_ptr<SceneNode> MeshRenderComponent::VCreateSceneNode()
 
 void MeshRenderComponent::VCreateInheritedXmlElement(TiXmlElement* pBaseElement)
 {
-	TiXmlElement* pMeshNode = GCC_NEW TiXmlElement("SdkMesh");
-	TiXmlText* pSdkMeshName = GCC_NEW TiXmlText(m_MeshFileName.c_str());
-	pMeshNode->LinkEndChild(pSdkMeshName);
-	pBaseElement->LinkEndChild(pMeshNode);
+	TiXmlElement* pSdkMesh = GCC_NEW TiXmlElement("SdkMesh");
+	TiXmlText* pSdkMeshName = GCC_NEW TiXmlText(m_SdkMeshName.c_str());
+	pSdkMesh->LinkEndChild(pSdkMeshName);
+	pBaseElement->LinkEndChild(pSdkMesh);
 }
 
 SkyRenderComponent::SkyRenderComponent()

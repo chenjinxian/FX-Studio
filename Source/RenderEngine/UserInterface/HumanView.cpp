@@ -8,7 +8,7 @@
 #include "../MainLoop/Process.h"
 #include <DXUTGui.h>
 
-const unsigned int SCREEN_REFRESH_RATE(1000/60);
+const uint32_t SCREEN_REFRESH_RATE(1000/60);
 
 HumanView::HumanView(shared_ptr<IRenderer> renderer)
 {

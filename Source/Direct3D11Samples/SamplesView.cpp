@@ -161,7 +161,7 @@ bool SamplesView::VLoadGameDelegate(TiXmlElement* pLevelData)
 
 // 	m_pFreeCameraController.reset(GCC_NEW MovementController(m_pCamera, 0, 0, false));
 
-	m_pScene->VOnRestore();
+	HumanView::VOnRestore();
 	return true;
 }
 

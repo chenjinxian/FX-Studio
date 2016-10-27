@@ -45,14 +45,16 @@ namespace DirectX
         _In_ size_t wicDataSize,
         _Outptr_opt_ ID3D11Resource** texture,
         _Outptr_opt_ ID3D11ShaderResourceView** textureView,
-        _In_ size_t maxsize = 0);
+		_In_ size_t maxsize = 0,
+		_In_ bool forceSRGB = false);
 
     HRESULT __cdecl CreateWICTextureFromFile(
         _In_ ID3D11Device* d3dDevice,
         _In_z_ const wchar_t* szFileName,
         _Outptr_opt_ ID3D11Resource** texture,
         _Outptr_opt_ ID3D11ShaderResourceView** textureView,
-        _In_ size_t maxsize = 0);
+		_In_ size_t maxsize = 0,
+		_In_ bool forceSRGB = false);
 
     // Standard version with optional auto-gen mipmap support
     HRESULT __cdecl CreateWICTextureFromMemory(
@@ -67,7 +69,8 @@ namespace DirectX
         _In_ size_t wicDataSize,
         _Outptr_opt_ ID3D11Resource** texture,
         _Outptr_opt_ ID3D11ShaderResourceView** textureView,
-        _In_ size_t maxsize = 0);
+		_In_ size_t maxsize = 0,
+		_In_ bool forceSRGB = false);
 
     HRESULT __cdecl CreateWICTextureFromFile(
     #if defined(_XBOX_ONE) && defined(_TITLE)
@@ -80,7 +83,8 @@ namespace DirectX
         _In_z_ const wchar_t* szFileName,
         _Outptr_opt_ ID3D11Resource** texture,
         _Outptr_opt_ ID3D11ShaderResourceView** textureView,
-        _In_ size_t maxsize = 0);
+		_In_ size_t maxsize = 0,
+		_In_ bool forceSRGB = false);
 
     // Extended version
     HRESULT __cdecl CreateWICTextureFromMemoryEx(

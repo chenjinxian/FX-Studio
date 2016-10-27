@@ -214,7 +214,7 @@ HRESULT CameraNode::VRender(Scene* pScene, double fTime, float fElapsedTime)
 
 HRESULT CameraNode::VOnRestore(Scene* pScene)
 {
-	static const XMVECTORF32 s_Eye = { 0.0f, 3.0f, -800.0f, 0.f };
+	static const XMVECTORF32 s_Eye = { 0.0f, 3.0f, -10.0f, 0.f };
 	static const XMVECTORF32 s_At = { 0.0f, 1.0f, 0.0f, 0.f };
 	m_ModelViewer.SetViewParams(s_Eye, s_At);
 
@@ -243,8 +243,8 @@ GridNode::GridNode(ActorId actorId, WeakBaseRenderComponentPtr renderComponent)
 	mVertexBuffer(nullptr),
 	mPosition(0, 0, 0),
 	mWorldMatrix(Matrix::Identity),
-	mSize(16),
-	mScale(16),
+	mSize(30),
+	mScale(100),
 	mColor(0.961f, 0.871f, 0.702f, 1.0f)
 {
 	HRESULT hr;

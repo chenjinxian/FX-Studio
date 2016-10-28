@@ -2,6 +2,7 @@
 #include "SceneNode.h"
 #include "D3DRenderer.h"
 #include "TextureResourceLoader.h"
+#include "../Actors/RenderComponent.h"
 #include "../ResourceCache/ResCache.h"
 #include "../AppFramework/RenderEngineApp.h"
 #include <SDKmisc.h>
@@ -37,12 +38,18 @@ bool SdkMeshResourceLoader::VLoadResource(char *rawBuffer, uint32_t rawSize, sha
 	return false;
 }
 
-D3DShaderMeshNode11::D3DShaderMeshNode11(ActorId actorId, WeakBaseRenderComponentPtr renderComponent,
-	const std::string& sdkMeshName, const std::string& textureName, RenderPass renderPass, const Matrix& mat)
-	: SceneNode(actorId, renderComponent, renderPass),
-	m_SdkMeshName(sdkMeshName),
-	m_TextureName(textureName)
+D3DShaderMeshNode11::D3DShaderMeshNode11(
+	ActorId actorId, WeakBaseRenderComponentPtr renderComponent, RenderPass renderPass, const Matrix& mat)
+	: SceneNode(actorId, renderComponent, renderPass)
 {
+	MeshRenderComponent* pMeshRender = static_cast<MeshRenderComponent*>(m_pRenderComponent);
+	if (pMeshRender != nullptr)
+	{
+		m_SdkMeshName = pMeshRender->GetSdkMeshName();
+		m_TextureName = pMeshRender->GetTextureName();
+		m_EffectName = pMeshRender->GetEffectName();
+	}
+
 	g_pEffect = nullptr;
 	g_pVertexLayout = nullptr;
 	g_pTechnique = nullptr;
@@ -58,20 +65,18 @@ D3DShaderMeshNode11::D3DShaderMeshNode11(ActorId actorId, WeakBaseRenderComponen
 
 	DWORD dwShaderFlags = D3DCOMPILE_ENABLE_STRICTNESS;
 #ifdef _DEBUG
-	// Set the D3DCOMPILE_DEBUG flag to embed debug information in the shaders.
-	// Setting this flag improves the shader debugging experience, but still allows 
-	// the shaders to be optimized and to run exactly the way they will run in 
-	// the release configuration of this program.
 	dwShaderFlags |= D3DCOMPILE_DEBUG;
-
-	// Disable optimizations to further improve shader debugging
 	dwShaderFlags |= D3DCOMPILE_SKIP_OPTIMIZATION;
 #endif
-
-	WCHAR str[MAX_PATH];
-	DXUTFindDXSDKMediaFileCch(str, MAX_PATH, L"Tutorial11.fx");
-
-	D3DX11CompileEffectFromFile(str, nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, dwShaderFlags, 0, pd3dDevice, &g_pEffect, nullptr);
+	Resource resource(m_EffectName);
+	shared_ptr<ResHandle> pResourceHandle = g_pApp->m_pResCache->GetHandle(&resource);
+	if (pResourceHandle)
+	{
+		D3DX11CompileEffectFromMemory(
+			pResourceHandle->Buffer(), pResourceHandle->Size(), m_EffectName.c_str(),
+			nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, dwShaderFlags, 0, pd3dDevice, &g_pEffect, nullptr);
+// 		D3DX11CreateEffectFromMemory(pResourceHandle->Buffer(), pResourceHandle->Size(), 0, pd3dDevice, &g_pEffect, m_EffectName.c_str());
+	}
 
 	// Obtain the technique
 	g_pTechnique = g_pEffect->GetTechniqueByName("Render");

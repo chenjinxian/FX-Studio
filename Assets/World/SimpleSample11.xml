@@ -21,7 +21,7 @@
         <Color r="0.400000" g="0.400000" b="0.400000" a="1.000000" />
         <SdkMesh>Models\tiny.sdkmesh</SdkMesh>
         <Texture>Textures\Tiny_skin.dds</Texture>
-		<Effect>Tutorial11.fx<Effect>
+		<Effect>Effects\Tutorial11.fx<Effect>
       </MeshRenderComponent>
     </Actor>
   </StaticActors>

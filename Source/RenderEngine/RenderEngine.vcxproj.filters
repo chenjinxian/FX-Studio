@@ -247,4 +247,15 @@
       <Filter>Graphics3D</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\..\Assets\Effects\BasicEffect.fx">
+      <Filter>Effect Files</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\Assets\Effects\Skybox.fx">
+      <Filter>Effect Files</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\Assets\Effects\Tutorial11.fx">
+      <Filter>Effect Files</Filter>
+    </FxCompile>
+  </ItemGroup>
 </Project>

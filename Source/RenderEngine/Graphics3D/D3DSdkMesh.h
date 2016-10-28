@@ -31,8 +31,8 @@ public:
 class D3DShaderMeshNode11 : public SceneNode
 {
 public:
-	D3DShaderMeshNode11(ActorId actorId, WeakBaseRenderComponentPtr renderComponent,
-		const std::string& sdkMeshName, const std::string& textureName, RenderPass renderPass, const Matrix& mat);
+	D3DShaderMeshNode11(
+		ActorId actorId, WeakBaseRenderComponentPtr renderComponent, RenderPass renderPass, const Matrix& mat);
 
 	~D3DShaderMeshNode11();
 
@@ -45,6 +45,7 @@ public:
 private:
 	std::string m_SdkMeshName;
 	std::string m_TextureName;
+	std::string m_EffectName;
 	XMMATRIX                            g_World;
 	ID3DX11Effect*                      g_pEffect;
 	ID3D11InputLayout*                  g_pVertexLayout;

@@ -20,8 +20,9 @@ bool DdsResourceLoader::VLoadResource(char *rawBuffer, uint32_t rawSize, shared_
 	{
 		shared_ptr<D3DTextureResourceExtraData11> extra = shared_ptr<D3DTextureResourceExtraData11>(GCC_NEW D3DTextureResourceExtraData11());
 
-		if (FAILED(CreateDDSTextureFromMemory(
-			DXUTGetD3D11Device(), DXUTGetD3D11DeviceContext(), (uint8_t*)rawBuffer, rawSize, nullptr, &extra->m_pTexture, 0, nullptr, true)))
+		if (FAILED(CreateDDSTextureFromMemoryEx(
+			DXUTGetD3D11Device(), DXUTGetD3D11DeviceContext(), (uint8_t*)rawBuffer, rawSize, 0,
+			D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE, 0, 0, true, nullptr, &extra->m_pTexture)))
 			return false;
 
 		handle->SetExtra(shared_ptr<D3DTextureResourceExtraData11>(extra));
@@ -40,8 +41,9 @@ bool WicResourceLoader::VLoadResource(char *rawBuffer, uint32_t rawSize, shared_
 		shared_ptr<D3DTextureResourceExtraData11> extra =
 			shared_ptr<D3DTextureResourceExtraData11>(GCC_NEW D3DTextureResourceExtraData11());
 
-		if (FAILED(CreateWICTextureFromMemory(
-			DXUTGetD3D11Device(), DXUTGetD3D11DeviceContext(), (uint8_t*)rawBuffer, rawSize, nullptr, &extra->m_pTexture, 0, true)))
+		if (FAILED(CreateWICTextureFromMemoryEx(
+			DXUTGetD3D11Device(), DXUTGetD3D11DeviceContext(), (uint8_t*)rawBuffer, rawSize, 0,
+			D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE, 0, 0, true, nullptr, &extra->m_pTexture)))
 			return false;
 
 		handle->SetExtra(shared_ptr<D3DTextureResourceExtraData11>(extra));

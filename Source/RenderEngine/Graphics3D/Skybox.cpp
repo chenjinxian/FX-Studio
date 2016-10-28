@@ -119,8 +119,9 @@ HRESULT SkyboxNode::VOnRestore(Scene* pScene)
 	pMesh->CreateIndexBuffer(&m_pIndexBuffer);
 	m_IndexCount = pMesh->GetIndices().size();
 
-	HRESULT hr = DirectX::CreateDDSTextureFromFile(
-		DXUTGetD3D11Device(), m_TextureFile.c_str(), nullptr, &m_pCubeMapShaderResourceView, 0, nullptr, true);
+	HRESULT hr = CreateDDSTextureFromFileEx(
+		DXUTGetD3D11Device(), DXUTGetD3D11DeviceContext(), m_TextureFile.c_str(), 0,
+		D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE, 0, 0, true, nullptr, &m_pCubeMapShaderResourceView);
 	if (FAILED(hr))
 	{
 		GCC_ERROR("CreateDDSTextureFromFile() failed.");

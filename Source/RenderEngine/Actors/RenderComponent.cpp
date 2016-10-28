@@ -178,7 +178,7 @@ shared_ptr<SceneNode> MeshRenderComponent::VCreateSceneNode()
 		case RenderEngineApp::Renderer_D3D11:
 		{
 			return shared_ptr<SceneNode>(GCC_NEW D3DShaderMeshNode11(
-				m_pOwner->GetActorId(), weakThis, m_SdkMeshName, m_TextureName, RenderPass_Actor, pTransformComponent->GetTransform()));
+				m_pOwner->GetActorId(), weakThis, RenderPass_Actor, pTransformComponent->GetTransform()));
 		}
 
 		default:

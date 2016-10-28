@@ -51,6 +51,10 @@ public:
 	MeshRenderComponent();
 	~MeshRenderComponent();
 
+	const std::string& GetSdkMeshName() { return m_SdkMeshName; }
+	const std::string& GetTextureName() { return m_TextureName; }
+	const std::string& GetEffectName() { return m_EffectName; }
+
 	virtual const char* VGetName() const { return m_Name; }
 	static const char* m_Name;
 

@@ -7,7 +7,7 @@
 #include "../AppFramework/RenderEngineApp.h"
 
 const char* GridRenderComponent::m_Name = "GridRenderComponent";
-const char* MeshRenderComponent::m_Name = "MeshRenderComponent";
+const char* ModelRenderComponent::m_Name = "ModelRenderComponent";
 const char* SkyRenderComponent::m_Name = "SkyRenderComponent";
 const char* LightRenderComponent::m_Name = "LightRenderComponent";
 
@@ -130,19 +130,19 @@ void GridRenderComponent::VCreateInheritedXmlElement(TiXmlElement* pBaseElement)
 
 }
 
-MeshRenderComponent::MeshRenderComponent()
+ModelRenderComponent::ModelRenderComponent()
 	: m_SdkMeshName(),
 	m_TextureName()
 {
 
 }
 
-MeshRenderComponent::~MeshRenderComponent()
+ModelRenderComponent::~ModelRenderComponent()
 {
 
 }
 
-bool MeshRenderComponent::VDelegateInit(TiXmlElement* pData)
+bool ModelRenderComponent::VDelegateInit(TiXmlElement* pData)
 {
 	TiXmlElement* pSdkMesh = pData->FirstChildElement("SdkMesh");
 	if (pSdkMesh != nullptr)
@@ -165,7 +165,7 @@ bool MeshRenderComponent::VDelegateInit(TiXmlElement* pData)
 	return true;
 }
 
-shared_ptr<SceneNode> MeshRenderComponent::VCreateSceneNode()
+shared_ptr<SceneNode> ModelRenderComponent::VCreateSceneNode()
 {
 	shared_ptr<TransformComponent> pTransformComponent =
 		MakeStrongPtr(m_pOwner->GetComponent<TransformComponent>(TransformComponent::m_Name));
@@ -189,7 +189,7 @@ shared_ptr<SceneNode> MeshRenderComponent::VCreateSceneNode()
 	return shared_ptr<SceneNode>();
 }
 
-void MeshRenderComponent::VCreateInheritedXmlElement(TiXmlElement* pBaseElement)
+void ModelRenderComponent::VCreateInheritedXmlElement(TiXmlElement* pBaseElement)
 {
 	TiXmlElement* pSdkMesh = GCC_NEW TiXmlElement("SdkMesh");
 	TiXmlText* pSdkMeshName = GCC_NEW TiXmlText(m_SdkMeshName.c_str());

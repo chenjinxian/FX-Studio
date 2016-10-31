@@ -42,7 +42,7 @@ D3DShaderMeshNode11::D3DShaderMeshNode11(
 	ActorId actorId, WeakBaseRenderComponentPtr renderComponent, RenderPass renderPass, const Matrix& mat)
 	: SceneNode(actorId, renderComponent, renderPass)
 {
-	MeshRenderComponent* pMeshRender = static_cast<MeshRenderComponent*>(m_pRenderComponent);
+	ModelRenderComponent* pMeshRender = static_cast<ModelRenderComponent*>(m_pRenderComponent);
 	if (pMeshRender != nullptr)
 	{
 		m_SdkMeshName = pMeshRender->GetSdkMeshName();

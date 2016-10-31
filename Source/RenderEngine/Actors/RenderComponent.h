@@ -45,11 +45,11 @@ protected:
 	virtual void VCreateInheritedXmlElement(TiXmlElement* pBaseElement);
 };
 
-class MeshRenderComponent : public BaseRenderComponent
+class ModelRenderComponent : public BaseRenderComponent
 {
 public:
-	MeshRenderComponent();
-	~MeshRenderComponent();
+	ModelRenderComponent();
+	~ModelRenderComponent();
 
 	const std::string& GetSdkMeshName() { return m_SdkMeshName; }
 	const std::string& GetTextureName() { return m_TextureName; }

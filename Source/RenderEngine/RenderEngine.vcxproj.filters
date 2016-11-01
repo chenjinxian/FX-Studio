@@ -136,9 +136,6 @@
     <ClInclude Include="Graphics3D\VertexDeclarations.h">
       <Filter>Graphics3D</Filter>
     </ClInclude>
-    <ClInclude Include="Graphics3D\Model.h">
-      <Filter>Graphics3D</Filter>
-    </ClInclude>
     <ClInclude Include="Graphics3D\ModelMaterial.h">
       <Filter>Graphics3D</Filter>
     </ClInclude>
@@ -149,6 +146,12 @@
       <Filter>Graphics3D</Filter>
     </ClInclude>
     <ClInclude Include="Graphics3D\TextureResourceLoader.h">
+      <Filter>Graphics3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics3D\TextureMappingMaterial.h">
+      <Filter>Graphics3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics3D\ModelImporter.h">
       <Filter>Graphics3D</Filter>
     </ClInclude>
   </ItemGroup>
@@ -231,9 +234,6 @@
     <ClCompile Include="Graphics3D\Material.cpp">
       <Filter>Graphics3D</Filter>
     </ClCompile>
-    <ClCompile Include="Graphics3D\Model.cpp">
-      <Filter>Graphics3D</Filter>
-    </ClCompile>
     <ClCompile Include="Graphics3D\ModelMaterial.cpp">
       <Filter>Graphics3D</Filter>
     </ClCompile>
@@ -244,6 +244,12 @@
       <Filter>Graphics3D</Filter>
     </ClCompile>
     <ClCompile Include="Graphics3D\TextureResourceLoader.cpp">
+      <Filter>Graphics3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics3D\TextureMappingMaterial.cpp">
+      <Filter>Graphics3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics3D\ModelImporter.cpp">
       <Filter>Graphics3D</Filter>
     </ClCompile>
   </ItemGroup>

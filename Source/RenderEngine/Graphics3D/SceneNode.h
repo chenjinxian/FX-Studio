@@ -134,3 +134,32 @@ private:
 	UINT mScale;
 	Color mColor;
 };
+
+class Effect;
+class TextureMappingMaterial;
+class ModelNode : public SceneNode
+{
+public:
+	ModelNode(
+		ActorId actorId, WeakBaseRenderComponentPtr renderComponent, RenderPass renderPass, const Matrix& mat);
+
+	~ModelNode();
+
+	virtual HRESULT VOnRestore(Scene *pScene);
+	virtual HRESULT VOnLostDevice(Scene *pScene) { return S_OK; }
+	virtual HRESULT VOnDestoryDevice(Scene* pScene) override;
+	virtual HRESULT VOnUpdate(Scene* pScene, double fTime, float fElapsedTime) override;
+	virtual HRESULT VRender(Scene* pScene, double fTime, float fElapsedTime) override;
+
+private:
+	Effect* m_pEffect;
+	TextureMappingMaterial* m_pTextureMappingMaterial;
+	ID3D11Buffer* m_pVertexBuffer;
+	ID3D11Buffer* m_pIndexBuffer;
+	UINT m_IndexCount;
+	Matrix m_WorldMatrix;
+
+	std::string m_ModelName;
+	std::string m_TextureName;
+	std::string m_EffectName;
+};

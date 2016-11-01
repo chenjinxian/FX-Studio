@@ -48,6 +48,8 @@ public:
 
 	static void CompileEffectFromFile(ID3DX11Effect** ppEffect, const std::wstring& filename);
 	static void LoadCompiledEffect(ID3DX11Effect** ppEffect, const std::wstring& filename);
+	static void CompileEffectFromFile(ID3DX11Effect** ppEffect, const void* pBuffer, uint32_t lenght);
+	static void LoadCompiledEffect(ID3DX11Effect** ppEffect, const void* pBuffer, uint32_t lenght);
 
 	ID3DX11Effect* GetD3DX11Effect() const;
 	void SetD3DX11Effect(ID3DX11Effect* pD3DX11Effect);
@@ -59,6 +61,8 @@ public:
 
 	void CompileFromFile(const std::wstring& filename);
 	void LoadCompiledEffect(const std::wstring& filename);
+	void CompileFromMemory(const void* pBuffer, uint32_t lenght);
+	void LoadCompiledEffect(const void* pBuffer, uint32_t lenght);
 
 private:
 	void Initialize();

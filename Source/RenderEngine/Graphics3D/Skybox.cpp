@@ -1,5 +1,5 @@
 #include "Skybox.h"
-#include "Model.h"
+#include "ModelImporter.h"
 #include "Scene.h"
 #include "../Utilities/UtilityString.h"
 #include "DDSTextureLoader.h"
@@ -83,7 +83,7 @@ SkyboxNode::SkyboxNode(const std::wstring& textureFile)
 	m_IndexCount(0),
 	m_IsActive(true)
 {
-	m_ScaleMatrix = Matrix::CreateScale(100);
+	m_ScaleMatrix = Matrix::CreateScale(100.0f);
 }
 
 SkyboxNode::~SkyboxNode()
@@ -106,7 +106,7 @@ HRESULT SkyboxNode::VOnRestore(Scene* pScene)
 	Reset();
 
 	SetCurrentDirectory(Utility::ExecutableDirectory().c_str());
-	std::unique_ptr<Model> model(new Model("Assets\\Models\\Sphere.obj", true));
+	std::unique_ptr<Model> model(new Model(std::string("Assets\\Models\\Sphere.obj"), true));
 
 	m_pEffect = new Effect();
 	m_pEffect->LoadCompiledEffect(L"Assets\\Effects\\Skybox.cso");

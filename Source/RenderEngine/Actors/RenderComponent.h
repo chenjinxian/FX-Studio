@@ -51,7 +51,7 @@ public:
 	ModelRenderComponent();
 	~ModelRenderComponent();
 
-	const std::string& GetSdkMeshName() { return m_SdkMeshName; }
+	const std::string& GetModelName() { return m_ModelName; }
 	const std::string& GetTextureName() { return m_TextureName; }
 	const std::string& GetEffectName() { return m_EffectName; }
 
@@ -64,7 +64,7 @@ protected:
 	virtual void VCreateInheritedXmlElement(TiXmlElement* pBaseElement);
 
 private:
-	std::string m_SdkMeshName;
+	std::string m_ModelName;
 	std::string m_TextureName;
 	std::string m_EffectName;
 };

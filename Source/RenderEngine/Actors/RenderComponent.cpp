@@ -131,7 +131,7 @@ void GridRenderComponent::VCreateInheritedXmlElement(TiXmlElement* pBaseElement)
 }
 
 ModelRenderComponent::ModelRenderComponent()
-	: m_SdkMeshName(),
+	: m_ModelName(),
 	m_TextureName()
 {
 
@@ -147,7 +147,7 @@ bool ModelRenderComponent::VDelegateInit(TiXmlElement* pData)
 	TiXmlElement* pSdkMesh = pData->FirstChildElement("SdkMesh");
 	if (pSdkMesh != nullptr)
 	{
-		m_SdkMeshName = pSdkMesh->FirstChild()->Value();
+		m_ModelName = pSdkMesh->FirstChild()->Value();
 	}
 
 	TiXmlElement* pTexture = pData->FirstChildElement("Texture");
@@ -177,8 +177,17 @@ shared_ptr<SceneNode> ModelRenderComponent::VCreateSceneNode()
 		{
 		case RenderEngineApp::Renderer_D3D11:
 		{
-			return shared_ptr<SceneNode>(GCC_NEW D3DShaderMeshNode11(
-				m_pOwner->GetActorId(), weakThis, RenderPass_Actor, pTransformComponent->GetTransform()));
+			std::string extension =  m_ModelName.substr(m_ModelName.find_last_of('.'));
+			if (!extension.compare("sdkmesh"))
+			{
+				return shared_ptr<SceneNode>(GCC_NEW D3DShaderMeshNode11(
+					m_pOwner->GetActorId(), weakThis, RenderPass_Actor, pTransformComponent->GetTransform()));
+			}
+			else
+			{
+				return shared_ptr<SceneNode>(GCC_NEW ModelNode(
+					m_pOwner->GetActorId(), weakThis, RenderPass_Actor, pTransformComponent->GetTransform()));
+			}
 		}
 
 		default:
@@ -192,7 +201,7 @@ shared_ptr<SceneNode> ModelRenderComponent::VCreateSceneNode()
 void ModelRenderComponent::VCreateInheritedXmlElement(TiXmlElement* pBaseElement)
 {
 	TiXmlElement* pSdkMesh = GCC_NEW TiXmlElement("SdkMesh");
-	TiXmlText* pSdkMeshName = GCC_NEW TiXmlText(m_SdkMeshName.c_str());
+	TiXmlText* pSdkMeshName = GCC_NEW TiXmlText(m_ModelName.c_str());
 	pSdkMesh->LinkEndChild(pSdkMeshName);
 	pBaseElement->LinkEndChild(pSdkMesh);
 

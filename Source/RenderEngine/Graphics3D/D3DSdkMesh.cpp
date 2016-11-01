@@ -45,7 +45,7 @@ D3DShaderMeshNode11::D3DShaderMeshNode11(
 	ModelRenderComponent* pMeshRender = static_cast<ModelRenderComponent*>(m_pRenderComponent);
 	if (pMeshRender != nullptr)
 	{
-		m_SdkMeshName = pMeshRender->GetSdkMeshName();
+		m_SdkMeshName = pMeshRender->GetModelName();
 		m_TextureName = pMeshRender->GetTextureName();
 		m_EffectName = pMeshRender->GetEffectName();
 	}
@@ -173,10 +173,16 @@ HRESULT D3DShaderMeshNode11::VRender(Scene *pScene, double fTime, float fElapsed
 
 	Resource resource(m_SdkMeshName);
 	shared_ptr<ResHandle> pResourceHandle = g_pApp->m_pResCache->GetHandle(&resource);
+	if (pResourceHandle == nullptr)
+	{
+		return S_FALSE;
+	}
 	shared_ptr<D3DSdkMeshResourceExtraData11> extra = static_pointer_cast<D3DSdkMeshResourceExtraData11>(pResourceHandle->GetExtra());
-	//
-	// Render the mesh
-	//
+	if (extra == nullptr)
+	{
+		return S_FALSE;
+	}
+
 	UINT Strides[1];
 	UINT Offsets[1];
 	ID3D11Buffer* pVB[1];

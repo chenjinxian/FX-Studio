@@ -1,5 +1,5 @@
 #include "Material.h"
-#include "Model.h"
+#include "ModelImporter.h"
 
 Material::Material()
 	: m_pEffect(nullptr),
@@ -189,6 +189,37 @@ void Effect::LoadCompiledEffect(ID3DX11Effect** ppEffect, const std::wstring& fi
 	}
 }
 
+void Effect::CompileEffectFromFile(ID3DX11Effect** ppEffect, const void* pBuffer, uint32_t lenght)
+{
+	uint32_t shaderFlags = D3DCOMPILE_ENABLE_STRICTNESS;
+#ifdef _DEBUG
+	shaderFlags |= D3DCOMPILE_DEBUG;
+	shaderFlags |= D3DCOMPILE_SKIP_OPTIMIZATION;
+#endif
+
+	ID3D10Blob* errorMessages = nullptr;
+	HRESULT hr = D3DX11CompileEffectFromMemory(
+		pBuffer, lenght, nullptr, nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE,
+		shaderFlags, 0, DXUTGetD3D11Device(), ppEffect, &errorMessages);
+
+	if (FAILED(hr))
+	{
+		char* errorMessage = (errorMessages != nullptr ? (char*)errorMessages->GetBufferPointer() : "D3DX11CompileEffectFromMemory() failed");
+		GCC_ERROR(errorMessage);
+		SAFE_RELEASE(errorMessages);
+	}
+}
+
+void Effect::LoadCompiledEffect(ID3DX11Effect** ppEffect, const void* pBuffer, uint32_t lenght)
+{
+	HRESULT hr = D3DX11CreateEffectFromMemory(pBuffer, lenght, 0, DXUTGetD3D11Device(), ppEffect);
+	if (FAILED(hr))
+	{
+		GCC_ERROR("D3DX11CreateEffectFromMemory() failed.");
+	}
+}
+
+
 ID3DX11Effect* Effect::GetD3DX11Effect() const
 {
 	return m_pD3DX11Effect;
@@ -249,6 +280,18 @@ void Effect::CompileFromFile(const std::wstring& filename)
 void Effect::LoadCompiledEffect(const std::wstring& filename)
 {
 	LoadCompiledEffect(&m_pD3DX11Effect, filename);
+	Initialize();
+}
+
+void Effect::CompileFromMemory(const void* pBuffer, uint32_t lenght)
+{
+	CompileEffectFromFile(&m_pD3DX11Effect, pBuffer, lenght);
+	Initialize();
+}
+
+void Effect::LoadCompiledEffect(const void* pBuffer, uint32_t lenght)
+{
+	LoadCompiledEffect(&m_pD3DX11Effect, pBuffer, lenght);
 	Initialize();
 }
 

@@ -175,6 +175,7 @@
     <ClInclude Include="EventManager\EventManagerImpl.h" />
     <ClInclude Include="EventManager\Events.h" />
     <ClInclude Include="Graphics3D\D3DRenderer.h" />
+    <ClInclude Include="Graphics3D\LightNode.h" />
     <ClInclude Include="Graphics3D\Material.h" />
     <ClInclude Include="Graphics3D\D3DSdkMesh.h" />
     <ClInclude Include="Graphics3D\ModelImporter.h" />
@@ -216,6 +217,7 @@
     <ClCompile Include="EventManager\EventManagerImpl.cpp" />
     <ClCompile Include="EventManager\Events.cpp" />
     <ClCompile Include="Graphics3D\D3DRenderer.cpp" />
+    <ClCompile Include="Graphics3D\LightNode.cpp" />
     <ClCompile Include="Graphics3D\Material.cpp" />
     <ClCompile Include="Graphics3D\D3DSdkMesh.cpp" />
     <ClCompile Include="Graphics3D\ModelImporter.cpp" />

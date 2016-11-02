@@ -3,13 +3,17 @@
 #include "TransformComponent.h"
 #include "../Graphics3D/Skybox.h"
 #include "../Graphics3D/D3DSdkMesh.h"
+#include "../Graphics3D/LightNode.h"
 #include "../EventManager/Events.h"
 #include "../AppFramework/RenderEngineApp.h"
 
 const char* GridRenderComponent::m_Name = "GridRenderComponent";
 const char* ModelRenderComponent::m_Name = "ModelRenderComponent";
 const char* SkyRenderComponent::m_Name = "SkyRenderComponent";
-const char* LightRenderComponent::m_Name = "LightRenderComponent";
+const char* DirectionalLightComponent::m_Name = "DirectionalLightComponent";
+const char* PointLightComponent::m_Name = "PointLightComponent";
+const char* SpotLightComponent::m_Name = "SpotLightComponent";
+
 
 BaseRenderComponent::BaseRenderComponent() : m_pSceneNode(nullptr)
 {
@@ -144,10 +148,10 @@ ModelRenderComponent::~ModelRenderComponent()
 
 bool ModelRenderComponent::VDelegateInit(TiXmlElement* pData)
 {
-	TiXmlElement* pSdkMesh = pData->FirstChildElement("SdkMesh");
-	if (pSdkMesh != nullptr)
+	TiXmlElement* pModel = pData->FirstChildElement("Model");
+	if (pModel != nullptr)
 	{
-		m_ModelName = pSdkMesh->FirstChild()->Value();
+		m_ModelName = pModel->FirstChild()->Value();
 	}
 
 	TiXmlElement* pTexture = pData->FirstChildElement("Texture");
@@ -191,7 +195,7 @@ shared_ptr<SceneNode> ModelRenderComponent::VCreateSceneNode()
 		}
 
 		default:
-			GCC_ERROR("Unknown Renderer Implementation in TeapotRenderComponent");
+			GCC_ERROR("Unknown Renderer Implementation in ModelRenderComponent");
 		}
 	}
 
@@ -200,7 +204,7 @@ shared_ptr<SceneNode> ModelRenderComponent::VCreateSceneNode()
 
 void ModelRenderComponent::VCreateInheritedXmlElement(TiXmlElement* pBaseElement)
 {
-	TiXmlElement* pSdkMesh = GCC_NEW TiXmlElement("SdkMesh");
+	TiXmlElement* pSdkMesh = GCC_NEW TiXmlElement("Model");
 	TiXmlText* pSdkMeshName = GCC_NEW TiXmlText(m_ModelName.c_str());
 	pSdkMesh->LinkEndChild(pSdkMeshName);
 	pBaseElement->LinkEndChild(pSdkMesh);
@@ -245,7 +249,7 @@ shared_ptr<SceneNode> SkyRenderComponent::VCreateSceneNode()
 	}
 	else
 	{
-		GCC_ERROR("Unknown Renderer Implementation in VLoadGameDelegate");
+		GCC_ERROR("Unknown Renderer Implementation in SkyRenderComponent");
 	}
 	return sky;
 }
@@ -270,15 +274,189 @@ LightRenderComponent::~LightRenderComponent()
 
 bool LightRenderComponent::VDelegateInit(TiXmlElement* pData)
 {
+	TiXmlElement* pModel = pData->FirstChildElement("Model");
+	if (pModel != nullptr)
+	{
+		m_ModelName = pModel->FirstChild()->Value();
+	}
+
+	TiXmlElement* pLight = pData->FirstChildElement("Light");
+	TiXmlElement* pDirectionNode = pLight->FirstChildElement("Direction");
+	if (pDirectionNode != nullptr)
+	{
+		double x = 0;
+		double y = 0;
+		double z = 0;
+		pDirectionNode->Attribute("x", &x);
+		pDirectionNode->Attribute("y", &y);
+		pDirectionNode->Attribute("z", &z);
+	}
+
+	TiXmlElement* pUpNode = pLight->FirstChildElement("Up");
+	if (pUpNode != nullptr)
+	{
+		double x = 0;
+		double y = 0;
+		double z = 0;
+		pUpNode->Attribute("x", &x);
+		pUpNode->Attribute("y", &y);
+		pUpNode->Attribute("z", &z);
+	}
+
+	TiXmlElement* pRightNode = pLight->FirstChildElement("Right");
+	if (pRightNode != nullptr)
+	{
+		double x = 0;
+		double y = 0;
+		double z = 0;
+		pRightNode->Attribute("x", &x);
+		pRightNode->Attribute("y", &y);
+		pRightNode->Attribute("z", &z);
+	}
+
+	TiXmlElement* pShapeNode = pLight->FirstChildElement("Shape");
+	if (pShapeNode != nullptr)
+	{
+		double temp;
+		pShapeNode->Attribute("Radius", &temp);
+		pShapeNode->Attribute("InnerAngle", &temp);
+		pShapeNode->Attribute("OuterAngle", &temp);
+	}
 	return true;
 }
 
 shared_ptr<SceneNode> LightRenderComponent::VCreateSceneNode()
 {
+	shared_ptr<TransformComponent> pTransformComponent =
+		MakeStrongPtr(m_pOwner->GetComponent<TransformComponent>(TransformComponent::m_Name));
+	if (pTransformComponent)
+	{
+		WeakBaseRenderComponentPtr weakThis(this);
+
+		switch (RenderEngineApp::GetRendererImpl())
+		{
+		case RenderEngineApp::Renderer_D3D11:
+		{
+// 			return shared_ptr<SceneNode>(GCC_NEW D3DShaderMeshNode11(
+// 				m_pOwner->GetActorId(), weakThis, RenderPass_Actor, pTransformComponent->GetTransform()));
+		}
+
+		default:
+			GCC_ERROR("Unknown Renderer Implementation in LightRenderComponent");
+		}
+	}
+
 	return shared_ptr<SceneNode>();
 }
 
 void LightRenderComponent::VCreateInheritedXmlElement(TiXmlElement* pBaseElement)
+{
+	GCC_ASSERT(pBaseElement);
+	if (pBaseElement == nullptr)
+	{
+		return;
+	}
+
+// 	TiXmlElement* pSceneNode = GCC_NEW TiXmlElement("Light");
+// 
+// 	TiXmlElement* pDirectionNode = GCC_NEW TiXmlElement("Direction");
+// 	pDirectionNode->SetAttribute("x", ToStr(m_Props.m_Direction.x).c_str());
+// 	pDirectionNode->SetAttribute("y", ToStr(m_Props.m_Direction.y).c_str());
+// 	pDirectionNode->SetAttribute("z", ToStr(m_Props.m_Direction.z).c_str());
+// 	pSceneNode->LinkEndChild(pDirectionNode);
+// 
+// 	TiXmlElement* pUpNode = GCC_NEW TiXmlElement("Up");
+// 	pUpNode->SetAttribute("x", ToStr(m_Props.m_Up.x).c_str());
+// 	pUpNode->SetAttribute("y", ToStr(m_Props.m_Up.y).c_str());
+// 	pUpNode->SetAttribute("z", ToStr(m_Props.m_Up.z).c_str());
+// 	pSceneNode->LinkEndChild(pUpNode);
+// 
+// 	TiXmlElement* pRightNode = GCC_NEW TiXmlElement("Right");
+// 	pRightNode->SetAttribute("x", ToStr(m_Props.m_Right.x).c_str());
+// 	pRightNode->SetAttribute("y", ToStr(m_Props.m_Right.y).c_str());
+// 	pRightNode->SetAttribute("z", ToStr(m_Props.m_Right.z).c_str());
+// 	pSceneNode->LinkEndChild(pRightNode);
+// 
+// 	TiXmlElement* pShapeNode = GCC_NEW TiXmlElement("Shape");
+// 	pShapeNode->SetAttribute("Radius", ToStr(m_Props.m_Radius).c_str());
+// 	pShapeNode->SetAttribute("InnerAngle", ToStr(m_Props.m_InnerAngle).c_str());
+// 	pShapeNode->SetAttribute("OuterAngle", ToStr(m_Props.m_OuterAngle).c_str());
+// 	pSceneNode->LinkEndChild(pShapeNode);
+// 
+// 	pBaseElement->LinkEndChild(pSceneNode);
+}
+
+DirectionalLightComponent::DirectionalLightComponent()
+{
+
+}
+
+DirectionalLightComponent::~DirectionalLightComponent()
+{
+
+}
+
+bool DirectionalLightComponent::VDelegateInit(TiXmlElement* pData)
+{
+	return true;
+}
+
+shared_ptr<SceneNode> DirectionalLightComponent::VCreateSceneNode()
+{
+	return shared_ptr<SceneNode>();
+}
+
+void DirectionalLightComponent::VCreateInheritedXmlElement(TiXmlElement* pBaseElement)
+{
+
+}
+
+PointLightComponent::PointLightComponent()
+{
+
+}
+
+PointLightComponent::~PointLightComponent()
+{
+
+}
+
+bool PointLightComponent::VDelegateInit(TiXmlElement* pData)
+{
+	return true;
+}
+
+shared_ptr<SceneNode> PointLightComponent::VCreateSceneNode()
+{
+	return shared_ptr<SceneNode>();
+}
+
+void PointLightComponent::VCreateInheritedXmlElement(TiXmlElement* pBaseElement)
+{
+
+}
+
+SpotLightComponent::SpotLightComponent()
+{
+
+}
+
+SpotLightComponent::~SpotLightComponent()
+{
+
+}
+
+bool SpotLightComponent::VDelegateInit(TiXmlElement* pData)
+{
+	return true;
+}
+
+shared_ptr<SceneNode> SpotLightComponent::VCreateSceneNode()
+{
+	return shared_ptr<SceneNode>();
+}
+
+void SpotLightComponent::VCreateInheritedXmlElement(TiXmlElement* pBaseElement)
 {
 
 }

@@ -34,7 +34,7 @@ class GridRenderComponent : public BaseRenderComponent
 {
 public:
 	GridRenderComponent();
-	~GridRenderComponent();
+	virtual ~GridRenderComponent();
 
 	virtual const char* VGetName() const { return m_Name; }
 	static const char* m_Name;
@@ -49,7 +49,7 @@ class ModelRenderComponent : public BaseRenderComponent
 {
 public:
 	ModelRenderComponent();
-	~ModelRenderComponent();
+	virtual ~ModelRenderComponent();
 
 	const std::string& GetModelName() { return m_ModelName; }
 	const std::string& GetTextureName() { return m_TextureName; }
@@ -73,7 +73,24 @@ class LightRenderComponent : public BaseRenderComponent
 {
 public:
 	LightRenderComponent();
-	~LightRenderComponent();
+	virtual ~LightRenderComponent();
+
+	const std::string& GetModelName() { return m_ModelName; }
+
+protected:
+	virtual bool VDelegateInit(TiXmlElement* pData) override;
+	virtual shared_ptr<SceneNode> VCreateSceneNode() override;
+	virtual void VCreateInheritedXmlElement(TiXmlElement* pBaseElement);
+
+private:
+	std::string m_ModelName;
+};
+
+class DirectionalLightComponent : virtual public LightRenderComponent
+{
+public:
+	DirectionalLightComponent();
+	virtual ~DirectionalLightComponent();
 
 	virtual const char* VGetName() const { return m_Name; }
 	static const char* m_Name;
@@ -82,13 +99,55 @@ protected:
 	virtual bool VDelegateInit(TiXmlElement* pData) override;
 	virtual shared_ptr<SceneNode> VCreateSceneNode() override;
 	virtual void VCreateInheritedXmlElement(TiXmlElement* pBaseElement);
+
+private:
+	Vector3 m_Direction;
+	Vector3 m_Up;
+	Vector3 m_Right;
+};
+
+class PointLightComponent : virtual public LightRenderComponent
+{
+public:
+	PointLightComponent();
+	virtual ~PointLightComponent();
+
+	virtual const char* VGetName() const { return m_Name; }
+	static const char* m_Name;
+
+protected:
+	virtual bool VDelegateInit(TiXmlElement* pData) override;
+	virtual shared_ptr<SceneNode> VCreateSceneNode() override;
+	virtual void VCreateInheritedXmlElement(TiXmlElement* pBaseElement);
+
+private:
+	float m_Radius;
+};
+
+class SpotLightComponent : public DirectionalLightComponent, public PointLightComponent
+{
+public:
+	SpotLightComponent();
+	virtual ~SpotLightComponent();
+
+	virtual const char* VGetName() const { return m_Name; }
+	static const char* m_Name;
+
+protected:
+	virtual bool VDelegateInit(TiXmlElement* pData) override;
+	virtual shared_ptr<SceneNode> VCreateSceneNode() override;
+	virtual void VCreateInheritedXmlElement(TiXmlElement* pBaseElement);
+
+private:
+	float m_InnerAngle;
+	float m_OuterAngle;
 };
 
 class SkyRenderComponent : public BaseRenderComponent
 {
 public:
 	SkyRenderComponent();
-	~SkyRenderComponent();
+	virtual ~SkyRenderComponent();
 
 	virtual const char* VGetName() const { return m_Name; }
 	static const char* m_Name;

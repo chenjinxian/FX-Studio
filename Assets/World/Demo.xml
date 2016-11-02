@@ -3,29 +3,41 @@
   <StaticActors>
     <Actor type="Sky">
       <SkyRenderComponent>
-        <Color r="1.000000" g="1.000000" b="1.000000" a="1.000000" />
+        <Color r="1.0" g="1.0" b="1.0" a="1.0" />
         <Texture>art\sky2_n.JPG</Texture>
       </SkyRenderComponent>
     </Actor>
-    <Actor type="Grid">
+     <Actor type="DirectionalLight">
+      <LightRenderComponent>
+        <Color r="1.0" g="1.0" b="1.0" a="1.0" />
+        <Model>Models\DirectionalLightProxy.obj</Model>
+		<Light>
+		  <Direction x="5.0" y="5.0" z="3.0" />
+		  <Up x="5.0" y="5.0" z="3.0" />
+		  <Right x="5.0" y="5.0" z="3.0" />
+		  <Shape Radius="10.0" InnerAngle="1.0" OuterAngle="0.0" />
+		</Light>
+      </LightRenderComponent>
+    </Actor>
+   <Actor type="Grid">
       <TransformComponent>
-        <Position x="0.000000" y="0.000000" z="0.000000" />
-        <YawPitchRoll x="0.000000" y="-0.000000" z="0.000000" />
+        <Position x="0.0" y="0.0" z="0.0" />
+        <YawPitchRoll x="0.0" y="-0.0" z="0.0" />
       </TransformComponent>
       <GridRenderComponent>
-        <Color r="0.400000" g="0.400000" b="0.400000" a="1.000000" />
+        <Color r="0.4" g="0.4" b="0.4" a="1.0" />
         <Texture>art\grid.dds</Texture>
         <Division>100</Division>
       </GridRenderComponent>
     </Actor>
     <Actor type="Model">
       <TransformComponent>
-        <Position x="0.000000" y="0.000000" z="0.000000" />
-        <YawPitchRoll x="0.000000" y="-0.000000" z="0.000000" />
+        <Position x="0.0" y="0.0" z="0.0" />
+        <YawPitchRoll x="0.0" y="-0.0" z="0.0" />
       </TransformComponent>
       <ModelRenderComponent>
-        <Color r="0.400000" g="0.400000" b="0.400000" a="1.000000" />
-        <SdkMesh>Models\Sphere.obj</SdkMesh>
+        <Color r="0.4" g="0.4" b="0.4" a="1.0" />
+        <Model>Models\Sphere.obj</Model>
         <Texture>Textures\EarthComposite.jpg</Texture>
 		<Effect>Effects\TextureMapping.fx<Effect>
       </ModelRenderComponent>

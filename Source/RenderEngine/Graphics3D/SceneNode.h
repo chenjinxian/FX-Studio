@@ -140,8 +140,7 @@ class TextureMappingMaterial;
 class ModelNode : public SceneNode
 {
 public:
-	ModelNode(
-		ActorId actorId, WeakBaseRenderComponentPtr renderComponent, RenderPass renderPass, const Matrix& mat);
+	ModelNode(ActorId actorId, WeakBaseRenderComponentPtr renderComponent, RenderPass renderPass, const Matrix& mat);
 
 	~ModelNode();
 

@@ -154,6 +154,9 @@
     <ClInclude Include="Graphics3D\ModelImporter.h">
       <Filter>Graphics3D</Filter>
     </ClInclude>
+    <ClInclude Include="Graphics3D\LightNode.h">
+      <Filter>Graphics3D</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppFramework\RenderEngineApp.cpp">
@@ -250,6 +253,9 @@
       <Filter>Graphics3D</Filter>
     </ClCompile>
     <ClCompile Include="Graphics3D\ModelImporter.cpp">
+      <Filter>Graphics3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics3D\LightNode.cpp">
       <Filter>Graphics3D</Filter>
     </ClCompile>
   </ItemGroup>

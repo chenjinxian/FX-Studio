@@ -7,17 +7,17 @@
         <Texture>art\sky2_n.JPG</Texture>
       </SkyRenderComponent>
     </Actor>
-     <Actor type="DirectionalLight">
-      <LightRenderComponent>
+     <Actor type="SpotLight">
+      <SpotLightComponent>
         <Color r="1.0" g="1.0" b="1.0" a="1.0" />
-        <Model>Models\DirectionalLightProxy.obj</Model>
+        <Model>Models\SpotLightProxy.obj</Model>
 		<Light>
 		  <Direction x="5.0" y="5.0" z="3.0" />
 		  <Up x="5.0" y="5.0" z="3.0" />
 		  <Right x="5.0" y="5.0" z="3.0" />
 		  <Shape Radius="10.0" InnerAngle="1.0" OuterAngle="0.0" />
 		</Light>
-      </LightRenderComponent>
+      </SpotLightComponent>
     </Actor>
    <Actor type="Grid">
       <TransformComponent>

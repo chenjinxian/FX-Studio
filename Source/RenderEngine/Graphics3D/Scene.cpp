@@ -140,15 +140,17 @@ void Scene::NewRenderComponentDelegate(IEventDataPtr pEventData)
 
 	ActorId actorId = pCastEventData->GetActorId();
 	shared_ptr<SceneNode> pSceneNode(pCastEventData->GetSceneNode());
-
-	if (FAILED(pSceneNode->VOnRestore(this)))
+	if (pSceneNode != nullptr)
 	{
-		std::string error = "Failed to restore scene node to the scene for actorid " + ToStr(actorId);
-		GCC_ERROR(error);
-		return;
-	}
+		if (FAILED(pSceneNode->VOnRestore(this)))
+		{
+			std::string error = "Failed to restore scene node to the scene for actorid " + ToStr(actorId);
+			GCC_ERROR(error);
+			return;
+		}
 
-	AddChild(actorId, pSceneNode);
+		AddChild(actorId, pSceneNode);
+	}
 }
 
 void Scene::ModifiedRenderComponentDelegate(IEventDataPtr pEventData)

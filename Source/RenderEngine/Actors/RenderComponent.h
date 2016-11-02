@@ -40,8 +40,8 @@ public:
 	static const char* m_Name;
 
 protected:
-	virtual bool VDelegateInit(TiXmlElement* pData) override;
-	virtual shared_ptr<SceneNode> VCreateSceneNode() override;
+	virtual bool VDelegateInit(TiXmlElement* pData);
+	virtual shared_ptr<SceneNode> VCreateSceneNode();
 	virtual void VCreateInheritedXmlElement(TiXmlElement* pBaseElement);
 };
 
@@ -59,14 +59,29 @@ public:
 	static const char* m_Name;
 
 protected:
-	virtual bool VDelegateInit(TiXmlElement* pData) override;
-	virtual shared_ptr<SceneNode> VCreateSceneNode() override;
+	virtual bool VDelegateInit(TiXmlElement* pData);
+	virtual shared_ptr<SceneNode> VCreateSceneNode();
 	virtual void VCreateInheritedXmlElement(TiXmlElement* pBaseElement);
 
 private:
 	std::string m_ModelName;
 	std::string m_TextureName;
 	std::string m_EffectName;
+};
+
+class SkyRenderComponent : public BaseRenderComponent
+{
+public:
+	SkyRenderComponent();
+	virtual ~SkyRenderComponent();
+
+	virtual const char* VGetName() const { return m_Name; }
+	static const char* m_Name;
+
+protected:
+	virtual bool VDelegateInit(TiXmlElement* pData);
+	virtual shared_ptr<SceneNode> VCreateSceneNode();
+	virtual void VCreateInheritedXmlElement(TiXmlElement* pBaseElement);
 };
 
 class LightRenderComponent : public BaseRenderComponent
@@ -78,8 +93,7 @@ public:
 	const std::string& GetModelName() { return m_ModelName; }
 
 protected:
-	virtual bool VDelegateInit(TiXmlElement* pData) override;
-	virtual shared_ptr<SceneNode> VCreateSceneNode() override;
+	virtual bool VDelegateInit(TiXmlElement* pData);
 	virtual void VCreateInheritedXmlElement(TiXmlElement* pBaseElement);
 
 private:
@@ -96,11 +110,10 @@ public:
 	static const char* m_Name;
 
 protected:
-	virtual bool VDelegateInit(TiXmlElement* pData) override;
-	virtual shared_ptr<SceneNode> VCreateSceneNode() override;
+	virtual bool VDelegateInit(TiXmlElement* pData);
+	virtual shared_ptr<SceneNode> VCreateSceneNode();
 	virtual void VCreateInheritedXmlElement(TiXmlElement* pBaseElement);
 
-private:
 	Vector3 m_Direction;
 	Vector3 m_Up;
 	Vector3 m_Right;
@@ -116,11 +129,10 @@ public:
 	static const char* m_Name;
 
 protected:
-	virtual bool VDelegateInit(TiXmlElement* pData) override;
-	virtual shared_ptr<SceneNode> VCreateSceneNode() override;
+	virtual bool VDelegateInit(TiXmlElement* pData);
+	virtual shared_ptr<SceneNode> VCreateSceneNode();
 	virtual void VCreateInheritedXmlElement(TiXmlElement* pBaseElement);
 
-private:
 	float m_Radius;
 };
 
@@ -134,26 +146,11 @@ public:
 	static const char* m_Name;
 
 protected:
-	virtual bool VDelegateInit(TiXmlElement* pData) override;
-	virtual shared_ptr<SceneNode> VCreateSceneNode() override;
+	virtual bool VDelegateInit(TiXmlElement* pData);
+	virtual shared_ptr<SceneNode> VCreateSceneNode();
 	virtual void VCreateInheritedXmlElement(TiXmlElement* pBaseElement);
 
 private:
 	float m_InnerAngle;
 	float m_OuterAngle;
-};
-
-class SkyRenderComponent : public BaseRenderComponent
-{
-public:
-	SkyRenderComponent();
-	virtual ~SkyRenderComponent();
-
-	virtual const char* VGetName() const { return m_Name; }
-	static const char* m_Name;
-
-protected:
-	virtual bool VDelegateInit(TiXmlElement* pData) override;
-	virtual shared_ptr<SceneNode> VCreateSceneNode() override;
-	virtual void VCreateInheritedXmlElement(TiXmlElement* pBaseElement);
 };

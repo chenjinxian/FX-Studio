@@ -17,11 +17,11 @@ public:
 	virtual void VOnChanged() {}
 
 	virtual TiXmlElement* VGenerateXml() = 0;
-	virtual ComponentId VGetId() const { return GetIdFromName(VGetName()); }
-	virtual const char* VGetName() const = 0;
-	static ComponentId GetIdFromName(const char* compoentStr)
+	virtual ComponentId VGetComponentId() const { return GetIdFromName(VGetComponentName()); }
+	virtual const std::string& VGetComponentName() const = 0;
+	static ComponentId GetIdFromName(const std::string& compoentStr)
 	{
-		void* rawId = HashedString::hash_name(compoentStr);
+		void* rawId = HashedString::hash_name(compoentStr.c_str());
 		return reinterpret_cast<ComponentId>(rawId);
 	}
 

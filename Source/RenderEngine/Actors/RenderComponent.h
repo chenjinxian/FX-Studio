@@ -20,7 +20,7 @@ protected:
 	virtual shared_ptr<SceneNode> VCreateSceneNode() = 0;
 	Color LoadColor(TiXmlElement* pData);
 	
-	virtual TiXmlElement* VCreateBaseElement() { return GCC_NEW TiXmlElement(VGetName()); }
+	virtual TiXmlElement* VCreateBaseElement() { return GCC_NEW TiXmlElement(VGetComponentName().c_str()); }
 	virtual void VCreateInheritedXmlElement(TiXmlElement* pBaseElement) = 0;
 
 private:
@@ -36,8 +36,8 @@ public:
 	GridRenderComponent();
 	virtual ~GridRenderComponent();
 
-	virtual const char* VGetName() const { return m_Name; }
-	static const char* m_Name;
+	virtual const std::string& VGetComponentName() const override { return m_Name; }
+	static const std::string m_Name;
 
 protected:
 	virtual bool VDelegateInit(TiXmlElement* pData);
@@ -55,8 +55,8 @@ public:
 	const std::string& GetTextureName() { return m_TextureName; }
 	const std::string& GetEffectName() { return m_EffectName; }
 
-	virtual const char* VGetName() const { return m_Name; }
-	static const char* m_Name;
+	virtual const std::string& VGetComponentName() const override { return m_Name; }
+	static const std::string m_Name;
 
 protected:
 	virtual bool VDelegateInit(TiXmlElement* pData);
@@ -69,14 +69,14 @@ private:
 	std::string m_EffectName;
 };
 
-class SkyRenderComponent : public BaseRenderComponent
+class SkyboxRenderComponent : public BaseRenderComponent
 {
 public:
-	SkyRenderComponent();
-	virtual ~SkyRenderComponent();
+	SkyboxRenderComponent();
+	virtual ~SkyboxRenderComponent();
 
-	virtual const char* VGetName() const { return m_Name; }
-	static const char* m_Name;
+	virtual const std::string& VGetComponentName() const override { return m_Name; }
+	static const std::string m_Name;
 
 protected:
 	virtual bool VDelegateInit(TiXmlElement* pData);
@@ -110,8 +110,8 @@ public:
 	const Vector3& GetUp() { return m_Up; }
 	const Vector3& GetRight() { return m_Right; }
 
-	virtual const char* VGetName() const { return m_Name; }
-	static const char* m_Name;
+	virtual const std::string& VGetComponentName() const override { return m_Name; }
+	static const std::string m_Name;
 
 protected:
 	virtual bool VDelegateInit(TiXmlElement* pData);
@@ -131,8 +131,8 @@ public:
 
 	float GetRadius() const { return m_Radius; }
 
-	virtual const char* VGetName() const { return m_Name; }
-	static const char* m_Name;
+	virtual const std::string& VGetComponentName() const override { return m_Name; }
+	static const std::string m_Name;
 
 protected:
 	virtual bool VDelegateInit(TiXmlElement* pData);
@@ -151,8 +151,8 @@ public:
 	float GetInnerAngle() const { return m_InnerAngle; }
 	float GetOuterAngle() const { return m_OuterAngle; }
 
-	virtual const char* VGetName() const { return m_Name; }
-	static const char* m_Name;
+	virtual const std::string& VGetComponentName() const override { return m_Name; }
+	static const std::string m_Name;
 
 protected:
 	virtual bool VDelegateInit(TiXmlElement* pData);

@@ -15,6 +15,7 @@ public:
 
 protected:
 	virtual StrongActorComponentPtr VCreateComponent(TiXmlElement* pData);
+
 	GenericObjectFactory<ActorComponent, ComponentId> m_ComponentFactory;
 
 private:

@@ -12,7 +12,7 @@ SceneNode::SceneNode(ActorId actorId, WeakBaseRenderComponentPtr renderComponent
 	: m_pParent(nullptr), m_pRenderComponent(renderComponent)
 {
 	m_Properties.m_ActorId = actorId;
-	m_Properties.m_ActorName = (renderComponent != nullptr) ? renderComponent->VGetName() : "SceneNode";
+	m_Properties.m_ActorName = (renderComponent != nullptr) ? renderComponent->VGetComponentName() : "SceneNode";
 }
 
 SceneNode::~SceneNode()

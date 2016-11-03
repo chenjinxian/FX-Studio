@@ -9,7 +9,6 @@ public:
 	TransformComponent();
 	virtual ~TransformComponent();
 
-	virtual const char* VGetName() const { return m_Name; }
 	virtual bool VInit(TiXmlElement* pData) override;
 	virtual TiXmlElement* VGenerateXml() override;
 
@@ -18,7 +17,8 @@ public:
 	Vector3 GetPosition(void) const { return m_Transform.Backward(); }
 	void SetPosition(const Vector3& pos) { m_Transform.Backward(pos); }
 
-	static const char* m_Name;
+	virtual const std::string& VGetComponentName() const override { return m_Name; }
+	static const std::string m_Name;
 
 private:
 	Matrix m_Transform;

@@ -65,6 +65,7 @@ std::string Actor::ToXml()
 
 void Actor::AddComponent(StrongActorComponentPtr pComponent)
 {
-	std::pair<ActorCompoentMap::iterator, bool> success = m_ActorComponents.insert(std::make_pair(pComponent->VGetId(), pComponent));
+	std::pair<ActorCompoentMap::iterator, bool> success =
+		m_ActorComponents.insert(std::make_pair(pComponent->VGetComponentId(), pComponent));
 	GCC_ASSERT(success.second);
 }

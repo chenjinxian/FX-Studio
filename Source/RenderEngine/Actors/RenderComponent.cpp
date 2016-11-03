@@ -7,12 +7,12 @@
 #include "../EventManager/Events.h"
 #include "../AppFramework/RenderEngineApp.h"
 
-const char* GridRenderComponent::m_Name = "GridRenderComponent";
-const char* ModelRenderComponent::m_Name = "ModelRenderComponent";
-const char* SkyRenderComponent::m_Name = "SkyRenderComponent";
-const char* DirectionalLightComponent::m_Name = "DirectionalLightComponent";
-const char* PointLightComponent::m_Name = "PointLightComponent";
-const char* SpotLightComponent::m_Name = "SpotLightComponent";
+const std::string GridRenderComponent::m_Name = "GridRenderComponent";
+const std::string ModelRenderComponent::m_Name = "ModelRenderComponent";
+const std::string SkyboxRenderComponent::m_Name = "SkyboxRenderComponent";
+const std::string DirectionalLightComponent::m_Name = "DirectionalLightComponent";
+const std::string PointLightComponent::m_Name = "PointLightComponent";
+const std::string SpotLightComponent::m_Name = "SpotLightComponent";
 
 BaseRenderComponent::BaseRenderComponent() : m_pSceneNode(nullptr)
 {
@@ -219,17 +219,17 @@ void ModelRenderComponent::VCreateInheritedXmlElement(TiXmlElement* pBaseElement
 	pBaseElement->LinkEndChild(pEffect);
 }
 
-SkyRenderComponent::SkyRenderComponent()
+SkyboxRenderComponent::SkyboxRenderComponent()
 {
 
 }
 
-SkyRenderComponent::~SkyRenderComponent()
+SkyboxRenderComponent::~SkyboxRenderComponent()
 {
 
 }
 
-bool SkyRenderComponent::VDelegateInit(TiXmlElement* pData)
+bool SkyboxRenderComponent::VDelegateInit(TiXmlElement* pData)
 {
 	TiXmlElement* pTexture = pData->FirstChildElement("Texture");
 	if (pTexture)
@@ -239,7 +239,7 @@ bool SkyRenderComponent::VDelegateInit(TiXmlElement* pData)
 	return true;
 }
 
-shared_ptr<SceneNode> SkyRenderComponent::VCreateSceneNode()
+shared_ptr<SceneNode> SkyboxRenderComponent::VCreateSceneNode()
 {
 	shared_ptr<SkyboxNode> sky;
 	if (RenderEngineApp::GetRendererImpl() == RenderEngineApp::Renderer_D3D11)
@@ -248,12 +248,12 @@ shared_ptr<SceneNode> SkyRenderComponent::VCreateSceneNode()
 	}
 	else
 	{
-		GCC_ERROR("Unknown Renderer Implementation in SkyRenderComponent");
+		GCC_ERROR("Unknown Renderer Implementation in SkyboxRenderComponent");
 	}
 	return sky;
 }
 
-void SkyRenderComponent::VCreateInheritedXmlElement(TiXmlElement* pBaseElement)
+void SkyboxRenderComponent::VCreateInheritedXmlElement(TiXmlElement* pBaseElement)
 {
 // 	TiXmlElement* pTextureNode = GCC_NEW TiXmlElement("Texture");
 // 	TiXmlText* pTextureText = GCC_NEW TiXmlText(m_textureResource.c_str());

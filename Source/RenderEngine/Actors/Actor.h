@@ -20,8 +20,8 @@ public:
 
 	std::string ToXml();
 
-	ActorId GetActorId(void) const { return m_ActorId; }
-	ActorType GetActorType(void) const { return m_ActorType; }
+	ActorId GetActorId() const { return m_ActorId; }
+	ActorType GetActorType() const { return m_ActorType; }
 
 	template <class ComponentType>
 	weak_ptr<ComponentType> GetComponent(ComponentId componentId)
@@ -41,7 +41,7 @@ public:
 	}
 
 	template <class ComponentType>
-	weak_ptr<ComponentType> GetComponent(const char *name)
+	weak_ptr<ComponentType> GetComponent(const std::string& name)
 	{
 		ComponentId componentId = ActorComponent::GetIdFromName(name);
 		auto findIt = m_ActorComponents.find(componentId);

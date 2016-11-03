@@ -8,16 +8,19 @@
       </SkyRenderComponent>
     </Actor>
      <Actor type="SpotLight">
-      <SpotLightComponent>
+      <TransformComponent>
+        <Position x="0.0" y="0.0" z="0.0" />
+        <YawPitchRoll x="0.0" y="-0.0" z="0.0" />
+      </TransformComponent>
+      <DirectionalLightComponent>
         <Color r="1.0" g="1.0" b="1.0" a="1.0" />
-        <Model>Models\SpotLightProxy.obj</Model>
+        <Model>Models\DirectionalLightProxy.obj</Model>
 		<Light>
 		  <Direction x="5.0" y="5.0" z="3.0" />
 		  <Up x="5.0" y="5.0" z="3.0" />
 		  <Right x="5.0" y="5.0" z="3.0" />
-		  <Shape Radius="10.0" InnerAngle="1.0" OuterAngle="0.0" />
 		</Light>
-      </SpotLightComponent>
+      </DirectionalLightComponent>
     </Actor>
    <Actor type="Grid">
       <TransformComponent>

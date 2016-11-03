@@ -14,7 +14,6 @@ const char* DirectionalLightComponent::m_Name = "DirectionalLightComponent";
 const char* PointLightComponent::m_Name = "PointLightComponent";
 const char* SpotLightComponent::m_Name = "SpotLightComponent";
 
-
 BaseRenderComponent::BaseRenderComponent() : m_pSceneNode(nullptr)
 {
 }
@@ -357,8 +356,8 @@ shared_ptr<SceneNode> DirectionalLightComponent::VCreateSceneNode()
 		{
 		case RenderEngineApp::Renderer_D3D11:
 		{
-			// 			return shared_ptr<SceneNode>(GCC_NEW D3DShaderMeshNode11(
-			// 				m_pOwner->GetActorId(), weakThis, RenderPass_Actor, pTransformComponent->GetTransform()));
+			return shared_ptr<SceneNode>(GCC_NEW DirectionalLightNode(
+				m_pOwner->GetActorId(), weakThis, RenderPass_Actor, pTransformComponent->GetTransform()));
 		}
 
 		default:

@@ -106,6 +106,10 @@ public:
 	DirectionalLightComponent();
 	virtual ~DirectionalLightComponent();
 
+	const Vector3& GetDirection() { return m_Direction; }
+	const Vector3& GetUp() { return m_Up; }
+	const Vector3& GetRight() { return m_Right; }
+
 	virtual const char* VGetName() const { return m_Name; }
 	static const char* m_Name;
 
@@ -125,6 +129,8 @@ public:
 	PointLightComponent();
 	virtual ~PointLightComponent();
 
+	float GetRadius() const { return m_Radius; }
+
 	virtual const char* VGetName() const { return m_Name; }
 	static const char* m_Name;
 
@@ -141,6 +147,9 @@ class SpotLightComponent : public DirectionalLightComponent, public PointLightCo
 public:
 	SpotLightComponent();
 	virtual ~SpotLightComponent();
+
+	float GetInnerAngle() const { return m_InnerAngle; }
+	float GetOuterAngle() const { return m_OuterAngle; }
 
 	virtual const char* VGetName() const { return m_Name; }
 	static const char* m_Name;

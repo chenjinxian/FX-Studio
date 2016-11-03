@@ -7,18 +7,47 @@ class LightNode : public SceneNode
 {
 public:
 	LightNode(ActorId actorId, WeakBaseRenderComponentPtr renderComponent, RenderPass renderPass, const Matrix& mat);
+	virtual ~LightNode();
+
+	virtual HRESULT VOnRestore(Scene* pScene) override;
+	virtual HRESULT VRender(Scene* pScene, double fTime, float fElapsedTime) override;
 
 protected:
+	Effect* m_pEffect;
+	class BasicMaterial* m_pMaterial;
+	ID3D11Buffer* m_pVertexBuffer;
+	ID3D11Buffer* m_pIndexBuffer;
+	uint32_t m_IndexCount;
+	Matrix m_WorldMatrix;
+	Matrix m_ScaleMatrix;
+
 	std::string m_ModelName;
 };
 
-class DirectionalLightNode : public LightNode
+class DirectionalLightNode : virtual public LightNode
 {
 public:
-	DirectionalLightNode(ActorId actorId, WeakBaseRenderComponentPtr renderComponent, RenderPass renderPass, const Matrix& mat)
-		: LightNode(actorId, renderComponent, renderPass, mat) { }
+	DirectionalLightNode(ActorId actorId, WeakBaseRenderComponentPtr renderComponent, RenderPass renderPass, const Matrix& mat);
+	virtual ~DirectionalLightNode();
 
-	virtual HRESULT VOnRestore(Scene* pScene) override;
+	virtual HRESULT VOnUpdate(Scene* pScene, double fTime, float fElapsedTime) override;
+};
+
+class PointLightNode : virtual public LightNode
+{
+public:
+	PointLightNode(ActorId actorId, WeakBaseRenderComponentPtr renderComponent, RenderPass renderPass, const Matrix& mat);
+	virtual ~PointLightNode();
+
+	virtual HRESULT VOnUpdate(Scene* pScene, double fTime, float fElapsedTime) override;
+};
+
+class SpotLightNode : public DirectionalLightNode, public PointLightNode
+{
+public:
+	SpotLightNode(ActorId actorId, WeakBaseRenderComponentPtr renderComponent, RenderPass renderPass, const Matrix& mat);
+	virtual ~SpotLightNode();
+
 	virtual HRESULT VOnUpdate(Scene* pScene, double fTime, float fElapsedTime) override;
 };
 

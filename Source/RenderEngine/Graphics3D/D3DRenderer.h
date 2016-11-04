@@ -26,6 +26,41 @@ public:
 	virtual HRESULT VOnRestore();
 	virtual void VShutdown() { D3DRenderer::VShutdown(); }
 
+	virtual shared_ptr<IRenderState> VPrepareAlphaPass();
+	virtual shared_ptr<IRenderState> VPrepareSkyBoxPass();
+
 private:
 	Color m_backgroundColor;
+};
+
+class D3DBlendStates : public boost::noncopyable
+{
+public:
+	static void Initialize(ID3D11Device* pd3dDevice);
+	static void Release();
+
+	static ID3D11BlendState* AlphaBlend;
+	static ID3D11BlendState* MultiplicativeBlend;
+};
+
+class D3DRasterizerStates : public boost::noncopyable
+{
+public:
+	static void Initialize(ID3D11Device* pd3dDevice);
+	static void Release();
+
+	static ID3D11RasterizerState* CullNone;
+	static ID3D11RasterizerState* CullBack;
+	static ID3D11RasterizerState* CullFront;
+	static ID3D11RasterizerState* Wireframe;
+};
+
+class D3DDepthStencilStates : public boost::noncopyable
+{
+public:
+	static void Initialize(ID3D11Device* pd3dDevice);
+	static void Release();
+
+	static ID3D11DepthStencilState* DepthNone;
+	static ID3D11DepthStencilState* DepthRead;
 };

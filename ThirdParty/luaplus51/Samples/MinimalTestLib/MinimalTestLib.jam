@@ -1,0 +1,21 @@
+{
+
+SubDir LUAPLUS Samples MinimalTestLib ;
+
+LUAPLUS_OUTPUT_DIRECTORY = $(ALL_LOCATE_TARGET)/image ;
+C.OutputPath * : $(ALL_LOCATE_TARGET)/image ;
+
+SubInclude LUAPLUS Src LuaPlus : LuaPlusStaticLib ;
+
+local SRCS =
+		MinimalTestLib.cpp
+		TestANSI.lua
+		TestUnicode.lua
+;
+
+C.IncludeDirectories MinimalTestLib : $(LUAPLUS_INCLUDE_DIRECTORIES) ;
+C.LinkLibraries MinimalTestLib : $(LUA_VERSION)-static ;
+
+C.Application MinimalTestLib : $(SRCS) ;
+
+}

@@ -1,0 +1,41 @@
+{
+
+SubDir LUAPLUS Samples TestSuite ;
+
+LUAPLUS_OUTPUT_DIRECTORY = $(ALL_LOCATE_TARGET)/image ;
+C.OutputPath * : $(ALL_LOCATE_TARGET)/image ;
+
+SubInclude LUAPLUS Src LuaPlus : LuaPlusSharedLib ;
+SubInclude LUAPLUS Samples UnitTest++ : UnitTest++ ;
+
+local SRCS =
+		BogusCharacters.lua
+		CompileMe.lua
+		stdafx.cpp
+		stdafx.h
+		TestANSI.lua
+		TestSuite.cpp
+		TestUnicode.lua
+;
+
+C.Defines TestSuite : LUA_BUILD_AS_DLL ;
+C.IncludeDirectories TestSuite : $(LUAPLUS_INCLUDE_DIRECTORIES) $(LUAPLUS)/Samples/UnitTest++/src ;
+C.LinkLibraries TestSuite : $(LUA_VERSION) UnitTest++ ;
+
+TEST_SUITE_EXE = [ C.Application TestSuite : $(SRCS) ] ;
+TEST_SUITE_CWD = $(SUBDIR) ;
+
+actions RunTestSuite
+{
+	cd $(TEST_SUITE_CWD:C)
+	$(TEST_SUITE_EXE:TC)
+}
+
+Depends tests : $(TEST_SUITE_EXE) ;
+Always tests ;
+NotFile tests ;
+RunTestSuite tests ;
+
+Depends all : tests ;
+
+}

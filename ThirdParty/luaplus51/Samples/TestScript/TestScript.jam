@@ -1,0 +1,27 @@
+{
+
+SubDir LUAPLUS Samples TestScript ;
+
+LUAPLUS_OUTPUT_DIRECTORY = $(ALL_LOCATE_TARGET)/image ;
+C.OutputPath * : $(ALL_LOCATE_TARGET)/image ;
+
+SubInclude LUAPLUS Src LuaPlus : LuaPlusSharedLib ;
+
+local SRCS =
+		ScriptArrayTest.lua
+		ScriptCallbackTest.lua
+		ScriptDumpTest.lua
+		ScriptSaveTest.lua
+		ScriptVectorDump.lua
+		SimpleHeap.cpp
+		SimpleHeap.h
+		TestScript.cpp
+;
+
+C.Defines TestScript : LUA_BUILD_AS_DLL ;
+C.IncludeDirectories TestScript : $(LUAPLUS_INCLUDE_DIRECTORIES) ;
+C.LinkLibraries TestScript : $(LUA_VERSION) ;
+
+C.Application TestScript : $(SRCS) ;
+
+}

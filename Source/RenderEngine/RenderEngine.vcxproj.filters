@@ -35,6 +35,18 @@
     <Filter Include="Effect Files">
       <UniqueIdentifier>{289d8c16-99ab-4493-b67a-2864aaf74356}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Audio">
+      <UniqueIdentifier>{975a4a50-9d1a-426d-83d2-7235258673fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Physics">
+      <UniqueIdentifier>{5bfec664-8d0e-48b6-9805-b8e2d8f59d5c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Network">
+      <UniqueIdentifier>{02cbb98f-0a78-4b89-b049-06e440b39cb5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AI">
+      <UniqueIdentifier>{b53cae63-9305-4f45-83f5-f30eeef85295}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />

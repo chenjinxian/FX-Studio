@@ -73,6 +73,7 @@
     <LinkIncremental>true</LinkIncremental>
     <IntDir>$(SolutionDir)Temp\$(ProjectName)\$(PlatformName)$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)d</TargetName>
+    <OutDir>$(SolutionDir)..\Bin</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -80,6 +81,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <IntDir>$(SolutionDir)Temp\$(ProjectName)\$(PlatformName)$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)..\Bin</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>

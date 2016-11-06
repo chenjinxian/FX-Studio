@@ -72,6 +72,7 @@ bool RenderEngineApp::InitInstance(HINSTANCE hInstance, LPWSTR lpCmdLine, HWND h
 	RegisterEngineEvents();
 	VRegisterGameEvents();
 
+	SetCurrentDirectory(Utility::ExecutableDirectory().c_str());
 	IResourceFile *zipFile = (m_IsEditorRunning || m_Options.m_IsDevelopmentDirectories) ?
 		GCC_NEW DevelopmentResourceZipFile(L"Assets.zip", DevelopmentResourceZipFile::Editor) :
 		GCC_NEW ResourceZipFile(L"Assets.zip");

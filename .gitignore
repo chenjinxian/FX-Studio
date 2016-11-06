@@ -251,12 +251,3 @@ paket-files/
 # JetBrains Rider
 .idea/
 *.sln.iml
-Lib/RenderEngine.lib
-Lib/RenderEngined.lib
-Lib/DirectXTKd.lib
-Lib/DXUTd.lib
-Lib/DXUTOptd.lib
-Lib/Effects11d.lib
-Lib/DirectXTKd.lib
-Lib/DXUTd.lib
-Lib/DirectXTKd.lib

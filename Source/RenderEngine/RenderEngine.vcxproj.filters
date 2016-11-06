@@ -46,14 +46,8 @@
     <ClInclude Include="AppFramework\RenderEngineApp.h">
       <Filter>AppFramework</Filter>
     </ClInclude>
-    <ClInclude Include="Graphics3D\Scene.h">
-      <Filter>Graphics3D</Filter>
-    </ClInclude>
     <ClInclude Include="AppFramework\BaseGameLogic.h">
       <Filter>AppFramework</Filter>
-    </ClInclude>
-    <ClInclude Include="Graphics3D\D3DRenderer.h">
-      <Filter>Graphics3D</Filter>
     </ClInclude>
     <ClInclude Include="Utilities\Templates.h">
       <Filter>Utilities</Filter>
@@ -75,9 +69,6 @@
     </ClInclude>
     <ClInclude Include="Actors\TransformComponent.h">
       <Filter>Actors</Filter>
-    </ClInclude>
-    <ClInclude Include="Graphics3D\SceneNode.h">
-      <Filter>Graphics3D</Filter>
     </ClInclude>
     <ClInclude Include="EventManager\EventManager.h">
       <Filter>EventManager</Filter>
@@ -130,34 +121,46 @@
     <ClInclude Include="UserInterface\UserInterface.h">
       <Filter>UserInterface</Filter>
     </ClInclude>
-    <ClInclude Include="Graphics3D\Material.h">
+    <ClInclude Include="Graphics3D\BasicMaterial.h">
       <Filter>Graphics3D</Filter>
     </ClInclude>
-    <ClInclude Include="Graphics3D\VertexDeclarations.h">
-      <Filter>Graphics3D</Filter>
-    </ClInclude>
-    <ClInclude Include="Graphics3D\ModelMaterial.h">
-      <Filter>Graphics3D</Filter>
-    </ClInclude>
-    <ClInclude Include="Graphics3D\Skybox.h">
+    <ClInclude Include="Graphics3D\D3DRenderer.h">
       <Filter>Graphics3D</Filter>
     </ClInclude>
     <ClInclude Include="Graphics3D\D3DSdkMesh.h">
       <Filter>Graphics3D</Filter>
     </ClInclude>
-    <ClInclude Include="Graphics3D\TextureResourceLoader.h">
+    <ClInclude Include="Graphics3D\LightNode.h">
       <Filter>Graphics3D</Filter>
     </ClInclude>
-    <ClInclude Include="Graphics3D\TextureMappingMaterial.h">
+    <ClInclude Include="Graphics3D\Material.h">
       <Filter>Graphics3D</Filter>
     </ClInclude>
     <ClInclude Include="Graphics3D\ModelImporter.h">
       <Filter>Graphics3D</Filter>
     </ClInclude>
-    <ClInclude Include="Graphics3D\LightNode.h">
+    <ClInclude Include="Graphics3D\ModelMaterial.h">
       <Filter>Graphics3D</Filter>
     </ClInclude>
-    <ClInclude Include="Graphics3D\BasicMaterial.h">
+    <ClInclude Include="Graphics3D\Scene.h">
+      <Filter>Graphics3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics3D\SceneNode.h">
+      <Filter>Graphics3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics3D\Skybox.h">
+      <Filter>Graphics3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics3D\TextureMappingMaterial.h">
+      <Filter>Graphics3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics3D\TextureResourceLoader.h">
+      <Filter>Graphics3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics3D\VertexDeclarations.h">
+      <Filter>Graphics3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics3D\CameraNode.h">
       <Filter>Graphics3D</Filter>
     </ClInclude>
   </ItemGroup>
@@ -165,14 +168,8 @@
     <ClCompile Include="AppFramework\RenderEngineApp.cpp">
       <Filter>AppFramework</Filter>
     </ClCompile>
-    <ClCompile Include="Graphics3D\Scene.cpp">
-      <Filter>Graphics3D</Filter>
-    </ClCompile>
     <ClCompile Include="AppFramework\BaseGameLogic.cpp">
       <Filter>AppFramework</Filter>
-    </ClCompile>
-    <ClCompile Include="Graphics3D\D3DRenderer.cpp">
-      <Filter>Graphics3D</Filter>
     </ClCompile>
     <ClCompile Include="Actors\Actor.cpp">
       <Filter>Actors</Filter>
@@ -185,9 +182,6 @@
     </ClCompile>
     <ClCompile Include="Actors\TransformComponent.cpp">
       <Filter>Actors</Filter>
-    </ClCompile>
-    <ClCompile Include="Graphics3D\SceneNode.cpp">
-      <Filter>Graphics3D</Filter>
     </ClCompile>
     <ClCompile Include="EventManager\EventManager.cpp">
       <Filter>EventManager</Filter>
@@ -237,31 +231,43 @@
     <ClCompile Include="AppFramework\RenderEngine.cpp">
       <Filter>AppFramework</Filter>
     </ClCompile>
-    <ClCompile Include="Graphics3D\Material.cpp">
+    <ClCompile Include="Graphics3D\BasicMaterial.cpp">
       <Filter>Graphics3D</Filter>
     </ClCompile>
-    <ClCompile Include="Graphics3D\ModelMaterial.cpp">
-      <Filter>Graphics3D</Filter>
-    </ClCompile>
-    <ClCompile Include="Graphics3D\Skybox.cpp">
+    <ClCompile Include="Graphics3D\D3DRenderer.cpp">
       <Filter>Graphics3D</Filter>
     </ClCompile>
     <ClCompile Include="Graphics3D\D3DSdkMesh.cpp">
       <Filter>Graphics3D</Filter>
     </ClCompile>
-    <ClCompile Include="Graphics3D\TextureResourceLoader.cpp">
+    <ClCompile Include="Graphics3D\LightNode.cpp">
       <Filter>Graphics3D</Filter>
     </ClCompile>
-    <ClCompile Include="Graphics3D\TextureMappingMaterial.cpp">
+    <ClCompile Include="Graphics3D\Material.cpp">
       <Filter>Graphics3D</Filter>
     </ClCompile>
     <ClCompile Include="Graphics3D\ModelImporter.cpp">
       <Filter>Graphics3D</Filter>
     </ClCompile>
-    <ClCompile Include="Graphics3D\LightNode.cpp">
+    <ClCompile Include="Graphics3D\ModelMaterial.cpp">
       <Filter>Graphics3D</Filter>
     </ClCompile>
-    <ClCompile Include="Graphics3D\BasicMaterial.cpp">
+    <ClCompile Include="Graphics3D\Scene.cpp">
+      <Filter>Graphics3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics3D\SceneNode.cpp">
+      <Filter>Graphics3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics3D\Skybox.cpp">
+      <Filter>Graphics3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics3D\TextureMappingMaterial.cpp">
+      <Filter>Graphics3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics3D\TextureResourceLoader.cpp">
+      <Filter>Graphics3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics3D\CameraNode.cpp">
       <Filter>Graphics3D</Filter>
     </ClCompile>
   </ItemGroup>

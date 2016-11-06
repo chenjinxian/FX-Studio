@@ -29,7 +29,6 @@ class BaseUI : public IScreenElement
 public:
 	BaseUI() : m_bIsVisible(true), m_PosX(0), m_PosY(0), m_Width(100), m_Height(100) {}
 	virtual void VOnUpdate(double fTime, float fElapsedTime) {}
-	virtual HRESULT VOnLostDevice() { return S_OK; }
 	virtual HRESULT VOnDestoryDevice() { return S_OK; }
 	virtual bool VIsVisible() const { return m_bIsVisible; }
 	virtual void VSetVisible(bool visible) { m_bIsVisible = visible; }
@@ -55,8 +54,6 @@ public:
 		{ OnRestore(); return S_OK; }
 	virtual HRESULT VOnRender(double fTime, float fElapsedTime)
 		{ OnRender(fTime, fElapsedTime); return S_OK; }
-	virtual HRESULT VOnLostDevice()
-		{ OnLostDevice(); return S_OK; } 
 	virtual HRESULT VOnDestoryDevice() { return OnDestoryDevice(); }
 	virtual int VGetZOrder() const { return 0; }
 	virtual void VSetZOrder(int zOrder) { }

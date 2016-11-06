@@ -38,7 +38,6 @@ public:
 	~IScreenElement() {}
 
 	virtual HRESULT VOnRestore() = 0;
-	virtual HRESULT VOnLostDevice() = 0;
 	virtual HRESULT VOnDestoryDevice() = 0;
 	virtual void VOnUpdate(double fTime, float fElapsedTime) = 0;
 	virtual HRESULT VOnRender(double fTime, float fElapsedTime) = 0;
@@ -83,7 +82,7 @@ enum GameViewType
 };
 
 typedef uint32_t GameViewId;
-const GameViewId INVALID_GAME_VIEW_ID = 0xffffffff;
+const GameViewId INVALID_GAME_VIEW_ID = 0xFFFFFFFF;
 
 class IGameView
 {
@@ -92,7 +91,6 @@ public:
 	~IGameView() {}
 
 	virtual HRESULT VOnRestore() = 0;
-	virtual HRESULT VOnLostDevice() = 0;
 	virtual HRESULT VOnDestoryDevice() = 0;
 	virtual void VOnUpdate(double fTime, float fElapsedTime) = 0;
 	virtual void VOnRender(double fTime, float fElapsedTime) = 0;
@@ -159,6 +157,10 @@ enum RenderPass
 
 class Scene;
 class SceneNodeProperties;
+class RayCast;
+class LightNode;
+
+typedef std::list<shared_ptr<LightNode> > Lights;
 
 class IRenderState
 {
@@ -177,6 +179,8 @@ public:
 	virtual bool VPreRender() = 0;
 	virtual bool VPostRender() = 0;
 	virtual void VShutdown() = 0;
+	virtual shared_ptr<IRenderState> VPrepareAlphaPass() = 0;
+	virtual shared_ptr<IRenderState> VPrepareSkyBoxPass() = 0;
 };
 
 class ISceneNode
@@ -189,9 +193,7 @@ public:
 
 	virtual HRESULT VOnUpdate(Scene* pScene, double fTime, float fElapsedTime) = 0;
 	virtual HRESULT VOnRestore(Scene* pScene) = 0;
-	virtual HRESULT VOnLostDevice(Scene* pScene) = 0;
 	virtual HRESULT VOnDestoryDevice(Scene* pScene) = 0;
-	virtual LRESULT CALLBACK VOnMsgProc(Scene *pScene, AppMsg msg) = 0;
 
 	virtual HRESULT VPreRender(Scene* pScene) = 0;
 	virtual HRESULT VRender(Scene* pScene, double fTime, float fElapsedTime) = 0;

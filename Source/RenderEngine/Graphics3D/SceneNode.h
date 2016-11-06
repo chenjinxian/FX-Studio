@@ -45,9 +45,7 @@ public:
 
 	virtual HRESULT VOnUpdate(Scene* pScene, double fTime, float fElapsedTime) override;
 	virtual HRESULT VOnRestore(Scene* pScene) override;
-	virtual HRESULT VOnLostDevice(Scene *pScene) override;
 	virtual HRESULT VOnDestoryDevice(Scene *pScene) override;
-	virtual LRESULT CALLBACK VOnMsgProc(Scene *pScene, AppMsg msg) override;
 
 	virtual HRESULT VPreRender(Scene* pScene) override;
 	virtual HRESULT VRender(Scene* pScene, double fTime, float fElapsedTime) override;
@@ -75,26 +73,6 @@ public:
 	virtual bool VAddChild(shared_ptr<ISceneNode> child);
 	virtual bool VRemoveChild(ActorId actorId);
 	virtual bool VIsVisible(Scene* pScene) const { return true; }
-};
-
-class CameraNode : public SceneNode
-{
-public:
-	CameraNode();
-	~CameraNode();
-
-	virtual HRESULT VOnUpdate(Scene* pScene, double fTime, float fElapsedTime);
-	virtual HRESULT VRender(Scene* pScene, double fTime, float fElapsedTime);
-	virtual HRESULT VOnRestore(Scene* pScene);
-	virtual bool VIsVisible(Scene* pScene) const { return true; }
-	virtual LRESULT CALLBACK VOnMsgProc(Scene *pScene, AppMsg msg);
-
-	Matrix GetViewMatrix() { return m_ModelViewer.GetViewMatrix(); }
-	Matrix GetProjectMatrix() { return m_ModelViewer.GetProjMatrix(); }
-	Vector3 GetPostion() { return m_ModelViewer.GetEyePt(); }
-
-private:
-	CModelViewerCamera m_ModelViewer;
 };
 
 typedef struct _VertexPositionColor
@@ -145,7 +123,6 @@ public:
 	~ModelNode();
 
 	virtual HRESULT VOnRestore(Scene *pScene);
-	virtual HRESULT VOnLostDevice(Scene *pScene) { return S_OK; }
 	virtual HRESULT VOnDestoryDevice(Scene* pScene) override;
 	virtual HRESULT VOnUpdate(Scene* pScene, double fTime, float fElapsedTime) override;
 	virtual HRESULT VRender(Scene* pScene, double fTime, float fElapsedTime) override;

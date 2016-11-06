@@ -34,7 +34,6 @@ using std::tr1::dynamic_pointer_cast;
 
 #include "DXUT.h"
 #include "DXUTcamera.h"
-#include "DXUTgui.h"
 #include "DXUTsettingsDlg.h"
 #include "SDKmisc.h"
 #include "SDKmesh.h"

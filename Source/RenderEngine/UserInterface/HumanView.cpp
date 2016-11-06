@@ -94,18 +94,6 @@ HRESULT HumanView::VOnRestore()
 	return hr;
 }
 
-HRESULT HumanView::VOnLostDevice() 
-{
-	HRESULT hr;
-
-	for(ScreenElementList::iterator i=m_ScreenElements.begin(); i!=m_ScreenElements.end(); ++i)
-	{
-		V_RETURN ( (*i)->VOnLostDevice() );
-	}
-
-	return S_OK;
-}
-
 HRESULT HumanView::VOnDestoryDevice()
 {
 	HRESULT hr;

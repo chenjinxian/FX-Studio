@@ -30,29 +30,11 @@ HRESULT SceneNode::VOnRestore(Scene* pScene)
 	return S_OK;
 }
 
-HRESULT SceneNode::VOnLostDevice(Scene *pScene)
-{
-	for (auto& child : m_Children)
-	{
-		child->VOnLostDevice(pScene);
-	}
-	return S_OK;
-}
-
 HRESULT SceneNode::VOnDestoryDevice(Scene *pScene)
 {
 	for (auto& child : m_Children)
 	{
 		child->VOnDestoryDevice(pScene);
-	}
-	return S_OK;
-}
-
-LRESULT CALLBACK SceneNode::VOnMsgProc(Scene *pScene, AppMsg msg)
-{
-	for (auto& child : m_Children)
-	{
-		child->VOnMsgProc(pScene, msg);
 	}
 	return S_OK;
 }
@@ -195,48 +177,6 @@ bool RootNode::VRemoveChild(ActorId actorId)
 		}
 	}
 	return anythingRemoved;
-}
-
-CameraNode::CameraNode() : SceneNode(INVALID_ACTOR_ID, WeakBaseRenderComponentPtr(), RenderPass_0)
-{
-
-}
-
-CameraNode::~CameraNode()
-{
-
-}
-
-HRESULT CameraNode::VOnUpdate(Scene* pScene, double fTime, float fElapsedTime)
-{
-	m_ModelViewer.FrameMove(fElapsedTime);
-	return S_OK;
-}
-
-HRESULT CameraNode::VRender(Scene* pScene, double fTime, float fElapsedTime)
-{
-	return S_OK;
-}
-
-HRESULT CameraNode::VOnRestore(Scene* pScene)
-{
-	static const XMVECTORF32 s_Eye = { 0.0f, 0.0f, -30.0f, 0.f };
-	static const XMVECTORF32 s_At = { 0.0f, 0.0f, 0.0f, 0.f };
-	m_ModelViewer.SetViewParams(s_Eye, s_At);
-
-	const DXGI_SURFACE_DESC* pBackBufferSurfaceDesc = DXUTGetDXGIBackBufferSurfaceDesc();
-	float fAspectRatio = pBackBufferSurfaceDesc->Width / (FLOAT)pBackBufferSurfaceDesc->Height;
-	m_ModelViewer.SetProjParams(XM_PI / 4, fAspectRatio, 0.1f, 5000.0f);
-	m_ModelViewer.SetWindow(pBackBufferSurfaceDesc->Width, pBackBufferSurfaceDesc->Height);
-	m_ModelViewer.SetButtonMasks(MOUSE_RIGHT_BUTTON, MOUSE_WHEEL, MOUSE_LEFT_BUTTON);
-// 	m_ModelViewer.SetRotateButtons(true, false, true);
-
-	return S_OK;
-}
-
-LRESULT CALLBACK CameraNode::VOnMsgProc(Scene *pScene, AppMsg msg)
-{
-	return m_ModelViewer.HandleMessages(msg.m_hWnd, msg.m_uMsg, msg.m_wParam, msg.m_lParam);
 }
 
 GridNode::GridNode(ActorId actorId, WeakBaseRenderComponentPtr renderComponent)

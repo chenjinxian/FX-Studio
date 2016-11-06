@@ -37,7 +37,6 @@ public:
 	~D3DShaderMeshNode11();
 
 	virtual HRESULT VOnRestore(Scene *pScene);
-	virtual HRESULT VOnLostDevice(Scene *pScene) { return S_OK; }
 	virtual HRESULT VOnDestoryDevice(Scene* pScene) override;
 	virtual HRESULT VOnUpdate(Scene* pScene, double fTime, float fElapsedTime) override;
 	virtual HRESULT VRender(Scene* pScene, double fTime, float fElapsedTime) override;

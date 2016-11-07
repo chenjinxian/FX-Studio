@@ -40,30 +40,17 @@ void MovementController::OnUpdate(double fTime, float fElapsedTime)
 
 	if (m_Keys['A'] || m_Keys[VK_LEFT])
 	{
-		movementX = -1.0f;
+		movementX = 1.0f;
 		isTranslating = true;
 	}
 	else if (m_Keys['D'] || m_Keys[VK_RIGHT])
 	{
-		movementX = 1.0f;
+		movementX = -1.0f;
 		isTranslating = true;
 	}
 
+	Vector3 position = m_pObject->VGet()->GetPosition();
 	Vector3 right = m_pObject->VGet()->GetRight();
-	{
-// 		m_Yaw += (m_TargetYaw - m_Yaw) * (.35f);
-// 		m_TargetPitch = std::max<float>(-90.0f, std::min<float>(90.0f, m_TargetPitch));
-// 		m_Pitch += (m_TargetPitch - m_Pitch) * (.35f);
-// 
-// 		Matrix rotation = Matrix::CreateFromYawPitchRoll(
-// 			XMConvertToRadians(-m_Yaw), XMConvertToRadians(m_Pitch), 0.0f);
-// 
-// 		m_WorldMatrix = rotation * Matrix::CreateTranslation(m_Postion);
-// 		if (m_pObject != nullptr)
-// 		{
-// 			m_pObject->VSetTransform(m_WorldMatrix);
-// 		}
-	}
 
 	if (isTranslating)
 	{
@@ -72,18 +59,26 @@ void MovementController::OnUpdate(double fTime, float fElapsedTime)
 		if (m_CurrentSpeed > m_MaxSpeed)
 			m_CurrentSpeed = m_MaxSpeed;
 
-		Vector3 position = m_pObject->VGet()->GetPosition();
 		position += right * movementX * m_CurrentSpeed;
 		position += m_pObject->VGet()->GetDirection() * movementY * m_CurrentSpeed;
-		
-		if (m_pObject != nullptr)
-		{
-			m_pObject->VSetTransform(position, Matrix::CreateFromYawPitchRoll(0, 0, 0));
-		}
 	}
 	else
 	{
 		m_CurrentSpeed = 0.0f;
+	}
+
+	{
+		m_Yaw += (m_TargetYaw - m_Yaw) * (.35f);
+		m_TargetPitch = std::max<float>(-90.0f, std::min<float>(90.0f, m_TargetPitch));
+		m_Pitch += (m_TargetPitch - m_Pitch) * (.35f);
+
+		Matrix rotation = Matrix::CreateFromYawPitchRoll(
+			XMConvertToRadians(-m_Yaw), XMConvertToRadians(m_Pitch), 0.0f);
+
+		if (m_pObject != nullptr)
+		{
+			m_pObject->VSetTransform(position, rotation);
+		}
 	}
 }
 

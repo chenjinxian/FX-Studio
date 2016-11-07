@@ -41,15 +41,15 @@ SceneNode::~SceneNode()
 
 void SceneNode::VSetTransform(const Vector3& position, const Matrix& rotation)
 {
-// 	m_Properties.m_Direction = Vector3::TransformNormal(m_Properties.m_Direction, rotation);
-// 	m_Properties.m_Direction.Normalize();
-// 	m_Properties.m_Up = Vector3::TransformNormal(m_Properties.m_Up, rotation);
-// 	m_Properties.m_Up.Normalize();
-// 	m_Properties.m_Right = m_Properties.m_Direction.Cross(m_Properties.m_Up);
-// 	m_Properties.m_Up = m_Properties.m_Right.Cross(m_Properties.m_Direction);
+	m_Properties.m_Direction = Vector3::TransformNormal(Vector3::Forward, rotation);
+	m_Properties.m_Direction.Normalize();
+	m_Properties.m_Up = Vector3::TransformNormal(Vector3::Up, rotation);
+	m_Properties.m_Up.Normalize();
+	m_Properties.m_Right = m_Properties.m_Direction.Cross(m_Properties.m_Up);
+	m_Properties.m_Up = m_Properties.m_Right.Cross(m_Properties.m_Direction);
 
 	m_Properties.m_Position = position;
-// 	m_Properties.m_Rotation = rotation;
+	m_Properties.m_Rotation = rotation;
 }
 
 HRESULT SceneNode::VOnRestore(Scene* pScene)

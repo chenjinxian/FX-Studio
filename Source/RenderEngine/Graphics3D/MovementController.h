@@ -33,8 +33,5 @@ protected:
 	bool m_IsRotateWithLButtonDown;
 	Vector2 m_LastMousePos;
 	bool m_Keys[256];
-
-	Matrix m_WorldMatrix;
-	Vector3 m_Postion;
 };
 

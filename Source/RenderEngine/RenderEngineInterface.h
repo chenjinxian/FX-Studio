@@ -191,7 +191,7 @@ public:
 	~ISceneNode() {}
 
 	virtual const SceneNodeProperties* VGet() const = 0;
-	virtual void VSetTransform(const Vector3& position, const Matrix& rotation) = 0;
+	virtual void VSetTransform(const Matrix& worldMarix) = 0;
 
 	virtual HRESULT VOnUpdate(Scene* pScene, double fTime, float fElapsedTime) = 0;
 	virtual HRESULT VOnRestore(Scene* pScene) = 0;

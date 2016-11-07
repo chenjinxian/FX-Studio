@@ -26,26 +26,18 @@ class SceneNodeProperties
 	friend class SceneNode;
 
 public:
-	SceneNodeProperties();
+	SceneNodeProperties() : m_ActorId(INVALID_ACTOR_ID), m_RenderPass(RenderPass_0) {}
 	~SceneNodeProperties() {}
 
 	ActorId GetActorId() const { return m_ActorId; }
 	const std::string& GetActorName() const { return m_ActorName; }
-	const Vector3& GetPosition() const { return m_Position; }
-	const Vector3& GetDirection() const { return m_Direction; }
-	const Vector3& GetUp() const { return m_Up; }
-	const Vector3& GetRight() const { return m_Right; }
-	const Matrix& GetRotation() const { return m_Rotation; }
+	const Matrix& GetWorldMatrix() const { return m_WorldMatrix; }
 	RenderPass GetRenderPass() const { return m_RenderPass; }
 
 protected:
 	ActorId m_ActorId;
 	std::string m_ActorName;
-	Vector3 m_Position;
-	Vector3 m_Direction;
-	Vector3 m_Up;
-	Vector3 m_Right;
-	Matrix m_Rotation;
+	Matrix m_WorldMatrix;
 	RenderPass m_RenderPass;
 };
 
@@ -56,12 +48,11 @@ class SceneNode : public ISceneNode, public boost::noncopyable
 	friend class Scene;
 
 public:
-	SceneNode(ActorId actorId, WeakBaseRenderComponentPtr renderComponent, RenderPass renderPass,
-		const Matrix& orientation = Matrix::Identity, const Matrix& rotation = Matrix::Identity);
+	SceneNode(ActorId actorId, WeakBaseRenderComponentPtr renderComponent, RenderPass renderPass, const Matrix& worldMatrix = Matrix::Identity);
 	virtual ~SceneNode();
 
 	virtual const SceneNodeProperties* VGet() const override { return &m_Properties; }
-	virtual void VSetTransform(const Vector3& position, const Matrix& rotation);
+	virtual void VSetTransform(const Matrix& worldMarix);
 
 	virtual HRESULT VOnUpdate(Scene* pScene, double fTime, float fElapsedTime) override;
 	virtual HRESULT VOnRestore(Scene* pScene) override;

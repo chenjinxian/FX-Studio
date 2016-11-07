@@ -62,7 +62,7 @@ public:
 	shared_ptr<SceneNode> GetTarget() { return m_pTarget; }
 	void ClearTarget() { m_pTarget = shared_ptr<SceneNode>(); }
 
-	const Vector3& GetPosition() { return VGet()->GetPosition(); }
+	const Vector3& GetPosition() { return m_Position; }
 	const Matrix& GetViewMatrix() { return m_ViewMatrix; }
 	const Matrix& GetProjectMatrix() { return m_ProjectionMatrix; }
 	Matrix GetWorldViewProjection(Scene* pScene);
@@ -76,6 +76,10 @@ private:
 	shared_ptr<SceneNode> m_pTarget;
 	Vector4 m_OffsetVector;
 
+	Vector3 m_Position;
+	Vector3 m_Direction;
+	Vector3 m_Up;
+	Vector3 m_Right;
 	Matrix m_ViewMatrix;
 	Matrix m_ProjectionMatrix;
 };

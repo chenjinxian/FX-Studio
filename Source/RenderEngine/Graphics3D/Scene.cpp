@@ -157,6 +157,6 @@ void Scene::MoveActorDelegate(IEventDataPtr pEventData)
 	shared_ptr<ISceneNode> pNode = FindActor(id);
 	if (pNode)
 	{
-// 		pNode->VSetTransform(transform);
+		pNode->VSetTransform(transform);
 	}
 }

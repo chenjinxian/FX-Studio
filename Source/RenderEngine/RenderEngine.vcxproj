@@ -182,6 +182,7 @@
     <ClInclude Include="Graphics3D\Material.h" />
     <ClInclude Include="Graphics3D\ModelImporter.h" />
     <ClInclude Include="Graphics3D\ModelMaterial.h" />
+    <ClInclude Include="Graphics3D\MovementController.h" />
     <ClInclude Include="Graphics3D\Scene.h" />
     <ClInclude Include="Graphics3D\SceneNode.h" />
     <ClInclude Include="Graphics3D\Skybox.h" />
@@ -226,6 +227,7 @@
     <ClCompile Include="Graphics3D\Material.cpp" />
     <ClCompile Include="Graphics3D\ModelImporter.cpp" />
     <ClCompile Include="Graphics3D\ModelMaterial.cpp" />
+    <ClCompile Include="Graphics3D\MovementController.cpp" />
     <ClCompile Include="Graphics3D\Scene.cpp" />
     <ClCompile Include="Graphics3D\SceneNode.cpp" />
     <ClCompile Include="Graphics3D\Skybox.cpp" />

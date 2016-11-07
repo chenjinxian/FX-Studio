@@ -13,6 +13,14 @@ class BaseRenderComponent;
 
 typedef BaseRenderComponent* WeakBaseRenderComponentPtr;
 
+enum AlphaType
+{
+	AlphaType_Opaque,
+	AlphaType_Texture,
+	AlphaType_Material,
+	AlphaType_Vertex
+};
+
 class SceneNodeProperties
 {
 	friend class SceneNode;
@@ -23,11 +31,13 @@ public:
 
 	ActorId GetActorId() const { return m_ActorId; }
 	const std::string& GetActorName() const { return m_ActorName; }
+	const Matrix& GetWorldMatrix() const { return m_WorldMatrix; }
 	RenderPass GetRenderPass() const { return m_RenderPass; }
 
 protected:
 	ActorId m_ActorId;
 	std::string m_ActorName;
+	Matrix m_WorldMatrix;
 	RenderPass m_RenderPass;
 };
 
@@ -38,10 +48,11 @@ class SceneNode : public ISceneNode, public boost::noncopyable
 	friend class Scene;
 
 public:
-	SceneNode(ActorId actorId, WeakBaseRenderComponentPtr renderComponent, RenderPass renderPass);
+	SceneNode(ActorId actorId, WeakBaseRenderComponentPtr renderComponent, RenderPass renderPass, const Matrix& worldMatrix = Matrix::Identity);
 	virtual ~SceneNode();
 
 	virtual const SceneNodeProperties* VGet() const override { return &m_Properties; }
+	virtual void VSetTransform(const Matrix& worldMarix);
 
 	virtual HRESULT VOnUpdate(Scene* pScene, double fTime, float fElapsedTime) override;
 	virtual HRESULT VOnRestore(Scene* pScene) override;
@@ -56,11 +67,13 @@ public:
 	virtual bool VAddChild(shared_ptr<ISceneNode> child) override;
 	virtual bool VRemoveChild(ActorId actorId) override;
 
+	void SetRadius(float radius) { }
+
 protected:
 	SceneNodeList m_Children;
 	SceneNode* m_pParent;
-	SceneNodeProperties m_Properties;
 	WeakBaseRenderComponentPtr m_pRenderComponent;
+	SceneNodeProperties m_Properties;
 };
 
 class RootNode : public SceneNode
@@ -75,21 +88,10 @@ public:
 	virtual bool VIsVisible(Scene* pScene) const { return true; }
 };
 
-typedef struct _VertexPositionColor
-{
-	XMFLOAT4 Position;
-	XMFLOAT4 Color;
-
-	_VertexPositionColor() { }
-
-	_VertexPositionColor(const XMFLOAT4& position, const XMFLOAT4& color)
-		: Position(position), Color(color) { }
-} VertexPositionColor;
-
 class GridNode : public SceneNode
 {
 public:
-	GridNode(ActorId actorId, WeakBaseRenderComponentPtr renderComponent);
+	GridNode(ActorId actorId, WeakBaseRenderComponentPtr renderComponent, const Matrix& worldMatrix);
 	virtual ~GridNode();
 
 	virtual HRESULT VOnRestore(Scene* pScene);
@@ -118,7 +120,7 @@ class TextureMappingMaterial;
 class ModelNode : public SceneNode
 {
 public:
-	ModelNode(ActorId actorId, WeakBaseRenderComponentPtr renderComponent, RenderPass renderPass, const Matrix& mat);
+	ModelNode(ActorId actorId, WeakBaseRenderComponentPtr renderComponent, RenderPass renderPass, const Matrix& worldMatrix);
 
 	~ModelNode();
 

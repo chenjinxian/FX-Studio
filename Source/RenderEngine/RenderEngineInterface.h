@@ -179,6 +179,7 @@ public:
 	virtual bool VPreRender() = 0;
 	virtual bool VPostRender() = 0;
 	virtual void VShutdown() = 0;
+	virtual void VCalcLighting(Lights *lights, int maximumLights) = 0;
 	virtual shared_ptr<IRenderState> VPrepareAlphaPass() = 0;
 	virtual shared_ptr<IRenderState> VPrepareSkyBoxPass() = 0;
 };
@@ -190,6 +191,7 @@ public:
 	~ISceneNode() {}
 
 	virtual const SceneNodeProperties* VGet() const = 0;
+	virtual void VSetTransform(const Matrix& worldMarix) = 0;
 
 	virtual HRESULT VOnUpdate(Scene* pScene, double fTime, float fElapsedTime) = 0;
 	virtual HRESULT VOnRestore(Scene* pScene) = 0;

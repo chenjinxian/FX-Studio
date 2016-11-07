@@ -163,6 +163,9 @@
     <ClInclude Include="Graphics3D\CameraNode.h">
       <Filter>Graphics3D</Filter>
     </ClInclude>
+    <ClInclude Include="Graphics3D\MovementController.h">
+      <Filter>Graphics3D</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AppFramework\RenderEngineApp.cpp">
@@ -268,6 +271,9 @@
       <Filter>Graphics3D</Filter>
     </ClCompile>
     <ClCompile Include="Graphics3D\CameraNode.cpp">
+      <Filter>Graphics3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics3D\MovementController.cpp">
       <Filter>Graphics3D</Filter>
     </ClCompile>
   </ItemGroup>

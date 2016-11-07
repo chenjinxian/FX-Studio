@@ -26,6 +26,7 @@ public:
 	virtual HRESULT VOnRestore();
 	virtual void VShutdown() { D3DRenderer::VShutdown(); }
 
+	virtual void VCalcLighting(Lights *lights, int maximumLights) { }
 	virtual shared_ptr<IRenderState> VPrepareAlphaPass();
 	virtual shared_ptr<IRenderState> VPrepareSkyBoxPass();
 

@@ -1,22 +1,35 @@
 #include "SceneNode.h"
+#include "CameraNode.h"
 #include "Scene.h"
 #include "ModelImporter.h"
 #include "Material.h"
 #include "TextureMappingMaterial.h"
 #include "TextureResourceLoader.h"
+#include "VertexDeclarations.h"
+#include "../Actors/Actor.h"
 #include "../Actors/RenderComponent.h"
+#include "../Actors/TransformComponent.h"
 #include "../ResourceCache/ResCache.h"
 #include "../AppFramework/RenderEngineApp.h"
+#include "../AppFramework/BaseGameLogic.h"
 
-SceneNode::SceneNode(ActorId actorId, WeakBaseRenderComponentPtr renderComponent, RenderPass renderPass)
+SceneNode::SceneNode(ActorId actorId, WeakBaseRenderComponentPtr renderComponent, RenderPass renderPass, const Matrix& worldMatrix)
 	: m_pParent(nullptr), m_pRenderComponent(renderComponent)
 {
 	m_Properties.m_ActorId = actorId;
 	m_Properties.m_ActorName = (renderComponent != nullptr) ? renderComponent->VGetComponentName() : "SceneNode";
+	m_Properties.m_RenderPass = renderPass;
+	VSetTransform(worldMatrix);
+	SetRadius(0);
 }
 
 SceneNode::~SceneNode()
 {
+}
+
+void SceneNode::VSetTransform(const Matrix& worldMarix)
+{
+	m_Properties.m_WorldMatrix = worldMarix;
 }
 
 HRESULT SceneNode::VOnRestore(Scene* pScene)
@@ -50,6 +63,18 @@ HRESULT SceneNode::VOnUpdate(Scene* pScene, double fTime, float fElapsedTime)
 
 HRESULT SceneNode::VPreRender(Scene* pScene)
 {
+	StrongActorPtr pActor = MakeStrongPtr(g_pApp->GetGameLogic()->VGetActor(m_Properties.GetActorId()));
+	if (pActor != nullptr)
+	{
+		shared_ptr<TransformComponent> pTransform = MakeStrongPtr(pActor->GetComponent<TransformComponent>(TransformComponent::m_Name));
+		if (pTransform)
+		{
+			m_Properties.m_WorldMatrix = pTransform->GetTransform();
+		}
+	}
+
+	pScene->PushAndSetMatrix(m_Properties.m_WorldMatrix);
+
 	return S_OK;
 }
 
@@ -78,6 +103,7 @@ HRESULT SceneNode::VRenderChildren(Scene* pScene, double fTime, float fElapsedTi
 
 HRESULT SceneNode::VPostRender(Scene* pScene)
 {
+	pScene->PopMatrix();
 	return S_OK;
 }
 
@@ -179,8 +205,8 @@ bool RootNode::VRemoveChild(ActorId actorId)
 	return anythingRemoved;
 }
 
-GridNode::GridNode(ActorId actorId, WeakBaseRenderComponentPtr renderComponent)
-	: SceneNode(actorId, renderComponent, RenderPass_0),
+GridNode::GridNode(ActorId actorId, WeakBaseRenderComponentPtr renderComponent, const Matrix& worldMatrix)
+	: SceneNode(actorId, renderComponent, RenderPass_0, worldMatrix),
 	mEffect(nullptr),
 	mTechnique(nullptr),
 	mPass(nullptr), 
@@ -324,8 +350,8 @@ HRESULT GridNode::VOnUpdate(Scene* pScene, double fTime, float fElapsedTime)
 }
 
 ModelNode::ModelNode(
-	ActorId actorId, WeakBaseRenderComponentPtr renderComponent, RenderPass renderPass, const Matrix& mat)
-	: SceneNode(actorId, renderComponent, renderPass),
+	ActorId actorId, WeakBaseRenderComponentPtr renderComponent, RenderPass renderPass, const Matrix& worldMatrix)
+	: SceneNode(actorId, renderComponent, renderPass, worldMatrix),
 	m_pEffect(nullptr),
 	m_pTextureMappingMaterial(nullptr),
 	m_WorldMatrix(Matrix::Identity),

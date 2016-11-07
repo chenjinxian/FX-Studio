@@ -1,4 +1,5 @@
 #include "LightNode.h"
+#include "CameraNode.h"
 #include "BasicMaterial.h"
 #include "ModelImporter.h"
 #include "../Actors/RenderComponent.h"

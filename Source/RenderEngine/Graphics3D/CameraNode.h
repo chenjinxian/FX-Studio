@@ -54,28 +54,33 @@ public:
 	virtual ~CameraNode();
 
 	virtual HRESULT VOnRestore(Scene* pScene);
-	virtual HRESULT VOnUpdate(Scene* pScene, double fTime, float fElapsedTime);
 	virtual HRESULT VRender(Scene* pScene, double fTime, float fElapsedTime);
 	virtual bool VIsVisible(Scene* pScene) const { return true; }
 
 	const Frustum& GetFrustum() { return m_Frustum; }
-	void SetTarget(shared_ptr<SceneNode> pTarget) { return m_pTarget = pTarget; }
+	void SetTarget(shared_ptr<SceneNode> pTarget) { m_pTarget = pTarget; }
 	shared_ptr<SceneNode> GetTarget() { return m_pTarget; }
 	void ClearTarget() { m_pTarget = shared_ptr<SceneNode>(); }
 
+	const Vector3& GetPosition() { return m_Position; }
+	const Matrix& GetViewMatrix() { return m_ViewMatrix; }
+	const Matrix& GetProjectMatrix() { return m_ProjectionMatrix; }
 	Matrix GetWorldViewProjection(Scene* pScene);
 	void SetViewTransform(Scene* pScene);
-	const Matrix& GetViewMatrix() { return m_View; }
-	const Matrix& GetProjectMatrix() { return m_Projection; }
 	
 	void SetCameraOffset(const Vector4& offsetVector) { m_OffsetVector = offsetVector; }
 
 private:
 	Frustum m_Frustum;
-	Matrix m_View;
-	Matrix m_Projection;
 	bool m_IsDebugCamera;
 	shared_ptr<SceneNode> m_pTarget;
 	Vector4 m_OffsetVector;
+
+	Vector3 m_Position;
+	Vector3 m_Direction;
+	Vector3 m_Up;
+	Vector3 m_Right;
+	Matrix m_ViewMatrix;
+	Matrix m_ProjectionMatrix;
 };
 

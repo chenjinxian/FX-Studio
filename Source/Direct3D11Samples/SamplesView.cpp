@@ -114,18 +114,13 @@ void SamplesView::VOnUpdate(double fTime, float fElapsedTime)
 {
 	HumanView::VOnUpdate(fTime, fElapsedTime);
 
-// 	if (m_pFreeCameraController)
-// 	{
-// 		m_pFreeCameraController->OnUpdate(deltaMs);
-// 	}
-// 
 // 	if (m_pTeapotController)
 // 	{
 // 		m_pTeapotController->OnUpdate(deltaMs);
 // 	}
-// 
-// 	shared_ptr<EvtData_Update_Tick> pTickEvent(GCC_NEW EvtData_Update_Tick(deltaMs));
-// 	IEventManager::Get()->VTriggerEvent(pTickEvent);
+
+	shared_ptr<EvtData_Update_Tick> pTickEvent(GCC_NEW EvtData_Update_Tick(fElapsedTime));
+	IEventManager::Get()->VTriggerEvent(pTickEvent);
 }
 
 void SamplesView::VOnAttach(GameViewId vid, ActorId aid)

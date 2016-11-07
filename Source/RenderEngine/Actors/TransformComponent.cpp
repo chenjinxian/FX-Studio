@@ -3,7 +3,11 @@
 const std::string TransformComponent::m_Name = "TransformComponent";
 
 TransformComponent::TransformComponent()
-	: m_Transform(Matrix::Identity)
+	: m_Transform(Matrix::Identity),
+	m_Position(Vector3::Zero),
+	m_Direction(Vector3::Forward),
+	m_Up(Vector3::Up),
+	m_Right(Vector3::Right)
 {
 }
 
@@ -27,7 +31,7 @@ bool TransformComponent::VInit(TiXmlElement* pData)
 		pPositionElement->Attribute("x", &x);
 		pPositionElement->Attribute("y", &y);
 		pPositionElement->Attribute("z", &z);
-		position = Vector3(x, y, z);
+		m_Position = Vector3(x, y, z);
 	}
 
 	TiXmlElement* pScaleElement = pData->FirstChildElement("Scale");
@@ -39,21 +43,37 @@ bool TransformComponent::VInit(TiXmlElement* pData)
 		scales = Vector3(x, y, z);
 	}
 
-	TiXmlElement* pRotationElement = pData->FirstChildElement("Rotation");
-	if (pRotationElement)
+	TiXmlElement* pDirectionElement = pData->FirstChildElement("Direction");
+	if (pDirectionElement)
 	{
-		pRotationElement->Attribute("yaw", &x);
-		pRotationElement->Attribute("pitch", &y);
-		pRotationElement->Attribute("roll", &z);
-		yawPitchRoll = Vector3(x, y, z);
+		pDirectionElement->Attribute("x", &x);
+		pDirectionElement->Attribute("y", &y);
+		pDirectionElement->Attribute("z", &z);
+		m_Direction = Vector3(x, y, z);
 	}
 
-	Matrix translation = Matrix::CreateTranslation(position);
-	Matrix scale = Matrix::CreateScale(scales);
-	Matrix rotation = Matrix::CreateFromYawPitchRoll(
-		XMConvertToRadians(yawPitchRoll.x), XMConvertToRadians(yawPitchRoll.y), XMConvertToRadians(yawPitchRoll.z));
+	TiXmlElement* pUpElement = pData->FirstChildElement("Up");
+	if (pUpElement)
+	{
+		pUpElement->Attribute("x", &x);
+		pUpElement->Attribute("y", &y);
+		pUpElement->Attribute("z", &z);
+		m_Up = Vector3(x, y, z);
+	}
 
-	m_Transform = rotation * translation;
+	TiXmlElement* pRightElement = pData->FirstChildElement("Right");
+	if (pRightElement)
+	{
+		pRightElement->Attribute("x", &x);
+		pRightElement->Attribute("y", &y);
+		pRightElement->Attribute("z", &z);
+		m_Right = Vector3(x, y, z);
+	}
+
+	m_Transform.Forward(m_Direction);
+	m_Transform.Up(m_Up);
+	m_Transform.Right(m_Right);
+	m_Transform.Translation(m_Position);
 
 	return true;
 }

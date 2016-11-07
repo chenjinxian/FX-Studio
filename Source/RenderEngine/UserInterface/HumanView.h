@@ -5,6 +5,8 @@
 #include "../Graphics3D/D3DRenderer.h"
 #include "UserInterface.h"
 
+class MovementController;
+
 class HumanView : public IGameView
 {
 	friend class GameCodeApp;
@@ -42,8 +44,9 @@ public:
 
 	ScreenElementList m_ScreenElements;
 	int m_PointerRadius;
-	shared_ptr<IPointerHandler> m_PointerHandler;
-	shared_ptr<IKeyboardHandler> m_KeyboardHandler;
+	shared_ptr<IPointerHandler> m_pPointerHandler;
+	shared_ptr<IKeyboardHandler> m_pKeyboardHandler;
+	shared_ptr<MovementController> m_pFreeCameraController;
 	shared_ptr<ScreenElementScene> m_pScene;
 	shared_ptr<CameraNode> m_pCamera;
 

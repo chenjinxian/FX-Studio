@@ -1,5 +1,6 @@
 #include "D3DSdkMesh.h"
 #include "SceneNode.h"
+#include "CameraNode.h"
 #include "D3DRenderer.h"
 #include "TextureResourceLoader.h"
 #include "../Actors/RenderComponent.h"

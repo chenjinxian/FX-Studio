@@ -1,4 +1,5 @@
 #include "CameraNode.h"
+#include "Scene.h"
 
 Frustum::Frustum()
 	: m_Fov(XM_PIDIV4),
@@ -77,8 +78,14 @@ CameraNode::CameraNode(const Frustum& frustum)
 	: SceneNode(INVALID_ACTOR_ID, WeakBaseRenderComponentPtr(), RenderPass_0),
 	m_Frustum(frustum),
 	m_IsDebugCamera(false),
-	m_pTarget(shared_ptr<SceneNode>()),
-	m_OffsetVector(0.0f, 1.0f, -10.0f, 0.0f)
+	m_pTarget(nullptr),
+	m_OffsetVector(0.0f, 1.0f, -10.0f, 0.0f),
+	m_Position(Vector3::Zero),
+	m_Direction(Vector3::Forward),
+	m_Up(Vector3::Up),
+	m_Right(Vector3::Right),
+	m_ViewMatrix(Matrix::Identity),
+	m_ProjectionMatrix(Matrix::Identity)
 {
 
 }
@@ -91,12 +98,8 @@ CameraNode::~CameraNode()
 HRESULT CameraNode::VOnRestore(Scene* pScene)
 {
 	m_Frustum.SetAspect((float)DXUTGetWindowWidth() / DXUTGetWindowHeight());
-	m_Projection = Matrix::CreatePerspectiveFieldOfView(m_Frustum.m_Fov, m_Frustum.m_Aspect, m_Frustum.m_Near, m_Frustum.m_Far);
-}
-
-HRESULT CameraNode::VOnUpdate(Scene* pScene, double fTime, float fElapsedTime)
-{
-
+	m_ProjectionMatrix = Matrix::CreatePerspectiveFieldOfView(m_Frustum.m_Fov, m_Frustum.m_Aspect, m_Frustum.m_Near, m_Frustum.m_Far);
+	return S_OK;
 }
 
 HRESULT CameraNode::VRender(Scene* pScene, double fTime, float fElapsedTime)
@@ -107,7 +110,7 @@ HRESULT CameraNode::VRender(Scene* pScene, double fTime, float fElapsedTime)
 
 		m_Frustum.Render();
 
-		pScene->PushAndSetMatrix(m_Props.ToWorld());
+		pScene->PushAndSetMatrix(m_Properties.GetWorldMatrix());
 	}
 
 	return S_OK;
@@ -115,10 +118,28 @@ HRESULT CameraNode::VRender(Scene* pScene, double fTime, float fElapsedTime)
 
 Matrix CameraNode::GetWorldViewProjection(Scene* pScene)
 {
-
+	Matrix world = pScene->GetTopMatrix();
+	Matrix worldView = world * m_ViewMatrix;
+	return worldView * m_ProjectionMatrix;
 }
 
 void CameraNode::SetViewTransform(Scene* pScene)
 {
+	if (m_pTarget != nullptr)
+	{
+		Matrix worldTarget = m_pTarget->VGet()->GetWorldMatrix();
+		Vector3 position = worldTarget.Translation() + Vector4::Transform(m_OffsetVector, worldTarget);
+		worldTarget.Translation(position);
+		VSetTransform(worldTarget);
+	}
 
+	Matrix world = VGet()->GetWorldMatrix();
+	m_Direction = Vector3::TransformNormal(m_Direction, world);
+	m_Direction.Normalize();
+	m_Up = Vector3::TransformNormal(m_Up, world);
+	m_Up.Normalize();
+	m_Right = m_Direction.Cross(m_Up);
+	m_Up = m_Right.Cross(m_Direction);
+
+	m_ViewMatrix = Matrix::CreateLookAt(world.Translation(), m_Direction, m_Up);
 }

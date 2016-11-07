@@ -1,9 +1,12 @@
 #include "Scene.h"
 #include "SceneNode.h"
+#include "CameraNode.h"
 #include "../EventManager/EventManager.h"
 #include "../EventManager/Events.h"
 
-Scene::Scene(shared_ptr<IRenderer> pRenderer) : m_pRenderer(pRenderer), m_pCamera(nullptr)
+Scene::Scene(shared_ptr<IRenderer> pRenderer)
+	: m_pRenderer(pRenderer),
+	m_pCamera(nullptr)
 {
 	m_pRootNode.reset(GCC_NEW RootNode());
 
@@ -35,12 +38,6 @@ HRESULT Scene::OnUpdate(double fTime, float fElapsedTime)
 {
 	if (m_pRootNode != nullptr)
 	{
-		static uint32_t lastTime = GetTickCount();
-		uint32_t elapsedTime = 0;
-		uint32_t currentTime = GetTickCount();
-		elapsedTime = currentTime - lastTime;
-		lastTime = currentTime;
-
 		return m_pRootNode->VOnUpdate(this, fTime, fElapsedTime);
 	}
 
@@ -51,12 +48,16 @@ HRESULT Scene::OnRender(double fTime, float fElapsedTime)
 {
 	if (m_pRootNode != nullptr && m_pCamera != nullptr)
 	{
+		m_pCamera->SetViewTransform(this);
+
 		if (m_pRootNode->VPreRender(this) == S_OK)
 		{
 			m_pRootNode->VRender(this, fTime, fElapsedTime);
 			m_pRootNode->VRenderChildren(this, fTime, fElapsedTime);
 			m_pRootNode->VPostRender(this);
 		}
+
+		RenderAlphaPass();
 	}
 
 	return S_OK;
@@ -142,10 +143,20 @@ void Scene::ModifiedRenderComponentDelegate(IEventDataPtr pEventData)
 
 void Scene::DestroyActorDelegate(IEventDataPtr pEventData)
 {
-
+	shared_ptr<EvtData_Destroy_Actor> pCastEventData = static_pointer_cast<EvtData_Destroy_Actor>(pEventData);
+	RemoveChild(pCastEventData->GetActorId());
 }
 
 void Scene::MoveActorDelegate(IEventDataPtr pEventData)
 {
+	shared_ptr<EvtData_Move_Actor> pCastEventData = static_pointer_cast<EvtData_Move_Actor>(pEventData);
 
+	ActorId id = pCastEventData->GetActorId();
+	Matrix transform = pCastEventData->GetMatrix();
+
+	shared_ptr<ISceneNode> pNode = FindActor(id);
+	if (pNode)
+	{
+		pNode->VSetTransform(transform);
+	}
 }

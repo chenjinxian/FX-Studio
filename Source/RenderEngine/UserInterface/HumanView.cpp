@@ -5,6 +5,8 @@
 #include "../EventManager/EventManagerImpl.h"
 #include "../Graphics3D/D3DRenderer.h"
 #include "../Graphics3D/Scene.h"
+#include "../Graphics3D/CameraNode.h"
+#include "../Graphics3D/MovementController.h"
 #include "../MainLoop/Process.h"
 #include <DXUTGui.h>
 
@@ -26,14 +28,18 @@ HumanView::HumanView(shared_ptr<IRenderer> renderer)
 	{
 		m_pScene.reset(GCC_NEW ScreenElementScene(renderer));
 
-// 		Frustum frustum;
-// 		frustum.Init(GCC_PI/4.0f, 1.0f, 1.0f, 100.0f);
-		m_pCamera.reset(GCC_NEW CameraNode());
+		Frustum frustum;
+		frustum.Init(XM_PI / 4.0f, 1.0f, 1.0f, 100.0f);
+		m_pCamera.reset(GCC_NEW CameraNode(frustum));
 		GCC_ASSERT(m_pScene && m_pCamera && _T("Out of memory"));
 
 		m_pScene->VAddChild(INVALID_ACTOR_ID, m_pCamera);
 		m_pScene->SetCamera(m_pCamera);
 	}
+
+	m_pPointerHandler = nullptr;
+	m_pKeyboardHandler = nullptr;
+	m_pFreeCameraController = nullptr;
 }
 
 
@@ -51,6 +57,9 @@ HumanView::~HumanView()
 
 bool HumanView::LoadGame(TiXmlElement* pLevelData)
 {
+	m_pFreeCameraController.reset(GCC_NEW MovementController(m_pCamera, 0, 0, true));
+	m_pPointerHandler = m_pFreeCameraController;
+	m_pKeyboardHandler = m_pFreeCameraController;
 	return VLoadGameDelegate(pLevelData);
 }
 
@@ -132,51 +141,51 @@ LRESULT CALLBACK HumanView::VOnMsgProc( AppMsg msg )
 	switch (msg.m_uMsg) 
 	{
 		case WM_KEYDOWN:
-			if (m_KeyboardHandler)
+			if (m_pKeyboardHandler)
 			{
-				result = m_KeyboardHandler->VOnKeyDown(static_cast<const BYTE>(msg.m_wParam));
+				result = m_pKeyboardHandler->VOnKeyDown(static_cast<uint8_t>(msg.m_wParam));
 			}
 			break;
 	
 		case WM_KEYUP:
-			if (m_KeyboardHandler)
-				result = m_KeyboardHandler->VOnKeyUp(static_cast<const BYTE>(msg.m_wParam));
+			if (m_pKeyboardHandler)
+				result = m_pKeyboardHandler->VOnKeyUp(static_cast<uint8_t>(msg.m_wParam));
 			break;
 
 		case WM_MOUSEMOVE:
-			if (m_PointerHandler)
-				result = m_PointerHandler->VOnPointerMove(Vector2(LOWORD(msg.m_lParam), HIWORD(msg.m_lParam)), 1);
+			if (m_pPointerHandler)
+				result = m_pPointerHandler->VOnPointerMove(Vector2(LOWORD(msg.m_lParam), HIWORD(msg.m_lParam)), 1);
 			break;
 
 		case WM_LBUTTONDOWN:
-			if (m_PointerHandler)
+			if (m_pPointerHandler)
 			{
 				SetCapture(msg.m_hWnd);
-				result = m_PointerHandler->VOnPointerButtonDown(Vector2(LOWORD(msg.m_lParam), HIWORD(msg.m_lParam)), 1, "PointerLeft");
+				result = m_pPointerHandler->VOnPointerButtonDown(Vector2(LOWORD(msg.m_lParam), HIWORD(msg.m_lParam)), 1, "PointerLeft");
 			}	
 			break;
 
 		case WM_LBUTTONUP:
-			if (m_PointerHandler)
+			if (m_pPointerHandler)
 			{
 				SetCapture(NULL);
-				result = m_PointerHandler->VOnPointerButtonUp(Vector2(LOWORD(msg.m_lParam), HIWORD(msg.m_lParam)), 1, "PointerLeft");
+				result = m_pPointerHandler->VOnPointerButtonUp(Vector2(LOWORD(msg.m_lParam), HIWORD(msg.m_lParam)), 1, "PointerLeft");
 			}
 			break;
 
 		case WM_RBUTTONDOWN:
-			if (m_PointerHandler)
+			if (m_pPointerHandler)
 			{
 				SetCapture(msg.m_hWnd);
-				result = m_PointerHandler->VOnPointerButtonDown(Vector2(LOWORD(msg.m_lParam), HIWORD(msg.m_lParam)), 1, "PointerRight");
+				result = m_pPointerHandler->VOnPointerButtonDown(Vector2(LOWORD(msg.m_lParam), HIWORD(msg.m_lParam)), 1, "PointerRight");
 			}
 			break;
 
 		case WM_RBUTTONUP:
-			if (m_PointerHandler)
+			if (m_pPointerHandler)
 			{
 				SetCapture(NULL);
-				result = m_PointerHandler->VOnPointerButtonUp(Vector2(LOWORD(msg.m_lParam), HIWORD(msg.m_lParam)), 1, "PointerRight");
+				result = m_pPointerHandler->VOnPointerButtonUp(Vector2(LOWORD(msg.m_lParam), HIWORD(msg.m_lParam)), 1, "PointerRight");
 			}
 			break;
 		case WM_CHAR:
@@ -196,6 +205,11 @@ void HumanView::VOnUpdate(double fTime, float fElapsedTime)
 	{
 		(*i)->VOnUpdate(fTime, fElapsedTime);
 	}
+
+	if (m_pFreeCameraController)
+	{
+		m_pFreeCameraController->OnUpdate(fTime, fElapsedTime);
+	}
 }
 
 void HumanView::VPushElement(shared_ptr<IScreenElement> pElement)
@@ -208,12 +222,12 @@ void HumanView::VRemoveElement(shared_ptr<IScreenElement> pElement)
 	m_ScreenElements.remove(pElement);
 }
 
-void HumanView::VSetCameraOffset(const Vector4 & camOffset )
+void HumanView::VSetCameraOffset(const Vector4& camOffset )
 {
 	GCC_ASSERT(m_pCamera);
 	if (m_pCamera)
 	{
-// 		m_pCamera->SetCameraOffset( camOffset );
+		m_pCamera->SetCameraOffset(camOffset);
 	}
 }
 

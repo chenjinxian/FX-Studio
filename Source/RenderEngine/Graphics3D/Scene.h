@@ -16,7 +16,6 @@ public:
 	HRESULT OnUpdate(double fTime, float fElapsedTime);
 	HRESULT OnRender(double fTime, float fElapsedTime);
 	HRESULT OnRestore();
-	HRESULT OnLostDevice();
 	HRESULT OnDestoryDevice();
 	shared_ptr<ISceneNode> FindActor(ActorId actorId);
 	bool AddChild(ActorId actorId, shared_ptr<ISceneNode> pChild);
@@ -32,10 +31,40 @@ public:
 
 	shared_ptr<IRenderer> GetRenderder() { return m_pRenderer; }
 
+	void PushAndSetMatrix(const Matrix& worldMatrix)
+	{
+		if (m_MatrixStack.empty())
+		{
+			m_MatrixStack.push(worldMatrix);
+		}
+		else
+		{
+			m_MatrixStack.push(worldMatrix * m_MatrixStack.top());
+		}
+	}
+
+	void PopMatrix()
+	{
+		m_MatrixStack.pop();
+	}
+
+	Matrix GetTopMatrix()
+	{
+		if (m_MatrixStack.empty())
+		{
+			GCC_ERROR("push matrix error");
+		}
+		return m_MatrixStack.top();
+	}
+
 private:
+	void RenderAlphaPass() {}
+
 	shared_ptr<IRenderer> m_pRenderer;
 	shared_ptr<SceneNode> m_pRootNode;
 	shared_ptr<CameraNode> m_pCamera;
+
+	std::stack<Matrix> m_MatrixStack;
 	SceneActorMap m_ActorMap;
 };
 

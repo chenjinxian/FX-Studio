@@ -1,6 +1,7 @@
 #include "Skybox.h"
 #include "ModelImporter.h"
 #include "Scene.h"
+#include "CameraNode.h"
 #include "../Utilities/UtilityString.h"
 #include "DDSTextureLoader.h"
 
@@ -158,7 +159,7 @@ HRESULT SkyboxNode::VRender(Scene* pScene, double fTime, float fElapsedTime)
 
 HRESULT SkyboxNode::VOnUpdate(Scene* pScene, double fTime, float fElapsedTime)
 {
-	m_WorldMatrix = m_ScaleMatrix * Matrix::CreateTranslation(pScene->GetCamera()->GetPostion());
+// 	m_WorldMatrix = m_ScaleMatrix * Matrix::CreateTranslation(pScene->GetCamera()->GetPostion());
 	return S_OK;
 }
 

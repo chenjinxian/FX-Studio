@@ -80,7 +80,6 @@ public:
 
 protected:
 // 	shared_ptr<TeapotController> m_pTeapotController;
-// 	shared_ptr<MovementController> m_pFreeCameraController;
 	shared_ptr<SceneNode> m_pTeapot;
 	shared_ptr<StandardHUD> m_StandardHUD;
 

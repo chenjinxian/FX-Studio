@@ -58,7 +58,7 @@ public:
 	virtual int VGetZOrder() const { return 0; }
 	virtual void VSetZOrder(int zOrder) { }
 
-	virtual LRESULT CALLBACK VOnMsgProc( AppMsg msg ) { return OnMsgProc(msg); }
+	virtual LRESULT CALLBACK VOnMsgProc( AppMsg msg ) { return 0; }
 
 	virtual bool VIsVisible() const { return true; }
 	virtual void VSetVisible(bool visible) { }

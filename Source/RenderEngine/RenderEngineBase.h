@@ -19,6 +19,7 @@
 #include <list>
 #include <vector>
 #include <queue>
+#include <stack>
 #include <map>
 #include <memory>
 using std::tr1::shared_ptr;

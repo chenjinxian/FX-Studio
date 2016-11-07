@@ -118,7 +118,7 @@ shared_ptr<SceneNode> GridRenderComponent::VCreateSceneNode()
 		switch (RenderEngineApp::GetRendererImpl())
 		{
 		case RenderEngineApp::Renderer_D3D11:
-			return shared_ptr<SceneNode>(GCC_NEW GridNode(m_pOwner->GetActorId(), weakThis));
+			return shared_ptr<SceneNode>(GCC_NEW GridNode(m_pOwner->GetActorId(), weakThis, pTransformComponent->GetTransform()));
 
 		default:
 			GCC_ERROR("Unknown Renderer Implementation in GridRenderComponent");

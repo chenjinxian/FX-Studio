@@ -55,9 +55,9 @@ StrongActorPtr ActorFactory::CreateActor(
 	}
 
 	shared_ptr<TransformComponent> pTransformComponent = MakeStrongPtr(pActor->GetComponent<TransformComponent>(TransformComponent::m_Name));
-	if (pTransformComponent)
+	if (initialTransform.Translation() != Vector3::Zero && pTransformComponent)
 	{
-		pTransformComponent->SetPosition(initialTransform.Backward());
+		pTransformComponent->SetPosition(initialTransform.Translation());
 	}
 
 	pActor->PostInit();

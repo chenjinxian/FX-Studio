@@ -69,7 +69,7 @@ HRESULT LightNode::VRender(Scene* pScene, double fTime, float fElapsedTime)
 	direct3DDeviceContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &stride, &offset);
 	direct3DDeviceContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
-	XMMATRIX wvp = m_WorldMatrix * pScene->GetCamera()->GetViewMatrix() * pScene->GetCamera()->GetProjectMatrix();
+	XMMATRIX wvp = pScene->GetCamera()->GetWorldViewProjection(pScene);
 	m_pMaterial->GetWorldViewProjection() << wvp;
 
 	pass->Apply(0);

@@ -6,8 +6,7 @@ TransformComponent::TransformComponent()
 	: m_Transform(Matrix::Identity),
 	m_Position(Vector3::Zero),
 	m_Direction(Vector3::Forward),
-	m_Up(Vector3::Up),
-	m_Right(Vector3::Right)
+	m_Up(Vector3::Up)
 {
 }
 
@@ -20,18 +19,16 @@ bool TransformComponent::VInit(TiXmlElement* pData)
 {
 	GCC_ASSERT(pData);
 
-	Vector3 position(0.0f, 0.0f, 0.0f);
 	Vector3 scales(1.0f, 1.0f, 1.0f);
-	Vector3 yawPitchRoll(0.0f, 0.0f, 0.0f);
 
 	double x = 0; double y = 0; double z = 0;
-	TiXmlElement* pPositionElement = pData->FirstChildElement("Position");
+	TiXmlElement* pPositionElement = pData->FirstChildElement("Translation");
 	if (pPositionElement)
 	{
 		pPositionElement->Attribute("x", &x);
 		pPositionElement->Attribute("y", &y);
 		pPositionElement->Attribute("z", &z);
-		m_Position = Vector3(x, y, z);
+		m_Position = Vector3((float)x, (float)y, (float)z);
 	}
 
 	TiXmlElement* pScaleElement = pData->FirstChildElement("Scale");
@@ -40,7 +37,7 @@ bool TransformComponent::VInit(TiXmlElement* pData)
 		pScaleElement->Attribute("x", &x);
 		pScaleElement->Attribute("y", &y);
 		pScaleElement->Attribute("z", &z);
-		scales = Vector3(x, y, z);
+		scales = Vector3((float)x, (float)y, (float)z);
 	}
 
 	TiXmlElement* pDirectionElement = pData->FirstChildElement("Direction");
@@ -49,7 +46,7 @@ bool TransformComponent::VInit(TiXmlElement* pData)
 		pDirectionElement->Attribute("x", &x);
 		pDirectionElement->Attribute("y", &y);
 		pDirectionElement->Attribute("z", &z);
-		m_Direction = Vector3(x, y, z);
+		m_Direction = Vector3((float)x, (float)y, (float)z);
 	}
 
 	TiXmlElement* pUpElement = pData->FirstChildElement("Up");
@@ -58,22 +55,10 @@ bool TransformComponent::VInit(TiXmlElement* pData)
 		pUpElement->Attribute("x", &x);
 		pUpElement->Attribute("y", &y);
 		pUpElement->Attribute("z", &z);
-		m_Up = Vector3(x, y, z);
+		m_Up = Vector3((float)x, (float)y, (float)z);
 	}
 
-	TiXmlElement* pRightElement = pData->FirstChildElement("Right");
-	if (pRightElement)
-	{
-		pRightElement->Attribute("x", &x);
-		pRightElement->Attribute("y", &y);
-		pRightElement->Attribute("z", &z);
-		m_Right = Vector3(x, y, z);
-	}
-
-	m_Transform.Forward(m_Direction);
-	m_Transform.Up(m_Up);
-	m_Transform.Right(m_Right);
-	m_Transform.Translation(m_Position);
+	m_Transform = Matrix::CreateLookAt(m_Position, m_Position + m_Direction, m_Up);
 
 	return true;
 }

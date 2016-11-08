@@ -106,7 +106,7 @@ HRESULT CameraNode::VRender(Scene* pScene, double fTime, float fElapsedTime)
 
 		m_Frustum.Render();
 
-		pScene->PushAndSetMatrix(m_Properties.GetRotation());
+		pScene->PushAndSetMatrix(m_Properties.GetWorldMatrix());
 	}
 
 	return S_OK;
@@ -123,14 +123,11 @@ void CameraNode::SetViewTransform(Scene* pScene)
 {
 	if (m_pTarget != nullptr)
 	{
-// 		Matrix worldTarget = m_pTarget->VGet()->GetWorldMatrix();
-// 		Vector3 position = worldTarget.Translation() + Vector4::Transform(m_OffsetVector, worldTarget);
-// 		worldTarget.Translation(position);
-// 		VSetTransform(worldTarget);
+		Matrix worldTarget = m_pTarget->VGet()->GetWorldMatrix();
+		Vector3 position = worldTarget.Translation() + Vector4::Transform(m_OffsetVector, worldTarget);
+		worldTarget.Translation(position);
+		VSetTransform(worldTarget);
 	}
 
-	Vector3 position = VGet()->GetPosition();
-	Vector3 direction = VGet()->GetDirection();
-	Vector3 up = VGet()->GetUp();
-	m_ViewMatrix = Matrix::CreateLookAt(position, position + direction, up);
+	m_ViewMatrix = VGet()->GetWorldMatrix().Invert();
 }

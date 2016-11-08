@@ -24,33 +24,33 @@ MovementController::MovementController(
 void MovementController::OnUpdate(double fTime, float fElapsedTime)
 {
 	bool isTranslating = false;
-	float movementX = 0.0f;
-	float movementY = 0.0f;
+	Vector3 forward = Vector3::Zero;
+	Vector3 strafe = Vector3::Zero;
 
+	Matrix worldMatrix = m_pObject->VGet()->GetWorldMatrix();
 	if (m_Keys['W'] || m_Keys[VK_UP])
 	{
-		movementY = 1.0f;
+		forward = Vector3::TransformNormal(Vector3::Forward, worldMatrix);
 		isTranslating = true;
 	}
 	else if (m_Keys['S'] || m_Keys[VK_DOWN])
 	{
-		movementY = -1.0f;
+		forward = Vector3::TransformNormal(Vector3::Backward, worldMatrix);
 		isTranslating = true;
 	}
 
 	if (m_Keys['A'] || m_Keys[VK_LEFT])
 	{
-		movementX = 1.0f;
+		strafe = Vector3::TransformNormal(Vector3::Right, worldMatrix);
 		isTranslating = true;
 	}
 	else if (m_Keys['D'] || m_Keys[VK_RIGHT])
 	{
-		movementX = -1.0f;
+		strafe = Vector3::TransformNormal(Vector3::Left, worldMatrix);
 		isTranslating = true;
 	}
 
-	Vector3 position = m_pObject->VGet()->GetPosition();
-	Vector3 right = m_pObject->VGet()->GetRight();
+	Vector3 position = worldMatrix.Translation();
 
 	if (isTranslating)
 	{
@@ -59,8 +59,10 @@ void MovementController::OnUpdate(double fTime, float fElapsedTime)
 		if (m_CurrentSpeed > m_MaxSpeed)
 			m_CurrentSpeed = m_MaxSpeed;
 
-		position += right * movementX * m_CurrentSpeed;
-		position += m_pObject->VGet()->GetDirection() * movementY * m_CurrentSpeed;
+		Vector3 direction = forward + strafe;
+		direction.Normalize();
+		direction *= m_CurrentSpeed;
+		position += direction;
 	}
 	else
 	{
@@ -74,10 +76,11 @@ void MovementController::OnUpdate(double fTime, float fElapsedTime)
 
 		Matrix rotation = Matrix::CreateFromYawPitchRoll(
 			XMConvertToRadians(-m_Yaw), XMConvertToRadians(m_Pitch), 0.0f);
+		rotation.Translation(position);
 
 		if (m_pObject != nullptr)
 		{
-			m_pObject->VSetTransform(position, rotation);
+			m_pObject->VSetTransform(rotation);
 		}
 	}
 }

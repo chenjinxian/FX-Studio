@@ -16,22 +16,18 @@
 SceneNodeProperties::SceneNodeProperties()
 	: m_ActorId(INVALID_ACTOR_ID),
 	m_RenderPass(RenderPass_0),
-	m_Position(-10.0f, 0.0f, 25.0f),
-	m_Direction(Vector3::Forward),
-	m_Up(Vector3::Up),
-	m_Right(Vector3::Right)
+	m_worldMatrix(Matrix::Identity)
 {
 
 }
 
-SceneNode::SceneNode(ActorId actorId, WeakBaseRenderComponentPtr renderComponent,
-	RenderPass renderPass, const Matrix& orientation, const Matrix& rotation)
+SceneNode::SceneNode(ActorId actorId, WeakBaseRenderComponentPtr renderComponent, RenderPass renderPass, const Matrix& worldMatrix)
 	: m_pParent(nullptr), m_pRenderComponent(renderComponent)
 {
 	m_Properties.m_ActorId = actorId;
 	m_Properties.m_ActorName = (renderComponent != nullptr) ? renderComponent->VGetComponentName() : "SceneNode";
 	m_Properties.m_RenderPass = renderPass;
-// 	VSetTransform(orientation, rotation);
+	VSetTransform(worldMatrix);
 	SetRadius(0);
 }
 
@@ -39,17 +35,9 @@ SceneNode::~SceneNode()
 {
 }
 
-void SceneNode::VSetTransform(const Vector3& position, const Matrix& rotation)
+void SceneNode::VSetTransform(const Matrix& worldMatrix)
 {
-	m_Properties.m_Direction = Vector3::TransformNormal(Vector3::Forward, rotation);
-	m_Properties.m_Direction.Normalize();
-	m_Properties.m_Up = Vector3::TransformNormal(Vector3::Up, rotation);
-	m_Properties.m_Up.Normalize();
-	m_Properties.m_Right = m_Properties.m_Direction.Cross(m_Properties.m_Up);
-	m_Properties.m_Up = m_Properties.m_Right.Cross(m_Properties.m_Direction);
-
-	m_Properties.m_Position = position;
-	m_Properties.m_Rotation = rotation;
+	m_Properties.m_worldMatrix = worldMatrix;
 }
 
 HRESULT SceneNode::VOnRestore(Scene* pScene)
@@ -89,12 +77,11 @@ HRESULT SceneNode::VPreRender(Scene* pScene)
 		shared_ptr<TransformComponent> pTransform = MakeStrongPtr(pActor->GetComponent<TransformComponent>(TransformComponent::m_Name));
 		if (pTransform)
 		{
-// 			m_Properties.m_Orientation = pTransform->GetTransform();
-			m_Properties.m_Rotation = pTransform->GetTransform();
+			m_Properties.m_worldMatrix = pTransform->GetTransform();
 		}
 	}
 
-	pScene->PushAndSetMatrix(m_Properties.m_Rotation);
+	pScene->PushAndSetMatrix(m_Properties.m_worldMatrix);
 
 	return S_OK;
 }

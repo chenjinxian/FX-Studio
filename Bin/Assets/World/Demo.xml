@@ -3,11 +3,10 @@
   <StaticActors>
     <Actor type="DirectionalLight">
       <TransformComponent>
-        <Translation x="0.0" y="0.0" z="0.0" />
+        <Translation x="10.0" y="0.0" z="0.0" />
         <Scale x="1.0" y="1.0" z="1.0" />
         <Direction x="0.0" y="0.0" z="-1.0" />
         <Up x="0.0" y="1.0" z="0.0" />
-        <Right x="1.0" y="0.0" z="0.0" />
       </TransformComponent>
       <DirectionalLightComponent>
         <Color r="1.0" g="1.0" b="1.0" a="1.0" />
@@ -15,7 +14,6 @@
         <Light>
           <Direction x="5.0" y="5.0" z="3.0" />
           <Up x="5.0" y="5.0" z="3.0" />
-          <Right x="5.0" y="5.0" z="3.0" />
         </Light>
       </DirectionalLightComponent>
     </Actor>
@@ -25,7 +23,6 @@
         <Scale x="1.0" y="1.0" z="1.0" />
         <Direction x="0.0" y="0.0" z="-1.0" />
         <Up x="0.0" y="1.0" z="0.0" />
-        <Right x="1.0" y="0.0" z="0.0" />
       </TransformComponent>
       <GridRenderComponent>
         <Color r="0.4" g="0.4" b="0.4" a="1.0" />
@@ -39,7 +36,6 @@
         <Scale x="1.0" y="1.0" z="1.0" />
         <Direction x="0.0" y="0.0" z="-1.0" />
         <Up x="0.0" y="1.0" z="0.0" />
-        <Right x="1.0" y="0.0" z="0.0" />
       </TransformComponent>
       <ModelRenderComponent>
         <Color r="0.4" g="0.4" b="0.4" a="1.0" />

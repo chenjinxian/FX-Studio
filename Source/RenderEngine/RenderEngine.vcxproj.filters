@@ -277,4 +277,9 @@
       <Filter>Graphics3D</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\..\Bin\Assets\Effects\Skybox.fx">
+      <Filter>Effect Files</Filter>
+    </FxCompile>
+  </ItemGroup>
 </Project>

@@ -3,10 +3,7 @@
 const std::string TransformComponent::m_Name = "TransformComponent";
 
 TransformComponent::TransformComponent()
-	: m_Transform(Matrix::Identity),
-	m_Position(Vector3::Zero),
-	m_Direction(Vector3::Forward),
-	m_Up(Vector3::Up)
+	: m_Transform(Matrix::Identity)
 {
 }
 
@@ -19,7 +16,9 @@ bool TransformComponent::VInit(TiXmlElement* pData)
 {
 	GCC_ASSERT(pData);
 
+	Vector3 position(0.0f, 0.0f, 0.0f);
 	Vector3 scales(1.0f, 1.0f, 1.0f);
+	Vector3 yawPitchRoll(0.0f, 0.0f, 0.0f);
 
 	double x = 0; double y = 0; double z = 0;
 	TiXmlElement* pPositionElement = pData->FirstChildElement("Translation");
@@ -28,7 +27,7 @@ bool TransformComponent::VInit(TiXmlElement* pData)
 		pPositionElement->Attribute("x", &x);
 		pPositionElement->Attribute("y", &y);
 		pPositionElement->Attribute("z", &z);
-		m_Position = Vector3((float)x, (float)y, (float)z);
+		position = Vector3((float)x, (float)y, (float)z);
 	}
 
 	TiXmlElement* pScaleElement = pData->FirstChildElement("Scale");
@@ -40,25 +39,21 @@ bool TransformComponent::VInit(TiXmlElement* pData)
 		scales = Vector3((float)x, (float)y, (float)z);
 	}
 
-	TiXmlElement* pDirectionElement = pData->FirstChildElement("Direction");
-	if (pDirectionElement)
+	TiXmlElement* pRotationElement = pData->FirstChildElement("Rotation");
+	if (pRotationElement)
 	{
-		pDirectionElement->Attribute("x", &x);
-		pDirectionElement->Attribute("y", &y);
-		pDirectionElement->Attribute("z", &z);
-		m_Direction = Vector3((float)x, (float)y, (float)z);
+		pRotationElement->Attribute("x", &x);
+		pRotationElement->Attribute("y", &y);
+		pRotationElement->Attribute("z", &z);
+		yawPitchRoll = Vector3((float)x, (float)y, (float)z);
 	}
 
-	TiXmlElement* pUpElement = pData->FirstChildElement("Up");
-	if (pUpElement)
-	{
-		pUpElement->Attribute("x", &x);
-		pUpElement->Attribute("y", &y);
-		pUpElement->Attribute("z", &z);
-		m_Up = Vector3((float)x, (float)y, (float)z);
-	}
-
-	m_Transform = Matrix::CreateLookAt(m_Position, m_Position + m_Direction, m_Up);
+	Matrix translation = Matrix::CreateTranslation(position);
+	Matrix scale = Matrix::CreateScale(scales);
+	Matrix rotation = Matrix::CreateFromYawPitchRoll(
+		XMConvertToRadians(yawPitchRoll.y), XMConvertToRadians(yawPitchRoll.x), XMConvertToRadians(yawPitchRoll.z));
+	
+	m_Transform = scale * rotation * translation;
 
 	return true;
 }

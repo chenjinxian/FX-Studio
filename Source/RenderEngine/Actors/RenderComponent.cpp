@@ -244,7 +244,7 @@ shared_ptr<SceneNode> SkyboxRenderComponent::VCreateSceneNode()
 	shared_ptr<SkyboxNode> sky;
 	if (RenderEngineApp::GetRendererImpl() == RenderEngineApp::Renderer_D3D11)
 	{
-		sky = shared_ptr<SkyboxNode>(GCC_NEW SkyboxNode(L"Assets\\Textures\\Maskonaive2_1024.dds"));
+		sky = shared_ptr<SkyboxNode>(GCC_NEW SkyboxNode(L"Assets\\Textures\\Plains_of_abraham.dds"));
 	}
 	else
 	{

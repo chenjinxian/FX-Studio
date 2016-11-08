@@ -134,9 +134,9 @@ public:
 private:
 	Effect* m_pEffect;
 	TextureMappingMaterial* m_pTextureMappingMaterial;
-	ID3D11Buffer* m_pVertexBuffer;
-	ID3D11Buffer* m_pIndexBuffer;
-	UINT m_IndexCount;
+	std::vector<ID3D11Buffer*> m_pVertexBuffers;
+	std::vector<ID3D11Buffer*> m_pIndexBuffers;
+	std::vector<uint32_t> m_IndexCounts;
 	Matrix m_WorldMatrix;
 
 	std::string m_ModelName;

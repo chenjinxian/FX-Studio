@@ -362,10 +362,7 @@ ModelNode::ModelNode(
 	: SceneNode(actorId, renderComponent, renderPass, worldMatrix),
 	m_pEffect(nullptr),
 	m_pTextureMappingMaterial(nullptr),
-	m_WorldMatrix(Matrix::Identity),
-	m_pVertexBuffer(nullptr),
-	m_pIndexBuffer(nullptr),
-	m_IndexCount(0)
+	m_WorldMatrix(worldMatrix)
 {
 	ModelRenderComponent* pMeshRender = static_cast<ModelRenderComponent*>(m_pRenderComponent);
 	if (pMeshRender != nullptr)
@@ -386,16 +383,32 @@ ModelNode::ModelNode(
 	m_pTextureMappingMaterial = new TextureMappingMaterial();
 	m_pTextureMappingMaterial->Initialize(m_pEffect);
 
-	Mesh* mesh = model->GetMeshes().at(0);
-	m_pTextureMappingMaterial->CreateVertexBuffer(mesh, &m_pVertexBuffer);
-	mesh->CreateIndexBuffer(&m_pIndexBuffer);
-	m_IndexCount = mesh->GetIndices().size();
+	for (auto mesh : model->GetMeshes())
+	{
+		ID3D11Buffer* pVertexBuffer = nullptr;
+		ID3D11Buffer* pIndexBuffer = nullptr;
+		m_pTextureMappingMaterial->CreateVertexBuffer(mesh, &pVertexBuffer);
+		mesh->CreateIndexBuffer(&pIndexBuffer);
+
+		m_pVertexBuffers.push_back(pVertexBuffer);
+		m_pIndexBuffers.push_back(pIndexBuffer);
+		m_IndexCounts.push_back(mesh->GetIndices().size());
+	}
 }
 
 ModelNode::~ModelNode()
 {
-	SAFE_RELEASE(m_pVertexBuffer);
-	SAFE_RELEASE(m_pIndexBuffer);
+	for (auto pVertexBuffer : m_pVertexBuffers)
+	{
+		SAFE_RELEASE(pVertexBuffer);
+	}
+	m_pVertexBuffers.clear();
+	for (auto pIndexBuffer : m_pIndexBuffers)
+	{
+		SAFE_RELEASE(pIndexBuffer);
+	}
+	m_pIndexBuffers.clear();
+
 	SAFE_DELETE(m_pEffect);
 	SAFE_DELETE(m_pTextureMappingMaterial);
 }
@@ -424,28 +437,32 @@ HRESULT ModelNode::VRender(Scene* pScene, double fTime, float fElapsedTime)
 	ID3D11InputLayout* inputLayout = m_pTextureMappingMaterial->GetInputLayouts().at(pass);
 	direct3DDeviceContext->IASetInputLayout(inputLayout);
 
-	UINT stride = m_pTextureMappingMaterial->VertexSize();
-	UINT offset = 0;
-	direct3DDeviceContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &stride, &offset);
-	direct3DDeviceContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-
-	XMMATRIX wvp = m_WorldMatrix * pScene->GetCamera()->GetViewMatrix() * pScene->GetCamera()->GetProjectMatrix();
+	XMMATRIX wvp = pScene->GetCamera()->GetWorldViewProjection(pScene);
 	m_pTextureMappingMaterial->GetWorldViewProjection() << wvp;
 
-	Resource resource(m_TextureName);
-	shared_ptr<ResHandle> pTextureRes = g_pApp->m_pResCache->GetHandle(&resource);
-	if (pTextureRes != nullptr)
+	UINT stride = m_pTextureMappingMaterial->VertexSize();
+	UINT offset = 0;
+
+	for (uint32_t i = 0, count = m_IndexCounts.size(); i < count; i++)
 	{
-		shared_ptr<D3DTextureResourceExtraData11> extra = static_pointer_cast<D3DTextureResourceExtraData11>(pTextureRes->GetExtra());
-		if (extra != nullptr)
+		direct3DDeviceContext->IASetVertexBuffers(0, 1, &m_pVertexBuffers[i], &stride, &offset);
+		direct3DDeviceContext->IASetIndexBuffer(m_pIndexBuffers[i], DXGI_FORMAT_R32_UINT, 0);
+
+		Resource resource(m_TextureName);
+		shared_ptr<ResHandle> pTextureRes = g_pApp->m_pResCache->GetHandle(&resource);
+		if (pTextureRes != nullptr)
 		{
-			m_pTextureMappingMaterial->GetColorTexture() << extra->GetTexture();
-;
+			shared_ptr<D3DTextureResourceExtraData11> extra = static_pointer_cast<D3DTextureResourceExtraData11>(pTextureRes->GetExtra());
+			if (extra != nullptr)
+			{
+				m_pTextureMappingMaterial->GetColorTexture() << extra->GetTexture();
+			}
 		}
+
+		pass->Apply(0);
+
+		direct3DDeviceContext->DrawIndexed(m_IndexCounts[i], 0, 0);
 	}
 
-	pass->Apply(0);
-
-	direct3DDeviceContext->DrawIndexed(m_IndexCount, 0, 0);
 	return S_OK;
 }

@@ -31,10 +31,7 @@ public:
 
 	ActorId GetActorId() const { return m_ActorId; }
 	const std::string& GetActorName() const { return m_ActorName; }
-	const Vector3& GetPosition() const { return m_worldMatrix.Translation(); }
-// 	const Vector3& GetDirection() const { return m_Direction; }
-// 	const Vector3& GetUp() const { return m_Up; }
-// 	const Vector3& GetRight() const { return m_Right; }
+	Vector3 GetPosition() const { return m_worldMatrix.Translation(); }
 	const Matrix& GetWorldMatrix() const { return m_worldMatrix; }
 	RenderPass GetRenderPass() const { return m_RenderPass; }
 

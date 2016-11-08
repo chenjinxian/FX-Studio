@@ -78,7 +78,7 @@ SkyboxNode::SkyboxNode(const std::wstring& textureFile)
 	m_pCubeMapShaderResourceView(nullptr),
 	m_pVertexBuffer(nullptr),
 	m_pIndexBuffer(nullptr),
-	m_WorldMatrix(Matrix::Identity),
+	m_WorldMatrix(Matrix::CreateScale(100.0f)),
 	m_ScaleMatrix(Matrix::Identity),
 	m_TextureFile(textureFile),
 	m_IndexCount(0),
@@ -159,7 +159,8 @@ HRESULT SkyboxNode::VRender(Scene* pScene, double fTime, float fElapsedTime)
 
 HRESULT SkyboxNode::VOnUpdate(Scene* pScene, double fTime, float fElapsedTime)
 {
-// 	m_WorldMatrix = m_ScaleMatrix * Matrix::CreateTranslation(pScene->GetCamera()->GetPostion());
+	Vector3 cameraPosition = pScene->GetCamera()->GetPosition();
+	m_WorldMatrix.Translation(cameraPosition);
 	return S_OK;
 }
 

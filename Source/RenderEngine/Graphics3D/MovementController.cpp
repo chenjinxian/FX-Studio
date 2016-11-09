@@ -75,7 +75,7 @@ void MovementController::OnUpdate(double fTime, float fElapsedTime)
 		m_Pitch += (m_TargetPitch - m_Pitch) * (.35f);
 
 		Matrix rotation = Matrix::CreateFromYawPitchRoll(
-			XMConvertToRadians(-m_Yaw), XMConvertToRadians(m_Pitch), 0.0f);
+			XMConvertToRadians(m_Yaw), XMConvertToRadians(m_Pitch), 0.0f);
 		rotation.Translation(position);
 
 		if (m_pObject != nullptr)

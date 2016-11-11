@@ -81,7 +81,7 @@ void SamplesLogic::VChangeState(BaseGameState gameState)
 	{
 	case BGS_WaitingForPlayers:
 	{
-		DEBUG_ERROR(m_ExpectedPlayers == 1);
+		DEBUG_ASSERT(m_ExpectedPlayers == 1);
 		for (int i = 0; i < m_ExpectedPlayers; ++i)
 		{
 			shared_ptr<IGameView> playersView(GCC_NEW SamplesView(g_pApp->m_pRenderer));

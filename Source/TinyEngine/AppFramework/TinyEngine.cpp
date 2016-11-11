@@ -1,11 +1,11 @@
-#include "TinyEngineBase.h"
+#include "TinyEngineApp.h"
 #include <crtdbg.h>
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	if (g_BaseApp != nullptr)
+	if (g_pApp != nullptr)
 	{
-		g_BaseApp->HandleMessages(hWnd, uMsg, wParam, lParam);
+		g_pApp->HandleMessages(hWnd, uMsg, wParam, lParam);
 	}
 	return (DefWindowProc(hWnd, uMsg, wParam, lParam));
 }
@@ -17,9 +17,9 @@ INT WINAPI GameMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	tmpDbgFlag |= _CRTDBG_CHECK_ALWAYS_DF;
 	_CrtSetDbgFlag(tmpDbgFlag);
 
-	if (g_BaseApp != nullptr)
+	if (g_pApp != nullptr)
 	{
-		g_BaseApp->SetupWindow(hInstance, WndProc);
+		g_pApp->SetupWindow(hInstance, WndProc);
 	}
 
 	return 0;

@@ -46,7 +46,7 @@ public:
 	ScreenElementScene(shared_ptr<IRenderer> renderer) : Scene(renderer) { }
 	virtual ~ScreenElementScene(void)
 	{
-		GCC_WARNING("~ScreenElementScene()");
+		DEBUG_WARNING("~ScreenElementScene()");
 	}
 
 	virtual void VOnUpdate(double fTime, float fElapsedTime) { OnUpdate(fTime, fElapsedTime); };

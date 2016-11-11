@@ -121,7 +121,7 @@ shared_ptr<SceneNode> GridRenderComponent::VCreateSceneNode()
 			return shared_ptr<SceneNode>(GCC_NEW GridNode(m_pOwner->GetActorId(), weakThis, pTransformComponent->GetTransform()));
 
 		default:
-			GCC_ERROR("Unknown Renderer Implementation in GridRenderComponent");
+			DEBUG_ERROR("Unknown Renderer Implementation in GridRenderComponent");
 		}
 	}
 
@@ -194,7 +194,7 @@ shared_ptr<SceneNode> ModelRenderComponent::VCreateSceneNode()
 		}
 
 		default:
-			GCC_ERROR("Unknown Renderer Implementation in ModelRenderComponent");
+			DEBUG_ERROR("Unknown Renderer Implementation in ModelRenderComponent");
 		}
 	}
 
@@ -248,7 +248,7 @@ shared_ptr<SceneNode> SkyboxRenderComponent::VCreateSceneNode()
 	}
 	else
 	{
-		GCC_ERROR("Unknown Renderer Implementation in SkyboxRenderComponent");
+		DEBUG_ERROR("Unknown Renderer Implementation in SkyboxRenderComponent");
 	}
 	return sky;
 }
@@ -284,7 +284,7 @@ bool LightRenderComponent::VDelegateInit(TiXmlElement* pData)
 
 void LightRenderComponent::VCreateInheritedXmlElement(TiXmlElement* pBaseElement)
 {
-	GCC_ASSERT(pBaseElement);
+	DEBUG_ASSERT(pBaseElement);
 	if (pBaseElement == nullptr)
 	{
 		return;
@@ -361,7 +361,7 @@ shared_ptr<SceneNode> DirectionalLightComponent::VCreateSceneNode()
 		}
 
 		default:
-			GCC_ERROR("Unknown Renderer Implementation in LightRenderComponent");
+			DEBUG_ERROR("Unknown Renderer Implementation in LightRenderComponent");
 		}
 	}
 
@@ -438,7 +438,7 @@ shared_ptr<SceneNode> PointLightComponent::VCreateSceneNode()
 		}
 
 		default:
-			GCC_ERROR("Unknown Renderer Implementation in LightRenderComponent");
+			DEBUG_ERROR("Unknown Renderer Implementation in LightRenderComponent");
 		}
 	}
 
@@ -534,7 +534,7 @@ shared_ptr<SceneNode> SpotLightComponent::VCreateSceneNode()
 		}
 
 		default:
-			GCC_ERROR("Unknown Renderer Implementation in LightRenderComponent");
+			DEBUG_ERROR("Unknown Renderer Implementation in LightRenderComponent");
 		}
 	}
 

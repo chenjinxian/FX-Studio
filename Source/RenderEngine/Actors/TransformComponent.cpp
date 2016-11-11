@@ -14,7 +14,7 @@ TransformComponent::~TransformComponent()
 
 bool TransformComponent::VInit(TiXmlElement* pData)
 {
-	GCC_ASSERT(pData);
+	DEBUG_ASSERT(pData);
 
 	Vector3 position(0.0f, 0.0f, 0.0f);
 	Vector3 scales(1.0f, 1.0f, 1.0f);

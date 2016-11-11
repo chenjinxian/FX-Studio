@@ -1,5 +1,6 @@
 #include "Logger.h"
-#include "../Utilities/ConcurrentQueue.h"
+#include "boost/thread/mutex.hpp"
+#include "boost/thread/condition_variable.hpp"
 
 using std::string;
 
@@ -323,7 +324,7 @@ void Init(const char* loggingConfigFilename)
 {
 	if (!s_pLogMgr)
 	{
-		s_pLogMgr = GCC_NEW LogMgr;
+		s_pLogMgr = DEBUG_NEW LogMgr;
 		s_pLogMgr->Init(loggingConfigFilename);
 	}
 }

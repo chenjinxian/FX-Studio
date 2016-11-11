@@ -31,7 +31,7 @@ HumanView::HumanView(shared_ptr<IRenderer> renderer)
 		Frustum frustum;
 		frustum.Init(XM_PIDIV4, 1.0f, 0.01f, 1000.0f);
 		m_pCamera.reset(GCC_NEW CameraNode(frustum));
-		GCC_ASSERT(m_pScene && m_pCamera && _T("Out of memory"));
+		DEBUG_ASSERT(m_pScene && m_pCamera && _T("Out of memory"));
 
 		m_pScene->VAddChild(INVALID_ACTOR_ID, m_pCamera);
 		m_pScene->SetCamera(m_pCamera);
@@ -224,7 +224,7 @@ void HumanView::VRemoveElement(shared_ptr<IScreenElement> pElement)
 
 void HumanView::VSetCameraOffset(const Vector4& camOffset )
 {
-	GCC_ASSERT(m_pCamera);
+	DEBUG_ASSERT(m_pCamera);
 	if (m_pCamera)
 	{
 		m_pCamera->SetCameraOffset(camOffset);

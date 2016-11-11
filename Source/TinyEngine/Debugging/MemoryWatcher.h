@@ -1,7 +1,6 @@
 #pragma once
 
 #ifdef _DEBUG
-#include "../Utilities/UtilityString.h"
 
 #define GCC_MEMORY_WATCHER_DECLARATION() \
     public: \
@@ -18,24 +17,24 @@
     { \
         void* pMem = malloc(size); \
         ++s_numAllocs; \
-        DEBUG_LOG("MemoryWatcher", "NEW: 0x" + ToStr(reinterpret_cast<unsigned long>(pMem), 16) + " " + ToStr(size) + " (x" + ToStr(s_numAllocs) + ") -> " + std::string(filename) + ":" + ToStr(lineNum)); \
+        GCC_LOG("MemoryWatcher", "NEW: 0x" + ToStr(reinterpret_cast<unsigned long>(pMem), 16) + " " + ToStr(size) + " (x" + ToStr(s_numAllocs) + ") -> " + std::string(filename) + ":" + ToStr(lineNum)); \
         return pMem; \
     } \
     void _className_::operator delete(void* pPtr) \
     { \
-        DEBUG_LOG("MemoryWatcher", "DELETE: 0x" + ToStr(reinterpret_cast<unsigned long>(pPtr), 16) + " (x" + ToStr(s_numAllocs) + ")"); \
+        GCC_LOG("MemoryWatcher", "DELETE: 0x" + ToStr(reinterpret_cast<unsigned long>(pPtr), 16) + " (x" + ToStr(s_numAllocs) + ")"); \
         free(pPtr); \
         --s_numAllocs; \
     } \
     void* _className_::operator new[](size_t size, int memBlock, const char* filename, int lineNum) \
     { \
         void* pMem = malloc(size); \
-        DEBUG_LOG("MemoryWatcher", "NEW: 0x" + ToStr(reinterpret_cast<unsigned long>(pMem), 16) + " " + ToStr(size) + " (x" + ToStr(s_numAllocs) + ") -> " + std::string(filename) + ":" + ToStr(lineNum)); \
+        GCC_LOG("MemoryWatcher", "NEW: 0x" + ToStr(reinterpret_cast<unsigned long>(pMem), 16) + " " + ToStr(size) + " (x" + ToStr(s_numAllocs) + ") -> " + std::string(filename) + ":" + ToStr(lineNum)); \
         return pMem; \
     } \
     void _className_::operator delete[](void* pPtr) \
     { \
-        DEBUG_LOG("MemoryWatcher", "DELETE: 0x" + ToStr(reinterpret_cast<unsigned long>(pPtr), 16) + " (x" + ToStr(s_numAllocs) + ")"); \
+        GCC_LOG("MemoryWatcher", "DELETE: 0x" + ToStr(reinterpret_cast<unsigned long>(pPtr), 16) + " (x" + ToStr(s_numAllocs) + ")"); \
         free(pPtr); \
         --s_numAllocs; \
     }

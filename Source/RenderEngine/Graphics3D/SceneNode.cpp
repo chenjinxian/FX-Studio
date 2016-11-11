@@ -193,7 +193,7 @@ bool RootNode::VAddChild(shared_ptr<ISceneNode> child)
 	RenderPass pass = child->VGet()->GetRenderPass();
 	if ((unsigned)pass >= m_Children.size() || !m_Children[pass])
 	{
-		GCC_ASSERT(0 && _T("There is no such render pass"));
+		DEBUG_ASSERT(0 && _T("There is no such render pass"));
 		return false;
 	}
 

@@ -32,12 +32,12 @@ bool Process::AttachToParent(Process* pParent)
 	}
 	else if (IsDead())
 	{
-		GCC_ERROR("Attempting to attach a dead process to a parent");
+		DEBUG_ERROR("Attempting to attach a dead process to a parent");
 		return false;
 	}
 	else if (IsRemoved())
 	{
-		GCC_ERROR("Attempting to attach a process that is already being removed to another parent");
+		DEBUG_ERROR("Attempting to attach a process that is already being removed to another parent");
 		return false;
 	}
 

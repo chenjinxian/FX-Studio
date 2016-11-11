@@ -35,7 +35,7 @@ void SkyboxMaterial::Initialize(Effect* pEffect)
 
 void SkyboxMaterial::CreateVertexBuffer(const Mesh* pMesh, ID3D11Buffer** ppVertexBuffer) const
 {
-	GCC_ASSERT(pMesh != nullptr);
+	DEBUG_ASSERT(pMesh != nullptr);
 	const std::vector<Vector3>& sourceVertices = pMesh->GetVertices();
 
 	std::vector<XMFLOAT4> vertices;
@@ -62,7 +62,7 @@ void SkyboxMaterial::CreateVertexBuffer(XMFLOAT4* vertices, uint32_t vertexCount
 	vertexSubResourceData.pSysMem = vertices;
 	if (FAILED(DXUTGetD3D11Device()->CreateBuffer(&vertexBufferDesc, &vertexSubResourceData, ppVertexBuffer)))
 	{
-		GCC_ERROR("ID3D11Device::CreateBuffer() failed.");
+		DEBUG_ERROR("ID3D11Device::CreateBuffer() failed.");
 	}
 }
 
@@ -125,7 +125,7 @@ HRESULT SkyboxNode::VOnRestore(Scene* pScene)
 		D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE, 0, 0, true, nullptr, &m_pCubeMapShaderResourceView);
 	if (FAILED(hr))
 	{
-		GCC_ERROR("CreateDDSTextureFromFile() failed.");
+		DEBUG_ERROR("CreateDDSTextureFromFile() failed.");
 	}
 
 	return hr;

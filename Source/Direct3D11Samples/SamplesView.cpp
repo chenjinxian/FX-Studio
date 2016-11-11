@@ -284,7 +284,7 @@ void CALLBACK MainMenuUI::_OnGUIEvent(UINT nEvent, int nControlID, CDXUTControl*
 
 	default:
 	{
-		GCC_ERROR("Unknown control.");
+		DEBUG_ERROR("Unknown control.");
 	}
 	}
 

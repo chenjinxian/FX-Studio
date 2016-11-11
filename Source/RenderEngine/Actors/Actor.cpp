@@ -10,13 +10,13 @@ Actor::Actor(ActorId actorId)
 
 Actor::~Actor()
 {
-	GCC_LOG("Actor", std::string("Destroying Actor ") + ToStr(m_ActorId));
-	GCC_ASSERT(m_ActorComponents.empty());
+	DEBUG_LOG("Actor", std::string("Destroying Actor ") + ToStr(m_ActorId));
+	DEBUG_ASSERT(m_ActorComponents.empty());
 }
 
 bool Actor::Init(TiXmlElement* pData)
 {
-	GCC_LOG("Actor", std::string("Initializing Actor ") + ToStr(m_ActorId));
+	DEBUG_LOG("Actor", std::string("Initializing Actor ") + ToStr(m_ActorId));
 
 	m_ActorType = pData->Attribute("type");
 	return true;
@@ -67,5 +67,5 @@ void Actor::AddComponent(StrongActorComponentPtr pComponent)
 {
 	std::pair<ActorCompoentMap::iterator, bool> success =
 		m_ActorComponents.insert(std::make_pair(pComponent->VGetComponentId(), pComponent));
-	GCC_ASSERT(success.second);
+	DEBUG_ASSERT(success.second);
 }

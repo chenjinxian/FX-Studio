@@ -20,7 +20,7 @@ Model::Model(const std::string& filename, bool flipUVs /*= false*/)
 	const aiScene* scene = importer.ReadFile(filename, flags);
 	if (scene == nullptr)
 	{
-		GCC_ERROR(importer.GetErrorString());
+		DEBUG_ERROR(importer.GetErrorString());
 	}
 
 	if (scene->HasMaterials())
@@ -55,7 +55,7 @@ Model::Model(const void* pBuffer, uint32_t length, bool flipUVs /*= false*/)
 	const aiScene* scene = importer.ReadFileFromMemory(pBuffer, length, flags);
 	if (scene == nullptr)
 	{
-		GCC_ERROR(importer.GetErrorString());
+		DEBUG_ERROR(importer.GetErrorString());
 	}
 
 	if (scene->HasMaterials())
@@ -124,7 +124,7 @@ Mesh::Mesh(Model* pModel, aiMesh* mesh)
 	m_FaceCount(0),
 	m_Indices()
 {
-	GCC_ASSERT(mesh != nullptr);
+	DEBUG_ASSERT(mesh != nullptr);
 	m_pModelMaterial = m_pModel->GetMaterials().at(mesh->mMaterialIndex);
 
 	m_Vertices.reserve(mesh->mNumVertices);
@@ -266,7 +266,7 @@ const std::vector<uint32_t>& Mesh::GetIndices() const
 
 void Mesh::CreateIndexBuffer(ID3D11Buffer** ppIndexBuffer)
 {
-	GCC_ASSERT(ppIndexBuffer != nullptr);
+	DEBUG_ASSERT(ppIndexBuffer != nullptr);
 
 	D3D11_BUFFER_DESC indexBufferDesc;
 	ZeroMemory(&indexBufferDesc, sizeof(indexBufferDesc));

@@ -107,7 +107,7 @@ ID3D11BlendState* D3DBlendStates::MultiplicativeBlend = nullptr;
 
 void D3DBlendStates::Initialize(ID3D11Device* pd3dDevice)
 {
-	GCC_ASSERT(pd3dDevice != nullptr);
+	DEBUG_ASSERT(pd3dDevice != nullptr);
 
 	D3D11_BLEND_DESC blendStateDesc;
 	ZeroMemory(&blendStateDesc, sizeof(blendStateDesc));
@@ -123,7 +123,7 @@ void D3DBlendStates::Initialize(ID3D11Device* pd3dDevice)
 	HRESULT hr;
 	if (FAILED(hr = pd3dDevice->CreateBlendState(&blendStateDesc, &AlphaBlend)))
 	{
-		GCC_ERROR("ID3D11Device::CreateBlendState() failed.");
+		DEBUG_ERROR("ID3D11Device::CreateBlendState() failed.");
 	}
 
 	ZeroMemory(&blendStateDesc, sizeof(blendStateDesc));
@@ -138,7 +138,7 @@ void D3DBlendStates::Initialize(ID3D11Device* pd3dDevice)
 
 	if (FAILED(hr = pd3dDevice->CreateBlendState(&blendStateDesc, &MultiplicativeBlend)))
 	{
-		GCC_ERROR("ID3D11Device::CreateBlendState() failed.");
+		DEBUG_ERROR("ID3D11Device::CreateBlendState() failed.");
 	}
 }
 
@@ -155,7 +155,7 @@ ID3D11RasterizerState* D3DRasterizerStates::Wireframe = nullptr;
 
 void D3DRasterizerStates::Initialize(ID3D11Device* pd3dDevice)
 {
-	GCC_ASSERT(pd3dDevice != nullptr);
+	DEBUG_ASSERT(pd3dDevice != nullptr);
 
 	D3D11_RASTERIZER_DESC rasterizerStateDesc;
 	ZeroMemory(&rasterizerStateDesc, sizeof(rasterizerStateDesc));
@@ -167,7 +167,7 @@ void D3DRasterizerStates::Initialize(ID3D11Device* pd3dDevice)
 	HRESULT hr = pd3dDevice->CreateRasterizerState(&rasterizerStateDesc, &CullBack);
 	if (FAILED(hr))
 	{
-		GCC_ERROR("ID3D11Device::CreateRasterizerState() failed.");
+		DEBUG_ERROR("ID3D11Device::CreateRasterizerState() failed.");
 	}
 
 	ZeroMemory(&rasterizerStateDesc, sizeof(rasterizerStateDesc));
@@ -180,7 +180,7 @@ void D3DRasterizerStates::Initialize(ID3D11Device* pd3dDevice)
 	hr = pd3dDevice->CreateRasterizerState(&rasterizerStateDesc, &CullFront);
 	if (FAILED(hr))
 	{
-		GCC_ERROR("ID3D11Device::CreateRasterizerState() failed.");
+		DEBUG_ERROR("ID3D11Device::CreateRasterizerState() failed.");
 	}
 
 	ZeroMemory(&rasterizerStateDesc, sizeof(rasterizerStateDesc));
@@ -192,7 +192,7 @@ void D3DRasterizerStates::Initialize(ID3D11Device* pd3dDevice)
 	hr = pd3dDevice->CreateRasterizerState(&rasterizerStateDesc, &CullNone);
 	if (FAILED(hr))
 	{
-		GCC_ERROR("ID3D11Device::CreateRasterizerState() failed.");
+		DEBUG_ERROR("ID3D11Device::CreateRasterizerState() failed.");
 	}
 
 	ZeroMemory(&rasterizerStateDesc, sizeof(rasterizerStateDesc));
@@ -204,7 +204,7 @@ void D3DRasterizerStates::Initialize(ID3D11Device* pd3dDevice)
 	hr = pd3dDevice->CreateRasterizerState(&rasterizerStateDesc, &Wireframe);
 	if (FAILED(hr))
 	{
-		GCC_ERROR("ID3D11Device::CreateRasterizerState() failed.");
+		DEBUG_ERROR("ID3D11Device::CreateRasterizerState() failed.");
 	}
 }
 
@@ -221,7 +221,7 @@ ID3D11DepthStencilState* D3DDepthStencilStates::DepthRead = nullptr;
 
 void D3DDepthStencilStates::Initialize(ID3D11Device* pd3dDevice)
 {
-	GCC_ASSERT(pd3dDevice != nullptr);
+	DEBUG_ASSERT(pd3dDevice != nullptr);
 
 	D3D11_DEPTH_STENCIL_DESC depthStencilDesc;
 	ZeroMemory(&depthStencilDesc, sizeof(depthStencilDesc));
@@ -243,7 +243,7 @@ void D3DDepthStencilStates::Initialize(ID3D11Device* pd3dDevice)
 	HRESULT hr;
 	if (FAILED(hr = pd3dDevice->CreateDepthStencilState(&depthStencilDesc, &DepthNone)))
 	{
-		GCC_ERROR("ID3D11Device::CreateDepthStencilState() failed.");
+		DEBUG_ERROR("ID3D11Device::CreateDepthStencilState() failed.");
 	}
 
 	ZeroMemory(&depthStencilDesc, sizeof(depthStencilDesc));
@@ -264,7 +264,7 @@ void D3DDepthStencilStates::Initialize(ID3D11Device* pd3dDevice)
 
 	if (FAILED(hr = pd3dDevice->CreateDepthStencilState(&depthStencilDesc, &DepthNone)))
 	{
-		GCC_ERROR("ID3D11Device::CreateDepthStencilState() failed.");
+		DEBUG_ERROR("ID3D11Device::CreateDepthStencilState() failed.");
 	}
 }
 

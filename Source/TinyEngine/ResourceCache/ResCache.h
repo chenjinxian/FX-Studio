@@ -1,6 +1,6 @@
 #pragma once
-#include "../RenderEngineBase.h"
-#include "../RenderEngineInterface.h"
+#include "../TinyEngineBase.h"
+#include "../TinyEngineInterface.h"
 #include "ZipFile.h"
 
 class ResHandle;

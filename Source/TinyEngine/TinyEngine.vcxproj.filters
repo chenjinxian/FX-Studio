@@ -1,33 +1,105 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
-    </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="AppFramework">
+      <UniqueIdentifier>{577e717b-96c0-4c8f-9949-83207270579c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphics3D">
+      <UniqueIdentifier>{3975b86a-7e80-493f-b7da-23681dee6470}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utilities">
+      <UniqueIdentifier>{9b72dd54-96c6-4267-a025-80b782341160}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Actors">
+      <UniqueIdentifier>{79b26296-9981-4cce-b660-a315fbb097a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EventManager">
+      <UniqueIdentifier>{7534956d-10ad-4e5f-ad6e-99a808728c0c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Debugging">
+      <UniqueIdentifier>{1b34d319-349a-43bd-970e-f3d7392a4858}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ResourceCache">
+      <UniqueIdentifier>{0448200a-138a-46c1-80c0-082320a8154c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UserInterface">
+      <UniqueIdentifier>{a3de8915-20c1-4897-b067-1cd71fb8b38c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Effect Files">
+      <UniqueIdentifier>{289d8c16-99ab-4493-b67a-2864aaf74356}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="TinyEngineBase.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Debugging\Logger.h">
+      <Filter>Debugging</Filter>
+    </ClInclude>
+    <ClInclude Include="Debugging\MemoryWatcher.h">
+      <Filter>Debugging</Filter>
+    </ClInclude>
+    <ClInclude Include="Debugging\MiniDump.h">
+      <Filter>Debugging</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceCache\ResCache.h">
+      <Filter>ResourceCache</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceCache\XmlResource.h">
+      <Filter>ResourceCache</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceCache\ZipFile.h">
+      <Filter>ResourceCache</Filter>
+    </ClInclude>
+    <ClInclude Include="TinyEngineBase.h" />
+    <ClInclude Include="TinyEngineInterface.h" />
+    <ClInclude Include="Graphics3D\D3D11Renderer.h">
+      <Filter>Graphics3D</Filter>
+    </ClInclude>
+    <ClInclude Include="AppFramework\TinyEngineApp.h">
+      <Filter>AppFramework</Filter>
+    </ClInclude>
+    <ClInclude Include="AppFramework\TinyEngineConfig.h">
+      <Filter>AppFramework</Filter>
+    </ClInclude>
+    <ClInclude Include="Utilities\Utility.h">
+      <Filter>Utilities</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="TinyEngineBase.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Debugging\Logger.cpp">
+      <Filter>Debugging</Filter>
     </ClCompile>
-    <ClCompile Include="TinyEngine.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Debugging\MiniDump.cpp">
+      <Filter>Debugging</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceCache\ResCache.cpp">
+      <Filter>ResourceCache</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceCache\XmlResource.cpp">
+      <Filter>ResourceCache</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceCache\ZipFile.cpp">
+      <Filter>ResourceCache</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics3D\D3D11Renderer.cpp">
+      <Filter>Graphics3D</Filter>
+    </ClCompile>
+    <ClCompile Include="AppFramework\TinyEngine.cpp">
+      <Filter>AppFramework</Filter>
+    </ClCompile>
+    <ClCompile Include="AppFramework\TinyEngineApp.cpp">
+      <Filter>AppFramework</Filter>
+    </ClCompile>
+    <ClCompile Include="AppFramework\TinyEngineConfig.cpp">
+      <Filter>AppFramework</Filter>
+    </ClCompile>
+    <ClCompile Include="Utilities\Utility.cpp">
+      <Filter>Utilities</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

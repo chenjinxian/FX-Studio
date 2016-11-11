@@ -93,7 +93,7 @@ MessageBox::MessageBox(std::wstring msg, std::wstring title, int buttonFlags)
 
 MessageBox::~MessageBox()
 {
-	GCC_ASSERT(1);
+	DEBUG_ASSERT(1);
 }
 
 HRESULT MessageBox::VOnRestore()
@@ -141,7 +141,7 @@ int MessageBox::Ask(MessageBox_Questions question)
 			break;
 		}
 		default:
-			GCC_ASSERT(0 && _T("Undefined question in Game::Ask"));
+			DEBUG_ASSERT(0 && _T("Undefined question in Game::Ask"));
 			return IDCANCEL;
 	}
 

@@ -24,7 +24,7 @@ ActorFactory::~ActorFactory()
 StrongActorPtr ActorFactory::CreateActor(
 	TiXmlElement *pActorRoot, const Matrix& initialTransform, ActorId serversActorId)
 {
-	GCC_ASSERT(pActorRoot != nullptr);
+	DEBUG_ASSERT(pActorRoot != nullptr);
 
 	ActorId nextActorId = serversActorId;
 	if (nextActorId == INVALID_ACTOR_ID)
@@ -34,7 +34,7 @@ StrongActorPtr ActorFactory::CreateActor(
 	StrongActorPtr pActor(GCC_NEW Actor(nextActorId));
 	if (!pActor->Init(pActorRoot))
 	{
-		GCC_ERROR("Failed to initialize actor: " + std::string(pActorRoot->Attribute("type")));
+		DEBUG_ERROR("Failed to initialize actor: " + std::string(pActorRoot->Attribute("type")));
 		return StrongActorPtr();
 	}
 
@@ -96,13 +96,13 @@ StrongActorComponentPtr ActorFactory::VCreateComponent(TiXmlElement* pData)
 	{
 		if (!pComponent->VInit(pData))
 		{
-			GCC_ERROR("Component failed to initialize: " + std::string(name));
+			DEBUG_ERROR("Component failed to initialize: " + std::string(name));
 			return StrongActorComponentPtr();
 		}
 	}
 	else
 	{
-		GCC_ERROR("Couldn't find ActorComponent named " + std::string(name));
+		DEBUG_ERROR("Couldn't find ActorComponent named " + std::string(name));
 		return StrongActorComponentPtr();
 	}
 

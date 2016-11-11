@@ -1,17 +1,17 @@
-#include "TinyEngineBase.h"
+#include "TinyEngineApp.h"
 
-TinyEngineBase* g_BaseApp = nullptr;
+TinyEngineApp* g_pApp = nullptr;
 
-TinyEngineBase::TinyEngineBase()
+TinyEngineApp::TinyEngineApp()
 {
 }
 
 
-TinyEngineBase::~TinyEngineBase()
+TinyEngineApp::~TinyEngineApp()
 {
 }
 
-HWND TinyEngineBase::SetupWindow(HINSTANCE hInstance, WNDPROC wndproc)
+HWND TinyEngineApp::SetupWindow(HINSTANCE hInstance, WNDPROC wndproc)
 {
 	m_hInstance = hInstance;
 
@@ -114,6 +114,6 @@ HWND TinyEngineBase::SetupWindow(HINSTANCE hInstance, WNDPROC wndproc)
 	return m_hWindow;
 }
 
-void TinyEngineBase::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+void TinyEngineApp::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 }

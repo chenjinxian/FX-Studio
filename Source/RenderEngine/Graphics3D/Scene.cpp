@@ -128,7 +128,7 @@ void Scene::NewRenderComponentDelegate(IEventDataPtr pEventData)
 		if (FAILED(pSceneNode->VOnRestore(this)))
 		{
 			std::string error = "Failed to restore scene node to the scene for actorid " + ToStr(actorId);
-			GCC_ERROR(error);
+			DEBUG_ERROR(error);
 			return;
 		}
 

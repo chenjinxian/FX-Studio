@@ -74,13 +74,13 @@ private:
 //---------------------------------------------------------------------------------------------------------------------
 inline void Process::Succeed(void)
 {
-	GCC_ASSERT(m_state == RUNNING || m_state == PAUSED);
+	DEBUG_ASSERT(m_state == RUNNING || m_state == PAUSED);
 	m_state = SUCCEEDED;
 }
 
 inline void Process::Fail(void)
 {
-	GCC_ASSERT(m_state == RUNNING || m_state == PAUSED);
+	DEBUG_ASSERT(m_state == RUNNING || m_state == PAUSED);
 	m_state = FAILED;
 }
 
@@ -97,7 +97,7 @@ inline void Process::Pause(void)
 	if (m_state == RUNNING)
 		m_state = PAUSED;
 	else
-		GCC_WARNING("Attempting to pause a process that isn't running");
+		DEBUG_WARNING("Attempting to pause a process that isn't running");
 }
 
 inline void Process::UnPause(void)
@@ -105,7 +105,7 @@ inline void Process::UnPause(void)
 	if (m_state == PAUSED)
 		m_state = RUNNING;
 	else
-		GCC_WARNING("Attempting to unpause a process that isn't paused");
+		DEBUG_WARNING("Attempting to unpause a process that isn't paused");
 }
 
 /*

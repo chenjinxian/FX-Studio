@@ -1,8 +1,9 @@
-#include <time.h>
 #include "MiniDump.h"
+#include <time.h>
 
 #pragma comment(lib, "version.lib")
 
+#define USER_DATA_BUFFER_SIZE (4096)
 
 // based on dbghelp.h
 typedef BOOL (WINAPI *MINIDUMPWRITEDUMP)(HANDLE hProcess, DWORD dwPid, HANDLE hFile, MINIDUMP_TYPE DumpType,

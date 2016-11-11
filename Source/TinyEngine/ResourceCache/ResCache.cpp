@@ -16,7 +16,7 @@ ResourceZipFile::~ResourceZipFile()
 
 bool ResourceZipFile::VOpen()
 {
-	m_pZipFile = GCC_NEW ZipFile;
+	m_pZipFile = DEBUG_NEW ZipFile;
 	if (m_pZipFile)
 	{
 		return m_pZipFile->Init(m_resFileName.c_str());
@@ -133,7 +133,7 @@ int DevelopmentResourceZipFile::VGetRawResource(const Resource &r, char *buffer)
 		if (num == -1)
 			return -1;
 
-		std::string fullFileSpec = ws2s(m_AssetsDir) + r.m_name.c_str(); 
+		std::string fullFileSpec = Utility::WS2S(m_AssetsDir) + r.m_name.c_str(); 
 		FILE *f = nullptr;
 		fopen_s(&f, fullFileSpec.c_str(), "rb");
 		size_t bytes = fread(buffer, 1, m_AssetFileInfo[num].nFileSizeLow, f);
@@ -154,7 +154,7 @@ std::string DevelopmentResourceZipFile::VGetResourceName(int num) const
 	if (m_mode == Editor)
 	{
 		std::wstring wideName = m_AssetFileInfo[num].cFileName;
-		return ws2s(wideName);
+		return Utility::WS2S(wideName);
 	}
 
 	return ResourceZipFile::VGetResourceName(num);
@@ -190,7 +190,7 @@ void DevelopmentResourceZipFile::ReadAssetsDirectory(std::wstring fileSpec)
 					std::wstring lower = fileName;
 					std::transform(lower.begin(), lower.end(), lower.begin(), (int(*)(int)) std::tolower);
 					wcscpy_s(&findData.cFileName[0], MAX_PATH, lower.c_str());
-					m_DirectoryContentsMap[ws2s(lower)] = m_AssetFileInfo.size();
+					m_DirectoryContentsMap[Utility::WS2S(lower)] = m_AssetFileInfo.size();
 					m_AssetFileInfo.push_back(findData);
 				} 
 			}
@@ -235,7 +235,7 @@ bool ResCache::Init()
 	bool retValue = false;
 	if ( m_file->VOpen() )
 	{
-		RegisterLoader(shared_ptr<IResourceLoader>(GCC_NEW DefaultResourceLoader()));
+		RegisterLoader(shared_ptr<IResourceLoader>(DEBUG_NEW DefaultResourceLoader()));
 		retValue = true;
 	}
 	return retValue;
@@ -270,7 +270,7 @@ shared_ptr<ResHandle> ResCache::Load(Resource *r)
 	{
 		shared_ptr<IResourceLoader> testLoader = *it;
 
-		if (WildcardMatch(testLoader->VGetPattern().c_str(), r->m_name.c_str()))
+		if (Utility::WildcardMatch(testLoader->VGetPattern().c_str(), r->m_name.c_str()))
 		{
 			loader = testLoader;
 			break;
@@ -291,7 +291,7 @@ shared_ptr<ResHandle> ResCache::Load(Resource *r)
 	}
 
 	int allocSize = rawSize + ((loader->VAddNullZero()) ? (1) : (0));
-	char *rawBuffer = loader->VUseRawFile() ? Allocate(allocSize) : GCC_NEW char[allocSize];
+	char *rawBuffer = loader->VUseRawFile() ? Allocate(allocSize) : DEBUG_NEW char[allocSize];
 	memset(rawBuffer, 0, allocSize);
 
 	if (rawBuffer==NULL || m_file->VGetRawResource(*r, rawBuffer)==0)
@@ -306,7 +306,7 @@ shared_ptr<ResHandle> ResCache::Load(Resource *r)
 	if (loader->VUseRawFile())
 	{
 		buffer = rawBuffer;
-		handle = shared_ptr<ResHandle>(GCC_NEW ResHandle(*r, buffer, rawSize, this));
+		handle = shared_ptr<ResHandle>(DEBUG_NEW ResHandle(*r, buffer, rawSize, this));
 	}
 	else
 	{
@@ -317,7 +317,7 @@ shared_ptr<ResHandle> ResCache::Load(Resource *r)
 			// resource cache out of memory
 			return shared_ptr<ResHandle>();
 		}
-		handle = shared_ptr<ResHandle>(GCC_NEW ResHandle(*r, buffer, size, this));
+		handle = shared_ptr<ResHandle>(DEBUG_NEW ResHandle(*r, buffer, size, this));
 		bool success = loader->VLoadResource(rawBuffer, rawSize, handle);
 		
 		if (loader->VDiscardRawBufferAfterLoad())
@@ -361,7 +361,7 @@ char *ResCache::Allocate(uint32_t size)
 	if (!MakeRoom(size))
 		return NULL;
 
-	char *mem = GCC_NEW char[size];
+	char *mem = DEBUG_NEW char[size];
 	if (mem)
 	{
 		m_allocated += size;
@@ -431,7 +431,7 @@ std::vector<std::string> ResCache::Match(const std::string pattern)
 	{
 		std::string name = m_file->VGetResourceName(i);
 		std::transform(name.begin(), name.end(), name.begin(), (int(*)(int)) std::tolower);
-		if (WildcardMatch(pattern.c_str(), name.c_str()))
+		if (Utility::WildcardMatch(pattern.c_str(), name.c_str()))
 		{
 			matchingNames.push_back(name);
 		}
@@ -451,7 +451,7 @@ int ResCache::Preload(const std::string pattern, void (*progressCallback)(int, b
 	{
 		Resource resource(m_file->VGetResourceName(i));
 
-		if (WildcardMatch(pattern.c_str(), resource.m_name.c_str()))
+		if (Utility::WildcardMatch(pattern.c_str(), resource.m_name.c_str()))
 		{
 			shared_ptr<ResHandle> handle = GetHandle(&resource);
 			++loaded;

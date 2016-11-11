@@ -15,7 +15,7 @@ BaseGameLogic::BaseGameLogic()
 {
 	m_pProcessManager = GCC_NEW ProcessManager;
 	m_pLevelManager = GCC_NEW LevelManager;
-	GCC_ASSERT(m_pProcessManager && m_pLevelManager);
+	DEBUG_ASSERT(m_pProcessManager && m_pLevelManager);
 	m_pLevelManager->Initialize(g_pApp->m_pResCache->Match("world\\*.xml"));
 
 // 	RegisterEngineScriptEvents();
@@ -54,7 +54,7 @@ std::string BaseGameLogic::GetActorXml(ActorId id)
 	if (pActor)
 		return pActor->ToXml();
 	else
-		GCC_ERROR("Couldn't find actor: " + ToStr(id));
+		DEBUG_ERROR("Couldn't find actor: " + ToStr(id));
 
 	return std::string();
 }
@@ -64,7 +64,7 @@ bool BaseGameLogic::VLoadGame(const std::string& projectXml)
 	TiXmlElement* pRoot = XmlResourceLoader::LoadAndReturnRootXmlElement(projectXml.c_str());
 	if (!pRoot)
 	{
-		GCC_ERROR("Failed to find level resource file: " + projectXml);
+		DEBUG_ERROR("Failed to find level resource file: " + projectXml);
 		return false;
 	}
 
@@ -155,8 +155,8 @@ void BaseGameLogic::VRemoveView(shared_ptr<IGameView> pView)
 StrongActorPtr BaseGameLogic::VCreateActor(
 	TiXmlElement *pActorRoot, const Matrix& initialTransform, ActorId serversActorId)
 {
-	GCC_ASSERT(m_pActorFactory != nullptr);
-	GCC_ASSERT(pActorRoot != nullptr);
+	DEBUG_ASSERT(m_pActorFactory != nullptr);
+	DEBUG_ASSERT(pActorRoot != nullptr);
 
 	if (!m_IsProxy && serversActorId != INVALID_ACTOR_ID)
 		return StrongActorPtr();
@@ -209,7 +209,7 @@ void BaseGameLogic::VMoveActor(ActorId actorId, const Matrix& mat)
 
 void BaseGameLogic::VModifyActor(const ActorId actorId, TiXmlElement* overrides)
 {
-	GCC_ASSERT(m_pActorFactory);
+	DEBUG_ASSERT(m_pActorFactory);
 	if (!m_pActorFactory)
 		return;
 
@@ -272,7 +272,7 @@ void BaseGameLogic::VOnUpdate(double fTime, float fElapsedTime)
 		break;
 
 	default:
-		GCC_ERROR("Unrecognized state.");
+		DEBUG_ERROR("Unrecognized state.");
 	}
 
 	for (auto& gameView : m_GameViews)
@@ -326,7 +326,7 @@ void BaseGameLogic::VChangeState(BaseGameState gameState)
 		m_GameState = gameState;
 		if (!g_pApp->VLoadGame())
 		{
-			GCC_ERROR("The game failed to load.");
+			DEBUG_ERROR("The game failed to load.");
 			g_pApp->AbortGame();
 		}
 		else
@@ -361,7 +361,7 @@ void BaseGameLogic::MoveActorDelegate(IEventDataPtr pEventData)
 
 void BaseGameLogic::RequestNewActorDelegate(IEventDataPtr pEventData)
 {
-	GCC_ASSERT(m_IsProxy);
+	DEBUG_ASSERT(m_IsProxy);
 	if (!m_IsProxy)
 		return;
 

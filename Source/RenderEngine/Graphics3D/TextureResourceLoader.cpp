@@ -29,7 +29,7 @@ bool DdsResourceLoader::VLoadResource(char *rawBuffer, uint32_t rawSize, shared_
 		return true;
 	}
 
-	GCC_ASSERT(0 && "Unsupported Renderer in TextureResourceLoader::VLoadResource");
+	DEBUG_ASSERT(0 && "Unsupported Renderer in TextureResourceLoader::VLoadResource");
 	return false;
 }
 
@@ -50,7 +50,7 @@ bool WicResourceLoader::VLoadResource(char *rawBuffer, uint32_t rawSize, shared_
 		return true;
 	}
 
-	GCC_ASSERT(0 && "Unsupported Renderer in TextureResourceLoader::VLoadResource");
+	DEBUG_ASSERT(0 && "Unsupported Renderer in TextureResourceLoader::VLoadResource");
 	return false;
 }
 

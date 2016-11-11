@@ -14,7 +14,7 @@ EventManager::~EventManager()
 
 bool EventManager::VAddListener(const EventListenerDelegate& eventDelegate, EventType type)
 {
-	GCC_LOG("Events", "Attempting to add delegate function for event type: " + ToStr(type, 16));
+	DEBUG_LOG("Events", "Attempting to add delegate function for event type: " + ToStr(type, 16));
 
 	void* ptr = eventDelegate.slot_function().functor.func_ptr;
 	auto findIt = m_EventConnections.find(ptr);
@@ -27,7 +27,7 @@ bool EventManager::VAddListener(const EventListenerDelegate& eventDelegate, Even
 	{
 		EventListenerSignal& eventSignal = m_EventSignals[type];
 		m_EventConnections.insert(std::make_pair(ptr, eventSignal.connect(eventDelegate)));
-		GCC_LOG("Events", "Successfully added delegate for event type: " + ToStr(type, 16));
+		DEBUG_LOG("Events", "Successfully added delegate for event type: " + ToStr(type, 16));
 
 		return true;
 	}
@@ -92,8 +92,8 @@ bool EventManager::VThreadSafeQueueEvent(const IEventDataPtr& pEvent)
 
 bool EventManager::VAbortEvent(EventType type, bool allOfType /*= false*/)
 {
-	GCC_ASSERT(m_ActiveQueue >= 0);
-	GCC_ASSERT(m_ActiveQueue < EVENTMANAGER_NUM_QUEUES);
+	DEBUG_ASSERT(m_ActiveQueue >= 0);
+	DEBUG_ASSERT(m_ActiveQueue < EVENTMANAGER_NUM_QUEUES);
 
 	bool success = false;
 	auto findIt = m_EventSignals.find(type);
@@ -134,7 +134,7 @@ bool EventManager::VUpdate(uint32_t maxMillis /*= kINFINITE*/)
 		{
 			if (currMs >= maxMs)
 			{
-				GCC_ERROR("A realtime process is spamming the event manager!");
+				DEBUG_ERROR("A realtime process is spamming the event manager!");
 			}
 		}
 	}
@@ -143,25 +143,25 @@ bool EventManager::VUpdate(uint32_t maxMillis /*= kINFINITE*/)
 	m_ActiveQueue = (m_ActiveQueue + 1) % EVENTMANAGER_NUM_QUEUES;
 	m_EventQueues[m_ActiveQueue].clear();
 
-	GCC_LOG("EventLoop", "Processing Event Queue " + ToStr(queueToProcess) + "; " + ToStr((unsigned long)m_EventQueues[queueToProcess].size()) + " events to process");
+	DEBUG_LOG("EventLoop", "Processing Event Queue " + ToStr(queueToProcess) + "; " + ToStr((unsigned long)m_EventQueues[queueToProcess].size()) + " events to process");
 
 	while (!m_EventQueues[queueToProcess].empty())
 	{
 		IEventDataPtr pEvent = m_EventQueues[queueToProcess].front();
 		m_EventQueues[queueToProcess].pop_front();
-		GCC_LOG("EventLoop", "\t\tProcessing Event " + std::string(pEvent->VGetName()));
+		DEBUG_LOG("EventLoop", "\t\tProcessing Event " + std::string(pEvent->VGetName()));
 
 		auto findIt = m_EventSignals.find(pEvent->VGetEventType());
 		if (findIt != m_EventSignals.end())
 		{
-			GCC_LOG("EventLoop", "\t\tSending event " + std::string(pEvent->VGetName()) + " to delegate");
+			DEBUG_LOG("EventLoop", "\t\tSending event " + std::string(pEvent->VGetName()) + " to delegate");
 			findIt->second(pEvent);
 		}
 
 		currMs = GetTickCount();
 		if (maxMillis != IEventManager::kINFINITE && currMs >= maxMs)
 		{
-			GCC_LOG("EventLoop", "Aborting event processing; time ran out");
+			DEBUG_LOG("EventLoop", "Aborting event processing; time ran out");
 			break;
 		}
 	}

@@ -65,7 +65,7 @@ void BasicMaterial::CreateVertexBuffer(BasicMaterialVertex* vertices, UINT verte
 	vertexSubResourceData.pSysMem = vertices;
 	if (FAILED(DXUTGetD3D11Device()->CreateBuffer(&vertexBufferDesc, &vertexSubResourceData, ppVertexBuffer)))
 	{
-		GCC_ERROR("ID3D11Device::CreateBuffer() failed.");
+		DEBUG_ERROR("ID3D11Device::CreateBuffer() failed.");
 	}
 }
 

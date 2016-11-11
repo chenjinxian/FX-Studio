@@ -60,7 +60,7 @@ bool RenderEngineApp::InitInstance(HINSTANCE hInstance, LPWSTR lpCmdLine, HWND h
 		DWORD thisCPU = ReadCPUSpeed();
 		if (thisCPU < minCpuSpeed)
 		{
-			GCC_ERROR("GetCPUSpeed reports CPU is too slow for this game.");
+			DEBUG_ERROR("GetCPUSpeed reports CPU is too slow for this game.");
 			return false;
 		}
 
@@ -81,7 +81,7 @@ bool RenderEngineApp::InitInstance(HINSTANCE hInstance, LPWSTR lpCmdLine, HWND h
 
 	if (!m_pResCache->Init())
 	{
-		GCC_ERROR("Failed to initialize resource cache!  Are your paths set up correctly?");
+		DEBUG_ERROR("Failed to initialize resource cache!  Are your paths set up correctly?");
 		return false;
 	}
 
@@ -95,14 +95,14 @@ bool RenderEngineApp::InitInstance(HINSTANCE hInstance, LPWSTR lpCmdLine, HWND h
 
 	if (!LoadStrings("English"))
 	{
-		GCC_ERROR("Failed to load strings");
+		DEBUG_ERROR("Failed to load strings");
 		return false;
 	}
 
 	m_pEventManager = GCC_NEW EventManager("RenderEngineApp Event Mgr", true);
 	if (!m_pEventManager)
 	{
-		GCC_ERROR("Failed to create EventManager.");
+		DEBUG_ERROR("Failed to create EventManager.");
 		return false;
 	}
 
@@ -180,7 +180,7 @@ bool RenderEngineApp::LoadStrings(std::string language)
 	TiXmlElement* pRoot = XmlResourceLoader::LoadAndReturnRootXmlElement(languageFile.c_str());
 	if (!pRoot)
 	{
-		GCC_ERROR("Strings are missing.");
+		DEBUG_ERROR("Strings are missing.");
 		return false;
 	}
 
@@ -214,7 +214,7 @@ UINT RenderEngineApp::MapCharToKeycode(const char pHotKey)
 	if (pHotKey >= 'A' && pHotKey <= 'Z')
 		return 0x41 + pHotKey - 'A';
 
-	GCC_ASSERT(0 && "Platform specific hotkey is not defined");
+	DEBUG_ASSERT(0 && "Platform specific hotkey is not defined");
 	return 0;
 }
 
@@ -223,7 +223,7 @@ std::wstring RenderEngineApp::GetString(std::wstring sID)
 	auto localizedString = m_TextResource.find(sID);
 	if (localizedString == m_TextResource.end())
 	{
-		GCC_ASSERT(0 && "String not found!");
+		DEBUG_ASSERT(0 && "String not found!");
 		return L"";
 	}
 	return localizedString->second;
@@ -495,11 +495,11 @@ int RenderEngineApp::Modal(shared_ptr<IScreenElement> pModalScreen, int defaultA
 
 	if (m_HasModalDialog & 0x10000000)
 	{
-		GCC_ASSERT(0 && "Too Many nested dialogs!");
+		DEBUG_ASSERT(0 && "Too Many nested dialogs!");
 		return defaultAnswer;
 	}
 
-	GCC_ASSERT(GetHwnd() != NULL && _T("Main Window is NULL!"));
+	DEBUG_ASSERT(GetHwnd() != NULL && _T("Main Window is NULL!"));
 	if ((GetHwnd() != NULL) && IsIconic(GetHwnd()))
 	{
 		FlashWhileMinimized();
@@ -765,7 +765,7 @@ void RenderEngineApp::VCreateNetworkEventForwarder(void)
 {
 // 	if (m_pNetworkEventForwarder != NULL)
 // 	{
-// 		GCC_ERROR("Overwriting network event forwarder in TeapotWarsApp!");
+// 		DEBUG_ERROR("Overwriting network event forwarder in TeapotWarsApp!");
 // 		SAFE_DELETE(m_pNetworkEventForwarder);
 // 	}
 // 

@@ -52,7 +52,7 @@ public:
 	{
 		if (m_MatrixStack.empty())
 		{
-			GCC_ERROR("push matrix error");
+			DEBUG_ERROR("push matrix error");
 		}
 		return m_MatrixStack.top();
 	}

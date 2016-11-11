@@ -404,7 +404,7 @@ public:
 
 	virtual void VSerialize(std::ostrstream& out)
 	{
-		GCC_ERROR("You should not be serializing update ticks!");
+		DEBUG_ERROR("You should not be serializing update ticks!");
 	}
 
 	virtual EventType VGetEventType() const override
@@ -506,7 +506,7 @@ public:
 
 	virtual void VSerialize(std::ostrstream & out)
 	{
-		GCC_ERROR("You should not be serializing decompression requests!");
+		DEBUG_ERROR("You should not be serializing decompression requests!");
 	}
 
 	const std::wstring& GetZipFilename(void) const
@@ -553,7 +553,7 @@ public:
 
 	virtual void VSerialize(std::ostrstream & out)
 	{
-		GCC_ERROR("You should not be serializing decompression progress events!");
+		DEBUG_ERROR("You should not be serializing decompression progress events!");
 	}
 
 	virtual const char* VGetName(void) const

@@ -119,7 +119,7 @@ bool ZipFile::Init(const std::wstring &resFileName)
   fseek(m_pFile, dhOffset - dh.dirSize, SEEK_SET);
 
   // Allocate the data buffer, and read the whole thing.
-  m_pDirData = GCC_NEW char[dh.dirSize + dh.nDirEntries*sizeof(*m_papDir)];
+  m_pDirData = DEBUG_NEW char[dh.dirSize + dh.nDirEntries*sizeof(*m_papDir)];
   if (!m_pDirData)
 	return false;
   memset(m_pDirData, 0, dh.dirSize + dh.nDirEntries*sizeof(*m_papDir));
@@ -265,7 +265,7 @@ bool ZipFile::ReadFile(int i, void *pBuf)
 	return false;
 
   // Alloc compressed data buffer and read the whole stream
-  char *pcData = GCC_NEW char[h.cSize];
+  char *pcData = DEBUG_NEW char[h.cSize];
   if (!pcData)
 	return false;
 
@@ -339,7 +339,7 @@ bool ZipFile::ReadLargeFile(int i, void *pBuf, void (*progressCallback)(int, boo
 	return false;
 
   // Alloc compressed data buffer and read the whole stream
-  char *pcData = GCC_NEW char[h.cSize];
+  char *pcData = DEBUG_NEW char[h.cSize];
   if (!pcData)
 	return false;
 
@@ -456,7 +456,7 @@ void main(int argc, const char *argv[])
 
 		  printf("File \"%s\" (%d bytes): ", fname, len);
 
-		  char *pData = GCC_NEW char[len];
+		  char *pData = DEBUG_NEW char[len];
 		  if (!pData)
 			printf("OUT OF MEMORY\n");
 		  else if (true == zip.ReadFile(i, pData))

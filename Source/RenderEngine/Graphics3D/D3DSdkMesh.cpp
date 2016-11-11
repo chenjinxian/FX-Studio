@@ -35,7 +35,7 @@ bool SdkMeshResourceLoader::VLoadResource(char *rawBuffer, uint32_t rawSize, sha
 		return true;
 	}
 
-	GCC_ASSERT(0 && "Unsupported Renderer in SdkMeshResourceLoader::VLoadResource");
+	DEBUG_ASSERT(0 && "Unsupported Renderer in SdkMeshResourceLoader::VLoadResource");
 	return false;
 }
 

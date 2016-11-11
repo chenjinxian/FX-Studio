@@ -14,7 +14,7 @@ bool CheckStorage(const DWORDLONG diskSpaceNeeded)
 
 	if (diskfree.avail_clusters < neededClusters)
 	{
-		GCC_ERROR("CheckStorage Failure: Not enough physical storage.");
+		DEBUG_ERROR("CheckStorage Failure: Not enough physical storage.");
 		return false;
 	}
 	return true;
@@ -26,13 +26,13 @@ bool CheckMemory(const DWORDLONG physicalRAMNeeded, const DWORDLONG virtualRAMNe
 	GlobalMemoryStatusEx(&status);
 	if (status.ullTotalPhys < physicalRAMNeeded)
 	{
-		GCC_ERROR("CheckMemory Failure: Not enough physical memory.");
+		DEBUG_ERROR("CheckMemory Failure: Not enough physical memory.");
 		return false;
 	}
 
 	if (status.ullAvailVirtual < virtualRAMNeeded)
 	{
-		GCC_ERROR("CheckMemory Failure: Not enough virtual memory.");
+		DEBUG_ERROR("CheckMemory Failure: Not enough virtual memory.");
 		return false;
 	}
 
@@ -41,7 +41,7 @@ bool CheckMemory(const DWORDLONG physicalRAMNeeded, const DWORDLONG virtualRAMNe
 		delete[] buff;
 	else
 	{
-		GCC_ERROR("CheckMemory Failure: Not enough contiguous available memory.");
+		DEBUG_ERROR("CheckMemory Failure: Not enough contiguous available memory.");
 		return false;
 	}
 	return true;
@@ -90,7 +90,7 @@ void GameOptions::Init(const std::string& xmlFileName, LPWSTR lpCmdLine)
 			attribute = pNode->Attribute("renderer");
 			if (attribute != "Direct3D 9" && attribute != "Direct3D 11")
 			{
-				GCC_ASSERT(0 && "Bad Renderer setting in Graphics options.");
+				DEBUG_ASSERT(0 && "Bad Renderer setting in Graphics options.");
 			}
 			else
 			{

@@ -46,7 +46,7 @@ INT WINAPI GameMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	}
 	else
 	{
-		GCC_ASSERT(0 && "Unknown renderer specified in game options.");
+		DEBUG_ASSERT(0 && "Unknown renderer specified in game options.");
 		return false;
 	}
 

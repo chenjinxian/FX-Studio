@@ -4,8 +4,8 @@ TinyEngineApp* g_pApp = nullptr;
 
 TinyEngineApp::TinyEngineApp()
 {
+	g_pApp = this;
 }
-
 
 TinyEngineApp::~TinyEngineApp()
 {

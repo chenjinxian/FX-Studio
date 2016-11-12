@@ -1,8 +1,7 @@
 #pragma once
-#include <Windows.h>
-#include <string>
+#include "../TinyEngineBase.h"
 
-class TinyEngineApp
+class TinyEngineApp : public boost::noncopyable
 {
 public:
 	TinyEngineApp();

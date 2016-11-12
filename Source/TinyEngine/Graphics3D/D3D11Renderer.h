@@ -9,23 +9,24 @@ public:
 	virtual ~D3D11Renderer();
 
 	virtual void VSetBackgroundColor(const Color& color) override;
-	virtual bool VInitAPI() override;
+	virtual bool VSetupSwapchain() override;
 	virtual bool VPreRender() override;
 	virtual bool VPostRender() override;
 	virtual void VShutdown() override;
 
 private:
+	void InitD3D11Device();
+
 	D3D_FEATURE_LEVEL m_FeatureLevel;
 	ID3D11Device1* m_pDevice;
 	ID3D11DeviceContext1* m_pDeviceContext;
 	IDXGISwapChain1* m_pSwapChain;
 
-	UINT m_FrameRate;
 	bool m_IsFullScreen;
-	bool m_DepthStencilBufferEnabled;
 	bool m_MultiSamplingEnabled;
-	UINT m_MultiSamplingCount;
-	UINT m_MultiSamplingQualityLevels;
+	uint32_t m_FrameRate;
+	uint32_t m_MultiSamplingCount;
+	uint32_t m_MultiSamplingQualityLevels;
 
 	ID3D11Texture2D* m_pDepthStencilBuffer;
 	D3D11_TEXTURE2D_DESC m_BackBufferDesc;

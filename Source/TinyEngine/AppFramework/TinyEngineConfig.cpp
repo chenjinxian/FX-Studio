@@ -1,11 +1,29 @@
 #include "TinyEngineConfig.h"
 
+std::string m_Project;
+
+std::string m_Renderer;
+uint32_t m_ScreenWidth;
+uint32_t m_ScreenHeight;
+bool m_IsFullScreen;
+bool m_IsVSync;
+uint32_t m_AntiAliasing;
+
+bool m_IsDevelopmentDirectories;
+
+unique_ptr<TiXmlDocument> m_pDocument;
 
 
 TinyEngineConfig::TinyEngineConfig()
-	: m_Level(), m_Renderer("Direct3D 11"), m_IsRunFullSpeed(false), m_ScreenWidth(1024), m_ScreenHeight(720),
-	m_SoundEffectsVolume(1.0f), m_MusicVolume(1.0f), m_ExpectedPlayers(1), m_ListenPort(-1), m_GameHost(),
-	m_NumAIs(1), m_MaxAIs(4), m_MaxPlayers(4), m_IsDevelopmentDirectories(false), m_pDoc(nullptr)
+	: m_Project(),
+	m_Renderer("Direct3D 11"),
+	m_ScreenWidth(1024),
+	m_ScreenHeight(720),
+	m_IsFullScreen(false),
+	m_IsVSync(false),
+	m_AntiAliasing(0),
+	m_IsZipResource(false),
+	m_pDocument(nullptr)
 {
 }
 
@@ -14,73 +32,61 @@ TinyEngineConfig::~TinyEngineConfig()
 {
 }
 
-void TinyEngineConfig::Init(const std::string& xmlFileName, LPWSTR lpCmdLine)
+void TinyEngineConfig::InitConfig(const std::string& xmlFileName, LPWSTR lpCmdLine)
 {
-	m_pDoc = new TiXmlDocument(xmlFileName.c_str());
-	if (m_pDoc && m_pDoc->LoadFile())
+	m_pDocument = std::make_unique<TiXmlDocument>(new TiXmlDocument(xmlFileName.c_str()));
+	if (m_pDocument != nullptr && m_pDocument->LoadFile())
 	{
-		TiXmlElement *pRoot = m_pDoc->RootElement();
-		if (!pRoot)
+		TiXmlElement *pRoot = m_pDocument->RootElement();
+		if (pRoot == nullptr)
 			return;
 
-		TiXmlElement* pNode = NULL;
-		pNode = pRoot->FirstChildElement("Graphics");
-		if (pNode)
+		TiXmlElement* pNode = pRoot->FirstChildElement("Graphics");
+		if (pNode != nullptr)
 		{
-			std::string attribute;
-			attribute = pNode->Attribute("renderer");
-			if (attribute != "Direct3D 9" && attribute != "Direct3D 11")
+			std::string attribute = pNode->Attribute("renderer");
+			if (attribute != "Direct3D 11" && attribute != "Vulkan")
 			{
-				DEBUG_ASSERT(0 && "Bad Renderer setting in Graphics options.");
+				DEBUG_ASSERT(0 && "Bad Renderer setting in Graphics configs.");
 			}
 			else
 			{
 				m_Renderer = attribute;
 			}
 
-			if (pNode->Attribute("width"))
+			if (pNode->Attribute("width") != nullptr)
 			{
 				m_ScreenWidth = atoi(pNode->Attribute("width"));
-				if (m_ScreenWidth < 800) m_ScreenWidth = 800;
 			}
 
-			if (pNode->Attribute("height"))
+			if (pNode->Attribute("height") != nullptr)
 			{
 				m_ScreenHeight = atoi(pNode->Attribute("height"));
-				if (m_ScreenHeight < 600) m_ScreenHeight = 600;
 			}
 
-			if (pNode->Attribute("runfullspeed"))
+			if (pNode->Attribute("fullscreen") != nullptr)
 			{
-				attribute = pNode->Attribute("runfullspeed");
-				m_IsRunFullSpeed = (attribute == "yes") ? true : false;
+				attribute = pNode->Attribute("fullscreen");
+				m_IsFullScreen = (attribute == "yes") ? true : false;
 			}
-		}
 
-		pNode = pRoot->FirstChildElement("Sound");
-		if (pNode)
-		{
-			m_MusicVolume = atoi(pNode->Attribute("musicVolume")) / 100.0f;
-			m_SoundEffectsVolume = atoi(pNode->Attribute("sfxVolume")) / 100.0f;
-		}
+			if (pNode->Attribute("vsync") != nullptr)
+			{
+				attribute = pNode->Attribute("vsync");
+				m_IsVSync = (attribute == "yes") ? true : false;
+			}
 
-		pNode = pRoot->FirstChildElement("Multiplayer");
-		if (pNode)
-		{
-			m_ExpectedPlayers = atoi(pNode->Attribute("expectedPlayers"));
-			m_NumAIs = atoi(pNode->Attribute("numAIs"));
-			m_MaxAIs = atoi(pNode->Attribute("maxAIs"));
-			m_MaxPlayers = atoi(pNode->Attribute("maxPlayers"));
-
-			m_ListenPort = atoi(pNode->Attribute("listenPort"));
-			m_GameHost = pNode->Attribute("gameHost");
+			if (pNode->Attribute("anti-aliasing") != nullptr)
+			{
+				m_AntiAliasing = atoi(pNode->Attribute("anti-aliasing"));
+			}
 		}
 
 		pNode = pRoot->FirstChildElement("ResCache");
 		if (pNode)
 		{
-			std::string attribute(pNode->Attribute("useDevelopmentDirectories"));
-			m_IsDevelopmentDirectories = ((attribute == "yes") ? (true) : (false));
+			std::string attribute(pNode->Attribute("useZipResource"));
+			m_IsZipResource = ((attribute == "yes") ? (true) : (false));
 		}
 	}
 }

@@ -22,10 +22,11 @@
 #include <queue>
 #include <map>
 #include <memory>
-using std::tr1::shared_ptr;
-using std::tr1::weak_ptr;
-using std::tr1::static_pointer_cast;
-using std::tr1::dynamic_pointer_cast;
+using std::shared_ptr;
+using std::weak_ptr;
+using std::unique_ptr;
+using std::static_pointer_cast;
+using std::dynamic_pointer_cast;
 
 #if defined(_DEBUG)
 #	define DEBUG_NEW new(_NORMAL_BLOCK,__FILE__, __LINE__)
@@ -69,4 +70,4 @@ using namespace DirectX::SimpleMath;
 #define __STR1__(x) __STR2__(x)
 #define __LOC__ __FILE__ "("__STR1__(__LINE__)") : Warning Msg: "
 
-extern INT WINAPI GameMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow);
+extern INT WINAPI WindowBaseMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow);

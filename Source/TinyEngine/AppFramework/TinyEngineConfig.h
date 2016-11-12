@@ -7,27 +7,19 @@ public:
 	TinyEngineConfig();
 	~TinyEngineConfig();
 
-	void Init(const std::string& xmlFilePath, LPWSTR lpCmdLine);
+	void InitConfig(const std::string& xmlFilePath, LPWSTR lpCmdLine);
 
-	std::string m_Level;
+	std::string m_Project;
 
 	std::string m_Renderer;
-	bool m_IsRunFullSpeed;
 	uint32_t m_ScreenWidth;
 	uint32_t m_ScreenHeight;
+	bool m_IsFullScreen;
+	bool m_IsVSync;
+	uint32_t m_AntiAliasing;
 
-	float m_SoundEffectsVolume;
-	float m_MusicVolume;
+	bool m_IsZipResource;
 
-	int m_ExpectedPlayers;
-	int m_ListenPort;
-	std::string m_GameHost;
-	int m_NumAIs;
-	int m_MaxAIs;
-	int m_MaxPlayers;
-
-	bool m_IsDevelopmentDirectories;
-
-	TiXmlDocument *m_pDoc;
+	unique_ptr<TiXmlDocument> m_pDocument;
 };
 

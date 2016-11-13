@@ -1,5 +1,9 @@
 #pragma once
 #include "../TinyEngineBase.h"
+#include "../TinyEngineInterface.h"
+
+class TinyEngineConfig;
+class ResCache;
 
 class TinyEngineApp : public boost::noncopyable
 {
@@ -7,13 +11,18 @@ public:
 	TinyEngineApp();
 	virtual ~TinyEngineApp();
 
+	bool InitEnvironment();
 	HWND SetupWindow(HINSTANCE hInstance, WNDPROC wndproc);
 	void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	bool InitRenderer();
+	void RenderLoop();
 
 	int GetScreenWidth() const { return m_ScreenWidth; }
 	int GetScreenHeight() const { return m_ScreenHeight; }
 
-	class ResCache *m_pResCache;
+	TinyEngineConfig m_Config;
+	unique_ptr<ResCache> m_pResCache;
+	shared_ptr<IRenderer> m_pRenderer;
 
 protected:
 	virtual const std::wstring& VGetWindowTitle() = 0;

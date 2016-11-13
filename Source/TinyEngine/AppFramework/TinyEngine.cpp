@@ -17,11 +17,17 @@ INT WINAPI WindowBaseMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR l
 	tmpDbgFlag |= _CRTDBG_CHECK_ALWAYS_DF;
 	_CrtSetDbgFlag(tmpDbgFlag);
 
-
+	SetCurrentDirectory(Utility::GetExecutableDirectory().c_str());
+	Logger::Init("logging.xml");
 
 	if (g_pApp != nullptr)
 	{
-		g_pApp->SetupWindow(hInstance, WndProc);
+		g_pApp->m_Config.InitConfig("TinyEngine.xml", lpCmdLine);
+		if (g_pApp->InitEnvironment())
+		{
+			g_pApp->SetupWindow(hInstance, WndProc);
+			g_pApp->SetupWindow
+		}
 	}
 
 	return 0;

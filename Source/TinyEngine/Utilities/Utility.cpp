@@ -1,4 +1,5 @@
 #include "Utility.h"
+#include <Shlwapi.h>
 
 std::string Utility::WS2S(const std::wstring& s)
 {
@@ -55,4 +56,13 @@ test_match:
 	if (!star) return 0;
 	str++;
 	goto test_match;
+}
+
+std::wstring Utility::GetExecutableDirectory()
+{
+	WCHAR buffer[MAX_PATH];
+	GetModuleFileName(nullptr, buffer, MAX_PATH);
+	PathRemoveFileSpec(buffer);
+
+	return std::wstring(buffer);
 }

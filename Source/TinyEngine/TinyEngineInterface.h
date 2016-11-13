@@ -33,7 +33,7 @@ public:
 	~IRenderer() {}
 
 	virtual void VSetBackgroundColor(const Color& color) = 0;
-	virtual bool VSetupSwapchain() = 0;
+	virtual bool VInitRenderer() = 0;
 	virtual bool VPreRender() = 0;
 	virtual bool VPostRender() = 0;
 	virtual void VShutdown() = 0;

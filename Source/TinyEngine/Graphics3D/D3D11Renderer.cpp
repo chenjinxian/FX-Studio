@@ -14,7 +14,7 @@ void D3D11Renderer::VSetBackgroundColor(const Color& color)
 
 }
 
-bool D3D11Renderer::VSetupSwapchain()
+bool D3D11Renderer::VInitRenderer()
 {
 	DXGI_SWAP_CHAIN_DESC1 swapChainDesc;
 	ZeroMemory(&swapChainDesc, sizeof(swapChainDesc));

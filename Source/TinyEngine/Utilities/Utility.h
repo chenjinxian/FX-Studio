@@ -9,6 +9,8 @@ public:
 
 	static bool WildcardMatch(const char *pat, const char *str);
 
+	static std::wstring GetExecutableDirectory();
+
 private:
 	Utility();
 };

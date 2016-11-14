@@ -22,7 +22,7 @@ ActorFactory::~ActorFactory()
 }
 
 StrongActorPtr ActorFactory::CreateActor(
-	TiXmlElement *pActorRoot, const Matrix& initialTransform, ActorId serversActorId)
+	tinyxml2::XMLElement *pActorRoot, const Matrix& initialTransform, ActorId serversActorId)
 {
 	DEBUG_ASSERT(pActorRoot != nullptr);
 
@@ -40,7 +40,7 @@ StrongActorPtr ActorFactory::CreateActor(
 
 	bool initialTransformSet = false;
 
-	for (TiXmlElement* pNode = pActorRoot->FirstChildElement(); pNode; pNode = pNode->NextSiblingElement())
+	for (tinyxml2::XMLElement* pNode = pActorRoot->FirstChildElement(); pNode; pNode = pNode->NextSiblingElement())
 	{
 		StrongActorComponentPtr pComponent(VCreateComponent(pNode));
 		if (pComponent)
@@ -65,9 +65,9 @@ StrongActorPtr ActorFactory::CreateActor(
 	return pActor;
 }
 
-void ActorFactory::ModifyActor(StrongActorPtr pActor, TiXmlElement* overrides)
+void ActorFactory::ModifyActor(StrongActorPtr pActor, tinyxml2::XMLElement* overrides)
 {
-	for (TiXmlElement* pNode = overrides->FirstChildElement(); pNode; pNode = pNode->NextSiblingElement())
+	for (tinyxml2::XMLElement* pNode = overrides->FirstChildElement(); pNode; pNode = pNode->NextSiblingElement())
 	{
 		ComponentId componentId = ActorComponent::GetIdFromName(pNode->Value());
 		StrongActorComponentPtr pComponent = MakeStrongPtr(pActor->GetComponent<ActorComponent>(componentId));
@@ -88,7 +88,7 @@ void ActorFactory::ModifyActor(StrongActorPtr pActor, TiXmlElement* overrides)
 	}
 }
 
-StrongActorComponentPtr ActorFactory::VCreateComponent(TiXmlElement* pData)
+StrongActorComponentPtr ActorFactory::VCreateComponent(tinyxml2::XMLElement* pData)
 {
 	const char* name = pData->Value();
 	StrongActorComponentPtr pComponent(m_ComponentFactory.Create(ActorComponent::GetIdFromName(name)));

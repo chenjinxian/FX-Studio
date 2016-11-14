@@ -2,7 +2,6 @@
 #include "../TinyEngineBase.h"
 #include "../TinyEngineInterface.h"
 #include "ResCache.h"
-#include <tinyxml.h>
 
 extern shared_ptr<IResourceLoader> CreateXmlResourceLoader();
 
@@ -11,10 +10,10 @@ class XmlResourceExtraData : public IResourceExtraData
 public:
 	virtual std::string VToString() { return "XmlResourceExtraData"; }
 	void ParseXml(char* pRawBuffer);
-	TiXmlElement* GetRoot(void) { return m_xmlDocument.RootElement(); }
+	tinyxml2::XMLElement* GetRoot(void) { return m_xmlDocument.RootElement(); }
 
 private:
-	TiXmlDocument m_xmlDocument;
+	tinyxml2::XMLDocument m_xmlDocument;
 };
 
 
@@ -27,7 +26,7 @@ public:
 	virtual bool VLoadResource(char *rawBuffer, uint32_t rawSize, shared_ptr<ResHandle> handle);
 	virtual std::string VGetPattern() { return "*.xml"; }
 
-	static TiXmlElement* LoadAndReturnRootXmlElement(const char* resourceString);
+	static tinyxml2::XMLElement* LoadAndReturnRootXmlElement(const char* resourceString);
 };
 
 

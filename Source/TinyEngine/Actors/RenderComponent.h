@@ -7,19 +7,19 @@ public:
 	BaseRenderComponent();
 	virtual ~BaseRenderComponent();
 
-	virtual bool VInit(TiXmlElement* pData) override;
+	virtual bool VInit(tinyxml2::XMLElement* pData) override;
 	virtual void VPostInit() override;
 	virtual void VOnChanged() override;
-	virtual TiXmlElement* VGenerateXml() override;
+	virtual tinyxml2::XMLElement* VGenerateXml() override;
 	const Color& GetColor() const { return m_Color; }
 
 protected:
-	virtual bool VDelegateInit(TiXmlElement* pData) { return true; }
+	virtual bool VDelegateInit(tinyxml2::XMLElement* pData) { return true; }
 	virtual shared_ptr<SceneNode> VCreateSceneNode() = 0;
-	Color LoadColor(TiXmlElement* pData);
+	Color LoadColor(tinyxml2::XMLElement* pData);
 	
-	virtual TiXmlElement* VCreateBaseElement() { return DEBUG_NEW TiXmlElement(VGetComponentName().c_str()); }
-	virtual void VCreateInheritedXmlElement(TiXmlElement* pBaseElement) = 0;
+	virtual tinyxml2::XMLElement* VCreateBaseElement() { return DEBUG_NEW tinyxml2::XMLElement(VGetComponentName().c_str()); }
+	virtual void VCreateInheritedXmlElement(tinyxml2::XMLElement* pBaseElement) = 0;
 
 private:
 	virtual shared_ptr<SceneNode> VGetSceneNode() override;
@@ -38,9 +38,9 @@ public:
 	static const std::string m_Name;
 
 protected:
-	virtual bool VDelegateInit(TiXmlElement* pData);
+	virtual bool VDelegateInit(tinyxml2::XMLElement* pData);
 	virtual shared_ptr<SceneNode> VCreateSceneNode();
-	virtual void VCreateInheritedXmlElement(TiXmlElement* pBaseElement);
+	virtual void VCreateInheritedXmlElement(tinyxml2::XMLElement* pBaseElement);
 };
 
 class ModelRenderComponent : public BaseRenderComponent
@@ -57,9 +57,9 @@ public:
 	static const std::string m_Name;
 
 protected:
-	virtual bool VDelegateInit(TiXmlElement* pData);
+	virtual bool VDelegateInit(tinyxml2::XMLElement* pData);
 	virtual shared_ptr<SceneNode> VCreateSceneNode();
-	virtual void VCreateInheritedXmlElement(TiXmlElement* pBaseElement);
+	virtual void VCreateInheritedXmlElement(tinyxml2::XMLElement* pBaseElement);
 
 private:
 	std::string m_ModelName;
@@ -77,9 +77,9 @@ public:
 	static const std::string m_Name;
 
 protected:
-	virtual bool VDelegateInit(TiXmlElement* pData);
+	virtual bool VDelegateInit(tinyxml2::XMLElement* pData);
 	virtual shared_ptr<SceneNode> VCreateSceneNode();
-	virtual void VCreateInheritedXmlElement(TiXmlElement* pBaseElement);
+	virtual void VCreateInheritedXmlElement(tinyxml2::XMLElement* pBaseElement);
 };
 
 class LightRenderComponent : public BaseRenderComponent
@@ -91,8 +91,8 @@ public:
 	const std::string& GetModelName() { return m_ModelName; }
 
 protected:
-	virtual bool VDelegateInit(TiXmlElement* pData);
-	virtual void VCreateInheritedXmlElement(TiXmlElement* pBaseElement);
+	virtual bool VDelegateInit(tinyxml2::XMLElement* pData);
+	virtual void VCreateInheritedXmlElement(tinyxml2::XMLElement* pBaseElement);
 
 private:
 	std::string m_ModelName;
@@ -112,9 +112,9 @@ public:
 	static const std::string m_Name;
 
 protected:
-	virtual bool VDelegateInit(TiXmlElement* pData);
+	virtual bool VDelegateInit(tinyxml2::XMLElement* pData);
 	virtual shared_ptr<SceneNode> VCreateSceneNode();
-	virtual void VCreateInheritedXmlElement(TiXmlElement* pBaseElement);
+	virtual void VCreateInheritedXmlElement(tinyxml2::XMLElement* pBaseElement);
 
 	Vector3 m_Direction;
 	Vector3 m_Up;
@@ -133,9 +133,9 @@ public:
 	static const std::string m_Name;
 
 protected:
-	virtual bool VDelegateInit(TiXmlElement* pData);
+	virtual bool VDelegateInit(tinyxml2::XMLElement* pData);
 	virtual shared_ptr<SceneNode> VCreateSceneNode();
-	virtual void VCreateInheritedXmlElement(TiXmlElement* pBaseElement);
+	virtual void VCreateInheritedXmlElement(tinyxml2::XMLElement* pBaseElement);
 
 	float m_Radius;
 };
@@ -153,9 +153,9 @@ public:
 	static const std::string m_Name;
 
 protected:
-	virtual bool VDelegateInit(TiXmlElement* pData);
+	virtual bool VDelegateInit(tinyxml2::XMLElement* pData);
 	virtual shared_ptr<SceneNode> VCreateSceneNode();
-	virtual void VCreateInheritedXmlElement(TiXmlElement* pBaseElement);
+	virtual void VCreateInheritedXmlElement(tinyxml2::XMLElement* pBaseElement);
 
 private:
 	float m_InnerAngle;

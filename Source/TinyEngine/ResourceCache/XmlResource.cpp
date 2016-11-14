@@ -25,7 +25,7 @@ shared_ptr<IResourceLoader> CreateXmlResourceLoader()
 }
 
 
-TiXmlElement* XmlResourceLoader::LoadAndReturnRootXmlElement(const char* resourceString)
+tinyxml2::XMLElement* XmlResourceLoader::LoadAndReturnRootXmlElement(const char* resourceString)
 {
 	Resource resource(resourceString);
 	shared_ptr<ResHandle> pResourceHandle = g_pApp->m_pResCache->GetHandle(&resource);

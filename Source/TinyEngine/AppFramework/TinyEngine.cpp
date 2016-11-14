@@ -26,9 +26,11 @@ INT WINAPI WindowBaseMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR l
 		if (g_pApp->InitEnvironment())
 		{
 			g_pApp->SetupWindow(hInstance, WndProc);
-// 			g_pApp->SetupWindow
+			g_pApp->InitRenderer();
+			g_pApp->RenderLoop();
 		}
 	}
 
+	Logger::Destroy();
 	return 0;
 }

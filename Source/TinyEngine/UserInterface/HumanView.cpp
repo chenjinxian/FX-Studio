@@ -48,7 +48,7 @@ HumanView::~HumanView()
 	}
 }
 
-bool HumanView::LoadGame(TiXmlElement* pLevelData)
+bool HumanView::LoadGame(tinyxml2::XMLElement* pLevelData)
 {
 	m_pFreeCameraController.reset(DEBUG_NEW MovementController(m_pCamera, 0, 0, true));
 	m_pPointerHandler = m_pFreeCameraController;

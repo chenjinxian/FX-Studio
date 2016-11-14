@@ -114,15 +114,15 @@ void LogMgr::Init(const char* loggingConfigFilename)
 {
 	if (loggingConfigFilename)
 	{
-		TiXmlDocument loggingConfigFile(loggingConfigFilename);
+		tinyxml2::XMLDocument loggingConfigFile(loggingConfigFilename);
 		if (loggingConfigFile.LoadFile())
 		{
-			TiXmlElement* pRoot = loggingConfigFile.RootElement();
+			tinyxml2::XMLElement* pRoot = loggingConfigFile.RootElement();
 			if (!pRoot)
 				return;
 
 			// Loop through each child element and load the component
-			for (TiXmlElement* pNode = pRoot->FirstChildElement(); pNode; pNode = pNode->NextSiblingElement())
+			for (tinyxml2::XMLElement* pNode = pRoot->FirstChildElement(); pNode; pNode = pNode->NextSiblingElement())
 			{
 				unsigned char flags = 0;
 				std::string tag(pNode->Attribute("tag"));

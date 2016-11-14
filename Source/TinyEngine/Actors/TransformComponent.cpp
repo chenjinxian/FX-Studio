@@ -13,7 +13,7 @@ TransformComponent::~TransformComponent()
 {
 }
 
-bool TransformComponent::VInit(TiXmlElement* pData)
+bool TransformComponent::VInit(tinyxml2::XMLElement* pData)
 {
 	DEBUG_ASSERT(pData);
 
@@ -22,16 +22,16 @@ bool TransformComponent::VInit(TiXmlElement* pData)
 	Vector3 yawPitchRoll(0.0f, 0.0f, 0.0f);
 
 	double x = 0; double y = 0; double z = 0;
-	TiXmlElement* pPositionElement = pData->FirstChildElement("Translation");
+	tinyxml2::XMLElement* pPositionElement = pData->FirstChildElement("Translation");
 	if (pPositionElement)
 	{
-		pPositionElement->Attribute("x", &x);
-		pPositionElement->Attribute("y", &y);
-		pPositionElement->Attribute("z", &z);
-		position = Vector3((float)x, (float)y, (float)z);
+// 		pPositionElement->FloatAttribute("x");
+// 		pPositionElement->FloatAttribute("y");
+// 		pPositionElement->FloatAttribute("z");
+		position = Vector3(pPositionElement->FloatAttribute("x"), pPositionElement->FloatAttribute("y"), pPositionElement->FloatAttribute("z"));
 	}
 
-	TiXmlElement* pScaleElement = pData->FirstChildElement("Scale");
+	tinyxml2::XMLElement* pScaleElement = pData->FirstChildElement("Scale");
 	if (pScaleElement)
 	{
 		pScaleElement->Attribute("x", &x);
@@ -40,7 +40,7 @@ bool TransformComponent::VInit(TiXmlElement* pData)
 		scales = Vector3((float)x, (float)y, (float)z);
 	}
 
-	TiXmlElement* pRotationElement = pData->FirstChildElement("Rotation");
+	tinyxml2::XMLElement* pRotationElement = pData->FirstChildElement("Rotation");
 	if (pRotationElement)
 	{
 		pRotationElement->Attribute("x", &x);
@@ -59,11 +59,11 @@ bool TransformComponent::VInit(TiXmlElement* pData)
 	return true;
 }
 
-TiXmlElement* TransformComponent::VGenerateXml()
+tinyxml2::XMLElement* TransformComponent::VGenerateXml()
 {
-	TiXmlElement* pBaseElement = DEBUG_NEW TiXmlElement(VGetComponentName().c_str());
+	tinyxml2::XMLElement* pBaseElement = DEBUG_NEW tinyxml2::XMLElement(VGetComponentName().c_str());
 
-	TiXmlElement* pPosition = DEBUG_NEW TiXmlElement("Position");
+	tinyxml2::XMLElement* pPosition = DEBUG_NEW tinyxml2::XMLElement("Position");
 	Vector3 pos = m_Transform.Translation();
 	pPosition->SetAttribute("x", boost::lexical_cast<std::string>(pos.x).c_str());
 	pPosition->SetAttribute("y", boost::lexical_cast<std::string>(pos.y).c_str());

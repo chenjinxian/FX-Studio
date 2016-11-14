@@ -42,7 +42,7 @@ using std::dynamic_pointer_cast;
 using namespace DirectX;
 using namespace DirectX::SimpleMath;
 
-#include "tinyxml.h"
+#include "tinyxml2.h"
 #include "boost/noncopyable.hpp"
 
 #include "Debugging/Logger.h"

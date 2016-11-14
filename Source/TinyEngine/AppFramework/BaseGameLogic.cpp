@@ -55,7 +55,7 @@ std::string BaseGameLogic::GetActorXml(ActorId id)
 
 bool BaseGameLogic::VLoadGame(const std::string& projectXml)
 {
-	TiXmlElement* pRoot = XmlResourceLoader::LoadAndReturnRootXmlElement(projectXml.c_str());
+	tinyxml2::XMLElement* pRoot = XmlResourceLoader::LoadAndReturnRootXmlElement(projectXml.c_str());
 	if (!pRoot)
 	{
 		DEBUG_ERROR("Failed to find level resource file: " + projectXml);
@@ -65,7 +65,7 @@ bool BaseGameLogic::VLoadGame(const std::string& projectXml)
 	const char* preLoadScript = NULL;
 	const char* postLoadScript = NULL;
 
-	TiXmlElement* pScriptElement = pRoot->FirstChildElement("Script");
+	tinyxml2::XMLElement* pScriptElement = pRoot->FirstChildElement("Script");
 	if (pScriptElement)
 	{
 		preLoadScript = pScriptElement->Attribute("preLoad");
@@ -78,10 +78,10 @@ bool BaseGameLogic::VLoadGame(const std::string& projectXml)
 		shared_ptr<ResHandle> pResourceHandle = g_pApp->m_pResCache->GetHandle(&resource);
 	}
 
-	TiXmlElement* pActorsNode = pRoot->FirstChildElement("StaticActors");
+	tinyxml2::XMLElement* pActorsNode = pRoot->FirstChildElement("StaticActors");
 	if (pActorsNode)
 	{
-		for (TiXmlElement* pNode = pActorsNode->FirstChildElement(); pNode; pNode = pNode->NextSiblingElement())
+		for (tinyxml2::XMLElement* pNode = pActorsNode->FirstChildElement(); pNode; pNode = pNode->NextSiblingElement())
 		{
 			StrongActorPtr pActor = VCreateActor(pNode);
 			if (pActor)
@@ -147,7 +147,7 @@ void BaseGameLogic::VRemoveView(shared_ptr<IGameView> pView)
 }
 
 StrongActorPtr BaseGameLogic::VCreateActor(
-	TiXmlElement *pActorRoot, const Matrix& initialTransform, ActorId serversActorId)
+	tinyxml2::XMLElement *pActorRoot, const Matrix& initialTransform, ActorId serversActorId)
 {
 	DEBUG_ASSERT(m_pActorFactory != nullptr);
 	DEBUG_ASSERT(pActorRoot != nullptr);
@@ -201,7 +201,7 @@ void BaseGameLogic::VMoveActor(ActorId actorId, const Matrix& mat)
 	 
 }
 
-void BaseGameLogic::VModifyActor(const ActorId actorId, TiXmlElement* overrides)
+void BaseGameLogic::VModifyActor(const ActorId actorId, tinyxml2::XMLElement* overrides)
 {
 	DEBUG_ASSERT(m_pActorFactory);
 	if (!m_pActorFactory)

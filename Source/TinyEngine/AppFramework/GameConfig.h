@@ -20,6 +20,6 @@ public:
 
 	bool m_IsZipResource;
 
-	unique_ptr<TiXmlDocument> m_pDocument;
+	unique_ptr<tinyxml2::XMLDocument> m_pDocument;
 };
 

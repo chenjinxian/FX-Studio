@@ -20,14 +20,14 @@ GameConfig::~GameConfig()
 
 void GameConfig::InitConfig(const std::string& xmlFileName, LPWSTR lpCmdLine)
 {
-	m_pDocument = unique_ptr<TiXmlDocument>(new TiXmlDocument(xmlFileName.c_str()));
+	m_pDocument = unique_ptr<tinyxml2::XMLDocument>(new tinyxml2::XMLDocument(xmlFileName.c_str()));
 	if (m_pDocument != nullptr && m_pDocument->LoadFile())
 	{
-		TiXmlElement *pRoot = m_pDocument->RootElement();
+		tinyxml2::XMLElement *pRoot = m_pDocument->RootElement();
 		if (pRoot == nullptr)
 			return;
 
-		TiXmlElement* pNode = pRoot->FirstChildElement("Graphics");
+		tinyxml2::XMLElement* pNode = pRoot->FirstChildElement("Graphics");
 		if (pNode != nullptr)
 		{
 			std::string attribute = pNode->Attribute("renderer");

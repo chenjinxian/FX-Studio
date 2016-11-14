@@ -51,11 +51,11 @@ public:
 	virtual void VRemoveView(shared_ptr<IGameView> pView);
 
 	virtual StrongActorPtr VCreateActor(
-		TiXmlElement *pActorRoot, const Matrix& initialTransform = Matrix::Identity, ActorId serversActorId = INVALID_ACTOR_ID) override;
+		tinyxml2::XMLElement *pActorRoot, const Matrix& initialTransform = Matrix::Identity, ActorId serversActorId = INVALID_ACTOR_ID) override;
 	virtual void VDestroyActor(ActorId actorId) override;
 	virtual WeakActorPtr VGetActor(ActorId actorId) override;
 	virtual void VMoveActor(ActorId actorId, const Matrix& mat) override;
-	virtual void VModifyActor(ActorId actorId, TiXmlElement *overrides);
+	virtual void VModifyActor(ActorId actorId, tinyxml2::XMLElement *overrides);
 
 	virtual void VChangeState(BaseGameState gameState);
 	const BaseGameState GetState() const { return m_GameState; }
@@ -67,7 +67,7 @@ public:
 
 protected:
 	virtual ActorFactory* VCreateActorFactory();
-	virtual bool VLoadGameDelegate(TiXmlElement* pData) { return true; }
+	virtual bool VLoadGameDelegate(tinyxml2::XMLElement* pData) { return true; }
 	void MoveActorDelegate(IEventDataPtr pEventData);
 	void RequestNewActorDelegate(IEventDataPtr pEventData);
 

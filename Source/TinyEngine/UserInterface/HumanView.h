@@ -32,7 +32,7 @@ public:
 	virtual void VSetCameraOffset(const Vector4& camOffset);
 	virtual void VSetControlledActor(ActorId actorId) { m_ActorId = actorId; }
 
-	bool LoadGame(TiXmlElement* pLevelData);
+	bool LoadGame(tinyxml2::XMLElement* pLevelData);
 	void TogglePause(bool active);
 	bool InitAudio();
 	void PlaySoundDelegate(IEventDataPtr pEventData);
@@ -48,7 +48,7 @@ public:
 
 protected:
 	virtual void VRenderText() { };
-	virtual bool VLoadGameDelegate(TiXmlElement* pLevelData) { VPushElement(m_pScene);  return true; }
+	virtual bool VLoadGameDelegate(tinyxml2::XMLElement* pLevelData) { VPushElement(m_pScene);  return true; }
 
 	GameViewId m_ViewId;
 	ActorId m_ActorId;

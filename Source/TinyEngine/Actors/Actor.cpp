@@ -15,7 +15,7 @@ Actor::~Actor()
 	DEBUG_ASSERT(m_ActorComponents.empty());
 }
 
-bool Actor::Init(TiXmlElement* pData)
+bool Actor::Init(tinyxml2::XMLElement* pData)
 {
 	DEBUG_LOG("Actor", std::string("Initializing Actor ") + boost::lexical_cast<std::string>(m_ActorId));
 
@@ -46,14 +46,14 @@ void Actor::Update(double fTime, float fElapsedTime)
 
 std::string Actor::ToXml()
 {
-	TiXmlDocument outDoc;
+	tinyxml2::XMLDocument outDoc;
 
-	TiXmlElement* pActorElement = DEBUG_NEW TiXmlElement("Actor");
+	tinyxml2::XMLElement* pActorElement = DEBUG_NEW tinyxml2::XMLElement("Actor");
 	pActorElement->SetAttribute("type", m_ActorType.c_str());
 
 	for (auto& component : m_ActorComponents)
 	{
-		TiXmlElement* pComponentElement = component.second->VGenerateXml();
+		tinyxml2::XMLElement* pComponentElement = component.second->VGenerateXml();
 		pActorElement->LinkEndChild(pComponentElement);
 	}
 

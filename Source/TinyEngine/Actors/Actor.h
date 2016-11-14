@@ -13,7 +13,7 @@ public:
 	explicit Actor(ActorId actorId);
 	virtual ~Actor();
 
-	bool Init(TiXmlElement* pData);
+	bool Init(tinyxml2::XMLElement* pData);
 	void PostInit();
 	void Destroy();
 	void Update(double fTime, float fElapsedTime);

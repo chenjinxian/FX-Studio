@@ -7,8 +7,8 @@ public:
 	TransformComponent();
 	virtual ~TransformComponent();
 
-	virtual bool VInit(TiXmlElement* pData) override;
-	virtual TiXmlElement* VGenerateXml() override;
+	virtual bool VInit(tinyxml2::XMLElement* pData) override;
+	virtual tinyxml2::XMLElement* VGenerateXml() override;
 
 	const Matrix& GetTransform(void) const { return m_Transform; }
 	void SetTransform(const Matrix& newTransform) { m_Transform = newTransform; }

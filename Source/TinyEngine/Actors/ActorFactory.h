@@ -10,11 +10,11 @@ public:
 	virtual ~ActorFactory();
 
 	StrongActorPtr CreateActor(
-		TiXmlElement *pActorRoot, const Matrix& initialTransform, ActorId serversActorId);
-	void ModifyActor(StrongActorPtr pActor, TiXmlElement* overrides);
+		tinyxml2::XMLElement *pActorRoot, const Matrix& initialTransform, ActorId serversActorId);
+	void ModifyActor(StrongActorPtr pActor, tinyxml2::XMLElement* overrides);
 
 protected:
-	virtual StrongActorComponentPtr VCreateComponent(TiXmlElement* pData);
+	virtual StrongActorComponentPtr VCreateComponent(tinyxml2::XMLElement* pData);
 
 	GenericObjectFactory<ActorComponent, ComponentId> m_ComponentFactory;
 

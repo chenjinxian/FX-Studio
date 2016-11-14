@@ -8,8 +8,8 @@ public:
 	~DemoApp();
 
 protected:
-	virtual const std::wstring& VGetWindowTitle() override;
-	virtual const std::wstring& VGetWindowClass() override;
+	virtual const wchar_t* VGetWindowTitle() override;
+	virtual const wchar_t* VGetWindowClass() override;
 	virtual HICON VGetIcon() override;
 };
 

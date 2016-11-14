@@ -43,18 +43,18 @@ void BaseRenderComponent::VOnChanged()
 	IEventManager::Get()->VTriggerEvent(pEvent);
 }
 
-tinyxml2::XMLElement* BaseRenderComponent::VGenerateXml()
+tinyxml2::XMLElement* BaseRenderComponent::VGenerateXml(tinyxml2::XMLDocument* pDocument)
 {
-	tinyxml2::XMLElement* pBaseElement = VCreateBaseElement();
+	tinyxml2::XMLElement* pBaseElement = VCreateBaseElement(pDocument);
 
-	tinyxml2::XMLElement* pColor = DEBUG_NEW tinyxml2::XMLElement("Color");
-	pColor->SetAttribute("r", boost::lexical_cast<std::string>(m_Color.x).c_str());
-	pColor->SetAttribute("g", boost::lexical_cast<std::string>(m_Color.y).c_str());
-	pColor->SetAttribute("b", boost::lexical_cast<std::string>(m_Color.z).c_str());
-	pColor->SetAttribute("a", boost::lexical_cast<std::string>(m_Color.w).c_str());
+	tinyxml2::XMLElement* pColor = pDocument->NewElement("Color");
+	pColor->SetAttribute("r", m_Color.x);
+	pColor->SetAttribute("g", m_Color.y);
+	pColor->SetAttribute("b", m_Color.z);
+	pColor->SetAttribute("a", m_Color.w);
 	pBaseElement->LinkEndChild(pColor);
 
-	VCreateInheritedXmlElement(pBaseElement);
+	VCreateInheritedXmlElement(pBaseElement, pDocument);
 	return pBaseElement;
 }
 
@@ -62,20 +62,13 @@ Color BaseRenderComponent::LoadColor(tinyxml2::XMLElement* pData)
 {
 	Color color;
 
-	double r = 1.0;
-	double g = 1.0;
-	double b = 1.0;
-	double a = 1.0;
-
-	pData->Attribute("r", &r);
-	pData->Attribute("g", &g);
-	pData->Attribute("b", &b);
-	pData->Attribute("a", &a);
-
-	color.x = (float)r;
-	color.y = (float)g;
-	color.z = (float)b;
-	color.w = (float)a;
+	if (pData != nullptr)
+	{
+		color.x = pData->FloatAttribute("r");
+		color.y = pData->FloatAttribute("g");
+		color.z = pData->FloatAttribute("b");
+		color.w = pData->FloatAttribute("a");
+	}
 
 	return color;
 }
@@ -125,7 +118,7 @@ shared_ptr<SceneNode> GridRenderComponent::VCreateSceneNode()
 	return shared_ptr<SceneNode>();
 }
 
-void GridRenderComponent::VCreateInheritedXmlElement(tinyxml2::XMLElement* pBaseElement)
+void GridRenderComponent::VCreateInheritedXmlElement(tinyxml2::XMLElement* pBaseElement, tinyxml2::XMLDocument* pDocument)
 {
 
 }
@@ -198,20 +191,20 @@ shared_ptr<SceneNode> ModelRenderComponent::VCreateSceneNode()
 	return shared_ptr<SceneNode>();
 }
 
-void ModelRenderComponent::VCreateInheritedXmlElement(tinyxml2::XMLElement* pBaseElement)
+void ModelRenderComponent::VCreateInheritedXmlElement(tinyxml2::XMLElement* pBaseElement, tinyxml2::XMLDocument* pDocument)
 {
-	tinyxml2::XMLElement* pSdkMesh = DEBUG_NEW tinyxml2::XMLElement("Model");
-	TiXmlText* pSdkMeshName = DEBUG_NEW TiXmlText(m_ModelName.c_str());
+	tinyxml2::XMLElement* pSdkMesh = pDocument->NewElement("Model");
+	tinyxml2::XMLText* pSdkMeshName = pDocument->NewText(m_ModelName.c_str());
 	pSdkMesh->LinkEndChild(pSdkMeshName);
 	pBaseElement->LinkEndChild(pSdkMesh);
 
-	tinyxml2::XMLElement* pTexture = DEBUG_NEW tinyxml2::XMLElement("Texture");
-	TiXmlText* pTextureName = DEBUG_NEW TiXmlText(m_TextureName.c_str());
+	tinyxml2::XMLElement* pTexture = pDocument->NewElement("Texture");
+	tinyxml2::XMLText* pTextureName = pDocument->NewText(m_TextureName.c_str());
 	pTexture->LinkEndChild(pTextureName);
 	pBaseElement->LinkEndChild(pTexture);
 
-	tinyxml2::XMLElement* pEffect = DEBUG_NEW tinyxml2::XMLElement("Effect");
-	TiXmlText* pEffectName = DEBUG_NEW TiXmlText(m_EffectName.c_str());
+	tinyxml2::XMLElement* pEffect = pDocument->NewElement("Effect");
+	tinyxml2::XMLText* pEffectName = pDocument->NewText(m_EffectName.c_str());
 	pEffect->LinkEndChild(pEffectName);
 	pBaseElement->LinkEndChild(pEffect);
 }
@@ -252,10 +245,10 @@ shared_ptr<SceneNode> SkyboxRenderComponent::VCreateSceneNode()
 	return shared_ptr<SceneNode>();
 }
 
-void SkyboxRenderComponent::VCreateInheritedXmlElement(tinyxml2::XMLElement* pBaseElement)
+void SkyboxRenderComponent::VCreateInheritedXmlElement(tinyxml2::XMLElement* pBaseElement, tinyxml2::XMLDocument* pDocument)
 {
-// 	tinyxml2::XMLElement* pTextureNode = DEBUG_NEW tinyxml2::XMLElement("Texture");
-// 	TiXmlText* pTextureText = DEBUG_NEW TiXmlText(m_textureResource.c_str());
+// 	tinyxml2::XMLElement* pTextureNode = pDocument->NewElement("Texture");
+// 	tinyxml2::XMLText* pTextureText = pDocument->NewText(m_textureResource.c_str());
 // 	pTextureNode->LinkEndChild(pTextureText);
 // 	pBaseElement->LinkEndChild(pTextureNode);
 }
@@ -281,7 +274,7 @@ bool LightRenderComponent::VDelegateInit(tinyxml2::XMLElement* pData)
 	return true;
 }
 
-void LightRenderComponent::VCreateInheritedXmlElement(tinyxml2::XMLElement* pBaseElement)
+void LightRenderComponent::VCreateInheritedXmlElement(tinyxml2::XMLElement* pBaseElement, tinyxml2::XMLDocument* pDocument)
 {
 	DEBUG_ASSERT(pBaseElement);
 	if (pBaseElement == nullptr)
@@ -289,8 +282,8 @@ void LightRenderComponent::VCreateInheritedXmlElement(tinyxml2::XMLElement* pBas
 		return;
 	}
 
-	tinyxml2::XMLElement* pModelNode = DEBUG_NEW tinyxml2::XMLElement("Model");
-	TiXmlText* pModelName = DEBUG_NEW TiXmlText(m_ModelName.c_str());
+	tinyxml2::XMLElement* pModelNode = pDocument->NewElement("Model");
+	tinyxml2::XMLText* pModelName = pDocument->NewText(m_ModelName.c_str());
 	pModelNode->LinkEndChild(pModelName);
 	pBaseElement->LinkEndChild(pModelNode);
 }
@@ -309,35 +302,35 @@ bool DirectionalLightComponent::VDelegateInit(tinyxml2::XMLElement* pData)
 {
 	LightRenderComponent::VDelegateInit(pData);
 
-	double x = 0;
-	double y = 0;
-	double z = 0;
+	float x = 0;
+	float y = 0;
+	float z = 0;
 	tinyxml2::XMLElement* pLight = pData->FirstChildElement("Light");
 	tinyxml2::XMLElement* pDirectionNode = pLight->FirstChildElement("Direction");
 	if (pDirectionNode != nullptr)
 	{
-		pDirectionNode->Attribute("x", &x);
-		pDirectionNode->Attribute("y", &y);
-		pDirectionNode->Attribute("z", &z);
-		m_Direction = Vector3((float)x, (float)y, (float)z);
+		pDirectionNode->QueryFloatAttribute("x", &x);
+		pDirectionNode->QueryFloatAttribute("y", &y);
+		pDirectionNode->QueryFloatAttribute("z", &z);
+		m_Direction = Vector3(x, y, z);
 	}
 
 	tinyxml2::XMLElement* pUpNode = pLight->FirstChildElement("Up");
 	if (pUpNode != nullptr)
 	{
-		pUpNode->Attribute("x", &x);
-		pUpNode->Attribute("y", &y);
-		pUpNode->Attribute("z", &z);
-		m_Up = Vector3((float)x, (float)y, (float)z);
+		pUpNode->QueryFloatAttribute("x", &x);
+		pUpNode->QueryFloatAttribute("y", &y);
+		pUpNode->QueryFloatAttribute("z", &z);
+		m_Up = Vector3(x, y, z);
 	}
 
 	tinyxml2::XMLElement* pRightNode = pLight->FirstChildElement("Right");
 	if (pRightNode != nullptr)
 	{
-		pRightNode->Attribute("x", &x);
-		pRightNode->Attribute("y", &y);
-		pRightNode->Attribute("z", &z);
-		m_Right = Vector3((float)x, (float)y, (float)z);
+		pRightNode->QueryFloatAttribute("x", &x);
+		pRightNode->QueryFloatAttribute("y", &y);
+		pRightNode->QueryFloatAttribute("z", &z);
+		m_Right = Vector3(x, y, z);
 	}
 
 	return true;
@@ -367,28 +360,28 @@ shared_ptr<SceneNode> DirectionalLightComponent::VCreateSceneNode()
 	return shared_ptr<SceneNode>();
 }
 
-void DirectionalLightComponent::VCreateInheritedXmlElement(tinyxml2::XMLElement* pBaseElement)
+void DirectionalLightComponent::VCreateInheritedXmlElement(tinyxml2::XMLElement* pBaseElement, tinyxml2::XMLDocument* pDocument)
 {
-	LightRenderComponent::VCreateInheritedXmlElement(pBaseElement);
+	LightRenderComponent::VCreateInheritedXmlElement(pBaseElement, pDocument);
 
-	tinyxml2::XMLElement* pSceneNode = DEBUG_NEW tinyxml2::XMLElement("Light");
+	tinyxml2::XMLElement* pSceneNode = pDocument->NewElement("Light");
 
-	tinyxml2::XMLElement* pDirectionNode = DEBUG_NEW tinyxml2::XMLElement("Direction");
-	pDirectionNode->SetAttribute("x", boost::lexical_cast<std::string>(m_Direction.x).c_str());
-	pDirectionNode->SetAttribute("y", boost::lexical_cast<std::string>(m_Direction.y).c_str());
-	pDirectionNode->SetAttribute("z", boost::lexical_cast<std::string>(m_Direction.z).c_str());
+	tinyxml2::XMLElement* pDirectionNode = pDocument->NewElement("Direction");
+	pDirectionNode->SetAttribute("x", m_Direction.x);
+	pDirectionNode->SetAttribute("y", m_Direction.y);
+	pDirectionNode->SetAttribute("z", m_Direction.z);
 	pSceneNode->LinkEndChild(pDirectionNode);
 
-	tinyxml2::XMLElement* pUpNode = DEBUG_NEW tinyxml2::XMLElement("Up");
-	pUpNode->SetAttribute("x", boost::lexical_cast<std::string>(m_Up.x).c_str());
-	pUpNode->SetAttribute("y", boost::lexical_cast<std::string>(m_Up.y).c_str());
-	pUpNode->SetAttribute("z", boost::lexical_cast<std::string>(m_Up.z).c_str());
+	tinyxml2::XMLElement* pUpNode = pDocument->NewElement("Up");
+	pUpNode->SetAttribute("x", m_Up.x);
+	pUpNode->SetAttribute("y", m_Up.y);
+	pUpNode->SetAttribute("z", m_Up.z);
 	pSceneNode->LinkEndChild(pUpNode);
 
-	tinyxml2::XMLElement* pRightNode = DEBUG_NEW tinyxml2::XMLElement("Right");
-	pRightNode->SetAttribute("x", boost::lexical_cast<std::string>(m_Right.x).c_str());
-	pRightNode->SetAttribute("y", boost::lexical_cast<std::string>(m_Right.y).c_str());
-	pRightNode->SetAttribute("z", boost::lexical_cast<std::string>(m_Right.z).c_str());
+	tinyxml2::XMLElement* pRightNode = pDocument->NewElement("Right");
+	pRightNode->SetAttribute("x", m_Right.x);
+	pRightNode->SetAttribute("y", m_Right.y);
+	pRightNode->SetAttribute("z", m_Right.z);
 	pSceneNode->LinkEndChild(pRightNode);
 
 	pBaseElement->LinkEndChild(pSceneNode);
@@ -412,9 +405,7 @@ bool PointLightComponent::VDelegateInit(tinyxml2::XMLElement* pData)
 	tinyxml2::XMLElement* pShapeNode = pLight->FirstChildElement("Shape");
 	if (pShapeNode != nullptr)
 	{
-		double temp;
-		pShapeNode->Attribute("Radius", &temp);
-		m_Radius = (float)temp;
+		m_Radius = pShapeNode->FloatAttribute("Radius");
 	}
 
 	return true;
@@ -444,13 +435,13 @@ shared_ptr<SceneNode> PointLightComponent::VCreateSceneNode()
 	return shared_ptr<SceneNode>();
 }
 
-void PointLightComponent::VCreateInheritedXmlElement(tinyxml2::XMLElement* pBaseElement)
+void PointLightComponent::VCreateInheritedXmlElement(tinyxml2::XMLElement* pBaseElement, tinyxml2::XMLDocument* pDocument)
 {
-	LightRenderComponent::VCreateInheritedXmlElement(pBaseElement);
+	LightRenderComponent::VCreateInheritedXmlElement(pBaseElement, pDocument);
 
-	tinyxml2::XMLElement* pSceneNode = DEBUG_NEW tinyxml2::XMLElement("Light");
-	tinyxml2::XMLElement* pShapeNode = DEBUG_NEW tinyxml2::XMLElement("Shape");
-	pShapeNode->SetAttribute("Radius", boost::lexical_cast<std::string>(m_Radius).c_str());
+	tinyxml2::XMLElement* pSceneNode = pDocument->NewElement("Light");
+	tinyxml2::XMLElement* pShapeNode = pDocument->NewElement("Shape");
+	pShapeNode->SetAttribute("Radius", m_Radius);
 	pSceneNode->LinkEndChild(pShapeNode);
 
 	pBaseElement->LinkEndChild(pSceneNode);
@@ -470,47 +461,43 @@ bool SpotLightComponent::VDelegateInit(tinyxml2::XMLElement* pData)
 {
 	LightRenderComponent::VDelegateInit(pData);
 
-	double x = 0;
-	double y = 0;
-	double z = 0;
+	float x = 0;
+	float y = 0;
+	float z = 0;
 	tinyxml2::XMLElement* pLight = pData->FirstChildElement("Light");
 	tinyxml2::XMLElement* pDirectionNode = pLight->FirstChildElement("Direction");
 	if (pDirectionNode != nullptr)
 	{
-		pDirectionNode->Attribute("x", &x);
-		pDirectionNode->Attribute("y", &y);
-		pDirectionNode->Attribute("z", &z);
-		m_Direction = Vector3((float)x, (float)y, (float)z);
+		pDirectionNode->QueryFloatAttribute("x", &x);
+		pDirectionNode->QueryFloatAttribute("y", &y);
+		pDirectionNode->QueryFloatAttribute("z", &z);
+		m_Direction = Vector3(x, y, z);
 	}
 
 	tinyxml2::XMLElement* pUpNode = pLight->FirstChildElement("Up");
 	if (pUpNode != nullptr)
 	{
-		pUpNode->Attribute("x", &x);
-		pUpNode->Attribute("y", &y);
-		pUpNode->Attribute("z", &z);
-		m_Up = Vector3((float)x, (float)y, (float)z);
+		pUpNode->QueryFloatAttribute("x", &x);
+		pUpNode->QueryFloatAttribute("y", &y);
+		pUpNode->QueryFloatAttribute("z", &z);
+		m_Up = Vector3(x, y, z);
 	}
 
 	tinyxml2::XMLElement* pRightNode = pLight->FirstChildElement("Right");
 	if (pRightNode != nullptr)
 	{
-		pRightNode->Attribute("x", &x);
-		pRightNode->Attribute("y", &y);
-		pRightNode->Attribute("z", &z);
-		m_Right = Vector3((float)x, (float)y, (float)z);
+		pRightNode->QueryFloatAttribute("x", &x);
+		pRightNode->QueryFloatAttribute("y", &y);
+		pRightNode->QueryFloatAttribute("z", &z);
+		m_Right = Vector3(x, y, z);
 	}
 
 	tinyxml2::XMLElement* pShapeNode = pLight->FirstChildElement("Shape");
 	if (pShapeNode != nullptr)
 	{
-		double temp;
-		pShapeNode->Attribute("Radius", &temp);
-		m_Radius = (float)temp;
-		pShapeNode->Attribute("InnerAngle", &temp);
-		m_InnerAngle = (float)temp;
-		pShapeNode->Attribute("OuterAngle", &temp);
-		m_OuterAngle = (float)temp;
+		m_Radius = pShapeNode->FloatAttribute("Radius");
+		m_InnerAngle = pShapeNode->FloatAttribute("InnerAngle");
+		m_OuterAngle = pShapeNode->FloatAttribute("OuterAngle");
 	}
 
 	return true;
@@ -540,34 +527,34 @@ shared_ptr<SceneNode> SpotLightComponent::VCreateSceneNode()
 	return shared_ptr<SceneNode>();
 }
 
-void SpotLightComponent::VCreateInheritedXmlElement(tinyxml2::XMLElement* pBaseElement)
+void SpotLightComponent::VCreateInheritedXmlElement(tinyxml2::XMLElement* pBaseElement, tinyxml2::XMLDocument* pDocument)
 {
-	LightRenderComponent::VCreateInheritedXmlElement(pBaseElement);
+	LightRenderComponent::VCreateInheritedXmlElement(pBaseElement, pDocument);
 
-	tinyxml2::XMLElement* pSceneNode = DEBUG_NEW tinyxml2::XMLElement("Light");
+	tinyxml2::XMLElement* pSceneNode = pDocument->NewElement("Light");
 
-	tinyxml2::XMLElement* pDirectionNode = DEBUG_NEW tinyxml2::XMLElement("Direction");
-	pDirectionNode->SetAttribute("x", boost::lexical_cast<std::string>(m_Direction.x).c_str());
-	pDirectionNode->SetAttribute("y", boost::lexical_cast<std::string>(m_Direction.y).c_str());
-	pDirectionNode->SetAttribute("z", boost::lexical_cast<std::string>(m_Direction.z).c_str());
+	tinyxml2::XMLElement* pDirectionNode = pDocument->NewElement("Direction");
+	pDirectionNode->SetAttribute("x", m_Direction.x);
+	pDirectionNode->SetAttribute("y", m_Direction.y);
+	pDirectionNode->SetAttribute("z", m_Direction.z);
 	pSceneNode->LinkEndChild(pDirectionNode);
 
-	tinyxml2::XMLElement* pUpNode = DEBUG_NEW tinyxml2::XMLElement("Up");
-	pUpNode->SetAttribute("x", boost::lexical_cast<std::string>(m_Up.x).c_str());
-	pUpNode->SetAttribute("y", boost::lexical_cast<std::string>(m_Up.y).c_str());
-	pUpNode->SetAttribute("z", boost::lexical_cast<std::string>(m_Up.z).c_str());
+	tinyxml2::XMLElement* pUpNode = pDocument->NewElement("Up");
+	pUpNode->SetAttribute("x", m_Up.x);
+	pUpNode->SetAttribute("y", m_Up.y);
+	pUpNode->SetAttribute("z", m_Up.z);
 	pSceneNode->LinkEndChild(pUpNode);
 
-	tinyxml2::XMLElement* pRightNode = DEBUG_NEW tinyxml2::XMLElement("Right");
-	pRightNode->SetAttribute("x", boost::lexical_cast<std::string>(m_Right.x).c_str());
-	pRightNode->SetAttribute("y", boost::lexical_cast<std::string>(m_Right.y).c_str());
-	pRightNode->SetAttribute("z", boost::lexical_cast<std::string>(m_Right.z).c_str());
+	tinyxml2::XMLElement* pRightNode = pDocument->NewElement("Right");
+	pRightNode->SetAttribute("x", m_Right.x);
+	pRightNode->SetAttribute("y", m_Right.y);
+	pRightNode->SetAttribute("z", m_Right.z);
 	pSceneNode->LinkEndChild(pRightNode);
 
-	tinyxml2::XMLElement* pShapeNode = DEBUG_NEW tinyxml2::XMLElement("Shape");
-	pShapeNode->SetAttribute("Radius", boost::lexical_cast<std::string>(m_Radius).c_str());
-	pShapeNode->SetAttribute("InnerAngle", boost::lexical_cast<std::string>(m_InnerAngle).c_str());
-	pShapeNode->SetAttribute("OuterAngle", boost::lexical_cast<std::string>(m_OuterAngle).c_str());
+	tinyxml2::XMLElement* pShapeNode = pDocument->NewElement("Shape");
+	pShapeNode->SetAttribute("Radius", m_Radius);
+	pShapeNode->SetAttribute("InnerAngle", m_InnerAngle);
+	pShapeNode->SetAttribute("OuterAngle", m_OuterAngle);
 	pSceneNode->LinkEndChild(pShapeNode);
 
 	pBaseElement->LinkEndChild(pSceneNode);

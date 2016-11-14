@@ -10,12 +10,12 @@ DemoApp::~DemoApp()
 {
 }
 
-const std::wstring& DemoApp::VGetWindowTitle()
+const wchar_t* DemoApp::VGetWindowTitle()
 {
 	return _T("TinyEngine - Demo");
 }
 
-const std::wstring& DemoApp::VGetWindowClass()
+const wchar_t* DemoApp::VGetWindowClass()
 {
 	return _T("TinyEngine");
 }

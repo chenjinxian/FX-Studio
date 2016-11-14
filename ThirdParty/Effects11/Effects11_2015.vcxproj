@@ -201,8 +201,8 @@ copy "$(TargetPath)" "$(SolutionDir)..\Lib\"</Command>
       </Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>
-      </Command>
+      <Command>mkdir "$(SolutionDir)..\Lib\x64\"
+copy "$(TargetPath)" "$(SolutionDir)..\Lib\x64\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

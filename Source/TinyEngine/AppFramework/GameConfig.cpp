@@ -20,8 +20,8 @@ GameConfig::~GameConfig()
 
 void GameConfig::InitConfig(const std::string& xmlFileName, LPWSTR lpCmdLine)
 {
-	m_pDocument = unique_ptr<tinyxml2::XMLDocument>(new tinyxml2::XMLDocument(xmlFileName.c_str()));
-	if (m_pDocument != nullptr && m_pDocument->LoadFile())
+	m_pDocument = unique_ptr<tinyxml2::XMLDocument>(new tinyxml2::XMLDocument());
+	if (m_pDocument != nullptr && (m_pDocument->LoadFile(xmlFileName.c_str()) == tinyxml2::XML_SUCCESS))
 	{
 		tinyxml2::XMLElement *pRoot = m_pDocument->RootElement();
 		if (pRoot == nullptr)
@@ -42,37 +42,34 @@ void GameConfig::InitConfig(const std::string& xmlFileName, LPWSTR lpCmdLine)
 
 			if (pNode->Attribute("width") != nullptr)
 			{
-				m_ScreenWidth = atoi(pNode->Attribute("width"));
+				m_ScreenWidth = pNode->IntAttribute("width");
 			}
 
 			if (pNode->Attribute("height") != nullptr)
 			{
-				m_ScreenHeight = atoi(pNode->Attribute("height"));
+				m_ScreenHeight = pNode->IntAttribute("height");
 			}
 
 			if (pNode->Attribute("fullscreen") != nullptr)
 			{
-				attribute = pNode->Attribute("fullscreen");
-				m_IsFullScreen = (attribute == "yes") ? true : false;
+				m_IsFullScreen = pNode->BoolAttribute("fullscreen");
 			}
 
 			if (pNode->Attribute("vsync") != nullptr)
 			{
-				attribute = pNode->Attribute("vsync");
-				m_IsVSync = (attribute == "yes") ? true : false;
+				m_IsVSync = pNode->BoolAttribute("vsync");
 			}
 
 			if (pNode->Attribute("anti-aliasing") != nullptr)
 			{
-				m_AntiAliasing = atoi(pNode->Attribute("anti-aliasing"));
+				m_AntiAliasing = pNode->IntAttribute("anti-aliasing");
 			}
 		}
 
 		pNode = pRoot->FirstChildElement("ResCache");
 		if (pNode)
 		{
-			std::string attribute(pNode->Attribute("useZipResource"));
-			m_IsZipResource = ((attribute == "yes") ? (true) : (false));
+			m_IsZipResource = pNode->BoolAttribute("useZipResource");
 		}
 	}
 }

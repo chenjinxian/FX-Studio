@@ -16,7 +16,7 @@ public:
 	virtual void VUpdate(double fTime, float fElapsedTime) {}
 	virtual void VOnChanged() {}
 
-	virtual tinyxml2::XMLElement* VGenerateXml() = 0;
+	virtual tinyxml2::XMLElement* VGenerateXml(tinyxml2::XMLDocument* pDocument) = 0;
 	virtual ComponentId VGetComponentId() const { return GetIdFromName(VGetComponentName()); }
 	virtual const std::string& VGetComponentName() const = 0;
 	static ComponentId GetIdFromName(const std::string& compoentStr)

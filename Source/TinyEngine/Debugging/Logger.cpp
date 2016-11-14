@@ -114,8 +114,8 @@ void LogMgr::Init(const char* loggingConfigFilename)
 {
 	if (loggingConfigFilename)
 	{
-		tinyxml2::XMLDocument loggingConfigFile(loggingConfigFilename);
-		if (loggingConfigFile.LoadFile())
+		tinyxml2::XMLDocument loggingConfigFile; (loggingConfigFilename);
+		if (loggingConfigFile.LoadFile(loggingConfigFilename) == tinyxml2::XML_SUCCESS)
 		{
 			tinyxml2::XMLElement* pRoot = loggingConfigFile.RootElement();
 			if (!pRoot)
@@ -128,12 +128,12 @@ void LogMgr::Init(const char* loggingConfigFilename)
 				std::string tag(pNode->Attribute("tag"));
 
 				int debugger = 0;
-				pNode->Attribute("debugger", &debugger);
+				pNode->QueryIntAttribute("debugger", &debugger);
 				if (debugger)
 					flags |= LOGFLAG_WRITE_TO_DEBUGGER;
 
 				int logfile = 0;
-				pNode->Attribute("file", &logfile);
+				pNode->QueryIntAttribute("file", &logfile);
 				if (logfile)
 					flags |= LOGFLAG_WRITE_TO_LOG_FILE;
 

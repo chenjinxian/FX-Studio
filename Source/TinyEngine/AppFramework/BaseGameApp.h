@@ -14,28 +14,28 @@ public:
 	virtual ~BaseGameApp();
 
 	bool InitEnvironment();
-	HWND SetupWindow(HINSTANCE hInstance, WNDPROC wndproc);
+	HWND SetupWindow(HINSTANCE hInstance);
 	void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	bool InitRenderer();
 	void RenderLoop();
 
-	int GetScreenWidth() const { return m_ScreenWidth; }
-	int GetScreenHeight() const { return m_ScreenHeight; }
+	int GetScreenWidth() const { return m_Config.m_ScreenWidth; }
+	int GetScreenHeight() const { return m_Config.m_ScreenHeight; }
 
 	GameConfig m_Config;
 	unique_ptr<ResCache> m_pResCache;
 	shared_ptr<IRenderer> m_pRenderer;
 
 protected:
-	virtual const std::wstring& VGetWindowTitle() = 0;
-	virtual const std::wstring& VGetWindowClass() = 0;
+	virtual const wchar_t* VGetWindowTitle() = 0;
+	virtual const wchar_t* VGetWindowClass() = 0;
 	virtual HICON VGetIcon() = 0;
 
 private:
+	static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+
 	HINSTANCE m_hInstance;
 	HWND m_hWindow;
-	uint32_t m_ScreenWidth;
-	uint32_t m_ScreenHeight;
 
 	GameTime m_GameTime;
 };

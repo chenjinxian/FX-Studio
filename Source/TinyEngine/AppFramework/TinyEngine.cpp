@@ -1,14 +1,17 @@
 #include "BaseGameApp.h"
 #include <crtdbg.h>
 
-LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
-{
-	if (g_pApp != nullptr)
-	{
-		g_pApp->HandleMessages(hWnd, uMsg, wParam, lParam);
-	}
-	return (DefWindowProc(hWnd, uMsg, wParam, lParam));
-}
+#ifdef _DEBUG
+#pragma comment(lib, "DirectXTKd.lib")
+#pragma comment(lib, "Effects11d.lib")
+#pragma comment(lib, "tinyxml2d.lib")
+#pragma comment(lib, "zlibstatic.lib")
+#else
+#pragma comment(lib, "DirectXTK.lib")
+#pragma comment(lib, "Effects11.lib")
+#pragma comment(lib, "tinyxml2.lib")
+#pragma comment(lib, "zlibstatic.lib")
+#endif
 
 INT WINAPI WindowBaseMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
 {
@@ -22,10 +25,10 @@ INT WINAPI WindowBaseMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR l
 
 	if (g_pApp != nullptr)
 	{
-		g_pApp->m_Config.InitConfig("TinyEngine.xml", lpCmdLine);
+		g_pApp->m_Config.InitConfig("TinyEngineConfig.xml", lpCmdLine);
 		if (g_pApp->InitEnvironment())
 		{
-			g_pApp->SetupWindow(hInstance, WndProc);
+			g_pApp->SetupWindow(hInstance);
 			g_pApp->InitRenderer();
 			g_pApp->RenderLoop();
 		}

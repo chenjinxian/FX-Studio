@@ -48,17 +48,17 @@ std::string Actor::ToXml()
 {
 	tinyxml2::XMLDocument outDoc;
 
-	tinyxml2::XMLElement* pActorElement = DEBUG_NEW tinyxml2::XMLElement("Actor");
+	tinyxml2::XMLElement* pActorElement = outDoc.NewElement("Actor");
 	pActorElement->SetAttribute("type", m_ActorType.c_str());
 
 	for (auto& component : m_ActorComponents)
 	{
-		tinyxml2::XMLElement* pComponentElement = component.second->VGenerateXml();
+		tinyxml2::XMLElement* pComponentElement = component.second->VGenerateXml(&outDoc);
 		pActorElement->LinkEndChild(pComponentElement);
 	}
 
 	outDoc.LinkEndChild(pActorElement);
-	TiXmlPrinter printer;
+	tinyxml2::XMLPrinter printer;
 	outDoc.Accept(&printer);
 
 	return printer.CStr();

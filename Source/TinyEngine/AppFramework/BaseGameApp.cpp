@@ -21,15 +21,16 @@ bool BaseGameApp::InitEnvironment()
 	return true;
 }
 
-HWND BaseGameApp::SetupWindow(HINSTANCE hInstance, WNDPROC wndproc)
+HWND BaseGameApp::SetupWindow(HINSTANCE hInstance)
 {
 	m_hInstance = hInstance;
 
 	WNDCLASSEX wndClass;
+	ZeroMemory(&wndClass, sizeof(wndClass));
 
 	wndClass.cbSize = sizeof(WNDCLASSEX);
 	wndClass.style = CS_HREDRAW | CS_VREDRAW;
-	wndClass.lpfnWndProc = wndproc;
+	wndClass.lpfnWndProc = WndProc;
 	wndClass.cbClsExtra = 0;
 	wndClass.cbWndExtra = 0;
 	wndClass.hInstance = hInstance;
@@ -37,7 +38,7 @@ HWND BaseGameApp::SetupWindow(HINSTANCE hInstance, WNDPROC wndproc)
 	wndClass.hCursor = LoadCursor(NULL, IDC_ARROW);
 	wndClass.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
 	wndClass.lpszMenuName = NULL;
-	wndClass.lpszClassName = VGetWindowClass().c_str();
+	wndClass.lpszClassName = VGetWindowClass();
 	wndClass.hIconSm = LoadIcon(NULL, IDI_WINLOGO);
 
 	if (!RegisterClassEx(&wndClass))
@@ -57,7 +58,7 @@ HWND BaseGameApp::SetupWindow(HINSTANCE hInstance, WNDPROC wndproc)
 		dmScreenSettings.dmBitsPerPel = 32;
 		dmScreenSettings.dmFields = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
 
-		if ((m_ScreenWidth != screenWidth) && (m_ScreenHeight != screenHeight))
+		if ((m_Config.m_ScreenWidth != screenWidth) && (m_Config.m_ScreenHeight != screenHeight))
 		{
 			if (ChangeDisplaySettings(&dmScreenSettings, CDS_FULLSCREEN) != DISP_CHANGE_SUCCESSFUL)
 			{
@@ -92,13 +93,13 @@ HWND BaseGameApp::SetupWindow(HINSTANCE hInstance, WNDPROC wndproc)
 	RECT windowRect;
 	windowRect.left = 0L;
 	windowRect.top = 0L;
-	windowRect.right = m_Config.m_IsFullScreen ? (long)screenWidth : (long)m_ScreenWidth;
-	windowRect.bottom = m_Config.m_IsFullScreen ? (long)screenHeight : (long)m_ScreenHeight;
+	windowRect.right = m_Config.m_IsFullScreen ? (long)screenWidth : (long)m_Config.m_ScreenWidth;
+	windowRect.bottom = m_Config.m_IsFullScreen ? (long)screenHeight : (long)m_Config.m_ScreenHeight;
 
 	AdjustWindowRectEx(&windowRect, dwStyle, FALSE, dwExStyle);
 
 	m_hWindow = CreateWindowEx(0,
-		VGetWindowClass().c_str(), VGetWindowTitle().c_str(),
+		VGetWindowClass(), VGetWindowTitle(),
 		dwStyle | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
 		0, 0, windowRect.right - windowRect.left, windowRect.bottom - windowRect.top,
 		NULL, NULL, m_hInstance, NULL);
@@ -161,7 +162,20 @@ void BaseGameApp::RenderLoop()
 		}
 
 // 		render();
+		Sleep(20);
 		
 		m_GameTime.UpdateGameTime();
 	}
+}
+
+LRESULT CALLBACK BaseGameApp::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	switch (uMsg)
+	{
+	case WM_DESTROY:
+		PostQuitMessage(0);
+		return 0;
+	}
+
+	return (DefWindowProc(hWnd, uMsg, wParam, lParam));
 }

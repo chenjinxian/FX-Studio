@@ -1,4 +1,4 @@
-#include "TinyEngineApp.h"
+#include "BaseGameApp.h"
 #include <crtdbg.h>
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -26,7 +26,7 @@ INT WINAPI WindowBaseMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR l
 		if (g_pApp->InitEnvironment())
 		{
 			g_pApp->SetupWindow(hInstance, WndProc);
-			g_pApp->SetupWindow
+// 			g_pApp->SetupWindow
 		}
 	}
 

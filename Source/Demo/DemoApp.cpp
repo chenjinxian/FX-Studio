@@ -2,7 +2,7 @@
 
 DemoApp g_DemoApp;
 
-DemoApp::DemoApp() : TinyEngineApp()
+DemoApp::DemoApp() : BaseGameApp()
 {
 }
 

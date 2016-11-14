@@ -14,14 +14,16 @@
 
 #include <mmsystem.h>
 
-#include <algorithm>
 #include <string>
 #include <vector>
 #include <list>
 #include <stack>
 #include <queue>
 #include <map>
+#include <algorithm>
+#include <functional>
 #include <memory>
+
 using std::shared_ptr;
 using std::weak_ptr;
 using std::unique_ptr;

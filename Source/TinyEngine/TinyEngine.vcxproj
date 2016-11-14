@@ -117,6 +117,7 @@
       <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)..\ThirdParty\Effects11\inc;$(SolutionDir)..\ThirdParty\DirectXTK\inc;$(SolutionDir)..\ThirdParty\tinyxml;$(SolutionDir)..\ThirdParty\zlib;$(SolutionDir)..\ThirdParty\boost;$(SolutionDir)..\ThirdParty\assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>-D_SCL_SECURE_NO_WARNINGS %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -168,30 +169,80 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AppFramework\TinyEngineApp.h" />
-    <ClInclude Include="AppFramework\TinyEngineConfig.h" />
+    <ClInclude Include="Actors\Actor.h" />
+    <ClInclude Include="Actors\ActorComponent.h" />
+    <ClInclude Include="Actors\ActorFactory.h" />
+    <ClInclude Include="Actors\RenderComponent.h" />
+    <ClInclude Include="Actors\RenderComponentInterface.h" />
+    <ClInclude Include="Actors\TransformComponent.h" />
+    <ClInclude Include="AppFramework\BaseGameLogic.h" />
+    <ClInclude Include="AppFramework\GameTime.h" />
+    <ClInclude Include="AppFramework\BaseGameApp.h" />
+    <ClInclude Include="AppFramework\GameConfig.h" />
     <ClInclude Include="Debugging\Logger.h" />
     <ClInclude Include="Debugging\MemoryWatcher.h" />
     <ClInclude Include="Debugging\MiniDump.h" />
+    <ClInclude Include="EventManager\EventManager.h" />
+    <ClInclude Include="EventManager\EventManagerImpl.h" />
+    <ClInclude Include="EventManager\Events.h" />
+    <ClInclude Include="Graphics3D\BasicMaterial.h" />
+    <ClInclude Include="Graphics3D\CameraNode.h" />
     <ClInclude Include="Graphics3D\D3D11Renderer.h" />
+    <ClInclude Include="Graphics3D\LightNode.h" />
+    <ClInclude Include="Graphics3D\Material.h" />
+    <ClInclude Include="Graphics3D\ModelImporter.h" />
+    <ClInclude Include="Graphics3D\ModelMaterial.h" />
+    <ClInclude Include="Graphics3D\MovementController.h" />
+    <ClInclude Include="Graphics3D\Scene.h" />
+    <ClInclude Include="Graphics3D\SceneNode.h" />
+    <ClInclude Include="Graphics3D\Skybox.h" />
+    <ClInclude Include="Graphics3D\TextureMappingMaterial.h" />
+    <ClInclude Include="Graphics3D\TextureResourceLoader.h" />
+    <ClInclude Include="Graphics3D\VertexDeclarations.h" />
     <ClInclude Include="TinyEngine.h" />
     <ClInclude Include="TinyEngineBase.h" />
     <ClInclude Include="TinyEngineInterface.h" />
     <ClInclude Include="ResourceCache\ResCache.h" />
     <ClInclude Include="ResourceCache\XmlResource.h" />
     <ClInclude Include="ResourceCache\ZipFile.h" />
+    <ClInclude Include="UserInterface\HumanView.h" />
+    <ClInclude Include="UserInterface\UserInterface.h" />
+    <ClInclude Include="Utilities\ConcurrentQueue.h" />
+    <ClInclude Include="Utilities\Templates.h" />
     <ClInclude Include="Utilities\Utility.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Actors\Actor.cpp" />
+    <ClCompile Include="Actors\ActorFactory.cpp" />
+    <ClCompile Include="Actors\RenderComponent.cpp" />
+    <ClCompile Include="Actors\TransformComponent.cpp" />
+    <ClCompile Include="AppFramework\BaseGameLogic.cpp" />
+    <ClCompile Include="AppFramework\GameTime.cpp" />
     <ClCompile Include="AppFramework\TinyEngine.cpp" />
-    <ClCompile Include="AppFramework\TinyEngineApp.cpp" />
-    <ClCompile Include="AppFramework\TinyEngineConfig.cpp" />
+    <ClCompile Include="AppFramework\BaseGameApp.cpp" />
+    <ClCompile Include="AppFramework\GameConfig.cpp" />
     <ClCompile Include="Debugging\Logger.cpp" />
     <ClCompile Include="Debugging\MiniDump.cpp" />
+    <ClCompile Include="EventManager\EventManager.cpp" />
+    <ClCompile Include="EventManager\EventManagerImpl.cpp" />
+    <ClCompile Include="EventManager\Events.cpp" />
+    <ClCompile Include="Graphics3D\BasicMaterial.cpp" />
+    <ClCompile Include="Graphics3D\CameraNode.cpp" />
     <ClCompile Include="Graphics3D\D3D11Renderer.cpp" />
+    <ClCompile Include="Graphics3D\LightNode.cpp" />
+    <ClCompile Include="Graphics3D\Material.cpp" />
+    <ClCompile Include="Graphics3D\ModelImporter.cpp" />
+    <ClCompile Include="Graphics3D\ModelMaterial.cpp" />
+    <ClCompile Include="Graphics3D\MovementController.cpp" />
+    <ClCompile Include="Graphics3D\Scene.cpp" />
+    <ClCompile Include="Graphics3D\SceneNode.cpp" />
+    <ClCompile Include="Graphics3D\Skybox.cpp" />
+    <ClCompile Include="Graphics3D\TextureMappingMaterial.cpp" />
+    <ClCompile Include="Graphics3D\TextureResourceLoader.cpp" />
     <ClCompile Include="ResourceCache\ResCache.cpp" />
     <ClCompile Include="ResourceCache\XmlResource.cpp" />
     <ClCompile Include="ResourceCache\ZipFile.cpp" />
+    <ClCompile Include="UserInterface\HumanView.cpp" />
     <ClCompile Include="Utilities\Utility.cpp" />
   </ItemGroup>
   <ItemGroup>

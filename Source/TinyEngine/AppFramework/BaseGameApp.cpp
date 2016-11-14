@@ -1,27 +1,27 @@
-#include "TinyEngineApp.h"
-#include "TinyEngineConfig.h"
+#include "BaseGameApp.h"
+#include "GameConfig.h"
 #include "../Graphics3D/D3D11Renderer.h"
-#include <chrono>
+#include "../ResourceCache/ResCache.h"
 
-TinyEngineApp* g_pApp = nullptr;
+BaseGameApp* g_pApp = nullptr;
 
-TinyEngineApp::TinyEngineApp()
+BaseGameApp::BaseGameApp()
 	: m_pResCache(nullptr),
 	m_pRenderer(nullptr)
 {
 	g_pApp = this;
 }
 
-TinyEngineApp::~TinyEngineApp()
+BaseGameApp::~BaseGameApp()
 {
 }
 
-bool TinyEngineApp::InitEnvironment()
+bool BaseGameApp::InitEnvironment()
 {
 	return true;
 }
 
-HWND TinyEngineApp::SetupWindow(HINSTANCE hInstance, WNDPROC wndproc)
+HWND BaseGameApp::SetupWindow(HINSTANCE hInstance, WNDPROC wndproc)
 {
 	m_hInstance = hInstance;
 
@@ -122,11 +122,11 @@ HWND TinyEngineApp::SetupWindow(HINSTANCE hInstance, WNDPROC wndproc)
 	return m_hWindow;
 }
 
-void TinyEngineApp::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+void BaseGameApp::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 }
 
-bool TinyEngineApp::InitRenderer()
+bool BaseGameApp::InitRenderer()
 {
 	m_pRenderer = shared_ptr<IRenderer>(DEBUG_NEW D3D11Renderer());
 	if (m_pRenderer != nullptr)
@@ -140,19 +140,15 @@ bool TinyEngineApp::InitRenderer()
 	}
 }
 
-void TinyEngineApp::RenderLoop()
+void BaseGameApp::RenderLoop()
 {
-	auto tStart = std::chrono::high_resolution_clock::now();
-
 	MSG msg;
+	ZeroMemory(&msg, sizeof(msg));
+
+	m_GameTime.Reset();
+
 	while (TRUE)
 	{
-// 		if (viewUpdated)
-// 		{
-// 			viewUpdated = false;
-// 			viewChanged();
-// 		}
-
 		while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
 		{
 			TranslateMessage(&msg);
@@ -165,26 +161,7 @@ void TinyEngineApp::RenderLoop()
 		}
 
 // 		render();
-// 		frameCounter++;
-// 		auto tEnd = std::chrono::high_resolution_clock::now();
-// 		auto tDiff = std::chrono::duration<double, std::milli>(tEnd - tStart).count();
-// 		frameTimer = (float)tDiff / 1000.0f;
-// 		// Convert to clamped timer value
-// 		if (!paused)
-// 		{
-// 			timer += timerSpeed * frameTimer;
-// 			if (timer > 1.0)
-// 			{
-// 				timer -= 1.0f;
-// 			}
-// 		}
-// 		fpsTimer += (float)tDiff;
-// 		if (fpsTimer > 1000.0f)
-// 		{
-// 			lastFPS = roundf(1.0f / frameTimer);
-// 			updateTextOverlay();
-// 			fpsTimer = 0.0f;
-// 			frameCounter = 0;
-// 		}
+		
+		m_GameTime.UpdateGameTime();
 	}
 }

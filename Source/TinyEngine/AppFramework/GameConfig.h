@@ -1,11 +1,11 @@
 #pragma once
 #include "../TinyEngineBase.h"
 
-class TinyEngineConfig
+class GameConfig
 {
 public:
-	TinyEngineConfig();
-	~TinyEngineConfig();
+	GameConfig();
+	~GameConfig();
 
 	void InitConfig(const std::string& xmlFilePath, LPWSTR lpCmdLine);
 

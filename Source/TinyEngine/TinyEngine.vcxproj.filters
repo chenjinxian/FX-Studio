@@ -60,16 +60,100 @@
     <ClInclude Include="Graphics3D\D3D11Renderer.h">
       <Filter>Graphics3D</Filter>
     </ClInclude>
-    <ClInclude Include="AppFramework\TinyEngineApp.h">
-      <Filter>AppFramework</Filter>
-    </ClInclude>
-    <ClInclude Include="AppFramework\TinyEngineConfig.h">
-      <Filter>AppFramework</Filter>
-    </ClInclude>
     <ClInclude Include="Utilities\Utility.h">
       <Filter>Utilities</Filter>
     </ClInclude>
     <ClInclude Include="TinyEngine.h" />
+    <ClInclude Include="AppFramework\GameTime.h">
+      <Filter>AppFramework</Filter>
+    </ClInclude>
+    <ClInclude Include="AppFramework\BaseGameLogic.h">
+      <Filter>AppFramework</Filter>
+    </ClInclude>
+    <ClInclude Include="AppFramework\BaseGameApp.h">
+      <Filter>AppFramework</Filter>
+    </ClInclude>
+    <ClInclude Include="AppFramework\GameConfig.h">
+      <Filter>AppFramework</Filter>
+    </ClInclude>
+    <ClInclude Include="EventManager\EventManager.h">
+      <Filter>EventManager</Filter>
+    </ClInclude>
+    <ClInclude Include="EventManager\EventManagerImpl.h">
+      <Filter>EventManager</Filter>
+    </ClInclude>
+    <ClInclude Include="EventManager\Events.h">
+      <Filter>EventManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Utilities\ConcurrentQueue.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Utilities\Templates.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Actors\Actor.h">
+      <Filter>Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="Actors\ActorComponent.h">
+      <Filter>Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="Actors\ActorFactory.h">
+      <Filter>Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="Actors\RenderComponent.h">
+      <Filter>Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="Actors\RenderComponentInterface.h">
+      <Filter>Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="Actors\TransformComponent.h">
+      <Filter>Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics3D\SceneNode.h">
+      <Filter>Graphics3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics3D\ModelMaterial.h">
+      <Filter>Graphics3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics3D\MovementController.h">
+      <Filter>Graphics3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics3D\Scene.h">
+      <Filter>Graphics3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics3D\Skybox.h">
+      <Filter>Graphics3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics3D\TextureMappingMaterial.h">
+      <Filter>Graphics3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics3D\TextureResourceLoader.h">
+      <Filter>Graphics3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics3D\VertexDeclarations.h">
+      <Filter>Graphics3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics3D\BasicMaterial.h">
+      <Filter>Graphics3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics3D\CameraNode.h">
+      <Filter>Graphics3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics3D\LightNode.h">
+      <Filter>Graphics3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics3D\Material.h">
+      <Filter>Graphics3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics3D\ModelImporter.h">
+      <Filter>Graphics3D</Filter>
+    </ClInclude>
+    <ClInclude Include="UserInterface\HumanView.h">
+      <Filter>UserInterface</Filter>
+    </ClInclude>
+    <ClInclude Include="UserInterface\UserInterface.h">
+      <Filter>UserInterface</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Debugging\Logger.cpp">
@@ -93,14 +177,80 @@
     <ClCompile Include="AppFramework\TinyEngine.cpp">
       <Filter>AppFramework</Filter>
     </ClCompile>
-    <ClCompile Include="AppFramework\TinyEngineApp.cpp">
-      <Filter>AppFramework</Filter>
-    </ClCompile>
-    <ClCompile Include="AppFramework\TinyEngineConfig.cpp">
-      <Filter>AppFramework</Filter>
-    </ClCompile>
     <ClCompile Include="Utilities\Utility.cpp">
       <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="AppFramework\GameTime.cpp">
+      <Filter>AppFramework</Filter>
+    </ClCompile>
+    <ClCompile Include="AppFramework\BaseGameLogic.cpp">
+      <Filter>AppFramework</Filter>
+    </ClCompile>
+    <ClCompile Include="AppFramework\BaseGameApp.cpp">
+      <Filter>AppFramework</Filter>
+    </ClCompile>
+    <ClCompile Include="AppFramework\GameConfig.cpp">
+      <Filter>AppFramework</Filter>
+    </ClCompile>
+    <ClCompile Include="EventManager\EventManager.cpp">
+      <Filter>EventManager</Filter>
+    </ClCompile>
+    <ClCompile Include="EventManager\EventManagerImpl.cpp">
+      <Filter>EventManager</Filter>
+    </ClCompile>
+    <ClCompile Include="EventManager\Events.cpp">
+      <Filter>EventManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Actors\Actor.cpp">
+      <Filter>Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="Actors\ActorFactory.cpp">
+      <Filter>Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="Actors\RenderComponent.cpp">
+      <Filter>Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="Actors\TransformComponent.cpp">
+      <Filter>Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics3D\SceneNode.cpp">
+      <Filter>Graphics3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics3D\MovementController.cpp">
+      <Filter>Graphics3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics3D\Scene.cpp">
+      <Filter>Graphics3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics3D\Skybox.cpp">
+      <Filter>Graphics3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics3D\TextureMappingMaterial.cpp">
+      <Filter>Graphics3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics3D\TextureResourceLoader.cpp">
+      <Filter>Graphics3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics3D\BasicMaterial.cpp">
+      <Filter>Graphics3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics3D\CameraNode.cpp">
+      <Filter>Graphics3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics3D\LightNode.cpp">
+      <Filter>Graphics3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics3D\Material.cpp">
+      <Filter>Graphics3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics3D\ModelImporter.cpp">
+      <Filter>Graphics3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics3D\ModelMaterial.cpp">
+      <Filter>Graphics3D</Filter>
+    </ClCompile>
+    <ClCompile Include="UserInterface\HumanView.cpp">
+      <Filter>UserInterface</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

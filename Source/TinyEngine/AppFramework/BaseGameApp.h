@@ -1,15 +1,17 @@
 #pragma once
 #include "../TinyEngineBase.h"
 #include "../TinyEngineInterface.h"
+#include "GameConfig.h"
+#include "GameTime.h"
 
 class TinyEngineConfig;
 class ResCache;
 
-class TinyEngineApp : public boost::noncopyable
+class BaseGameApp : public boost::noncopyable
 {
 public:
-	TinyEngineApp();
-	virtual ~TinyEngineApp();
+	BaseGameApp();
+	virtual ~BaseGameApp();
 
 	bool InitEnvironment();
 	HWND SetupWindow(HINSTANCE hInstance, WNDPROC wndproc);
@@ -20,7 +22,7 @@ public:
 	int GetScreenWidth() const { return m_ScreenWidth; }
 	int GetScreenHeight() const { return m_ScreenHeight; }
 
-	TinyEngineConfig m_Config;
+	GameConfig m_Config;
 	unique_ptr<ResCache> m_pResCache;
 	shared_ptr<IRenderer> m_pRenderer;
 
@@ -34,6 +36,8 @@ private:
 	HWND m_hWindow;
 	uint32_t m_ScreenWidth;
 	uint32_t m_ScreenHeight;
+
+	GameTime m_GameTime;
 };
 
-extern TinyEngineApp* g_pApp;
+extern BaseGameApp* g_pApp;

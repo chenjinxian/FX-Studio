@@ -1,20 +1,6 @@
-#include "TinyEngineConfig.h"
+#include "GameConfig.h"
 
-std::string m_Project;
-
-std::string m_Renderer;
-uint32_t m_ScreenWidth;
-uint32_t m_ScreenHeight;
-bool m_IsFullScreen;
-bool m_IsVSync;
-uint32_t m_AntiAliasing;
-
-bool m_IsDevelopmentDirectories;
-
-unique_ptr<TiXmlDocument> m_pDocument;
-
-
-TinyEngineConfig::TinyEngineConfig()
+GameConfig::GameConfig()
 	: m_Project(),
 	m_Renderer("Direct3D 11"),
 	m_ScreenWidth(1024),
@@ -28,13 +14,13 @@ TinyEngineConfig::TinyEngineConfig()
 }
 
 
-TinyEngineConfig::~TinyEngineConfig()
+GameConfig::~GameConfig()
 {
 }
 
-void TinyEngineConfig::InitConfig(const std::string& xmlFileName, LPWSTR lpCmdLine)
+void GameConfig::InitConfig(const std::string& xmlFileName, LPWSTR lpCmdLine)
 {
-	m_pDocument = std::make_unique<TiXmlDocument>(new TiXmlDocument(xmlFileName.c_str()));
+	m_pDocument = unique_ptr<TiXmlDocument>(new TiXmlDocument(xmlFileName.c_str()));
 	if (m_pDocument != nullptr && m_pDocument->LoadFile())
 	{
 		TiXmlElement *pRoot = m_pDocument->RootElement();

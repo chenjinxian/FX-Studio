@@ -1,5 +1,5 @@
 #include "XmlResource.h"
-#include "../AppFramework/TinyEngineApp.h"
+#include "../AppFramework/BaseGameApp.h"
 
 void XmlResourceExtraData::ParseXml(char* pRawBuffer)
 {

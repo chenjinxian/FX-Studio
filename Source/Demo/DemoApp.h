@@ -1,7 +1,7 @@
 #pragma once
 #include "../TinyEngine/TinyEngine.h"
 
-class DemoApp : public TinyEngineApp
+class DemoApp : public BaseGameApp
 {
 public:
 	DemoApp();

@@ -15,7 +15,6 @@ public:
 
 	bool InitEnvironment();
 	HWND SetupWindow(HINSTANCE hInstance);
-	void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	bool InitRenderer();
 	void RenderLoop();
 

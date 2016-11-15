@@ -22,10 +22,10 @@ private:
 	ID3D11DeviceContext1* m_pDeviceContext;
 	IDXGISwapChain1* m_pSwapChain;
 
-	bool m_IsFullScreen;
-	bool m_MultiSamplingEnabled;
-	uint32_t m_FrameRate;
-	uint32_t m_MultiSamplingCount;
+// 	bool m_IsFullScreen;
+// 	bool m_MultiSamplingEnabled;
+// 	uint32_t m_FrameRate;
+// 	uint32_t m_MultiSamplingCount;
 	uint32_t m_MultiSamplingQualityLevels;
 
 	ID3D11Texture2D* m_pDepthStencilBuffer;

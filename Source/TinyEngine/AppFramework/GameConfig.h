@@ -16,7 +16,7 @@ public:
 	uint32_t m_ScreenHeight;
 	bool m_IsFullScreen;
 	bool m_IsVSync;
-	uint32_t m_AntiAliasing;
+	uint32_t m_AntiAliasingSample;
 
 	bool m_IsZipResource;
 

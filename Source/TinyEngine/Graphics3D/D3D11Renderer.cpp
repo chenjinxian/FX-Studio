@@ -1,4 +1,5 @@
 #include "D3D11Renderer.h"
+#include "../AppFramework/BaseGameApp.h"
 
 D3D11Renderer::D3D11Renderer()
 {
@@ -191,9 +192,18 @@ void D3D11Renderer::InitD3D11Device()
 	SAFE_RELEASE(direct3DDevice);
 	SAFE_RELEASE(direct3DDeviceContext);
 
-	m_pDevice->CheckMultisampleQualityLevels(DXGI_FORMAT_R8G8B8A8_UNORM, m_MultiSamplingCount, &m_MultiSamplingQualityLevels);
-	if (m_MultiSamplingQualityLevels == 0)
+	while (g_pApp->m_Config.m_AntiAliasingSample > 0)
 	{
-		DEBUG_WARNING("Unsupported multi-sampling quality");
+		if (SUCCEEDED(m_pDevice->CheckMultisampleQualityLevels(
+			DXGI_FORMAT_R8G8B8A8_UNORM, g_pApp->m_Config.m_AntiAliasingSample, &m_MultiSamplingQualityLevels)) &&
+			m_MultiSamplingQualityLevels > 0)
+		{
+			m_MultiSamplingQualityLevels--;
+			break;
+		}
+		else
+		{
+			g_pApp->m_Config.m_AntiAliasingSample /= 2;
+		}
 	}
 }

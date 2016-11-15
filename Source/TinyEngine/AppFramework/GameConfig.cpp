@@ -7,7 +7,7 @@ GameConfig::GameConfig()
 	m_ScreenHeight(720),
 	m_IsFullScreen(false),
 	m_IsVSync(false),
-	m_AntiAliasing(0),
+	m_AntiAliasingSample(0),
 	m_IsZipResource(false),
 	m_pDocument(nullptr)
 {
@@ -62,7 +62,7 @@ void GameConfig::InitConfig(const std::string& xmlFileName, LPWSTR lpCmdLine)
 
 			if (pNode->Attribute("anti-aliasing") != nullptr)
 			{
-				m_AntiAliasing = pNode->IntAttribute("anti-aliasing");
+				m_AntiAliasingSample = pNode->IntAttribute("anti-aliasing");
 			}
 		}
 

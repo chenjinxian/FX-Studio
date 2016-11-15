@@ -123,10 +123,6 @@ HWND BaseGameApp::SetupWindow(HINSTANCE hInstance)
 	return m_hWindow;
 }
 
-void BaseGameApp::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
-{
-}
-
 bool BaseGameApp::InitRenderer()
 {
 	m_pRenderer = shared_ptr<IRenderer>(DEBUG_NEW D3D11Renderer());

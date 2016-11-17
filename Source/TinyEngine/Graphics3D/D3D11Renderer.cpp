@@ -17,126 +17,106 @@ void D3D11Renderer::VSetBackgroundColor(const Color& color)
 
 bool D3D11Renderer::VInitRenderer()
 {
-// 	DXGI_SWAP_CHAIN_DESC1 swapChainDesc;
-// 	ZeroMemory(&swapChainDesc, sizeof(swapChainDesc));
-// 	swapChainDesc.Width = mScreenWidth;
-// 	swapChainDesc.Height = mScreenHeight;
-// 	swapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-// 
-// 	if (m_MultiSamplingEnabled)
-// 	{
-// 		swapChainDesc.SampleDesc.Count = m_MultiSamplingCount;
-// 		swapChainDesc.SampleDesc.Quality = m_MultiSamplingQualityLevels - 1;
-// 	}
-// 	else
-// 	{
-// 		swapChainDesc.SampleDesc.Count = 1;
-// 		swapChainDesc.SampleDesc.Quality = 0;
-// 	}
-// 
-// 	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-// 	swapChainDesc.BufferCount = 1;
-// 	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
-// 
-// 	IDXGIDevice* dxgiDevice = nullptr;
-// 	if (FAILED(hr = m_pDevice->QueryInterface(__uuidof(IDXGIDevice), reinterpret_cast<void**>(&dxgiDevice))))
-// 	{
-// 		DEBUG_ERROR("ID3D11Device::QueryInterface() failed", hr);
-// 	}
-// 
-// 	IDXGIAdapter *dxgiAdapter = nullptr;
-// 	if (FAILED(hr = dxgiDevice->GetParent(__uuidof(IDXGIAdapter), reinterpret_cast<void**>(&dxgiAdapter))))
-// 	{
-// 		ReleaseObject(dxgiDevice);
-// 		DEBUG_ERROR("IDXGIDevice::GetParent() failed retrieving adapter.", hr);
-// 	}
-// 
-// 	IDXGIFactory2* dxgiFactory = nullptr;
-// 	if (FAILED(hr = dxgiAdapter->GetParent(__uuidof(IDXGIFactory2), reinterpret_cast<void**>(&dxgiFactory))))
-// 	{
-// 		ReleaseObject(dxgiDevice);
-// 		ReleaseObject(dxgiAdapter);
-// 		DEBUG_ERROR("IDXGIAdapter::GetParent() failed retrieving factory.", hr);
-// 	}
-// 
-// 	DXGI_SWAP_CHAIN_FULLSCREEN_DESC fullScreenDesc;
-// 	ZeroMemory(&fullScreenDesc, sizeof(fullScreenDesc));
-// 	fullScreenDesc.RefreshRate.Numerator = mFrameRate;
-// 	fullScreenDesc.RefreshRate.Denominator = 1;
-// 	fullScreenDesc.Windowed = !mIsFullScreen;
-// 
-// 	if (FAILED(hr = dxgiFactory->CreateSwapChainForHwnd(dxgiDevice, mWindowHandle, &swapChainDesc, &fullScreenDesc, nullptr, &mSwapChain)))
-// 	{
-// 		ReleaseObject(dxgiDevice);
-// 		ReleaseObject(dxgiAdapter);
-// 		ReleaseObject(dxgiFactory);
-// 		DEBUG_ERROR("IDXGIDevice::CreateSwapChainForHwnd() failed.", hr);
-// 	}
-// 
-// 	ReleaseObject(dxgiDevice);
-// 	ReleaseObject(dxgiAdapter);
-// 	ReleaseObject(dxgiFactory);
-// 
-// 	ID3D11Texture2D* backBuffer;
-// 	if (FAILED(hr = mSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBuffer))))
-// 	{
-// 		DEBUG_ERROR("IDXGISwapChain::GetBuffer() failed.", hr);
-// 	}
-// 
-// 	backBuffer->GetDesc(&mBackBufferDesc);
-// 
-// 	if (FAILED(hr = m_pDevice->CreateRenderTargetView(backBuffer, nullptr, &mRenderTargetView)))
-// 	{
-// 		ReleaseObject(backBuffer);
-// 		DEBUG_ERROR("IDXGIDevice::CreateRenderTargetView() failed.", hr);
-// 	}
-// 
-// 	ReleaseObject(backBuffer);
-// 
-// 	if (mDepthStencilBufferEnabled)
-// 	{
-// 		D3D11_TEXTURE2D_DESC depthStencilDesc;
-// 		ZeroMemory(&depthStencilDesc, sizeof(depthStencilDesc));
-// 		depthStencilDesc.Width = mScreenWidth;
-// 		depthStencilDesc.Height = mScreenHeight;
-// 		depthStencilDesc.MipLevels = 1;
-// 		depthStencilDesc.ArraySize = 1;
-// 		depthStencilDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-// 		depthStencilDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-// 		depthStencilDesc.Usage = D3D11_USAGE_DEFAULT;
-// 
-// 		if (mMultiSamplingEnabled)
-// 		{
-// 			depthStencilDesc.SampleDesc.Count = mMultiSamplingCount;
-// 			depthStencilDesc.SampleDesc.Quality = mMultiSamplingQualityLevels - 1;
-// 		}
-// 		else
-// 		{
-// 			depthStencilDesc.SampleDesc.Count = 1;
-// 			depthStencilDesc.SampleDesc.Quality = 0;
-// 		}
-// 
-// 		if (FAILED(hr = m_pDevice->CreateTexture2D(&depthStencilDesc, nullptr, &mDepthStencilBuffer)))
-// 		{
-// 			DEBUG_ERROR("IDXGIDevice::CreateTexture2D() failed.", hr);
-// 		}
-// 
-// 		if (FAILED(hr = m_pDevice->CreateDepthStencilView(mDepthStencilBuffer, nullptr, &mDepthStencilView)))
-// 		{
-// 			DEBUG_ERROR("IDXGIDevice::CreateDepthStencilView() failed.", hr);
-// 		}
-// 	}
-// 
-// 	mDirect3DDeviceContext->OMSetRenderTargets(1, &mRenderTargetView, mDepthStencilView);
-// 
-// 	mViewport.TopLeftX = 0.0f;
-// 	mViewport.TopLeftY = 0.0f;
-// 	mViewport.Width = static_cast<float>(mScreenWidth);
-// 	mViewport.Height = static_cast<float>(mScreenHeight);
-// 	mViewport.MinDepth = 0.0f;
-// 	mViewport.MaxDepth = 1.0f;
-// 
-// 	mDirect3DDeviceContext->RSSetViewports(1, &mViewport);
+	HRESULT hr;
+
+	DXGI_SWAP_CHAIN_DESC1 swapChainDesc;
+	ZeroMemory(&swapChainDesc, sizeof(swapChainDesc));
+	swapChainDesc.Width = g_pApp->m_Config.m_ScreenWidth;
+	swapChainDesc.Height = g_pApp->m_Config.m_ScreenHeight;
+	swapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	swapChainDesc.SampleDesc.Count = g_pApp->m_Config.m_AntiAliasingSample;
+	swapChainDesc.SampleDesc.Quality = m_MultiSamplingQualityLevels;
+	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+	swapChainDesc.BufferCount = 1;
+	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
+
+	IDXGIDevice* dxgiDevice = nullptr;
+	if (FAILED(hr = m_pDevice->QueryInterface(__uuidof(IDXGIDevice), reinterpret_cast<void**>(&dxgiDevice))))
+	{
+		DEBUG_ERROR("ID3D11Device::QueryInterface() failed");
+	}
+
+	IDXGIAdapter *dxgiAdapter = nullptr;
+	if (FAILED(hr = dxgiDevice->GetParent(__uuidof(IDXGIAdapter), reinterpret_cast<void**>(&dxgiAdapter))))
+	{
+		SAFE_RELEASE(dxgiDevice);
+		DEBUG_ERROR("IDXGIDevice::GetParent() failed retrieving adapter.");
+	}
+
+	IDXGIFactory2* dxgiFactory = nullptr;
+	if (FAILED(hr = dxgiAdapter->GetParent(__uuidof(IDXGIFactory2), reinterpret_cast<void**>(&dxgiFactory))))
+	{
+		SAFE_RELEASE(dxgiDevice);
+		SAFE_RELEASE(dxgiAdapter);
+		DEBUG_ERROR("IDXGIAdapter::GetParent() failed retrieving factory.");
+	}
+
+	DXGI_SWAP_CHAIN_FULLSCREEN_DESC fullScreenDesc;
+	ZeroMemory(&fullScreenDesc, sizeof(fullScreenDesc));
+	fullScreenDesc.RefreshRate.Numerator = 60;
+	fullScreenDesc.RefreshRate.Denominator = 1;
+	fullScreenDesc.Windowed = !g_pApp->m_Config.m_IsFullScreen;
+
+	if (FAILED(hr = dxgiFactory->CreateSwapChainForHwnd(dxgiDevice, mWindowHandle, &swapChainDesc, &fullScreenDesc, nullptr, &m_pSwapChain)))
+	{
+		SAFE_RELEASE(dxgiDevice);
+		SAFE_RELEASE(dxgiAdapter);
+		SAFE_RELEASE(dxgiFactory);
+		DEBUG_ERROR("IDXGIDevice::CreateSwapChainForHwnd() failed.");
+	}
+
+	SAFE_RELEASE(dxgiDevice);
+	SAFE_RELEASE(dxgiAdapter);
+	SAFE_RELEASE(dxgiFactory);
+
+	ID3D11Texture2D* backBuffer;
+	if (FAILED(hr = m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBuffer))))
+	{
+		DEBUG_ERROR("IDXGISwapChain::GetBuffer() failed.");
+	}
+
+	backBuffer->GetDesc(&m_BackBufferDesc);
+
+	if (FAILED(hr = m_pDevice->CreateRenderTargetView(backBuffer, nullptr, &m_pRenderTargetView)))
+	{
+		SAFE_RELEASE(backBuffer);
+		DEBUG_ERROR("IDXGIDevice::CreateRenderTargetView() failed.");
+	}
+
+	SAFE_RELEASE(backBuffer);
+
+	D3D11_TEXTURE2D_DESC depthStencilDesc;
+	ZeroMemory(&depthStencilDesc, sizeof(depthStencilDesc));
+	depthStencilDesc.Width = g_pApp->m_Config.m_ScreenWidth;
+	depthStencilDesc.Height = g_pApp->m_Config.m_ScreenHeight;
+	depthStencilDesc.MipLevels = 1;
+	depthStencilDesc.ArraySize = 1;
+	depthStencilDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	depthStencilDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	depthStencilDesc.Usage = D3D11_USAGE_DEFAULT;
+	depthStencilDesc.SampleDesc.Count = g_pApp->m_Config.m_AntiAliasingSample;
+	depthStencilDesc.SampleDesc.Quality = m_MultiSamplingQualityLevels;
+
+	if (FAILED(hr = m_pDevice->CreateTexture2D(&depthStencilDesc, nullptr, &m_pDepthStencilBuffer)))
+	{
+		DEBUG_ERROR("IDXGIDevice::CreateTexture2D() failed.");
+	}
+
+	if (FAILED(hr = m_pDevice->CreateDepthStencilView(m_pDepthStencilBuffer, nullptr, &m_pDepthStencilView)))
+	{
+		DEBUG_ERROR("IDXGIDevice::CreateDepthStencilView() failed.");
+	}
+
+	m_pDeviceContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
+
+	m_Viewport.TopLeftX = 0.0f;
+	m_Viewport.TopLeftY = 0.0f;
+	m_Viewport.Width = static_cast<float>(g_pApp->m_Config.m_ScreenWidth);
+	m_Viewport.Height = static_cast<float>(g_pApp->m_Config.m_ScreenHeight                  );
+	m_Viewport.MinDepth = 0.0f;
+	m_Viewport.MaxDepth = 1.0f;
+
+	m_pDeviceContext->RSSetViewports(1, &m_Viewport);
 
 return true;
 }

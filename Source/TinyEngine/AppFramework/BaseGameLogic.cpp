@@ -5,7 +5,6 @@
 #include "../ResourceCache/XmlResource.h"
 #include "../EventManager/Events.h"
 // #include "../UserInterface/HumanView.h"
-#include "boost/lexical_cast.hpp"
 
 BaseGameLogic::BaseGameLogic()
 	: m_LastActorId(0),m_GameState(BGS_Initializing),

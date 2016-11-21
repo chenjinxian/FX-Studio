@@ -1,5 +1,33 @@
 #include "Utility.h"
 #include <Shlwapi.h>
+#include <shlobj.h>
+#include <direct.h>
+
+bool Utility::AnsiToWideCch(WCHAR* dest, const CHAR* src, int charCount)
+{
+	if (dest == nullptr || src == nullptr || charCount < 1)
+		return false;
+
+	int nResult = MultiByteToWideChar(CP_ACP, 0, src, -1, dest, charCount);
+	dest[charCount - 1] = 0;
+
+	if (nResult == 0)
+		return false;
+	return true;
+}
+
+bool Utility::WideToAnsiCch(CHAR* dest, const WCHAR* src, int charCount)
+{
+	if (dest == nullptr || src == nullptr || charCount < 1)
+		return;
+
+	int nResult = WideCharToMultiByte(CP_ACP, 0, src, -1, dest, charCount * sizeof(CHAR), nullptr, nullptr);
+	dest[charCount - 1] = 0;
+
+	if (nResult == 0)
+		return false;
+	return true;
+}
 
 std::string Utility::WS2S(const std::wstring& s)
 {
@@ -65,4 +93,109 @@ std::wstring Utility::GetExecutableDirectory()
 	PathRemoveFileSpec(buffer);
 
 	return std::wstring(buffer);
+}
+
+bool Utility::CheckStorage(DWORDLONG diskSpaceNeeded)
+{
+	int const drive = _getdrive();
+	struct _diskfree_t diskfree;
+
+	_getdiskfree(drive, &diskfree);
+
+	unsigned __int64 const neededClusters =
+		diskSpaceNeeded / (diskfree.sectors_per_cluster * diskfree.bytes_per_sector);
+
+	if (diskfree.avail_clusters < neededClusters)
+	{
+		DEBUG_ERROR("CheckStorage Failure: Not enough physical storage.");
+		return false;
+	}
+	return true;
+}
+
+DWORD Utility::ReadCPUSpeed()
+{
+	DWORD BufSize = sizeof(DWORD);
+	DWORD dwMHz = 0;
+	DWORD type = REG_DWORD;
+	HKEY hKey;
+
+	long lError = RegOpenKeyEx(HKEY_LOCAL_MACHINE,
+		L"HARDWARE\\DESCRIPTION\\System\\CentralProcessor\\0",
+		0, KEY_READ, &hKey);
+
+	if (lError == ERROR_SUCCESS)
+	{
+		RegQueryValueEx(hKey, L"~MHz", NULL, &type, (LPBYTE)&dwMHz, &BufSize);
+	}
+	return dwMHz;
+}
+
+bool Utility::CheckMemory(DWORDLONG physicalRAMNeeded, DWORDLONG virtualRAMNeeded)
+{
+	MEMORYSTATUSEX status;
+	GlobalMemoryStatusEx(&status);
+	if (status.ullTotalPhys < physicalRAMNeeded)
+	{
+		DEBUG_ERROR("CheckMemory Failure: Not enough physical memory.");
+		return false;
+	}
+
+	if (status.ullAvailVirtual < virtualRAMNeeded)
+	{
+		DEBUG_ERROR("CheckMemory Failure: Not enough virtual memory.");
+		return false;
+	}
+
+	char *buff = GCC_NEW char[(uint32_t)virtualRAMNeeded];
+	if (buff)
+		delete[] buff;
+	else
+	{
+		DEBUG_ERROR("CheckMemory Failure: Not enough contiguous available memory.");
+		return false;
+	}
+	return true;
+}
+
+bool Utility::IsOnlyInstance(LPCTSTR gameTitle)
+{
+	HANDLE handle = CreateMutex(NULL, TRUE, gameTitle);
+
+	if (GetLastError() != ERROR_SUCCESS)
+	{
+		HWND hWnd = FindWindow(gameTitle, NULL);
+		if (hWnd)
+		{
+			ShowWindow(hWnd, SW_SHOWNORMAL);
+			SetFocus(hWnd);
+			SetForegroundWindow(hWnd);
+			SetActiveWindow(hWnd);
+			return false;
+		}
+	}
+	return true;
+}
+
+const TCHAR * Utility::GetSaveGameDirectory(HWND hWnd, const TCHAR *gameAppDirectory)
+{
+	HRESULT hr;
+	static TCHAR saveGameDirectory[MAX_PATH];
+	TCHAR userDataPath[MAX_PATH];
+
+	hr = SHGetSpecialFolderPath(hWnd, userDataPath, CSIDL_APPDATA, true);
+
+	_tcscpy_s(saveGameDirectory, userDataPath);
+	_tcscat_s(saveGameDirectory, _T("\\"));
+	_tcscat_s(saveGameDirectory, gameAppDirectory);
+
+	if (0xffffffff == GetFileAttributes(saveGameDirectory))
+	{
+		if (SHCreateDirectoryEx(hWnd, saveGameDirectory, NULL) != ERROR_SUCCESS)
+			return false;
+	}
+
+	_tcscat_s(saveGameDirectory, _T("\\"));
+
+	return saveGameDirectory;
 }

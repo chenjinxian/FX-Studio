@@ -9,7 +9,7 @@ public:
 	virtual ~D3D11Renderer();
 
 	virtual void VSetBackgroundColor(const Color& color) override;
-	virtual bool VInitRenderer() override;
+	virtual bool VInitRenderer(HWND hWnd) override;
 	virtual bool VPreRender() override;
 	virtual bool VPostRender() override;
 	virtual void VShutdown() override;

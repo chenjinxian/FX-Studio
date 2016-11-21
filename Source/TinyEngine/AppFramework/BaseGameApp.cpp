@@ -2,12 +2,17 @@
 #include "GameConfig.h"
 #include "../Graphics3D/D3D11Renderer.h"
 #include "../ResourceCache/ResCache.h"
+#include "../ResourceCache/XmlResource.h"
+#include "../Graphics3D/TextureResourceLoader.h"
+#include "../EventManager/EventManagerImpl.h"
 
 BaseGameApp* g_pApp = nullptr;
+const int BaseGameApp::MEGABYTE = 1024 * 1024;
 
 BaseGameApp::BaseGameApp()
 	: m_pResCache(nullptr),
-	m_pRenderer(nullptr)
+	m_pRenderer(nullptr),
+	m_pGameLogic(nullptr)
 {
 	g_pApp = this;
 }
@@ -18,6 +23,81 @@ BaseGameApp::~BaseGameApp()
 
 bool BaseGameApp::InitEnvironment()
 {
+#ifndef _DEBUG
+	if (!Utility::IsOnlyInstance(VGetWindowTitle()))
+		return false;
+#endif
+
+	SetCursor(NULL);
+
+	bool resourceCheck = false;
+	while (!resourceCheck)
+	{
+		const DWORDLONG physicalRAM = 512 * MEGABYTE;
+		const DWORDLONG virtualRAM = 1024 * MEGABYTE;
+		const DWORDLONG diskSpace = 10 * MEGABYTE;
+		if (!Utility::CheckStorage(diskSpace))
+			return false;
+
+		const DWORD minCpuSpeed = 1300;
+		DWORD thisCPU = Utility::ReadCPUSpeed();
+		if (thisCPU < minCpuSpeed)
+		{
+			DEBUG_ERROR("GetCPUSpeed reports CPU is too slow for this game.");
+			return false;
+		}
+
+		resourceCheck = true;
+	}
+
+	RegisterEngineEvents();
+	VRegisterGameEvents();
+
+	IResourceFile *zipFile = (m_IsEditorRunning || !m_Config.m_IsZipResource) ?
+		DEBUG_NEW DevelopmentResourceZipFile(L"Assets.zip", DevelopmentResourceZipFile::Editor) :
+		DEBUG_NEW ResourceZipFile(L"Assets.zip");
+
+	m_pResCache = unique_ptr<ResCache>(DEBUG_NEW ResCache(50, zipFile));
+
+	if (!m_pResCache->Init())
+	{
+		DEBUG_ERROR("Failed to initialize resource cache!  Are your paths set up correctly?");
+		return false;
+	}
+
+	m_pResCache->RegisterLoader(CreateDdsResourceLoader());
+	m_pResCache->RegisterLoader(CreateJpgResourceLoader());
+	m_pResCache->RegisterLoader(CreatePngResourceLoader());
+	m_pResCache->RegisterLoader(CreateBmpResourceLoader());
+	m_pResCache->RegisterLoader(CreateTiffResourceLoader());
+	m_pResCache->RegisterLoader(CreateXmlResourceLoader());
+
+	if (!LoadStrings("English"))
+	{
+		DEBUG_ERROR("Failed to load strings");
+		return false;
+	}
+
+	m_pEventManager = DEBUG_NEW EventManager("TinyEngine Event Manager", true);
+	if (!m_pEventManager)
+	{
+		DEBUG_ERROR("Failed to create EventManager.");
+		return false;
+	}
+
+	m_pGameLogic = VCreateGameAndView();
+	if (m_pGameLogic == nullptr)
+		return false;
+
+
+// 	_tcscpy_s(m_saveGameDirectory, GetSaveGameDirectory(GetHwnd(), VGetGameAppDirectory()));
+
+	m_pResCache->Preload("*.dds", NULL);
+	m_pResCache->Preload("*.jpg", NULL);
+	m_pResCache->Preload("*.png", NULL);
+	m_pResCache->Preload("*.bmp", NULL);
+	m_pResCache->Preload("*.tiff", NULL);
+
 	return true;
 }
 
@@ -125,10 +205,22 @@ HWND BaseGameApp::SetupWindow(HINSTANCE hInstance)
 
 bool BaseGameApp::InitRenderer()
 {
+	if (GetRendererAPI() == Renderer_D3D11)
+	{
+		m_pRenderer = shared_ptr<IRenderer>(DEBUG_NEW D3D11Renderer());
+	}
+	else if (GetRendererAPI() == Renderer_Vulkan)
+	{
+// 		m_pRenderer = shared_ptr<IRenderer>(DEBUG_NEW VulkanRenderer());
+	}
+	m_pRenderer->VSetBackgroundColor(Color(0.392156899f, 0.584313750f, 0.929411829f, 1.000000000f));
+
+// 	m_IsRunning = true;
+
 	m_pRenderer = shared_ptr<IRenderer>(DEBUG_NEW D3D11Renderer());
 	if (m_pRenderer != nullptr)
 	{
-		return m_pRenderer->VInitRenderer();
+		return m_pRenderer->VInitRenderer(m_hWindow);
 	}
 	else
 	{
@@ -174,4 +266,83 @@ LRESULT CALLBACK BaseGameApp::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARA
 	}
 
 	return (DefWindowProc(hWnd, uMsg, wParam, lParam));
+}
+
+void BaseGameApp::RegisterEngineEvents(void)
+{
+
+}
+
+bool BaseGameApp::LoadStrings(std::string language)
+{
+	std::string languageFile = "Strings\\";
+	languageFile += language;
+	languageFile += ".xml";
+
+	tinyxml2::XMLElement* pRoot = XmlResourceLoader::LoadAndReturnRootXmlElement(languageFile.c_str());
+	if (!pRoot)
+	{
+		DEBUG_ERROR("Strings are missing.");
+		return false;
+	}
+
+	for (tinyxml2::XMLElement* pElem = pRoot->FirstChildElement(); pElem; pElem = pElem->NextSiblingElement())
+	{
+		const char *pKey = pElem->Attribute("id");
+		const char *pText = pElem->Attribute("value");
+		const char *pHotkey = pElem->Attribute("hotkey");
+		if (pKey && pText)
+		{
+			wchar_t wideKey[64];
+			wchar_t wideText[1024];
+			Utility::AnsiToWideCch(wideKey, pKey, 64);
+			Utility::AnsiToWideCch(wideText, pText, 1024);
+			m_TextResource[std::wstring(wideKey)] = std::wstring(wideText);
+
+			if (pHotkey)
+			{
+				m_Hotkeys[std::wstring(wideKey)] = MapCharToKeycode(*pHotkey);
+			}
+		}
+	}
+	return true;
+}
+
+std::wstring BaseGameApp::GetString(std::wstring sID)
+{
+	auto localizedString = m_TextResource.find(sID);
+	if (localizedString == m_TextResource.end())
+	{
+		DEBUG_ASSERT(0 && "String not found!");
+		return L"";
+	}
+	return localizedString->second;
+}
+
+UINT BaseGameApp::MapCharToKeycode(const char hotKey)
+{
+	if (hotKey >= '0' && hotKey <= '9')
+		return 0x30 + hotKey - '0';
+
+	if (hotKey >= 'A' && hotKey <= 'Z')
+		return 0x41 + hotKey - 'A';
+
+	DEBUG_ASSERT(0 && "Platform specific hotkey is not defined");
+	return 0;
+}
+
+BaseGameApp::Renderer BaseGameApp::GetRendererAPI()
+{
+	if (m_Config.m_Renderer == "Direct3D 11")
+	{
+		return Renderer_D3D11;
+	}
+	else if (m_Config.m_Renderer == "Vulkan")
+	{
+		return Renderer_Vulkan;
+	}
+	else
+	{
+		return Renderer_Unknown;
+	}
 }

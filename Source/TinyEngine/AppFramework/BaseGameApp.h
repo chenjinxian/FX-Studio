@@ -4,6 +4,8 @@
 #include "GameConfig.h"
 #include "GameTime.h"
 
+class BaseGameLogic;
+class EventManager;
 class TinyEngineConfig;
 class ResCache;
 
@@ -18,6 +20,14 @@ public:
 	bool InitRenderer();
 	void RenderLoop();
 
+	enum Renderer
+	{
+		Renderer_Unknown,
+		Renderer_D3D11,
+		Renderer_Vulkan
+	};
+	Renderer GetRendererAPI();
+
 	int GetScreenWidth() const { return m_Config.m_ScreenWidth; }
 	int GetScreenHeight() const { return m_Config.m_ScreenHeight; }
 
@@ -29,14 +39,30 @@ protected:
 	virtual const wchar_t* VGetWindowTitle() = 0;
 	virtual const wchar_t* VGetWindowClass() = 0;
 	virtual HICON VGetIcon() = 0;
+	virtual void VRegisterGameEvents(void) {}
+	virtual BaseGameLogic* VCreateGameAndView() = 0;
+	virtual bool VLoadGame(void);
+
+	BaseGameLogic* m_pGameLogic;
 
 private:
 	static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	void RegisterEngineEvents(void);
+	bool LoadStrings(std::string language);
+	std::wstring GetString(std::wstring sID);
+	UINT MapCharToKeycode(const char hotKey);
+
+	static const int MEGABYTE;
 
 	HINSTANCE m_hInstance;
 	HWND m_hWindow;
 
 	GameTime m_GameTime;
+	EventManager* m_pEventManager;
+
+	bool m_IsEditorRunning;
+	std::map<std::wstring, std::wstring> m_TextResource;
+	std::map<std::wstring, UINT> m_Hotkeys;
 };
 
 extern BaseGameApp* g_pApp;

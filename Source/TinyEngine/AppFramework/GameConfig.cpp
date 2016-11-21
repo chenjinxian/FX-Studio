@@ -20,7 +20,7 @@ GameConfig::~GameConfig()
 
 void GameConfig::InitConfig(const std::string& xmlFileName, LPWSTR lpCmdLine)
 {
-	m_pDocument = unique_ptr<tinyxml2::XMLDocument>(new tinyxml2::XMLDocument());
+	m_pDocument = unique_ptr<tinyxml2::XMLDocument>(DEBUG_NEW tinyxml2::XMLDocument());
 	if (m_pDocument != nullptr && (m_pDocument->LoadFile(xmlFileName.c_str()) == tinyxml2::XML_SUCCESS))
 	{
 		tinyxml2::XMLElement *pRoot = m_pDocument->RootElement();

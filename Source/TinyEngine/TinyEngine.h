@@ -2,3 +2,4 @@
 #include "TinyEngineBase.h"
 #include "TinyEngineInterface.h"
 #include "AppFramework/BaseGameApp.h"
+#include "AppFramework/BaseGameLogic.h"

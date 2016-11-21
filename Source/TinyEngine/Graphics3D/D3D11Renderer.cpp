@@ -15,7 +15,7 @@ void D3D11Renderer::VSetBackgroundColor(const Color& color)
 
 }
 
-bool D3D11Renderer::VInitRenderer()
+bool D3D11Renderer::VInitRenderer(HWND hWnd)
 {
 	HRESULT hr;
 
@@ -57,7 +57,7 @@ bool D3D11Renderer::VInitRenderer()
 	fullScreenDesc.RefreshRate.Denominator = 1;
 	fullScreenDesc.Windowed = !g_pApp->m_Config.m_IsFullScreen;
 
-	if (FAILED(hr = dxgiFactory->CreateSwapChainForHwnd(dxgiDevice, mWindowHandle, &swapChainDesc, &fullScreenDesc, nullptr, &m_pSwapChain)))
+	if (FAILED(hr = dxgiFactory->CreateSwapChainForHwnd(dxgiDevice, hWnd, &swapChainDesc, &fullScreenDesc, nullptr, &m_pSwapChain)))
 	{
 		SAFE_RELEASE(dxgiDevice);
 		SAFE_RELEASE(dxgiAdapter);
@@ -112,13 +112,13 @@ bool D3D11Renderer::VInitRenderer()
 	m_Viewport.TopLeftX = 0.0f;
 	m_Viewport.TopLeftY = 0.0f;
 	m_Viewport.Width = static_cast<float>(g_pApp->m_Config.m_ScreenWidth);
-	m_Viewport.Height = static_cast<float>(g_pApp->m_Config.m_ScreenHeight                  );
+	m_Viewport.Height = static_cast<float>(g_pApp->m_Config.m_ScreenHeight);
 	m_Viewport.MinDepth = 0.0f;
 	m_Viewport.MaxDepth = 1.0f;
 
 	m_pDeviceContext->RSSetViewports(1, &m_Viewport);
 
-return true;
+	return true;
 }
 
 bool D3D11Renderer::VPreRender()

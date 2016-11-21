@@ -107,6 +107,7 @@
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)..\ThirdParty\Effects11\inc;$(SolutionDir)..\ThirdParty\DirectXTK\inc;$(SolutionDir)..\ThirdParty\tinyxml2;$(SolutionDir)..\ThirdParty\zlib;$(SolutionDir)..\ThirdParty\boost;$(SolutionDir)..\ThirdParty\assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>-D_SCL_SECURE_NO_WARNINGS %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

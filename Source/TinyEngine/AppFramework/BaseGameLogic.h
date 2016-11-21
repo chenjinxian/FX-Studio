@@ -77,12 +77,9 @@ protected:
 	GameViewList m_GameViews;
 	ActorFactory* m_pActorFactory;
 
-	int m_ExpectedPlayers;
-	int m_ExpectedRemotePlayers;
-	int m_ExpectedAI;
 	int m_HumanPlayersAttached;
-	int m_AIPlayersAttached;
 	int m_HumanGamesLoaded;
+	int m_AIPlayersAttached;
 
 	bool m_IsProxy;
 	int m_RemotePlayerId;

@@ -1,5 +1,6 @@
 #include "BaseGameApp.h"
 #include "GameConfig.h"
+#include "BaseGameLogic.h"
 #include "../Graphics3D/D3D11Renderer.h"
 #include "../ResourceCache/ResCache.h"
 #include "../ResourceCache/XmlResource.h"
@@ -345,4 +346,14 @@ BaseGameApp::Renderer BaseGameApp::GetRendererAPI()
 	{
 		return Renderer_Unknown;
 	}
+}
+
+bool BaseGameApp::AttachAsClient()
+{
+	return true;
+}
+
+bool BaseGameApp::VLoadGame(void)
+{
+	return m_pGameLogic->VLoadGame(m_Config.m_Project);
 }

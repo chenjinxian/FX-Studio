@@ -31,6 +31,10 @@ public:
 	int GetScreenWidth() const { return m_Config.m_ScreenWidth; }
 	int GetScreenHeight() const { return m_Config.m_ScreenHeight; }
 
+	virtual bool VLoadGame(void);
+	void AbortGame() { m_IsQuitting = true; }
+	bool AttachAsClient();
+
 	GameConfig m_Config;
 	unique_ptr<ResCache> m_pResCache;
 	shared_ptr<IRenderer> m_pRenderer;
@@ -41,7 +45,6 @@ protected:
 	virtual HICON VGetIcon() = 0;
 	virtual void VRegisterGameEvents(void) {}
 	virtual BaseGameLogic* VCreateGameAndView() = 0;
-	virtual bool VLoadGame(void);
 
 	BaseGameLogic* m_pGameLogic;
 
@@ -60,6 +63,7 @@ private:
 	GameTime m_GameTime;
 	EventManager* m_pEventManager;
 
+	bool m_IsQuitting;
 	bool m_IsEditorRunning;
 	std::map<std::wstring, std::wstring> m_TextResource;
 	std::map<std::wstring, UINT> m_Hotkeys;

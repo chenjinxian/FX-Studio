@@ -4,14 +4,22 @@
 #include "../Actors/Actor.h"
 #include "../ResourceCache/XmlResource.h"
 #include "../EventManager/Events.h"
-// #include "../UserInterface/HumanView.h"
+#include "../UserInterface/HumanView.h"
+#include "boost/lexical_cast.hpp"
 
 BaseGameLogic::BaseGameLogic()
-	: m_LastActorId(0),m_GameState(BGS_Initializing),
-	m_IsProxy(false), m_IsRenderDiagnostics(false),
-	m_ExpectedPlayers(0), m_ExpectedRemotePlayers(0), m_ExpectedAI(0),
-	m_HumanPlayersAttached(0), m_HumanGamesLoaded(0), m_AIPlayersAttached(0),
-	m_pActorFactory(nullptr)
+	: m_Actors(),
+	m_LastActorId(0),
+	m_GameState(BGS_Initializing),
+	m_GameViews(),
+	m_pActorFactory(nullptr),
+	m_HumanPlayersAttached(0),
+	m_HumanGamesLoaded(0),
+	m_AIPlayersAttached(0),
+	m_IsProxy(false),
+	m_RemotePlayerId(0),
+	m_IsRenderDiagnostics(false),
+	m_pPhysics(nullptr)
 {
 // 	RegisterEngineScriptEvents();
 // 	IEventManager::Get()->VAddListener(
@@ -95,8 +103,8 @@ bool BaseGameLogic::VLoadGame(const std::string& projectXml)
 	{
 		if (gameView->VGetType() == GameView_Human)
 		{
-// 			shared_ptr<HumanView> pHumanView = static_pointer_cast<HumanView, IGameView>(gameView);
-// 			pHumanView->LoadGame(pRoot);
+			shared_ptr<HumanView> pHumanView = static_pointer_cast<HumanView, IGameView>(gameView);
+			pHumanView->LoadGame(pRoot);
 		}
 	}
 
@@ -233,10 +241,7 @@ void BaseGameLogic::VOnUpdate(double fTime, float fElapsedTime)
 		break;
 
 	case BGS_WaitingForPlayersToLoadEnvironment:
-		if (m_ExpectedPlayers + m_ExpectedRemotePlayers <= m_HumanGamesLoaded)
-		{
-			VChangeState(BGS_SpawningPlayersActors);
-		}
+		VChangeState(BGS_SpawningPlayersActors);
 		break;
 
 	case BGS_SpawningPlayersActors:
@@ -244,12 +249,9 @@ void BaseGameLogic::VOnUpdate(double fTime, float fElapsedTime)
 		break;
 
 	case BGS_WaitingForPlayers:
-		if (m_ExpectedPlayers + m_ExpectedRemotePlayers == m_HumanPlayersAttached)
+		if (!g_pApp->m_Config.m_Project.empty())
 		{
-// 			if (!g_pApp->m_Options.m_Level.empty())
-// 			{
-// 				VChangeState(BGS_LoadingGameEnvironment);
-// 			}
+			VChangeState(BGS_LoadingGameEnvironment);
 		}
 		break;
 
@@ -285,48 +287,27 @@ void BaseGameLogic::VChangeState(BaseGameState gameState)
 	{
 		m_GameViews.pop_front();
 
-// 		m_ExpectedPlayers = 1;
-// 		m_ExpectedRemotePlayers = g_pApp->m_Options.m_ExpectedPlayers - 1;
-// 		m_ExpectedAI = g_pApp->m_Options.m_NumAIs;
-// 
-// 		if (!g_pApp->m_Options.m_GameHost.empty())
-// 		{
-// 			VSetProxy();
-// 			m_ExpectedAI = 0;
-// 			m_ExpectedRemotePlayers = 0;
-// 
-// 			if (!g_pApp->AttachAsClient())
-// 			{
-// 				VChangeState(BGS_MainMenu);
-// 				return;
-// 			}
-// 		}
-// 		else if (m_ExpectedRemotePlayers > 0)
-// 		{
-// 			BaseSocketManager *pServer = DEBUG_NEW BaseSocketManager();
-// 			if (!pServer->Init())
-// 			{
-// 				VChangeState(BGS_MainMenu);
-// 				return;
-// 			}
-// 
-// 			pServer->AddSocket(new GameServerListenSocket(g_pApp->m_Options.m_listenPort));
-// 			g_pApp->m_pBaseSocketManager = pServer;
-// 		}
+		VSetProxy();
+
+		if (!g_pApp->AttachAsClient())
+		{
+			VChangeState(BGS_MainMenu);
+			return;
+		}
 	}
 	else if (gameState == BGS_LoadingGameEnvironment)
 	{
 		m_GameState = gameState;
-// 		if (!g_pApp->VLoadGame())
-// 		{
-// 			DEBUG_ERROR("The game failed to load.");
-// 			g_pApp->AbortGame();
-// 		}
-// 		else
-// 		{
-// 			VChangeState(BGS_WaitingForPlayersToLoadEnvironment);
-// 			return;
-// 		}
+		if (!g_pApp->VLoadGame())
+		{
+			DEBUG_ERROR("The game failed to load.");
+			g_pApp->AbortGame();
+		}
+		else
+		{
+			VChangeState(BGS_WaitingForPlayersToLoadEnvironment);
+			return;
+		}
 	}
 
 	m_GameState = gameState;

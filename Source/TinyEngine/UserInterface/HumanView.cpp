@@ -58,7 +58,7 @@ bool HumanView::LoadGame(tinyxml2::XMLElement* pLevelData)
 
 void HumanView::VOnRender(double fTime, float fElapsedTime)
 {
-	m_currTick = timeGetTime();
+	m_currTick = GetTickCount();
 	if (m_currTick == m_lastDraw)
 		return;
 

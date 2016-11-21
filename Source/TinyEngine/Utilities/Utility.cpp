@@ -19,7 +19,7 @@ bool Utility::AnsiToWideCch(WCHAR* dest, const CHAR* src, int charCount)
 bool Utility::WideToAnsiCch(CHAR* dest, const WCHAR* src, int charCount)
 {
 	if (dest == nullptr || src == nullptr || charCount < 1)
-		return;
+		return false;
 
 	int nResult = WideCharToMultiByte(CP_ACP, 0, src, -1, dest, charCount * sizeof(CHAR), nullptr, nullptr);
 	dest[charCount - 1] = 0;
@@ -147,7 +147,7 @@ bool Utility::CheckMemory(DWORDLONG physicalRAMNeeded, DWORDLONG virtualRAMNeede
 		return false;
 	}
 
-	char *buff = GCC_NEW char[(uint32_t)virtualRAMNeeded];
+	char *buff = DEBUG_NEW char[(uint32_t)virtualRAMNeeded];
 	if (buff)
 		delete[] buff;
 	else

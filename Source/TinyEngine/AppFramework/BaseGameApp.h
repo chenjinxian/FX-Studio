@@ -50,6 +50,10 @@ protected:
 
 private:
 	static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	void OnUpdate(const GameTime& gameTime);
+	void OnRender(const GameTime& gameTime);
+
+	bool HasModalDialog() { return m_HasModalDialog != 0; }
 	void RegisterEngineEvents(void);
 	bool LoadStrings(std::string language);
 	std::wstring GetString(std::wstring sID);
@@ -63,6 +67,7 @@ private:
 	GameTime m_GameTime;
 	EventManager* m_pEventManager;
 
+	int m_HasModalDialog;
 	bool m_IsQuitting;
 	bool m_IsEditorRunning;
 	std::map<std::wstring, std::wstring> m_TextResource;

@@ -56,13 +56,13 @@ public:
 	virtual const SceneNodeProperties* VGet() const override { return &m_Properties; }
 	virtual void VSetTransform(const Matrix& worldMatrix);
 
-	virtual HRESULT VOnUpdate(Scene* pScene, double fTime, float fElapsedTime) override;
+	virtual HRESULT VOnUpdate(Scene* pScene, const GameTime& gameTime) override;
 	virtual HRESULT VOnRestore(Scene* pScene) override;
 	virtual HRESULT VOnDestoryDevice(Scene *pScene) override;
 
 	virtual HRESULT VPreRender(Scene* pScene) override;
-	virtual HRESULT VRender(Scene* pScene, double fTime, float fElapsedTime) override;
-	virtual HRESULT VRenderChildren(Scene* pScene, double fTime, float fElapsedTime) override;
+	virtual HRESULT VRender(Scene* pScene, const GameTime& gameTime) override;
+	virtual HRESULT VRenderChildren(Scene* pScene, const GameTime& gameTime) override;
 	virtual HRESULT VPostRender(Scene* pScene) override;
 	virtual bool VIsVisible(Scene* pScene) const override;
 
@@ -84,7 +84,7 @@ public:
 	RootNode();
 	~RootNode();
 
-	virtual HRESULT VRenderChildren(Scene* pScene, double fTime, float fElapsedTime);
+	virtual HRESULT VRenderChildren(Scene* pScene, const GameTime& gameTime);
 	virtual bool VAddChild(shared_ptr<ISceneNode> child);
 	virtual bool VRemoveChild(ActorId actorId);
 	virtual bool VIsVisible(Scene* pScene) const { return true; }
@@ -97,8 +97,8 @@ public:
 	virtual ~GridNode();
 
 	virtual HRESULT VOnRestore(Scene* pScene);
-	virtual HRESULT VRender(Scene* pScene, double fTime, float fElapsedTime);
-	virtual HRESULT VOnUpdate(Scene* pScene, double fTime, float fElapsedTime);
+	virtual HRESULT VRender(Scene* pScene, const GameTime& gameTime);
+	virtual HRESULT VOnUpdate(Scene* pScene, const GameTime& gameTime);
 	virtual HRESULT VOnDestoryDevice(Scene *pScene);
 
 private:
@@ -128,8 +128,8 @@ public:
 
 	virtual HRESULT VOnRestore(Scene *pScene);
 	virtual HRESULT VOnDestoryDevice(Scene* pScene) override;
-	virtual HRESULT VOnUpdate(Scene* pScene, double fTime, float fElapsedTime) override;
-	virtual HRESULT VRender(Scene* pScene, double fTime, float fElapsedTime) override;
+	virtual HRESULT VOnUpdate(Scene* pScene, const GameTime& gameTime) override;
+	virtual HRESULT VRender(Scene* pScene, const GameTime& gameTime) override;
 
 private:
 	Effect* m_pEffect;

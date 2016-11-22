@@ -61,11 +61,11 @@ HRESULT SceneNode::VOnDestoryDevice(Scene *pScene)
 	return S_OK;
 }
 
-HRESULT SceneNode::VOnUpdate(Scene* pScene, double fTime, float fElapsedTime)
+HRESULT SceneNode::VOnUpdate(Scene* pScene, const GameTime& gameTime)
 {
 	for (auto& child : m_Children)
 	{
-		child->VOnUpdate(pScene, fTime, fElapsedTime);
+		child->VOnUpdate(pScene, gameTime);
 	}
 	return S_OK;
 }
@@ -87,12 +87,12 @@ HRESULT SceneNode::VPreRender(Scene* pScene)
 	return S_OK;
 }
 
-HRESULT SceneNode::VRender(Scene* pScene, double fTime, float fElapsedTime)
+HRESULT SceneNode::VRender(Scene* pScene, const GameTime& gameTime)
 {
 	return S_OK;
 }
 
-HRESULT SceneNode::VRenderChildren(Scene* pScene, double fTime, float fElapsedTime)
+HRESULT SceneNode::VRenderChildren(Scene* pScene, const GameTime& gameTime)
 {
 	for (auto& child : m_Children)
 	{
@@ -100,8 +100,8 @@ HRESULT SceneNode::VRenderChildren(Scene* pScene, double fTime, float fElapsedTi
 		{
 			if (child->VIsVisible(pScene))
 			{
-				child->VRender(pScene, fTime, fElapsedTime);
-				child->VRenderChildren(pScene, fTime, fElapsedTime);
+				child->VRender(pScene, gameTime);
+				child->VRenderChildren(pScene, gameTime);
 			}
 		}
 		child->VPostRender(pScene);
@@ -166,7 +166,7 @@ RootNode::~RootNode()
 
 }
 
-HRESULT RootNode::VRenderChildren(Scene* pScene, double fTime, float fElapsedTime)
+HRESULT RootNode::VRenderChildren(Scene* pScene, const GameTime& gameTime)
 {
 	for (int pass = RenderPass_0; pass < RenderPass_Last; ++pass)
 	{
@@ -174,13 +174,13 @@ HRESULT RootNode::VRenderChildren(Scene* pScene, double fTime, float fElapsedTim
 		{
 		case RenderPass_Static:
 		case RenderPass_Actor:
-			m_Children[pass]->VRenderChildren(pScene, fTime, fElapsedTime);
+			m_Children[pass]->VRenderChildren(pScene, gameTime);
 			break;
 
 		case RenderPass_Sky:
 		{
 // 			shared_ptr<IRenderState> skyPass = pScene->GetRenderder()->
-			m_Children[pass]->VRenderChildren(pScene, fTime, fElapsedTime);
+			m_Children[pass]->VRenderChildren(pScene, gameTime);
 			break;
 		}
 		}
@@ -335,7 +335,7 @@ HRESULT GridNode::VOnRestore(Scene* pScene)
 	return S_OK;
 }
 
-HRESULT GridNode::VRender(Scene* pScene, double fTime, float fElapsedTime)
+HRESULT GridNode::VRender(Scene* pScene, const GameTime& gameTime)
 {
 // 	auto pd3dImmediateContext = DXUTGetD3D11DeviceContext();
 // 	pd3dImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
@@ -355,7 +355,7 @@ HRESULT GridNode::VRender(Scene* pScene, double fTime, float fElapsedTime)
 	return S_OK;
 }
 
-HRESULT GridNode::VOnUpdate(Scene* pScene, double fTime, float fElapsedTime)
+HRESULT GridNode::VOnUpdate(Scene* pScene, const GameTime& gameTime)
 {
 	return S_OK;
 }
@@ -426,12 +426,12 @@ HRESULT ModelNode::VOnDestoryDevice(Scene* pScene)
 	return S_OK;
 }
 
-HRESULT ModelNode::VOnUpdate(Scene* pScene, double fTime, float fElapsedTime)
+HRESULT ModelNode::VOnUpdate(Scene* pScene, const GameTime& gameTime)
 {
 	return S_OK;
 }
 
-HRESULT ModelNode::VRender(Scene* pScene, double fTime, float fElapsedTime)
+HRESULT ModelNode::VRender(Scene* pScene, const GameTime& gameTime)
 {
 // 	ID3D11DeviceContext* direct3DDeviceContext = DXUTGetD3D11DeviceContext();
 // 	direct3DDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

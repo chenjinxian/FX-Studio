@@ -99,7 +99,7 @@ HRESULT CameraNode::VOnRestore(Scene* pScene)
 	return S_OK;
 }
 
-HRESULT CameraNode::VRender(Scene* pScene, double fTime, float fElapsedTime)
+HRESULT CameraNode::VRender(Scene* pScene, const GameTime& gameTime)
 {
 	if (m_IsDebugCamera)
 	{

@@ -155,9 +155,11 @@
   <ItemGroup>
     <ClCompile Include="Demo.cpp" />
     <ClCompile Include="DemoApp.cpp" />
+    <ClCompile Include="DemoView.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DemoApp.h" />
+    <ClInclude Include="DemoView.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TinyEngine\TinyEngine.vcxproj">

@@ -54,7 +54,7 @@ public:
 	virtual ~CameraNode();
 
 	virtual HRESULT VOnRestore(Scene* pScene);
-	virtual HRESULT VRender(Scene* pScene, double fTime, float fElapsedTime);
+	virtual HRESULT VRender(Scene* pScene, const GameTime& gameTime);
 	virtual bool VIsVisible(Scene* pScene) const { return true; }
 
 	const Frustum& GetFrustum() { return m_Frustum; }

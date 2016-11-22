@@ -131,7 +131,7 @@ HRESULT SkyboxNode::VOnRestore(Scene* pScene)
 	return S_OK;
 }
 
-HRESULT SkyboxNode::VRender(Scene* pScene, double fTime, float fElapsedTime)
+HRESULT SkyboxNode::VRender(Scene* pScene, const GameTime& gameTime)
 {
 // 	ID3D11DeviceContext* direct3DDeviceContext = DXUTGetD3D11DeviceContext();
 // 	direct3DDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -157,7 +157,7 @@ HRESULT SkyboxNode::VRender(Scene* pScene, double fTime, float fElapsedTime)
 }
 
 
-HRESULT SkyboxNode::VOnUpdate(Scene* pScene, double fTime, float fElapsedTime)
+HRESULT SkyboxNode::VOnUpdate(Scene* pScene, const GameTime& gameTime)
 {
 	Vector3 cameraPosition = pScene->GetCamera()->GetPosition();
 	m_WorldMatrix.Translation(cameraPosition);

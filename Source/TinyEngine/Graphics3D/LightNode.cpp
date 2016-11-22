@@ -55,7 +55,7 @@ HRESULT LightNode::VOnRestore(Scene* pScene)
 	return S_OK;
 }
 
-HRESULT LightNode::VRender(Scene* pScene, double fTime, float fElapsedTime)
+HRESULT LightNode::VRender(Scene* pScene, const GameTime& gameTime)
 {
 // 	ID3D11DeviceContext* direct3DDeviceContext = DXUTGetD3D11DeviceContext();
 // 	direct3DDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -97,7 +97,7 @@ DirectionalLightNode::~DirectionalLightNode()
 
 }
 
-HRESULT DirectionalLightNode::VOnUpdate(Scene* pScene, double fTime, float fElapsedTime)
+HRESULT DirectionalLightNode::VOnUpdate(Scene* pScene, const GameTime& gameTime)
 {
 	return S_OK;
 }
@@ -114,7 +114,7 @@ PointLightNode::~PointLightNode()
 
 }
 
-HRESULT PointLightNode::VOnUpdate(Scene* pScene, double fTime, float fElapsedTime)
+HRESULT PointLightNode::VOnUpdate(Scene* pScene, const GameTime& gameTime)
 {
 	return S_OK;
 }
@@ -133,7 +133,7 @@ SpotLightNode::~SpotLightNode()
 
 }
 
-HRESULT SpotLightNode::VOnUpdate(Scene* pScene, double fTime, float fElapsedTime)
+HRESULT SpotLightNode::VOnUpdate(Scene* pScene, const GameTime& gameTime)
 {
 	return S_OK;
 }

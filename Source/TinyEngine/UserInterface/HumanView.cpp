@@ -56,7 +56,7 @@ bool HumanView::LoadGame(tinyxml2::XMLElement* pLevelData)
 	return VLoadGameDelegate(pLevelData);
 }
 
-void HumanView::VOnRender(double fTime, float fElapsedTime)
+void HumanView::VOnRender(const GameTime& gameTime)
 {
 	m_currTick = GetTickCount();
 	if (m_currTick == m_lastDraw)
@@ -72,7 +72,7 @@ void HumanView::VOnRender(double fTime, float fElapsedTime)
 			{
 				if ((*i)->VIsVisible())
 				{
-					(*i)->VOnRender(fTime, fElapsedTime);
+					(*i)->VOnRender(gameTime);
 				}
 			}
 
@@ -190,16 +190,16 @@ LRESULT CALLBACK HumanView::VOnMsgProc(AppMsg msg)
 	return 0;
 }
 
-void HumanView::VOnUpdate(double fTime, float fElapsedTime)
+void HumanView::VOnUpdate(const GameTime& gameTime)
 {
 	for (ScreenElementList::iterator i = m_ScreenElements.begin(); i != m_ScreenElements.end(); ++i)
 	{
-		(*i)->VOnUpdate(fTime, fElapsedTime);
+		(*i)->VOnUpdate(gameTime);
 	}
 
 	if (m_pFreeCameraController)
 	{
-		m_pFreeCameraController->OnUpdate(fTime, fElapsedTime);
+		m_pFreeCameraController->OnUpdate(gameTime);
 	}
 }
 

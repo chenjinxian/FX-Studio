@@ -44,7 +44,7 @@ public:
 	std::string GetActorXml(ActorId id);
 	virtual void VSetProxy();
 
-	virtual void VOnUpdate(double fTime, float fElapsedTime) override;
+	virtual void VOnUpdate(const GameTime& gameTime) override;
 	virtual bool VLoadGame(const std::string& projectXml) override;
 
 	virtual void VAddView(shared_ptr<IGameView> pView, ActorId actorId = INVALID_ACTOR_ID);

@@ -28,7 +28,7 @@ class BaseUI : public IScreenElement
 {
 public:
 	BaseUI() : m_bIsVisible(true), m_PosX(0), m_PosY(0), m_Width(100), m_Height(100) {}
-	virtual void VOnUpdate(double fTime, float fElapsedTime) {}
+	virtual void VOnUpdate(const GameTime& gameTime) {}
 	virtual HRESULT VOnDestoryDevice() { return S_OK; }
 	virtual bool VIsVisible() const { return m_bIsVisible; }
 	virtual void VSetVisible(bool visible) { m_bIsVisible = visible; }
@@ -49,11 +49,11 @@ public:
 		DEBUG_WARNING("~ScreenElementScene()");
 	}
 
-	virtual void VOnUpdate(double fTime, float fElapsedTime) { OnUpdate(fTime, fElapsedTime); };
+	virtual void VOnUpdate(const GameTime& gameTime) { OnUpdate(gameTime); };
 	virtual HRESULT VOnRestore() 
 		{ OnRestore(); return S_OK; }
-	virtual HRESULT VOnRender(double fTime, float fElapsedTime)
-		{ OnRender(fTime, fElapsedTime); return S_OK; }
+	virtual HRESULT VOnRender(const GameTime& gameTime)
+		{ OnRender(gameTime); return S_OK; }
 	virtual HRESULT VOnDestoryDevice() { return OnDestoryDevice(); }
 	virtual int VGetZOrder() const { return 0; }
 	virtual void VSetZOrder(int zOrder) { }

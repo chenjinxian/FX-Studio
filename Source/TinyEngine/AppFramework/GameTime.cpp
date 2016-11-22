@@ -21,7 +21,7 @@ void GameTime::Reset()
 	{
 		DEBUG_ERROR("QueryPerformanceFrequency() failed.");
 	}
-	m_Frequency = (double)frequency.QuadPart;
+	m_Frequency = (float)frequency.QuadPart;
 
 	QueryPerformanceCounter(&m_StartTime);
 	m_CurrentTime = m_StartTime;

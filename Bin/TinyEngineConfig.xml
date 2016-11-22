@@ -1,4 +1,4 @@
 <TinyEngineConfig>
-  <Graphics renderer="Direct3D 11" width="1072" height="768" fullscreen="no" vsync="no" anti-aliasing="0"/>
-  <ResCache useZipResource="yes" /> 
+  <Graphics renderer="Direct3D 11" width="1280" height="720" fullscreen="0" vsync="0" anti-aliasing="8"/>
+  <ResCache useZipResource="1" /> 
 </TinyEngineConfig>

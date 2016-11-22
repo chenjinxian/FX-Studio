@@ -36,11 +36,11 @@ void Actor::Destroy()
 	m_ActorComponents.clear();
 }
 
-void Actor::Update(double fTime, float fElapsedTime)
+void Actor::Update(const GameTime& gameTime)
 {
 	for (auto& component : m_ActorComponents)
 	{
-		component.second->VUpdate(fTime, fElapsedTime);
+		component.second->VUpdate(gameTime);
 	}
 }
 

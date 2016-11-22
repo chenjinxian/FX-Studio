@@ -33,5 +33,7 @@ private:
 	ID3D11RenderTargetView* m_pRenderTargetView;
 	ID3D11DepthStencilView* m_pDepthStencilView;
 	D3D11_VIEWPORT m_Viewport;
+
+	Color m_BackgroundColor;
 };
 

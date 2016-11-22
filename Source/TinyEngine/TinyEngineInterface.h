@@ -31,6 +31,8 @@ struct AppMsg
 	LPARAM m_lParam;
 };
 
+class GameTime;
+
 class IScreenElement
 {
 public:
@@ -39,8 +41,8 @@ public:
 
 	virtual HRESULT VOnRestore() = 0;
 	virtual HRESULT VOnDestoryDevice() = 0;
-	virtual void VOnUpdate(double fTime, float fElapsedTime) = 0;
-	virtual HRESULT VOnRender(double fTime, float fElapsedTime) = 0;
+	virtual void VOnUpdate(const GameTime& gameTime) = 0;
+	virtual HRESULT VOnRender(const GameTime& gameTime) = 0;
 
 	virtual int VGetZOrder() const = 0;
 	virtual void VSetZOrder(int zOrder) = 0;
@@ -65,7 +67,7 @@ public:
 	virtual void VDestroyActor(ActorId actorId) = 0;
 	virtual void VMoveActor(ActorId actorId, const Matrix& mat) = 0;
 
-	virtual void VOnUpdate(double fTime, float fElapsedTime) = 0;
+	virtual void VOnUpdate(const GameTime& gameTime) = 0;
 	virtual bool VLoadGame(const std::string& projectXml) = 0;
 	virtual void VSetProxy() = 0;
 	virtual void VChangeState(enum BaseGameState newState) = 0;
@@ -92,8 +94,8 @@ public:
 
 	virtual HRESULT VOnRestore() = 0;
 	virtual HRESULT VOnDestoryDevice() = 0;
-	virtual void VOnUpdate(double fTime, float fElapsedTime) = 0;
-	virtual void VOnRender(double fTime, float fElapsedTime) = 0;
+	virtual void VOnUpdate(const GameTime& gameTime) = 0;
+	virtual void VOnRender(const GameTime& gameTime) = 0;
 	virtual void VOnAttach(GameViewId viewId, ActorId actorId) = 0;
 	virtual GameViewType VGetType() = 0;
 	virtual GameViewId VGetId() const = 0;
@@ -189,13 +191,13 @@ public:
 	virtual const SceneNodeProperties* VGet() const = 0;
 	virtual void VSetTransform(const Matrix& worldMatrix) = 0;
 
-	virtual HRESULT VOnUpdate(Scene* pScene, double fTime, float fElapsedTime) = 0;
+	virtual HRESULT VOnUpdate(Scene* pScene, const GameTime& gameTime) = 0;
 	virtual HRESULT VOnRestore(Scene* pScene) = 0;
 	virtual HRESULT VOnDestoryDevice(Scene* pScene) = 0;
 
 	virtual HRESULT VPreRender(Scene* pScene) = 0;
-	virtual HRESULT VRender(Scene* pScene, double fTime, float fElapsedTime) = 0;
-	virtual HRESULT VRenderChildren(Scene* pScene, double fTime, float fElapsedTime) = 0;
+	virtual HRESULT VRender(Scene* pScene, const GameTime& gameTime) = 0;
+	virtual HRESULT VRenderChildren(Scene* pScene, const GameTime& gameTime) = 0;
 	virtual HRESULT VPostRender(Scene* pScene) = 0;
 	virtual bool VIsVisible(Scene* pScene) const = 0;
 
@@ -211,5 +213,5 @@ public:
 
 	virtual bool VInitialize() = 0;
 	virtual void VSyncVisibleScene() = 0;
-	virtual void VOnUpdate(double fTime, float fElapsedTime) = 0;
+	virtual void VOnUpdate(const GameTime& gameTime) = 0;
 };

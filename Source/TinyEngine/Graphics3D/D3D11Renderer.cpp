@@ -12,7 +12,7 @@ D3D11Renderer::~D3D11Renderer()
 
 void D3D11Renderer::VSetBackgroundColor(const Color& color)
 {
-
+	m_BackgroundColor = color;
 }
 
 bool D3D11Renderer::VInitRenderer(HWND hWnd)
@@ -123,11 +123,17 @@ bool D3D11Renderer::VInitRenderer(HWND hWnd)
 
 bool D3D11Renderer::VPreRender()
 {
+	if (m_pDeviceContext != nullptr && m_pRenderTargetView != nullptr)
+	{
+		m_pDeviceContext->ClearRenderTargetView(m_pRenderTargetView, m_BackgroundColor);
+		m_pDeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+	}
 	return true;
 }
 
 bool D3D11Renderer::VPostRender()
 {
+	m_pSwapChain->Present(0, 0);
 	return true;
 }
 

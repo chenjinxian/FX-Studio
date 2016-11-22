@@ -66,11 +66,11 @@ bool BaseGameApp::InitEnvironment()
 		return false;
 	}
 
-	m_pResCache->RegisterLoader(CreateDdsResourceLoader());
-	m_pResCache->RegisterLoader(CreateJpgResourceLoader());
-	m_pResCache->RegisterLoader(CreatePngResourceLoader());
-	m_pResCache->RegisterLoader(CreateBmpResourceLoader());
-	m_pResCache->RegisterLoader(CreateTiffResourceLoader());
+// 	m_pResCache->RegisterLoader(CreateDdsResourceLoader());
+// 	m_pResCache->RegisterLoader(CreateJpgResourceLoader());
+// 	m_pResCache->RegisterLoader(CreatePngResourceLoader());
+// 	m_pResCache->RegisterLoader(CreateBmpResourceLoader());
+// 	m_pResCache->RegisterLoader(CreateTiffResourceLoader());
 	m_pResCache->RegisterLoader(CreateXmlResourceLoader());
 
 	if (!LoadStrings("English"))
@@ -93,11 +93,11 @@ bool BaseGameApp::InitEnvironment()
 
 // 	_tcscpy_s(m_saveGameDirectory, GetSaveGameDirectory(GetHwnd(), VGetGameAppDirectory()));
 
-	m_pResCache->Preload("*.dds", NULL);
-	m_pResCache->Preload("*.jpg", NULL);
-	m_pResCache->Preload("*.png", NULL);
-	m_pResCache->Preload("*.bmp", NULL);
-	m_pResCache->Preload("*.tiff", NULL);
+// 	m_pResCache->Preload("*.dds", NULL);
+// 	m_pResCache->Preload("*.jpg", NULL);
+// 	m_pResCache->Preload("*.png", NULL);
+// 	m_pResCache->Preload("*.bmp", NULL);
+// 	m_pResCache->Preload("*.tiff", NULL);
 
 	return true;
 }
@@ -214,13 +214,12 @@ bool BaseGameApp::InitRenderer()
 	{
 // 		m_pRenderer = shared_ptr<IRenderer>(DEBUG_NEW VulkanRenderer());
 	}
-	m_pRenderer->VSetBackgroundColor(Color(0.392156899f, 0.584313750f, 0.929411829f, 1.000000000f));
 
 // 	m_IsRunning = true;
 
-	m_pRenderer = shared_ptr<IRenderer>(DEBUG_NEW D3D11Renderer());
 	if (m_pRenderer != nullptr)
 	{
+		m_pRenderer->VSetBackgroundColor(Color(0.392156899f, 0.584313750f, 0.929411829f, 1.000000000f));
 		return m_pRenderer->VInitRenderer(m_hWindow);
 	}
 	else
@@ -250,11 +249,43 @@ void BaseGameApp::RenderLoop()
 			break;
 		}
 
-// 		render();
-		Sleep(20);
+		OnRender(m_GameTime);
 		
 		m_GameTime.UpdateGameTime();
+		OnUpdate(m_GameTime);
 	}
+}
+
+void BaseGameApp::OnUpdate(const GameTime& gameTime)
+{
+	if (g_pApp->HasModalDialog())
+	{
+		return;
+	}
+
+	if (g_pApp->m_IsQuitting)
+	{
+		PostMessage(m_hWindow, WM_CLOSE, 0, 0);
+	}
+
+	if (g_pApp->m_pGameLogic != nullptr)
+	{
+		IEventManager::Get()->VUpdate(20);
+		g_pApp->m_pGameLogic->VOnUpdate(gameTime);
+	}
+}
+
+void BaseGameApp::OnRender(const GameTime& gameTime)
+{
+	BaseGameLogic *pGame = g_pApp->m_pGameLogic;
+
+	for (GameViewList::iterator i = pGame->m_GameViews.begin(),
+		end = pGame->m_GameViews.end(); i != end; ++i)
+	{
+		(*i)->VOnRender(gameTime);
+	}
+
+	g_pApp->m_pGameLogic->VRenderDiagnostics();
 }
 
 LRESULT CALLBACK BaseGameApp::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)

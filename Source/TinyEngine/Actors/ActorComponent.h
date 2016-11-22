@@ -13,7 +13,7 @@ public:
 
 	virtual bool VInit(tinyxml2::XMLElement* pData) = 0;
 	virtual void VPostInit() {}
-	virtual void VUpdate(double fTime, float fElapsedTime) {}
+	virtual void VUpdate(const GameTime& gameTime) {}
 	virtual void VOnChanged() {}
 
 	virtual tinyxml2::XMLElement* VGenerateXml(tinyxml2::XMLDocument* pDocument) = 0;

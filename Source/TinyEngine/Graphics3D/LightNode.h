@@ -9,7 +9,7 @@ public:
 	virtual ~LightNode();
 
 	virtual HRESULT VOnRestore(Scene* pScene) override;
-	virtual HRESULT VRender(Scene* pScene, double fTime, float fElapsedTime) override;
+	virtual HRESULT VRender(Scene* pScene, const GameTime& gameTime) override;
 
 protected:
 	Effect* m_pEffect;
@@ -29,7 +29,7 @@ public:
 	DirectionalLightNode(ActorId actorId, WeakBaseRenderComponentPtr renderComponent, RenderPass renderPass, const Matrix& mat);
 	virtual ~DirectionalLightNode();
 
-	virtual HRESULT VOnUpdate(Scene* pScene, double fTime, float fElapsedTime) override;
+	virtual HRESULT VOnUpdate(Scene* pScene, const GameTime& gameTime) override;
 };
 
 class PointLightNode : virtual public LightNode
@@ -38,7 +38,7 @@ public:
 	PointLightNode(ActorId actorId, WeakBaseRenderComponentPtr renderComponent, RenderPass renderPass, const Matrix& mat);
 	virtual ~PointLightNode();
 
-	virtual HRESULT VOnUpdate(Scene* pScene, double fTime, float fElapsedTime) override;
+	virtual HRESULT VOnUpdate(Scene* pScene, const GameTime& gameTime) override;
 };
 
 class SpotLightNode : public DirectionalLightNode, public PointLightNode
@@ -47,7 +47,7 @@ public:
 	SpotLightNode(ActorId actorId, WeakBaseRenderComponentPtr renderComponent, RenderPass renderPass, const Matrix& mat);
 	virtual ~SpotLightNode();
 
-	virtual HRESULT VOnUpdate(Scene* pScene, double fTime, float fElapsedTime) override;
+	virtual HRESULT VOnUpdate(Scene* pScene, const GameTime& gameTime) override;
 };
 
 

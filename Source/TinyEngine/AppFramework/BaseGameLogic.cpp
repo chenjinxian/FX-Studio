@@ -226,7 +226,7 @@ ActorFactory* BaseGameLogic::VCreateActorFactory()
 	return DEBUG_NEW ActorFactory();
 }
 
-void BaseGameLogic::VOnUpdate(double fTime, float fElapsedTime)
+void BaseGameLogic::VOnUpdate(const GameTime& gameTime)
 {
 	switch (m_GameState)
 	{
@@ -256,11 +256,11 @@ void BaseGameLogic::VOnUpdate(double fTime, float fElapsedTime)
 		break;
 
 	case BGS_Running:
-// 		m_pProcessManager->UpdateProcesses(fTime, fElapsedTime);
+// 		m_pProcessManager->UpdateProcesses(gameTime);
 
 		if (m_pPhysics && !m_IsProxy)
 		{
-			m_pPhysics->VOnUpdate(fTime, fElapsedTime);
+			m_pPhysics->VOnUpdate(gameTime);
 			m_pPhysics->VSyncVisibleScene();
 		}
 
@@ -272,12 +272,12 @@ void BaseGameLogic::VOnUpdate(double fTime, float fElapsedTime)
 
 	for (auto& gameView : m_GameViews)
 	{
-		gameView->VOnUpdate(fTime, fElapsedTime);
+		gameView->VOnUpdate(gameTime);
 	}
 
 	for (auto& actor : m_Actors)
 	{
-		actor.second->Update(fTime, fElapsedTime);
+		actor.second->Update(gameTime);
 	}
 }
 

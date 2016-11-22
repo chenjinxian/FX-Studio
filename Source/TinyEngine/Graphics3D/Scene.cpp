@@ -34,17 +34,17 @@ Scene::~Scene()
 		boost::bind(&Scene::ModifiedRenderComponentDelegate, this, _1), EvtData_Modified_Render_Component::sk_EventType);
 }
 
-HRESULT Scene::OnUpdate(double fTime, float fElapsedTime)
+HRESULT Scene::OnUpdate(const GameTime& gameTime)
 {
 	if (m_pRootNode != nullptr)
 	{
-		return m_pRootNode->VOnUpdate(this, fTime, fElapsedTime);
+		return m_pRootNode->VOnUpdate(this, gameTime);
 	}
 
 	return S_OK;
 }
 
-HRESULT Scene::OnRender(double fTime, float fElapsedTime)
+HRESULT Scene::OnRender(const GameTime& gameTime)
 {
 	if (m_pRootNode != nullptr && m_pCamera != nullptr)
 	{
@@ -52,8 +52,8 @@ HRESULT Scene::OnRender(double fTime, float fElapsedTime)
 
 		if (m_pRootNode->VPreRender(this) == S_OK)
 		{
-			m_pRootNode->VRender(this, fTime, fElapsedTime);
-			m_pRootNode->VRenderChildren(this, fTime, fElapsedTime);
+			m_pRootNode->VRender(this, gameTime);
+			m_pRootNode->VRenderChildren(this, gameTime);
 			m_pRootNode->VPostRender(this);
 		}
 

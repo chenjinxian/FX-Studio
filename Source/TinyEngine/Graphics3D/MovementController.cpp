@@ -1,5 +1,6 @@
 #include "MovementController.h"
 #include "SceneNode.h"
+#include "../AppFramework/BaseGameApp.h"
 
 MovementController::MovementController(
 	shared_ptr<SceneNode> pOjbect, float initialYaw, float initialPitch, bool rotateWithLButtonDown)
@@ -21,7 +22,7 @@ MovementController::MovementController(
 	memset(m_Keys, 0x00, sizeof(m_Keys));
 }
 
-void MovementController::OnUpdate(double fTime, float fElapsedTime)
+void MovementController::OnUpdate(const GameTime& gameTime)
 {
 	bool isTranslating = false;
 	Vector3 forward = Vector3::Zero;
@@ -55,7 +56,7 @@ void MovementController::OnUpdate(double fTime, float fElapsedTime)
 	if (isTranslating)
 	{
 		float numberOfSeconds = 5.0f;
-		m_CurrentSpeed += m_MaxSpeed * ((fElapsedTime * fElapsedTime) / numberOfSeconds);
+		m_CurrentSpeed += m_MaxSpeed * ((gameTime.GetElapsedTime() * gameTime.GetElapsedTime()) / numberOfSeconds);
 		if (m_CurrentSpeed > m_MaxSpeed)
 			m_CurrentSpeed = m_MaxSpeed;
 

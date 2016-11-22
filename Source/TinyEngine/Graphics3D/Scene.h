@@ -11,8 +11,8 @@ public:
 	Scene(shared_ptr<IRenderer> pRenderer);
 	virtual ~Scene();
 
-	HRESULT OnUpdate(double fTime, float fElapsedTime);
-	HRESULT OnRender(double fTime, float fElapsedTime);
+	HRESULT OnUpdate(const GameTime& gameTime);
+	HRESULT OnRender(const GameTime& gameTime);
 	HRESULT OnRestore();
 	HRESULT OnDestoryDevice();
 	shared_ptr<ISceneNode> FindActor(ActorId actorId);

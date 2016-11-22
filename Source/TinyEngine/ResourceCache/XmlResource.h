@@ -9,7 +9,7 @@ class XmlResourceExtraData : public IResourceExtraData
 {
 public:
 	virtual std::string VToString() { return "XmlResourceExtraData"; }
-	void ParseXml(char* pRawBuffer);
+	void ParseXml(const char* pRawBuffer, uint32_t rawSize);
 	tinyxml2::XMLElement* GetRoot(void) { return m_xmlDocument.RootElement(); }
 
 private:

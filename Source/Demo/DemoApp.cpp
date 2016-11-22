@@ -1,4 +1,5 @@
 #include "DemoApp.h"
+#include "DemoView.h"
 
 DemoApp g_DemoApp;
 
@@ -30,8 +31,8 @@ BaseGameLogic * DemoApp::VCreateGameAndView()
 	m_pGameLogic = DEBUG_NEW DemoLogic();
 	m_pGameLogic->Init();
 
-// 	shared_ptr<IGameView> menuView(GCC_NEW MainMenuView());
-// 	m_pGameLogic->VAddView(menuView);
+	shared_ptr<IGameView> menuView(DEBUG_NEW MainMenuView());
+	m_pGameLogic->VAddView(menuView);
 
 	return m_pGameLogic;
 }
@@ -102,7 +103,7 @@ void DemoLogic::VChangeState(BaseGameState gameState)
 // 				StrongActorPtr pActor = VCreateActor("actors\\player_teapot.xml", NULL, Matrix());
 // 				if (pActor)
 // 				{
-// 					shared_ptr<EvtData_New_Actor> pNewActorEvent(GCC_NEW EvtData_New_Actor(pActor->GetId(), pView->VGetId()));
+// 					shared_ptr<EvtData_New_Actor> pNewActorEvent(DEBUG_NEW EvtData_New_Actor(pActor->GetId(), pView->VGetId()));
 // 					IEventManager::Get()->VTriggerEvent(pNewActorEvent);
 // 				}
 			}

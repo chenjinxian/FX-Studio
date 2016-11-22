@@ -16,7 +16,7 @@ public:
 	bool Init(tinyxml2::XMLElement* pData);
 	void PostInit();
 	void Destroy();
-	void Update(double fTime, float fElapsedTime);
+	void Update(const GameTime& gameTime);
 
 	std::string ToXml();
 

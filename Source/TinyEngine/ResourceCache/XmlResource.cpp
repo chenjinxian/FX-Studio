@@ -1,9 +1,9 @@
 #include "XmlResource.h"
 #include "../AppFramework/BaseGameApp.h"
 
-void XmlResourceExtraData::ParseXml(char* pRawBuffer)
+void XmlResourceExtraData::ParseXml(const char* pRawBuffer, uint32_t rawSize)
 {
-	m_xmlDocument.Parse(pRawBuffer);
+	tinyxml2::XMLError error = m_xmlDocument.Parse(pRawBuffer, rawSize);
 }
 
 bool XmlResourceLoader::VLoadResource(char *rawBuffer, uint32_t rawSize, shared_ptr<ResHandle> handle)
@@ -12,7 +12,7 @@ bool XmlResourceLoader::VLoadResource(char *rawBuffer, uint32_t rawSize, shared_
 		return false;
 
 	shared_ptr<XmlResourceExtraData> pExtraData = shared_ptr<XmlResourceExtraData>(DEBUG_NEW XmlResourceExtraData());
-	pExtraData->ParseXml(rawBuffer);
+	pExtraData->ParseXml(rawBuffer, rawSize);
 
 	handle->SetExtra(shared_ptr<XmlResourceExtraData>(pExtraData));
 

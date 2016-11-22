@@ -33,8 +33,8 @@ public:
 	virtual bool VIsVisible(Scene* pScene);
 
 	virtual HRESULT VOnRestore(Scene* pScene);
-	virtual HRESULT VRender(Scene* pScene, double fTime, float fElapsedTime);
-	virtual HRESULT VOnUpdate(Scene* pScene, double fTime, float fElapsedTime);
+	virtual HRESULT VRender(Scene* pScene, const GameTime& gameTime);
+	virtual HRESULT VOnUpdate(Scene* pScene, const GameTime& gameTime);
 
 private:
 	void Reset();

@@ -10,7 +10,7 @@ public:
 	MovementController(shared_ptr<SceneNode> pOjbect, float initialYaw, float initialPitch, bool rotateWithLButtonDown);
 
 	void SetObject(shared_ptr<SceneNode> newObject) { m_pObject = newObject; }
-	void OnUpdate(double fTime, float fElapsedTime);
+	void OnUpdate(const GameTime& gameTime);
 
 	virtual bool VOnPointerButtonDown(const Vector2 &pos, int radius, const std::string &buttonName) override;
 	virtual bool VOnPointerButtonUp(const Vector2 &pos, int radius, const std::string &buttonName) override;

@@ -9,13 +9,13 @@ class HumanView : public IGameView
 	friend class GameCodeApp;
 
 public:
-	virtual ~HumanView();
 	HumanView(shared_ptr<IRenderer> renderer);
+	virtual ~HumanView();
 
 	virtual HRESULT VOnRestore();
 	virtual HRESULT VOnDestoryDevice();
-	virtual void VOnUpdate(double fTime, float fElapsedTime);
-	virtual void VOnRender(double fTime, float fElapsedTime);
+	virtual void VOnUpdate(const GameTime& gameTime);
+	virtual void VOnRender(const GameTime& gameTime);
 	virtual GameViewType VGetType() { return GameView_Human; }
 	virtual GameViewId VGetId() const { return m_ViewId; }
 

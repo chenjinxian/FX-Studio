@@ -1,5 +1,6 @@
 #include "DemoView.h"
 #include "DemoApp.h"
+#include "imgui.h"
 
 #define CID_START_BUTTON				(8)
 #define CID_LEVEL_LISTBOX				(16)
@@ -52,60 +53,7 @@ LRESULT CALLBACK DemoView::VOnMsgProc(AppMsg msg)
 
 void DemoView::VRenderText()
 {
-// 	if (!D3DRenderer::m_pTextHelper)
-// 		return;
-// 
-// 	HumanView::VRenderText();
-// 
-// 	D3DRenderer::m_pTextHelper->Begin();
-// 
-// 	if (!m_GameplayText.empty())
-// 	{
-// 		D3DRenderer::m_pTextHelper->SetInsertionPos(g_pApp->GetScreenWidth() / 2, 5);
-// 		D3DRenderer::m_pTextHelper->SetForegroundColor(Color(0.0f, 0.0f, 0.0f, 1.0f));
-// 		D3DRenderer::m_pTextHelper->DrawTextLine(m_GameplayText.c_str());
-// 		D3DRenderer::m_pTextHelper->SetInsertionPos(g_pApp->GetScreenWidth() / 2 - 1, 5 - 1);
-// 		D3DRenderer::m_pTextHelper->SetForegroundColor(Color(0.25f, 1.0f, 0.25f, 1.0f));
-// 		D3DRenderer::m_pTextHelper->DrawTextLine(m_GameplayText.c_str());
-// 	}
-// 
-// 	if (m_bShowUI)
-// 	{
-// 		D3DRenderer::m_pTextHelper->SetInsertionPos(5, 5);
-// 		D3DRenderer::m_pTextHelper->SetForegroundColor(Color(1.0f, 1.0f, 0.0f, 1.0f));
-// 		D3DRenderer::m_pTextHelper->DrawTextLine(DXUTGetFrameStats(DXUTIsVsyncEnabled()));
-// 		D3DRenderer::m_pTextHelper->DrawTextLine(DXUTGetDeviceStats());
-// 		D3DRenderer::m_pTextHelper->SetForegroundColor(Color(0.0f, 0.0f, 0.0f, 0.5f));
-// 
-// 		switch (m_GameState)
-// 		{
-// 		case BGS_Initializing:
-// 			D3DRenderer::m_pTextHelper->DrawTextLine(g_pApp->GetString(_T("IDS_INITIALIZING")).c_str());
-// 			break;
-// 
-// 		case BGS_MainMenu:
-// 			D3DRenderer::m_pTextHelper->DrawTextLine(L"Main Menu");
-// 			break;
-// 
-// 		case BGS_WaitingForPlayers:
-// 			D3DRenderer::m_pTextHelper->DrawTextLine(g_pApp->GetString(_T("IDS_WAITING")).c_str());
-// 			break;
-// 
-// 		case BGS_LoadingGameEnvironment:
-// 			D3DRenderer::m_pTextHelper->DrawTextLine(g_pApp->GetString(_T("IDS_LOADING")).c_str());
-// 			break;
-// 
-// 		case BGS_Running:
-// #ifndef DISABLE_PHYSICS
-// 			D3DRenderer::m_pTextHelper->DrawTextLine(g_pApp->GetString(_T("IDS_RUNNING")).c_str());
-// #else
-// 			D3DRenderer::m_pTextHelper->DrawTextLine(g_pApp->GetString(_T("IDS_NOPHYSICS")).c_str());
-// #endif //!DISABLE_PHYSICS
-// 			break;
-// 		}
-// 	}
-// 
-// 	D3DRenderer::m_pTextHelper->End();
+	ImGui::Text("Hello, world!");
 }
 
 void DemoView::VOnUpdate(const GameTime& gameTime)
@@ -149,12 +97,12 @@ bool DemoView::VLoadGameDelegate(tinyxml2::XMLElement* pLevelData)
 	if (!HumanView::VLoadGameDelegate(pLevelData))
 		return false;
 
-	m_StandardHUD.reset(DEBUG_NEW StandardHUD);
-	VPushElement(m_StandardHUD);
+// 	m_StandardHUD.reset(DEBUG_NEW StandardHUD);
+// 	VPushElement(m_StandardHUD);
 
 // 	m_pFreeCameraController.reset(DEBUG_NEW MovementController(m_pCamera, 0, 0, false));
 
-	HumanView::VOnRestore();
+	HumanView::VOnInitGameViews();
 	return true;
 }
 
@@ -196,7 +144,12 @@ MainMenuUI::~MainMenuUI()
 {
 }
 
-HRESULT MainMenuUI::VOnRestore()
+HRESULT MainMenuUI::VOnInitScreenElements()
+{
+	return S_OK;
+}
+
+HRESULT MainMenuUI::VOnDeleteScreenElements()
 {
 	return S_OK;
 }
@@ -219,31 +172,6 @@ LRESULT CALLBACK MainMenuUI::VOnMsgProc(AppMsg msg)
 void MainMenuUI::Set()
 {
 // 	m_LevelIndex = m_SampleUI.GetListBox(CID_LEVEL_LISTBOX)->GetSelectedIndex();
-}
-
-StandardHUD::StandardHUD()
-{
-}
-
-StandardHUD::~StandardHUD()
-{
-
-}
-
-HRESULT StandardHUD::VOnRestore()
-{
-	return S_OK;
-}
-
-HRESULT StandardHUD::VOnRender(const GameTime& gameTime)
-{
-	return S_OK;
-}
-
-LRESULT CALLBACK StandardHUD::VOnMsgProc(AppMsg msg)
-{
-// 	return m_HUD.MsgProc(msg.m_hWnd, msg.m_uMsg, msg.m_wParam, msg.m_lParam);
-	return S_OK;
 }
 
 MainMenuView::MainMenuView() : HumanView(shared_ptr<IRenderer>())

@@ -6,14 +6,22 @@
 #include "../ResourceCache/XmlResource.h"
 #include "../Graphics3D/TextureResourceLoader.h"
 #include "../EventManager/EventManagerImpl.h"
+#include "imgui.h"
 
 BaseGameApp* g_pApp = nullptr;
 const int BaseGameApp::MEGABYTE = 1024 * 1024;
 
 BaseGameApp::BaseGameApp()
-	: m_pResCache(nullptr),
+	: m_Config(),
+	m_pResCache(nullptr),
 	m_pRenderer(nullptr),
-	m_pGameLogic(nullptr)
+	m_pGameLogic(nullptr),
+	m_hInstance(nullptr),
+	m_hWindow(nullptr),
+	m_pEventManager(nullptr),
+	m_HasModalDialog(false),
+	m_IsQuitting(false),
+	m_IsEditorRunning(false)
 {
 	g_pApp = this;
 }
@@ -220,7 +228,7 @@ bool BaseGameApp::InitRenderer()
 	if (m_pRenderer != nullptr)
 	{
 		m_pRenderer->VSetBackgroundColor(Color(0.392156899f, 0.584313750f, 0.929411829f, 1.000000000f));
-		return m_pRenderer->VInitRenderer(m_hWindow);
+		return m_pRenderer->VInitRenderer(m_hWindow) && InitImGui();
 	}
 	else
 	{
@@ -292,9 +300,67 @@ LRESULT CALLBACK BaseGameApp::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARA
 {
 	switch (uMsg)
 	{
+	case WM_DISPLAYCHANGE:
+		break;
+	case WM_SYSCOMMAND:
+		break;
+	case WM_CLOSE:
+		break;
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		return 0;
+	case WM_SIZE:
+	{
+		if (wParam != SIZE_MINIMIZED && g_pApp->m_pGameLogic != nullptr && g_pApp->m_pRenderer != nullptr)
+		{
+			for (auto gameView : g_pApp->m_pGameLogic->m_GameViews)
+			{
+				gameView->VOnDeleteGameViews();
+			}
+
+			g_pApp->m_Config.m_ScreenWidth = LOWORD(lParam);
+			g_pApp->m_Config.m_ScreenHeight = HIWORD(lParam);
+			g_pApp->m_pRenderer->VResizeSwapChain();
+
+			for (auto gameView : g_pApp->m_pGameLogic->m_GameViews)
+			{
+				gameView->VOnInitGameViews();
+			}
+		}
+		break;
+	}
+	case WM_KEYDOWN:
+	case WM_KEYUP:
+	case WM_CHAR:
+	case WM_MOUSEMOVE:
+	case WM_MOUSEWHEEL:
+	case WM_LBUTTONDOWN:
+	case WM_LBUTTONUP:
+	case WM_RBUTTONDOWN:
+	case WM_RBUTTONUP:
+	case WM_MBUTTONDOWN:
+	case WM_MBUTTONUP:
+	case WM_LBUTTONDBLCLK:
+	case WM_RBUTTONDBLCLK:
+	{
+		if (g_pApp->m_pGameLogic != nullptr)
+		{
+			AppMsg msg;
+			msg.m_hWnd = hWnd;
+			msg.m_uMsg = uMsg;
+			msg.m_wParam = wParam;
+			msg.m_lParam = lParam;
+
+			for (auto gameView : g_pApp->m_pGameLogic->m_GameViews)
+			{
+				if (gameView->VOnMsgProc(msg))
+				{
+					return true;
+				}
+			}
+		}
+		break;
+	}
 	}
 
 	return (DefWindowProc(hWnd, uMsg, wParam, lParam));
@@ -387,4 +453,32 @@ bool BaseGameApp::AttachAsClient()
 bool BaseGameApp::VLoadGame(void)
 {
 	return m_pGameLogic->VLoadGame(m_Config.m_Project);
+}
+
+bool BaseGameApp::InitImGui()
+{
+	ImGuiIO& io = ImGui::GetIO();
+	io.KeyMap[ImGuiKey_Tab] = VK_TAB;
+	io.KeyMap[ImGuiKey_LeftArrow] = VK_LEFT;
+	io.KeyMap[ImGuiKey_RightArrow] = VK_RIGHT;
+	io.KeyMap[ImGuiKey_UpArrow] = VK_UP;
+	io.KeyMap[ImGuiKey_DownArrow] = VK_DOWN;
+	io.KeyMap[ImGuiKey_PageUp] = VK_PRIOR;
+	io.KeyMap[ImGuiKey_PageDown] = VK_NEXT;
+	io.KeyMap[ImGuiKey_Home] = VK_HOME;
+	io.KeyMap[ImGuiKey_End] = VK_END;
+	io.KeyMap[ImGuiKey_Delete] = VK_DELETE;
+	io.KeyMap[ImGuiKey_Backspace] = VK_BACK;
+	io.KeyMap[ImGuiKey_Enter] = VK_RETURN;
+	io.KeyMap[ImGuiKey_Escape] = VK_ESCAPE;
+	io.KeyMap[ImGuiKey_A] = 'A';
+	io.KeyMap[ImGuiKey_C] = 'C';
+	io.KeyMap[ImGuiKey_V] = 'V';
+	io.KeyMap[ImGuiKey_X] = 'X';
+	io.KeyMap[ImGuiKey_Y] = 'Y';
+	io.KeyMap[ImGuiKey_Z] = 'Z';
+
+	io.ImeWindowHandle = m_hWindow;
+
+	return true;
 }

@@ -6,8 +6,7 @@
 #include "../Graphics3D/Scene.h"
 #include "../Graphics3D/CameraNode.h"
 #include "../Graphics3D/MovementController.h"
-
-const uint32_t SCREEN_REFRESH_RATE(1000 / 60);
+#include "imgui.h"
 
 HumanView::HumanView(shared_ptr<IRenderer> renderer)
 {
@@ -58,51 +57,49 @@ bool HumanView::LoadGame(tinyxml2::XMLElement* pLevelData)
 
 void HumanView::VOnRender(const GameTime& gameTime)
 {
-	m_currTick = GetTickCount();
-	if (m_currTick == m_lastDraw)
-		return;
+	ImGuiIO& io = ImGui::GetIO();
+	io.DisplaySize = ImVec2((float)g_pApp->m_Config.m_ScreenWidth, (float)g_pApp->m_Config.m_ScreenHeight);
+	io.DeltaTime = gameTime.GetElapsedTime();
+	ImGui::NewFrame();
 
-	if (m_runFullSpeed || ((m_currTick - m_lastDraw) > SCREEN_REFRESH_RATE))
+	if (g_pApp->m_pRenderer->VPreRender())
 	{
-		if (g_pApp->m_pRenderer->VPreRender())
+		m_ScreenElements.sort(SortBy_SharedPtr_Content<IScreenElement>());
+
+		for (ScreenElementList::iterator i = m_ScreenElements.begin(); i != m_ScreenElements.end(); ++i)
 		{
-			m_ScreenElements.sort(SortBy_SharedPtr_Content<IScreenElement>());
-
-			for (ScreenElementList::iterator i = m_ScreenElements.begin(); i != m_ScreenElements.end(); ++i)
+			if ((*i)->VIsVisible())
 			{
-				if ((*i)->VIsVisible())
-				{
-					(*i)->VOnRender(gameTime);
-				}
+				(*i)->VOnRender(gameTime);
 			}
-
-			VRenderText();
-
-			m_lastDraw = m_currTick;
 		}
 
-		g_pApp->m_pRenderer->VPostRender();
+		VRenderText();
+
+		ImGui::Render();
 	}
+
+	g_pApp->m_pRenderer->VPostRender();
 }
 
-HRESULT HumanView::VOnRestore()
+HRESULT HumanView::VOnInitGameViews()
 {
 	HRESULT hr = S_OK;
 	for (ScreenElementList::iterator i = m_ScreenElements.begin(); i != m_ScreenElements.end(); ++i)
 	{
-		(*i)->VOnRestore();
+		(*i)->VOnInitScreenElements();
 	}
 
 	return hr;
 }
 
-HRESULT HumanView::VOnDestoryDevice()
+HRESULT HumanView::VOnDeleteGameViews()
 {
 // 	HRESULT hr;
 
 	for (ScreenElementList::iterator i = m_ScreenElements.begin(); i != m_ScreenElements.end(); ++i)
 	{
-		(*i)->VOnDestoryDevice();
+		(*i)->VOnDeleteScreenElements();
 	}
 
 	return S_OK;
@@ -125,15 +122,19 @@ LRESULT CALLBACK HumanView::VOnMsgProc(AppMsg msg)
 		{
 			if ((*i)->VOnMsgProc(msg))
 			{
-				return 1;
+				return true;
 			}
 		}
 	}
+
+	ImGuiIO& io = ImGui::GetIO();
 
 	LRESULT result = 0;
 	switch (msg.m_uMsg)
 	{
 	case WM_KEYDOWN:
+		if (msg.m_wParam < 256)
+			io.KeysDown[msg.m_wParam] = 1;
 		if (m_pKeyboardHandler)
 		{
 			result = m_pKeyboardHandler->VOnKeyDown(static_cast<uint8_t>(msg.m_wParam));
@@ -141,16 +142,25 @@ LRESULT CALLBACK HumanView::VOnMsgProc(AppMsg msg)
 		break;
 
 	case WM_KEYUP:
+		if (msg.m_wParam < 256)
+			io.KeysDown[msg.m_wParam] = 0;
 		if (m_pKeyboardHandler)
 			result = m_pKeyboardHandler->VOnKeyUp(static_cast<uint8_t>(msg.m_wParam));
 		break;
 
 	case WM_MOUSEMOVE:
+		io.MousePos.x = LOWORD(msg.m_lParam);
+		io.MousePos.y = HIWORD(msg.m_lParam);
 		if (m_pPointerHandler)
 			result = m_pPointerHandler->VOnPointerMove(Vector2(LOWORD(msg.m_lParam), HIWORD(msg.m_lParam)), 1);
 		break;
 
+	case WM_MOUSEWHEEL:
+		io.MouseWheel += GET_WHEEL_DELTA_WPARAM(msg.m_wParam) > 0 ? +1.0f : -1.0f;
+		break;
+
 	case WM_LBUTTONDOWN:
+		io.MouseDown[0] = true;
 		if (m_pPointerHandler)
 		{
 			SetCapture(msg.m_hWnd);
@@ -159,6 +169,7 @@ LRESULT CALLBACK HumanView::VOnMsgProc(AppMsg msg)
 		break;
 
 	case WM_LBUTTONUP:
+		io.MouseDown[0] = false;
 		if (m_pPointerHandler)
 		{
 			SetCapture(NULL);
@@ -167,6 +178,7 @@ LRESULT CALLBACK HumanView::VOnMsgProc(AppMsg msg)
 		break;
 
 	case WM_RBUTTONDOWN:
+		io.MouseDown[1] = true;
 		if (m_pPointerHandler)
 		{
 			SetCapture(msg.m_hWnd);
@@ -175,14 +187,27 @@ LRESULT CALLBACK HumanView::VOnMsgProc(AppMsg msg)
 		break;
 
 	case WM_RBUTTONUP:
+		io.MouseDown[1] = false;
 		if (m_pPointerHandler)
 		{
 			SetCapture(NULL);
 			result = m_pPointerHandler->VOnPointerButtonUp(Vector2(LOWORD(msg.m_lParam), HIWORD(msg.m_lParam)), 1, "PointerRight");
 		}
 		break;
-	case WM_CHAR:
+
+	case WM_MBUTTONDOWN:
+		io.MouseDown[2] = true;
 		break;
+
+	case WM_MBUTTONUP:
+		io.MouseDown[2] = false;
+		break;
+
+	case WM_CHAR:
+		if (msg.m_wParam > 0 && msg.m_wParam < 0x10000)
+			io.AddInputCharacter((unsigned short)msg.m_wParam);
+		break;
+
 	default:
 		return 0;
 	}

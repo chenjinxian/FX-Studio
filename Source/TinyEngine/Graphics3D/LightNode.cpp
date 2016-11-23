@@ -50,7 +50,12 @@ LightNode::~LightNode()
 	SAFE_RELEASE(m_pIndexBuffer);
 }
 
-HRESULT LightNode::VOnRestore(Scene* pScene)
+HRESULT LightNode::VOnInitSceneNode(Scene* pScene)
+{
+	return S_OK;
+}
+
+HRESULT LightNode::VOnDeleteSceneNode(Scene *pScene)
 {
 	return S_OK;
 }

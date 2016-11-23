@@ -10,12 +10,15 @@ public:
 
 	virtual void VSetBackgroundColor(const Color& color) override;
 	virtual bool VInitRenderer(HWND hWnd) override;
+	virtual void VDeleteRenderer() override;
+	virtual void VResizeSwapChain() override;
 	virtual bool VPreRender() override;
 	virtual bool VPostRender() override;
-	virtual void VShutdown() override;
 
 private:
 	void InitD3D11Device();
+	void CreateBuffers();
+	void DeleteBuffers();
 
 	D3D_FEATURE_LEVEL m_FeatureLevel;
 	ID3D11Device1* m_pDevice;

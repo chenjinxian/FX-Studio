@@ -8,7 +8,8 @@ public:
 	LightNode(ActorId actorId, WeakBaseRenderComponentPtr renderComponent, RenderPass renderPass, const Matrix& mat);
 	virtual ~LightNode();
 
-	virtual HRESULT VOnRestore(Scene* pScene) override;
+	virtual HRESULT VOnInitSceneNode(Scene* pScene) override;
+	virtual HRESULT VOnDeleteSceneNode(Scene *pScene) override;
 	virtual HRESULT VRender(Scene* pScene, const GameTime& gameTime) override;
 
 protected:

@@ -12,12 +12,12 @@ public:
 	HumanView(shared_ptr<IRenderer> renderer);
 	virtual ~HumanView();
 
-	virtual HRESULT VOnRestore();
-	virtual HRESULT VOnDestoryDevice();
-	virtual void VOnUpdate(const GameTime& gameTime);
-	virtual void VOnRender(const GameTime& gameTime);
-	virtual GameViewType VGetType() { return GameView_Human; }
-	virtual GameViewId VGetId() const { return m_ViewId; }
+	virtual HRESULT VOnInitGameViews() override;
+	virtual HRESULT VOnDeleteGameViews() override;
+	virtual void VOnUpdate(const GameTime& gameTime) override;
+	virtual void VOnRender(const GameTime& gameTime) override;
+	virtual GameViewType VGetType()  override { return GameView_Human; }
+	virtual GameViewId VGetId() const  override { return m_ViewId; }
 
 	virtual void VOnAttach(GameViewId vid, ActorId aid)
 	{
@@ -52,10 +52,6 @@ protected:
 
 	GameViewId m_ViewId;
 	ActorId m_ActorId;
-
-	DWORD m_currTick;
-	DWORD m_lastDraw;
-	bool m_runFullSpeed;
 
 	BaseGameState m_GameState;
 

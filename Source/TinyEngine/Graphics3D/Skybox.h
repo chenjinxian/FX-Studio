@@ -32,9 +32,10 @@ public:
 	virtual HRESULT VPreRender(Scene* pScene);
 	virtual bool VIsVisible(Scene* pScene);
 
-	virtual HRESULT VOnRestore(Scene* pScene);
-	virtual HRESULT VRender(Scene* pScene, const GameTime& gameTime);
-	virtual HRESULT VOnUpdate(Scene* pScene, const GameTime& gameTime);
+	virtual HRESULT VOnInitSceneNode(Scene* pScene) override;
+	virtual HRESULT VOnDeleteSceneNode(Scene *pScene) override;
+	virtual HRESULT VRender(Scene* pScene, const GameTime& gameTime) override;
+	virtual HRESULT VOnUpdate(Scene* pScene, const GameTime& gameTime) override;
 
 private:
 	void Reset();

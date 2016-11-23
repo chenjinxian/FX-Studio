@@ -18,6 +18,7 @@ public:
 	bool InitEnvironment();
 	HWND SetupWindow(HINSTANCE hInstance);
 	bool InitRenderer();
+	bool InitImGui();
 	void RenderLoop();
 
 	enum Renderer

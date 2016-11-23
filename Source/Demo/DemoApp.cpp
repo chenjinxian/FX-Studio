@@ -123,10 +123,10 @@ void DemoLogic::VChangeState(BaseGameState gameState)
 void DemoLogic::VAddView(shared_ptr<IGameView> pView, ActorId actorId /*= INVALID_ACTOR_ID*/)
 {
 	BaseGameLogic::VAddView(pView, actorId);
-// 	if (dynamic_pointer_cast<SamplesView>(pView))
-// 	{
-// 		m_HumanPlayersAttached++;
-// 	}
+	if (dynamic_pointer_cast<DemoView>(pView))
+	{
+		m_HumanPlayersAttached++;
+	}
 }
 
 void DemoLogic::RequestStartGameDelegate(IEventDataPtr pEventData)

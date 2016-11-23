@@ -101,7 +101,7 @@ bool SkyboxNode::VIsVisible(Scene* pScene)
 	return m_IsActive;
 }
 
-HRESULT SkyboxNode::VOnRestore(Scene* pScene)
+HRESULT SkyboxNode::VOnInitSceneNode(Scene* pScene)
 {
 // 	Reset();
 // 
@@ -128,6 +128,11 @@ HRESULT SkyboxNode::VOnRestore(Scene* pScene)
 // 
 // 	return hr;
 
+	return S_OK;
+}
+
+HRESULT SkyboxNode::VOnDeleteSceneNode(Scene *pScene)
+{
 	return S_OK;
 }
 

@@ -57,8 +57,8 @@ public:
 	virtual void VSetTransform(const Matrix& worldMatrix);
 
 	virtual HRESULT VOnUpdate(Scene* pScene, const GameTime& gameTime) override;
-	virtual HRESULT VOnRestore(Scene* pScene) override;
-	virtual HRESULT VOnDestoryDevice(Scene *pScene) override;
+	virtual HRESULT VOnInitSceneNode(Scene* pScene) override;
+	virtual HRESULT VOnDeleteSceneNode(Scene *pScene) override;
 
 	virtual HRESULT VPreRender(Scene* pScene) override;
 	virtual HRESULT VRender(Scene* pScene, const GameTime& gameTime) override;
@@ -96,10 +96,10 @@ public:
 	GridNode(ActorId actorId, WeakBaseRenderComponentPtr renderComponent, const Matrix& worldMatrix);
 	virtual ~GridNode();
 
-	virtual HRESULT VOnRestore(Scene* pScene);
-	virtual HRESULT VRender(Scene* pScene, const GameTime& gameTime);
-	virtual HRESULT VOnUpdate(Scene* pScene, const GameTime& gameTime);
-	virtual HRESULT VOnDestoryDevice(Scene *pScene);
+	virtual HRESULT VOnInitSceneNode(Scene* pScene) override;
+	virtual HRESULT VOnDeleteSceneNode(Scene *pScene) override;
+	virtual HRESULT VRender(Scene* pScene, const GameTime& gameTime) override;
+	virtual HRESULT VOnUpdate(Scene* pScene, const GameTime& gameTime) override;
 
 private:
 	ID3DX11Effect* mEffect;
@@ -126,8 +126,8 @@ public:
 
 	~ModelNode();
 
-	virtual HRESULT VOnRestore(Scene *pScene);
-	virtual HRESULT VOnDestoryDevice(Scene* pScene) override;
+	virtual HRESULT VOnInitSceneNode(Scene* pScene) override;
+	virtual HRESULT VOnDeleteSceneNode(Scene *pScene) override;
 	virtual HRESULT VOnUpdate(Scene* pScene, const GameTime& gameTime) override;
 	virtual HRESULT VRender(Scene* pScene, const GameTime& gameTime) override;
 

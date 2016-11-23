@@ -53,9 +53,10 @@ public:
 	CameraNode(const Frustum& frustum);
 	virtual ~CameraNode();
 
-	virtual HRESULT VOnRestore(Scene* pScene);
-	virtual HRESULT VRender(Scene* pScene, const GameTime& gameTime);
-	virtual bool VIsVisible(Scene* pScene) const { return true; }
+	virtual HRESULT VOnInitSceneNode(Scene* pScene) override;
+	virtual HRESULT VOnDeleteSceneNode(Scene *pScene) override;
+	virtual HRESULT VRender(Scene* pScene, const GameTime& gameTime) override;
+	virtual bool VIsVisible(Scene* pScene) const override { return true; }
 
 	const Frustum& GetFrustum() { return m_Frustum; }
 	void SetTarget(shared_ptr<SceneNode> pTarget) { m_pTarget = pTarget; }

@@ -145,7 +145,7 @@ void BaseGameLogic::VAddView(shared_ptr<IGameView> pView, ActorId actorId)
 	uint64_t viewId = m_GameViews.size();
 	m_GameViews.push_back(pView);
 	pView->VOnAttach(viewId, actorId);
-	pView->VOnRestore();
+	pView->VOnInitGameViews();
 }
 
 void BaseGameLogic::VRemoveView(shared_ptr<IGameView> pView)

@@ -92,10 +92,15 @@ CameraNode::~CameraNode()
 
 }
 
-HRESULT CameraNode::VOnRestore(Scene* pScene)
+HRESULT CameraNode::VOnInitSceneNode(Scene* pScene)
 {
 // 	m_Frustum.SetAspect((float)DXUTGetWindowWidth() / DXUTGetWindowHeight());
 // 	m_ProjectionMatrix = Matrix::CreatePerspectiveFieldOfView(m_Frustum.m_Fov, m_Frustum.m_Aspect, m_Frustum.m_Near, m_Frustum.m_Far);
+	return S_OK;
+}
+
+HRESULT CameraNode::VOnDeleteSceneNode(Scene *pScene)
+{
 	return S_OK;
 }
 

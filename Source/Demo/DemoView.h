@@ -7,7 +7,8 @@ public:
 	MainMenuUI();
 	virtual ~MainMenuUI();
 
-	virtual HRESULT VOnRestore();
+	virtual HRESULT VOnInitScreenElements() override;
+	virtual HRESULT VOnDeleteScreenElements() override;
 	virtual HRESULT VOnRender(const GameTime& gameTime);
 	virtual int VGetZOrder() const { return 1; }
 	virtual void VSetZOrder(int zOrder) { }
@@ -20,26 +21,6 @@ protected:
 	std::vector<std::wstring> m_Levels;
 	int m_LevelIndex;
 };
-
-
-class StandardHUD : public BaseUI
-{
-public:
-	StandardHUD();
-	virtual ~StandardHUD();
-
-	virtual HRESULT VOnRestore();
-	virtual HRESULT VOnRender(const GameTime& gameTime);
-	virtual int VGetZOrder() const { return 1; }
-	virtual void VSetZOrder(int zOrder) { }
-
-	virtual LRESULT CALLBACK VOnMsgProc(AppMsg msg);
-
-protected:
-};
-
-class IEventManager;
-class TeapotController;
 
 class MainMenuView : public HumanView
 {

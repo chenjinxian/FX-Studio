@@ -63,7 +63,7 @@ HRESULT Scene::OnRender(const GameTime& gameTime)
 	return S_OK;
 }
 
-HRESULT Scene::OnRestore()
+HRESULT Scene::OnInitScene()
 {
 	if (!m_pRootNode)
 		return S_OK;
@@ -71,14 +71,14 @@ HRESULT Scene::OnRestore()
 // 	HRESULT hr;
 // 	V_RETURN(m_pRenderer->VOnRestore());
 
-	return m_pRootNode->VOnRestore(this);
+	return m_pRootNode->VOnInitSceneNode(this);
 }
 
-HRESULT Scene::OnDestoryDevice()
+HRESULT Scene::OnDeleteScene()
 {
 	if (m_pRootNode != nullptr)
 	{
-		return m_pRootNode->VOnDestoryDevice(this);
+		return m_pRootNode->VOnDeleteSceneNode(this);
 	}
 	return S_OK;
 }
@@ -125,7 +125,7 @@ void Scene::NewRenderComponentDelegate(IEventDataPtr pEventData)
 	shared_ptr<SceneNode> pSceneNode(pCastEventData->GetSceneNode());
 	if (pSceneNode != nullptr)
 	{
-		if (FAILED(pSceneNode->VOnRestore(this)))
+		if (FAILED(pSceneNode->VOnInitSceneNode(this)))
 		{
 // 			std::string error = "Failed to restore scene node to the scene for actorid " + boost::lex(actorId);
 // 			DEBUG_ERROR(error);

@@ -69,56 +69,21 @@ bool D3D11Renderer::VInitRenderer(HWND hWnd)
 	SAFE_RELEASE(dxgiAdapter);
 	SAFE_RELEASE(dxgiFactory);
 
-	ID3D11Texture2D* backBuffer;
-	if (FAILED(hr = m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBuffer))))
-	{
-		DEBUG_ERROR("IDXGISwapChain::GetBuffer() failed.");
-	}
-
-	backBuffer->GetDesc(&m_BackBufferDesc);
-
-	if (FAILED(hr = m_pDevice->CreateRenderTargetView(backBuffer, nullptr, &m_pRenderTargetView)))
-	{
-		SAFE_RELEASE(backBuffer);
-		DEBUG_ERROR("IDXGIDevice::CreateRenderTargetView() failed.");
-	}
-
-	SAFE_RELEASE(backBuffer);
-
-	D3D11_TEXTURE2D_DESC depthStencilDesc;
-	ZeroMemory(&depthStencilDesc, sizeof(depthStencilDesc));
-	depthStencilDesc.Width = g_pApp->m_Config.m_ScreenWidth;
-	depthStencilDesc.Height = g_pApp->m_Config.m_ScreenHeight;
-	depthStencilDesc.MipLevels = 1;
-	depthStencilDesc.ArraySize = 1;
-	depthStencilDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	depthStencilDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-	depthStencilDesc.Usage = D3D11_USAGE_DEFAULT;
-	depthStencilDesc.SampleDesc.Count = g_pApp->m_Config.m_AntiAliasingSample;
-	depthStencilDesc.SampleDesc.Quality = m_MultiSamplingQualityLevels;
-
-	if (FAILED(hr = m_pDevice->CreateTexture2D(&depthStencilDesc, nullptr, &m_pDepthStencilBuffer)))
-	{
-		DEBUG_ERROR("IDXGIDevice::CreateTexture2D() failed.");
-	}
-
-	if (FAILED(hr = m_pDevice->CreateDepthStencilView(m_pDepthStencilBuffer, nullptr, &m_pDepthStencilView)))
-	{
-		DEBUG_ERROR("IDXGIDevice::CreateDepthStencilView() failed.");
-	}
-
-	m_pDeviceContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
-
-	m_Viewport.TopLeftX = 0.0f;
-	m_Viewport.TopLeftY = 0.0f;
-	m_Viewport.Width = static_cast<float>(g_pApp->m_Config.m_ScreenWidth);
-	m_Viewport.Height = static_cast<float>(g_pApp->m_Config.m_ScreenHeight);
-	m_Viewport.MinDepth = 0.0f;
-	m_Viewport.MaxDepth = 1.0f;
-
-	m_pDeviceContext->RSSetViewports(1, &m_Viewport);
+	CreateBuffers();
 
 	return true;
+}
+
+void D3D11Renderer::VDeleteRenderer()
+{
+
+}
+
+void D3D11Renderer::VResizeSwapChain()
+{
+	DeleteBuffers();
+	m_pSwapChain->ResizeBuffers(0, g_pApp->m_Config.m_ScreenWidth, g_pApp->m_Config.m_ScreenHeight, DXGI_FORMAT_UNKNOWN, 0);
+	CreateBuffers();
 }
 
 bool D3D11Renderer::VPreRender()
@@ -133,13 +98,8 @@ bool D3D11Renderer::VPreRender()
 
 bool D3D11Renderer::VPostRender()
 {
-	m_pSwapChain->Present(0, 0);
+	m_pSwapChain->Present(g_pApp->m_Config.m_IsVSync ? 1 : 0, 0);
 	return true;
-}
-
-void D3D11Renderer::VShutdown()
-{
-
 }
 
 void D3D11Renderer::InitD3D11Device()
@@ -192,4 +152,64 @@ void D3D11Renderer::InitD3D11Device()
 			g_pApp->m_Config.m_AntiAliasingSample /= 2;
 		}
 	}
+}
+
+void D3D11Renderer::CreateBuffers()
+{
+	HRESULT hr;
+	ID3D11Texture2D* backBuffer;
+	if (FAILED(hr = m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBuffer))))
+	{
+		DEBUG_ERROR("IDXGISwapChain::GetBuffer() failed.");
+	}
+
+	backBuffer->GetDesc(&m_BackBufferDesc);
+
+	if (FAILED(hr = m_pDevice->CreateRenderTargetView(backBuffer, nullptr, &m_pRenderTargetView)))
+	{
+		SAFE_RELEASE(backBuffer);
+		DEBUG_ERROR("IDXGIDevice::CreateRenderTargetView() failed.");
+	}
+
+	SAFE_RELEASE(backBuffer);
+
+	D3D11_TEXTURE2D_DESC depthStencilDesc;
+	ZeroMemory(&depthStencilDesc, sizeof(depthStencilDesc));
+	depthStencilDesc.Width = g_pApp->m_Config.m_ScreenWidth;
+	depthStencilDesc.Height = g_pApp->m_Config.m_ScreenHeight;
+	depthStencilDesc.MipLevels = 1;
+	depthStencilDesc.ArraySize = 1;
+	depthStencilDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	depthStencilDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	depthStencilDesc.Usage = D3D11_USAGE_DEFAULT;
+	depthStencilDesc.SampleDesc.Count = g_pApp->m_Config.m_AntiAliasingSample;
+	depthStencilDesc.SampleDesc.Quality = m_MultiSamplingQualityLevels;
+
+	if (FAILED(hr = m_pDevice->CreateTexture2D(&depthStencilDesc, nullptr, &m_pDepthStencilBuffer)))
+	{
+		DEBUG_ERROR("IDXGIDevice::CreateTexture2D() failed.");
+	}
+
+	if (FAILED(hr = m_pDevice->CreateDepthStencilView(m_pDepthStencilBuffer, nullptr, &m_pDepthStencilView)))
+	{
+		DEBUG_ERROR("IDXGIDevice::CreateDepthStencilView() failed.");
+	}
+
+	m_pDeviceContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
+
+	m_Viewport.TopLeftX = 0.0f;
+	m_Viewport.TopLeftY = 0.0f;
+	m_Viewport.Width = static_cast<float>(g_pApp->m_Config.m_ScreenWidth);
+	m_Viewport.Height = static_cast<float>(g_pApp->m_Config.m_ScreenHeight);
+	m_Viewport.MinDepth = 0.0f;
+	m_Viewport.MaxDepth = 1.0f;
+
+	m_pDeviceContext->RSSetViewports(1, &m_Viewport);
+}
+
+void D3D11Renderer::DeleteBuffers()
+{
+	SAFE_RELEASE(m_pRenderTargetView);
+	SAFE_RELEASE(m_pDepthStencilView);
+	SAFE_RELEASE(m_pDepthStencilBuffer);
 }

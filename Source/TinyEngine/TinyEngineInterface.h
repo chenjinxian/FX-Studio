@@ -39,8 +39,8 @@ public:
 	IScreenElement() {}
 	~IScreenElement() {}
 
-	virtual HRESULT VOnRestore() = 0;
-	virtual HRESULT VOnDestoryDevice() = 0;
+	virtual HRESULT VOnInitScreenElements() = 0;
+	virtual HRESULT VOnDeleteScreenElements() = 0;
 	virtual void VOnUpdate(const GameTime& gameTime) = 0;
 	virtual HRESULT VOnRender(const GameTime& gameTime) = 0;
 
@@ -92,8 +92,8 @@ public:
 	IGameView() {}
 	~IGameView() {}
 
-	virtual HRESULT VOnRestore() = 0;
-	virtual HRESULT VOnDestoryDevice() = 0;
+	virtual HRESULT VOnInitGameViews() = 0;
+	virtual HRESULT VOnDeleteGameViews() = 0;
 	virtual void VOnUpdate(const GameTime& gameTime) = 0;
 	virtual void VOnRender(const GameTime& gameTime) = 0;
 	virtual void VOnAttach(GameViewId viewId, ActorId actorId) = 0;
@@ -177,9 +177,10 @@ public:
 
 	virtual void VSetBackgroundColor(const Color& color) = 0;
 	virtual bool VInitRenderer(HWND hWnd) = 0;
+	virtual void VDeleteRenderer() = 0;
+	virtual void VResizeSwapChain() = 0;
 	virtual bool VPreRender() = 0;
 	virtual bool VPostRender() = 0;
-	virtual void VShutdown() = 0;
 };
 
 class ISceneNode
@@ -192,8 +193,8 @@ public:
 	virtual void VSetTransform(const Matrix& worldMatrix) = 0;
 
 	virtual HRESULT VOnUpdate(Scene* pScene, const GameTime& gameTime) = 0;
-	virtual HRESULT VOnRestore(Scene* pScene) = 0;
-	virtual HRESULT VOnDestoryDevice(Scene* pScene) = 0;
+	virtual HRESULT VOnInitSceneNode(Scene* pScene) = 0;
+	virtual HRESULT VOnDeleteSceneNode(Scene* pScene) = 0;
 
 	virtual HRESULT VPreRender(Scene* pScene) = 0;
 	virtual HRESULT VRender(Scene* pScene, const GameTime& gameTime) = 0;

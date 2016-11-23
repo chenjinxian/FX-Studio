@@ -41,22 +41,22 @@ void SceneNode::VSetTransform(const Matrix& worldMatrix)
 	m_Properties.m_worldMatrix = worldMatrix;
 }
 
-HRESULT SceneNode::VOnRestore(Scene* pScene)
+HRESULT SceneNode::VOnInitSceneNode(Scene* pScene)
 {
 	Color color = (m_pRenderComponent) ? m_pRenderComponent->GetColor() : Color(Colors::White.f);
 
 	for (auto& child : m_Children)
 	{
-		child->VOnRestore(pScene);
+		child->VOnInitSceneNode(pScene);
 	}
 	return S_OK;
 }
 
-HRESULT SceneNode::VOnDestoryDevice(Scene *pScene)
+HRESULT SceneNode::VOnDeleteSceneNode(Scene *pScene)
 {
 	for (auto& child : m_Children)
 	{
-		child->VOnDestoryDevice(pScene);
+		child->VOnDeleteSceneNode(pScene);
 	}
 	return S_OK;
 }
@@ -282,16 +282,16 @@ GridNode::~GridNode()
 	SAFE_RELEASE(mVertexBuffer);
 }
 
-HRESULT GridNode::VOnDestoryDevice(Scene *pScene)
+HRESULT GridNode::VOnDeleteSceneNode(Scene *pScene)
 {
 	return S_OK;
 }
 
-HRESULT GridNode::VOnRestore(Scene* pScene)
+HRESULT GridNode::VOnInitSceneNode(Scene* pScene)
 {
 // 	HRESULT hr;
 // 
-// 	V_RETURN(SceneNode::VOnRestore(pScene));
+// 	V_RETURN(SceneNode::VOnInitSceneNode(pScene));
 // 
 // 	SAFE_RELEASE(mVertexBuffer);
 // 
@@ -416,12 +416,12 @@ ModelNode::~ModelNode()
 	SAFE_DELETE(m_pTextureMappingMaterial);
 }
 
-HRESULT ModelNode::VOnRestore(Scene *pScene)
+HRESULT ModelNode::VOnInitSceneNode(Scene *pScene)
 {
 	return S_OK;
 }
 
-HRESULT ModelNode::VOnDestoryDevice(Scene* pScene)
+HRESULT ModelNode::VOnDeleteSceneNode(Scene* pScene)
 {
 	return S_OK;
 }

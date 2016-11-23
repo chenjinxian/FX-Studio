@@ -13,8 +13,8 @@ public:
 
 	HRESULT OnUpdate(const GameTime& gameTime);
 	HRESULT OnRender(const GameTime& gameTime);
-	HRESULT OnRestore();
-	HRESULT OnDestoryDevice();
+	HRESULT OnInitScene();
+	HRESULT OnDeleteScene();
 	shared_ptr<ISceneNode> FindActor(ActorId actorId);
 	bool AddChild(ActorId actorId, shared_ptr<ISceneNode> pChild);
 	bool RemoveChild(ActorId actorId);

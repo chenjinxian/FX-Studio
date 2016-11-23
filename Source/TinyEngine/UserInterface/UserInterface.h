@@ -29,9 +29,10 @@ class BaseUI : public IScreenElement
 public:
 	BaseUI() : m_bIsVisible(true), m_PosX(0), m_PosY(0), m_Width(100), m_Height(100) {}
 	virtual void VOnUpdate(const GameTime& gameTime) {}
-	virtual HRESULT VOnDestoryDevice() { return S_OK; }
-	virtual bool VIsVisible() const { return m_bIsVisible; }
-	virtual void VSetVisible(bool visible) { m_bIsVisible = visible; }
+	virtual HRESULT VOnInitScreenElements() override { return S_OK; }
+	virtual HRESULT VOnDeleteScreenElements() override { return S_OK; }
+	virtual bool VIsVisible() const override { return m_bIsVisible; }
+	virtual void VSetVisible(bool visible) override { m_bIsVisible = visible; }
 
 protected:
 	bool m_bIsVisible;
@@ -49,19 +50,17 @@ public:
 		DEBUG_WARNING("~ScreenElementScene()");
 	}
 
-	virtual void VOnUpdate(const GameTime& gameTime) { OnUpdate(gameTime); };
-	virtual HRESULT VOnRestore() 
-		{ OnRestore(); return S_OK; }
-	virtual HRESULT VOnRender(const GameTime& gameTime)
-		{ OnRender(gameTime); return S_OK; }
-	virtual HRESULT VOnDestoryDevice() { return OnDestoryDevice(); }
-	virtual int VGetZOrder() const { return 0; }
-	virtual void VSetZOrder(int zOrder) { }
+	virtual void VOnUpdate(const GameTime& gameTime) override { OnUpdate(gameTime); };
+	virtual HRESULT VOnInitScreenElements() override { return OnInitScene(); }
+	virtual HRESULT VOnDeleteScreenElements() override { return OnDeleteScene(); }
+	virtual HRESULT VOnRender(const GameTime& gameTime) override { return OnRender(gameTime); }
+	virtual int VGetZOrder() const override { return 0; }
+	virtual void VSetZOrder(int zOrder) override { }
 
-	virtual LRESULT CALLBACK VOnMsgProc( AppMsg msg ) { return 0; }
+	virtual LRESULT CALLBACK VOnMsgProc(AppMsg msg) override { return 0; }
 
-	virtual bool VIsVisible() const { return true; }
-	virtual void VSetVisible(bool visible) { }
+	virtual bool VIsVisible() const override { return true; }
+	virtual void VSetVisible(bool visible) override { }
 	virtual bool VAddChild(ActorId id, shared_ptr<ISceneNode> kid) { return Scene::AddChild(id, kid); }
 };
 

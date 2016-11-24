@@ -179,7 +179,7 @@ public:
 	virtual bool VInitRenderer(HWND hWnd) = 0;
 	virtual void VDeleteRenderer() = 0;
 	virtual void VResizeSwapChain() = 0;
-	virtual bool VPreRender() = 0;
+	virtual bool VPreRender(const GameTime& gameTime) = 0;
 	virtual bool VPostRender() = 0;
 };
 

@@ -1,12 +1,7 @@
 #include "DemoView.h"
 #include "DemoApp.h"
 #include "imgui.h"
-
-#define CID_START_BUTTON				(8)
-#define CID_LEVEL_LISTBOX				(16)
-
-const int g_SampleUIWidth = 600;
-const int g_SampleUIHeight = 600;
+#include "imgui_internal.h"
 
 DemoView::DemoView(shared_ptr<IRenderer> renderer) : HumanView(renderer)
 {
@@ -53,7 +48,19 @@ LRESULT CALLBACK DemoView::VOnMsgProc(AppMsg msg)
 
 void DemoView::VRenderText()
 {
-	ImGui::Text("Hello, world!");
+	ImGui::SetNextWindowPos(ImVec2(10,10));
+	ImGui::SetNextWindowSize(ImVec2(200, 100));
+
+	if (!ImGui::Begin("Main Menu", nullptr, ImVec2(0, 0), 0.0f,
+		ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings))
+	{
+		ImGui::End();
+		return;
+	}
+
+	ImGui::Text("Hello world");
+
+	ImGui::End();
 }
 
 void DemoView::VOnUpdate(const GameTime& gameTime)
@@ -97,8 +104,8 @@ bool DemoView::VLoadGameDelegate(tinyxml2::XMLElement* pLevelData)
 	if (!HumanView::VLoadGameDelegate(pLevelData))
 		return false;
 
-// 	m_StandardHUD.reset(DEBUG_NEW StandardHUD);
-// 	VPushElement(m_StandardHUD);
+	m_StandardHUD.reset(DEBUG_NEW StandardHUD);
+	VPushElement(m_StandardHUD);
 
 // 	m_pFreeCameraController.reset(DEBUG_NEW MovementController(m_pCamera, 0, 0, false));
 
@@ -136,8 +143,13 @@ void DemoView::RemoveAllDelegates(void)
 }
 
 MainMenuUI::MainMenuUI()
+	: m_UIWidth(600),
+	m_UIHeight(600),
+	m_UIPositionX((g_pApp->m_Config.m_ScreenWidth - m_UIWidth) / 2),
+	m_UIPositionY((g_pApp->m_Config.m_ScreenHeight - m_UIHeight) / 2),
+	m_CurrentSelect(0)
 {
-// 	Set();
+
 }
 
 MainMenuUI::~MainMenuUI()
@@ -146,7 +158,9 @@ MainMenuUI::~MainMenuUI()
 
 HRESULT MainMenuUI::VOnInitScreenElements()
 {
-	return S_OK;
+	m_UIPositionX = (g_pApp->m_Config.m_ScreenWidth - m_UIWidth) / 2;
+	m_UIPositionY = (g_pApp->m_Config.m_ScreenHeight - m_UIHeight) / 2;
+		return S_OK;
 }
 
 HRESULT MainMenuUI::VOnDeleteScreenElements()
@@ -156,22 +170,105 @@ HRESULT MainMenuUI::VOnDeleteScreenElements()
 
 HRESULT MainMenuUI::VOnRender(const GameTime& gameTime)
 {
-// 	HRESULT hr;
-// 	DXUT_BeginPerfEvent(DXUT_PERFEVENTCOLOR, L"ShootGameHUD");
-// 	VTrace(m_SampleUI.OnRender(fElapsedTime));
-// 	DXUT_EndPerfEvent();
+	ImGui::SetNextWindowPos(ImVec2(m_UIPositionX, m_UIPositionY));
+	ImGui::SetNextWindowSize(ImVec2(m_UIWidth, m_UIHeight));
+
+	if (!ImGui::Begin("Main Menu", nullptr, ImVec2(0, 0), 0.3f,
+		ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings))
+	{
+		ImGui::End();
+		return S_FALSE;
+	}
+
+	ImGui::NewLine();
+	ImGui::NewLine();
+	ImGui::Text("Main Menu");
+	ImGui::NewLine();
+	ImGui::Separator();
+
+	ImGui::Text("Select a project");
+	std::vector<const char*> projects = g_pApp->GetGameLogic()->GetProjectManager()->GetProjects();
+	ImGui::PushItemWidth(-1);
+	ImGui::ListBox("", &m_CurrentSelect, &projects[0], projects.size(), 15);
+	ImGui::PopItemWidth();
+
+	ImGui::NewLine();
+	ImGui::NewLine();
+	ImGui::SameLine(220);
+	bool m_IsStarted = ImGui::Button("Start Game", ImVec2(160, 36));
+
+	ImGui::End();
+
+	if (m_IsStarted && m_CurrentSelect >= 0)
+	{
+		g_pApp->m_Config.m_Project = projects[m_CurrentSelect];
+
+		VSetVisible(false);
+
+		shared_ptr<EvtData_Request_Start_Game> pRequestStartGameEvent(DEBUG_NEW EvtData_Request_Start_Game());
+		IEventManager::Get()->VQueueEvent(pRequestStartGameEvent);
+	}
+
 	return S_OK;
 }
 
 LRESULT CALLBACK MainMenuUI::VOnMsgProc(AppMsg msg)
 {
-// 	return m_SampleUI.MsgProc(msg.m_hWnd, msg.m_uMsg, msg.m_wParam, msg.m_lParam);
-	return S_OK;
-}
+	ImGuiIO& io = ImGui::GetIO();
 
-void MainMenuUI::Set()
-{
-// 	m_LevelIndex = m_SampleUI.GetListBox(CID_LEVEL_LISTBOX)->GetSelectedIndex();
+	switch (msg.m_uMsg)
+	{
+	case WM_KEYDOWN:
+		if (msg.m_wParam < 256) io.KeysDown[msg.m_wParam] = 1;
+		break;
+
+	case WM_KEYUP:
+		if (msg.m_wParam < 256) io.KeysDown[msg.m_wParam] = 0;
+		break;
+
+	case WM_MOUSEMOVE:
+		io.MousePos.x = LOWORD(msg.m_lParam);
+		io.MousePos.y = HIWORD(msg.m_lParam);
+		break;
+
+	case WM_MOUSEWHEEL:
+		io.MouseWheel += GET_WHEEL_DELTA_WPARAM(msg.m_wParam) > 0 ? +1.0f : -1.0f;
+		break;
+
+	case WM_LBUTTONDOWN:
+		io.MouseDown[0] = true;
+		break;
+
+	case WM_LBUTTONUP:
+		io.MouseDown[0] = false;
+		break;
+
+	case WM_RBUTTONDOWN:
+		io.MouseDown[1] = true;
+		break;
+
+	case WM_RBUTTONUP:
+		io.MouseDown[1] = false;
+		break;
+
+	case WM_MBUTTONDOWN:
+		io.MouseDown[2] = true;
+		break;
+
+	case WM_MBUTTONUP:
+		io.MouseDown[2] = false;
+		break;
+
+	case WM_CHAR:
+		if (msg.m_wParam > 0 && msg.m_wParam < 0x10000)
+			io.AddInputCharacter((unsigned short)msg.m_wParam);
+		break;
+
+	default:
+		return 0;
+	}
+
+	return 0;
 }
 
 MainMenuView::MainMenuView() : HumanView(shared_ptr<IRenderer>())
@@ -203,4 +300,29 @@ LRESULT CALLBACK MainMenuView::VOnMsgProc(AppMsg msg)
 			return 1;
 	}
 	return 0;
+}
+
+StandardHUD::StandardHUD()
+{
+}
+
+StandardHUD::~StandardHUD()
+{
+
+}
+
+HRESULT StandardHUD::VOnRestore()
+{
+	return S_OK;
+}
+
+HRESULT StandardHUD::VOnRender(const GameTime& gameTime)
+{
+	return S_OK;
+}
+
+LRESULT CALLBACK StandardHUD::VOnMsgProc(AppMsg msg)
+{
+	// 	return m_HUD.MsgProc(msg.m_hWnd, msg.m_uMsg, msg.m_wParam, msg.m_lParam);
+	return S_OK;
 }

@@ -12,13 +12,17 @@ public:
 	virtual bool VInitRenderer(HWND hWnd) override;
 	virtual void VDeleteRenderer() override;
 	virtual void VResizeSwapChain() override;
-	virtual bool VPreRender() override;
+	virtual bool VPreRender(const GameTime& gameTime) override;
 	virtual bool VPostRender() override;
 
 private:
 	void InitD3D11Device();
+	bool InitImGui(HWND hWnd);
 	void CreateBuffers();
 	void DeleteBuffers();
+	bool CreateImGuiBuffers();
+	void DeleteImGuiBuffers();
+	void RenderDrawLists();
 
 	D3D_FEATURE_LEVEL m_FeatureLevel;
 	ID3D11Device1* m_pDevice;

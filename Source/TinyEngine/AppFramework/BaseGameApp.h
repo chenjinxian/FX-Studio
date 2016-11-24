@@ -18,7 +18,6 @@ public:
 	bool InitEnvironment();
 	HWND SetupWindow(HINSTANCE hInstance);
 	bool InitRenderer();
-	bool InitImGui();
 	void RenderLoop();
 
 	enum Renderer
@@ -29,12 +28,11 @@ public:
 	};
 	Renderer GetRendererAPI();
 
-	int GetScreenWidth() const { return m_Config.m_ScreenWidth; }
-	int GetScreenHeight() const { return m_Config.m_ScreenHeight; }
-
 	virtual bool VLoadGame(void);
 	void AbortGame() { m_IsQuitting = true; }
 	bool AttachAsClient();
+
+	BaseGameLogic* GetGameLogic(void) const { return m_pGameLogic; }
 
 	GameConfig m_Config;
 	unique_ptr<ResCache> m_pResCache;

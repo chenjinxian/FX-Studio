@@ -21,6 +21,10 @@ BaseGameLogic::BaseGameLogic()
 	m_IsRenderDiagnostics(false),
 	m_pPhysics(nullptr)
 {
+	m_pProjectManager = DEBUG_NEW ProjectManager;
+	DEBUG_ASSERT(m_pProjectManager);
+	m_pProjectManager->Initialize(g_pApp->m_pResCache->Match("world\\*.xml"));
+	
 // 	RegisterEngineScriptEvents();
 // 	IEventManager::Get()->VAddListener(
 // 		boost::bind(&BaseGameLogic::RequestDestroyActorDelegate, this, std::placeholders::_1), EvtData_Request_Destroy_Actor::sk_EventType);
@@ -34,6 +38,7 @@ BaseGameLogic::~BaseGameLogic()
 	}
 
 	SAFE_DELETE(m_pActorFactory);
+	SAFE_DELETE(m_pProjectManager);
 
 	for (auto& actor : m_Actors)
 	{

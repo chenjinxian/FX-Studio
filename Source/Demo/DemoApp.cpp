@@ -76,8 +76,8 @@ void DemoLogic::VChangeState(BaseGameState gameState)
 	{
 	case BGS_WaitingForPlayers:
 	{
-// 		shared_ptr<IGameView> playersView(DEBUG_NEW SamplesView(g_pApp->m_pRenderer));
-// 		VAddView(playersView);
+		shared_ptr<IGameView> playersView(DEBUG_NEW DemoView(g_pApp->m_pRenderer));
+		VAddView(playersView);
 
 		if (m_IsProxy)
 		{

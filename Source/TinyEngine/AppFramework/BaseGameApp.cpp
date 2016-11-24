@@ -6,7 +6,6 @@
 #include "../ResourceCache/XmlResource.h"
 #include "../Graphics3D/TextureResourceLoader.h"
 #include "../EventManager/EventManagerImpl.h"
-#include "imgui.h"
 
 BaseGameApp* g_pApp = nullptr;
 const int BaseGameApp::MEGABYTE = 1024 * 1024;
@@ -205,10 +204,6 @@ HWND BaseGameApp::SetupWindow(HINSTANCE hInstance)
 
 	}
 
-	ShowWindow(m_hWindow, SW_SHOW);
-	SetForegroundWindow(m_hWindow);
-	SetFocus(m_hWindow);
-
 	return m_hWindow;
 }
 
@@ -228,7 +223,7 @@ bool BaseGameApp::InitRenderer()
 	if (m_pRenderer != nullptr)
 	{
 		m_pRenderer->VSetBackgroundColor(Color(0.392156899f, 0.584313750f, 0.929411829f, 1.000000000f));
-		return m_pRenderer->VInitRenderer(m_hWindow) && InitImGui();
+		return m_pRenderer->VInitRenderer(m_hWindow);
 	}
 	else
 	{
@@ -453,32 +448,4 @@ bool BaseGameApp::AttachAsClient()
 bool BaseGameApp::VLoadGame(void)
 {
 	return m_pGameLogic->VLoadGame(m_Config.m_Project);
-}
-
-bool BaseGameApp::InitImGui()
-{
-	ImGuiIO& io = ImGui::GetIO();
-	io.KeyMap[ImGuiKey_Tab] = VK_TAB;
-	io.KeyMap[ImGuiKey_LeftArrow] = VK_LEFT;
-	io.KeyMap[ImGuiKey_RightArrow] = VK_RIGHT;
-	io.KeyMap[ImGuiKey_UpArrow] = VK_UP;
-	io.KeyMap[ImGuiKey_DownArrow] = VK_DOWN;
-	io.KeyMap[ImGuiKey_PageUp] = VK_PRIOR;
-	io.KeyMap[ImGuiKey_PageDown] = VK_NEXT;
-	io.KeyMap[ImGuiKey_Home] = VK_HOME;
-	io.KeyMap[ImGuiKey_End] = VK_END;
-	io.KeyMap[ImGuiKey_Delete] = VK_DELETE;
-	io.KeyMap[ImGuiKey_Backspace] = VK_BACK;
-	io.KeyMap[ImGuiKey_Enter] = VK_RETURN;
-	io.KeyMap[ImGuiKey_Escape] = VK_ESCAPE;
-	io.KeyMap[ImGuiKey_A] = 'A';
-	io.KeyMap[ImGuiKey_C] = 'C';
-	io.KeyMap[ImGuiKey_V] = 'V';
-	io.KeyMap[ImGuiKey_X] = 'X';
-	io.KeyMap[ImGuiKey_Y] = 'Y';
-	io.KeyMap[ImGuiKey_Z] = 'Z';
-
-	io.ImeWindowHandle = m_hWindow;
-
-	return true;
 }

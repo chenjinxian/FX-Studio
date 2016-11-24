@@ -15,17 +15,17 @@ public:
 
 	virtual LRESULT CALLBACK VOnMsgProc(AppMsg msg);
 
-protected:
-	void Set();
-
-	std::vector<std::wstring> m_Levels;
-	int m_LevelIndex;
+private:
+	uint32_t m_UIWidth;
+	uint32_t m_UIHeight;
+	uint32_t m_UIPositionX;
+	uint32_t m_UIPositionY;
+	int m_CurrentSelect;
 };
 
 class MainMenuView : public HumanView
 {
 public:
-
 	MainMenuView();
 	~MainMenuView();
 
@@ -35,6 +35,22 @@ public:
 
 protected:
 	shared_ptr<MainMenuUI> m_MainMenuUI;
+};
+
+class StandardHUD : public BaseUI
+{
+public:
+	StandardHUD();
+	virtual ~StandardHUD();
+
+	virtual HRESULT VOnRestore();
+	virtual HRESULT VOnRender(const GameTime& gameTime);
+	virtual int VGetZOrder() const { return 1; }
+	virtual void VSetZOrder(int zOrder) { }
+
+	virtual LRESULT CALLBACK VOnMsgProc(AppMsg msg);
+
+protected:
 };
 
 class DemoView : public HumanView

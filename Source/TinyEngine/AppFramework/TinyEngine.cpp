@@ -28,9 +28,14 @@ INT WINAPI WindowBaseMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR l
 		g_pApp->m_Config.InitConfig("TinyEngineConfig.xml", lpCmdLine);
 		if (g_pApp->InitEnvironment())
 		{
-			g_pApp->SetupWindow(hInstance);
-			g_pApp->InitRenderer();
-			g_pApp->RenderLoop();
+			HWND hWnd = g_pApp->SetupWindow(hInstance);
+			if (g_pApp->InitRenderer())
+			{
+				ShowWindow(hWnd, SW_SHOW);
+				SetForegroundWindow(hWnd);
+				SetFocus(hWnd);
+				g_pApp->RenderLoop();
+			}
 		}
 	}
 

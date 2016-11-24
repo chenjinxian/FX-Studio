@@ -19,7 +19,34 @@ enum BaseGameState
 
 
 typedef std::map<ActorId, StrongActorPtr> ActorMap;
-typedef std::string Level;
+
+class ProjectManager
+{
+public:
+	ProjectManager() {}
+	~ProjectManager()
+	{
+		for (auto project : m_Projects)
+		{
+			SAFE_DELETE(project);
+		}
+	}
+
+	const std::vector<const char*>& GetProjects() const { return m_Projects; }
+	const int GetCurrentProject() const { return m_CurrentProject; }
+	bool Initialize(std::vector<std::string> &projects)
+	{
+		for (auto project : projects)
+		{
+			m_Projects.push_back(_strdup(project.c_str()));
+		}
+		return true;
+	}
+
+protected:
+	std::vector<const char*> m_Projects;
+	int m_CurrentProject;
+};
 
 class BaseGameLogic : public IGameLogic
 {
@@ -30,6 +57,7 @@ public:
 	virtual ~BaseGameLogic();
 
 	bool Init();
+	const ProjectManager* GetProjectManager() { return m_pProjectManager; }
 
 	void SetProxy(bool isProxy)
 	{
@@ -85,5 +113,6 @@ protected:
 	int m_RemotePlayerId;
 	bool m_IsRenderDiagnostics;
 	shared_ptr<IGamePhysics> m_pPhysics;
+	ProjectManager* m_pProjectManager;
 };
 

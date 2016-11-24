@@ -43,7 +43,8 @@ public:
 
 	void PopMatrix()
 	{
-		m_MatrixStack.pop();
+		if (!m_MatrixStack.empty())
+			m_MatrixStack.pop();
 	}
 
 	Matrix GetTopMatrix()

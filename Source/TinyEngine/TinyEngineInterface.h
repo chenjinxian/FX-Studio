@@ -175,6 +175,7 @@ public:
 	IRenderer() {}
 	~IRenderer() {}
 
+	virtual const std::wstring& VGetDeviceName() = 0;
 	virtual void VSetBackgroundColor(const Color& color) = 0;
 	virtual bool VInitRenderer(HWND hWnd) = 0;
 	virtual void VDeleteRenderer() = 0;

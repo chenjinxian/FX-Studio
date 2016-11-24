@@ -8,6 +8,7 @@ public:
 	D3D11Renderer();
 	virtual ~D3D11Renderer();
 
+	virtual const std::wstring& VGetDeviceName() override { return m_DeviceName; }
 	virtual void VSetBackgroundColor(const Color& color) override;
 	virtual bool VInitRenderer(HWND hWnd) override;
 	virtual void VDeleteRenderer() override;
@@ -41,6 +42,7 @@ private:
 	ID3D11DepthStencilView* m_pDepthStencilView;
 	D3D11_VIEWPORT m_Viewport;
 
+	std::wstring m_DeviceName;
 	Color m_BackgroundColor;
 };
 

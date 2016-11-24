@@ -65,6 +65,10 @@ bool D3D11Renderer::VInitRenderer(HWND hWnd)
 		DEBUG_ERROR("IDXGIDevice::GetParent() failed retrieving adapter.");
 	}
 
+	DXGI_ADAPTER_DESC desc;
+	dxgiAdapter->GetDesc(&desc);
+	m_DeviceName = desc.Description;
+
 	IDXGIFactory2* dxgiFactory = nullptr;
 	if (FAILED(hr = dxgiAdapter->GetParent(__uuidof(IDXGIFactory2), reinterpret_cast<void**>(&dxgiFactory))))
 	{

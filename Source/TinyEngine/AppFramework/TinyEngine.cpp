@@ -23,6 +23,8 @@ INT WINAPI WindowBaseMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR l
 	SetCurrentDirectory(Utility::GetExecutableDirectory().c_str());
 	Logger::Init("logging.xml");
 
+	SetThreadAffinityMask(GetCurrentThread(), 1);
+
 	if (g_pApp != nullptr)
 	{
 		g_pApp->m_Config.InitConfig("TinyEngineConfig.xml", lpCmdLine);

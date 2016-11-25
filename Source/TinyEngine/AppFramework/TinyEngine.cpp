@@ -1,4 +1,5 @@
 #include "BaseGameApp.h"
+#include "../Debugging/MiniDump.h"
 #include <crtdbg.h>
 
 #ifdef _DEBUG
@@ -12,6 +13,8 @@
 #pragma comment(lib, "tinyxml2.lib")
 #pragma comment(lib, "zlibstatic.lib")
 #endif
+
+MiniDumper g_MiniDump(false);
 
 INT WINAPI WindowBaseMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
 {

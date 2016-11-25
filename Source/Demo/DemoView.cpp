@@ -37,7 +37,7 @@ LRESULT CALLBACK DemoView::VOnMsgProc(AppMsg msg)
 		{
 // 			if (MessageBox::Ask(QUESTION_QUIT_GAME) == IDYES)
 // 			{
-// 				g_pApp->SetQuitting(true);
+				g_pApp->SetQuitting(true);
 // 			}
 			return 1;
 		}
@@ -46,10 +46,10 @@ LRESULT CALLBACK DemoView::VOnMsgProc(AppMsg msg)
 	return 0;
 }
 
-void DemoView::VRenderText()
+void DemoView::VRenderText(const GameTime& gameTime)
 {
-	ImGui::SetNextWindowPos(ImVec2(10,10));
-	ImGui::SetNextWindowSize(ImVec2(200, 100));
+	ImGui::SetNextWindowPos(ImVec2(0, 0));
+	ImGui::SetNextWindowSize(ImVec2(500, 100));
 
 	if (!ImGui::Begin("Main Menu", nullptr, ImVec2(0, 0), 0.0f,
 		ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings))
@@ -58,7 +58,8 @@ void DemoView::VRenderText()
 		return;
 	}
 
-	ImGui::Text("Hello world");
+	ImGui::Text(g_pApp->m_pRenderer->VGetDeviceName().c_str());
+	ImGui::Text("%d (fps)", gameTime.GetFrameRate());
 
 	ImGui::End();
 }
@@ -184,7 +185,6 @@ HRESULT MainMenuUI::VOnRender(const GameTime& gameTime)
 	ImGui::NewLine();
 	ImGui::Text("Main Menu");
 	ImGui::NewLine();
-	ImGui::Separator();
 
 	ImGui::Text("Select a project");
 	std::vector<const char*> projects = g_pApp->GetGameLogic()->GetProjectManager()->GetProjects();
@@ -282,9 +282,9 @@ MainMenuView::~MainMenuView()
 
 }
 
-void MainMenuView::VRenderText()
+void MainMenuView::VRenderText(const GameTime& gameTime)
 {
-	HumanView::VRenderText();
+
 }
 
 void MainMenuView::VOnUpdate(const GameTime& gameTime)

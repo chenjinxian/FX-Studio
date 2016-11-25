@@ -8,7 +8,7 @@ public:
 	D3D11Renderer();
 	virtual ~D3D11Renderer();
 
-	virtual const std::wstring& VGetDeviceName() override { return m_DeviceName; }
+	virtual const std::string& VGetDeviceName() override { return m_DeviceName; }
 	virtual void VSetBackgroundColor(const Color& color) override;
 	virtual bool VInitRenderer(HWND hWnd) override;
 	virtual void VDeleteRenderer() override;
@@ -30,19 +30,13 @@ private:
 	ID3D11DeviceContext1* m_pDeviceContext;
 	IDXGISwapChain1* m_pSwapChain;
 
-// 	bool m_IsFullScreen;
-// 	bool m_MultiSamplingEnabled;
-// 	uint32_t m_FrameRate;
-// 	uint32_t m_MultiSamplingCount;
-	uint32_t m_MultiSamplingQualityLevels;
-
 	ID3D11Texture2D* m_pDepthStencilBuffer;
 	D3D11_TEXTURE2D_DESC m_BackBufferDesc;
 	ID3D11RenderTargetView* m_pRenderTargetView;
 	ID3D11DepthStencilView* m_pDepthStencilView;
 	D3D11_VIEWPORT m_Viewport;
 
-	std::wstring m_DeviceName;
+	std::string m_DeviceName;
 	Color m_BackgroundColor;
 };
 

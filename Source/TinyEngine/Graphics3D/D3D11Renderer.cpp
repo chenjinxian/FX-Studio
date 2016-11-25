@@ -24,6 +24,14 @@ struct VERTEX_CONSTANT_BUFFER
 };
 
 D3D11Renderer::D3D11Renderer()
+	: m_pDevice(nullptr),
+	m_pDeviceContext(nullptr),
+	m_pSwapChain(nullptr),
+	m_pDepthStencilBuffer(nullptr),
+	m_pRenderTargetView(nullptr),
+	m_pDepthStencilView(nullptr),
+	m_DeviceName(),
+	m_BackgroundColor()
 {
 	InitD3D11Device();
 }
@@ -47,7 +55,7 @@ bool D3D11Renderer::VInitRenderer(HWND hWnd)
 	swapChainDesc.Height = g_pApp->m_Config.m_ScreenHeight;
 	swapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	swapChainDesc.SampleDesc.Count = g_pApp->m_Config.m_AntiAliasingSample;
-	swapChainDesc.SampleDesc.Quality = m_MultiSamplingQualityLevels;
+	swapChainDesc.SampleDesc.Quality = 0;
 	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	swapChainDesc.BufferCount = 1;
 	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
@@ -67,7 +75,7 @@ bool D3D11Renderer::VInitRenderer(HWND hWnd)
 
 	DXGI_ADAPTER_DESC desc;
 	dxgiAdapter->GetDesc(&desc);
-	m_DeviceName = desc.Description;
+	m_DeviceName = Utility::WS2S(desc.Description);
 
 	IDXGIFactory2* dxgiFactory = nullptr;
 	if (FAILED(hr = dxgiAdapter->GetParent(__uuidof(IDXGIFactory2), reinterpret_cast<void**>(&dxgiFactory))))
@@ -104,7 +112,12 @@ bool D3D11Renderer::VInitRenderer(HWND hWnd)
 
 void D3D11Renderer::VDeleteRenderer()
 {
+	DeleteImGuiBuffers();
+	DeleteBuffers();
 
+	SAFE_RELEASE(m_pSwapChain);
+	SAFE_RELEASE(m_pDeviceContext);
+	SAFE_RELEASE(m_pDevice);
 }
 
 void D3D11Renderer::VResizeSwapChain()
@@ -177,11 +190,10 @@ void D3D11Renderer::InitD3D11Device()
 
 	while (g_pApp->m_Config.m_AntiAliasingSample > 0)
 	{
+		uint32_t qualityLevel = 0;
 		if (SUCCEEDED(m_pDevice->CheckMultisampleQualityLevels(
-			DXGI_FORMAT_R8G8B8A8_UNORM, g_pApp->m_Config.m_AntiAliasingSample, &m_MultiSamplingQualityLevels)) &&
-			m_MultiSamplingQualityLevels > 0)
+			DXGI_FORMAT_R8G8B8A8_UNORM, g_pApp->m_Config.m_AntiAliasingSample, &qualityLevel)) && qualityLevel > 0)
 		{
-			m_MultiSamplingQualityLevels--;
 			break;
 		}
 		else
@@ -220,7 +232,7 @@ void D3D11Renderer::CreateBuffers()
 	depthStencilDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 	depthStencilDesc.Usage = D3D11_USAGE_DEFAULT;
 	depthStencilDesc.SampleDesc.Count = g_pApp->m_Config.m_AntiAliasingSample;
-	depthStencilDesc.SampleDesc.Quality = m_MultiSamplingQualityLevels;
+	depthStencilDesc.SampleDesc.Quality = 0;
 
 	if (FAILED(hr = m_pDevice->CreateTexture2D(&depthStencilDesc, nullptr, &m_pDepthStencilBuffer)))
 	{
@@ -246,6 +258,10 @@ void D3D11Renderer::CreateBuffers()
 
 void D3D11Renderer::DeleteBuffers()
 {
+	if (m_pDeviceContext != nullptr)
+	{
+		m_pDeviceContext->OMSetRenderTargets(0, nullptr, nullptr);
+	}
 	SAFE_RELEASE(m_pRenderTargetView);
 	SAFE_RELEASE(m_pDepthStencilView);
 	SAFE_RELEASE(m_pDepthStencilBuffer);

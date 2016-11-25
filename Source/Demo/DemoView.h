@@ -29,7 +29,7 @@ public:
 	MainMenuView();
 	~MainMenuView();
 
-	virtual void VRenderText() override;
+	virtual void VRenderText(const GameTime& gameTime) override;
 	virtual void VOnUpdate(const GameTime& gameTime) override;
 	virtual LRESULT CALLBACK VOnMsgProc(AppMsg msg) override;
 
@@ -60,7 +60,7 @@ public:
 	virtual ~DemoView();
 
 	virtual LRESULT CALLBACK VOnMsgProc(AppMsg msg);
-	virtual void VRenderText() override;
+	virtual void VRenderText(const GameTime& gameTime) override;
 	virtual void VOnUpdate(const GameTime& gameTime) override;
 	virtual void VOnAttach(GameViewId vid, ActorId aid) override;
 

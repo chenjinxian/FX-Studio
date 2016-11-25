@@ -47,7 +47,7 @@ public:
 	shared_ptr<CameraNode> m_pCamera;
 
 protected:
-	virtual void VRenderText() { };
+	virtual void VRenderText(const GameTime& gameTime) { };
 	virtual bool VLoadGameDelegate(tinyxml2::XMLElement* pLevelData) { VPushElement(m_pScene);  return true; }
 
 	GameViewId m_ViewId;

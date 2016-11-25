@@ -171,6 +171,9 @@ HWND BaseGameApp::SetupWindow(HINSTANCE hInstance)
 	{
 		dwExStyle = WS_EX_APPWINDOW;
 		dwStyle = WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN;
+
+		m_Config.m_ScreenWidth = screenWidth;
+		m_Config.m_ScreenHeight = screenHeight;
 	}
 	else
 	{
@@ -181,8 +184,8 @@ HWND BaseGameApp::SetupWindow(HINSTANCE hInstance)
 	RECT windowRect;
 	windowRect.left = 0L;
 	windowRect.top = 0L;
-	windowRect.right = m_Config.m_IsFullScreen ? (long)screenWidth : (long)m_Config.m_ScreenWidth;
-	windowRect.bottom = m_Config.m_IsFullScreen ? (long)screenHeight : (long)m_Config.m_ScreenHeight;
+	windowRect.right = (long)m_Config.m_ScreenWidth;
+	windowRect.bottom = (long)m_Config.m_ScreenHeight;
 
 	AdjustWindowRectEx(&windowRect, dwStyle, FALSE, dwExStyle);
 
@@ -300,6 +303,10 @@ LRESULT CALLBACK BaseGameApp::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARA
 	case WM_SYSCOMMAND:
 		break;
 	case WM_CLOSE:
+		if (g_pApp->m_IsQuitting)
+		{
+			g_pApp->OnClose();
+		}
 		break;
 	case WM_DESTROY:
 		PostQuitMessage(0);
@@ -448,4 +455,12 @@ bool BaseGameApp::AttachAsClient()
 bool BaseGameApp::VLoadGame(void)
 {
 	return m_pGameLogic->VLoadGame(m_Config.m_Project);
+}
+
+void BaseGameApp::OnClose()
+{
+	SAFE_DELETE(m_pGameLogic);
+	SAFE_DELETE(m_pEventManager);
+	m_pRenderer->VDeleteRenderer();
+	DestroyWindow(m_hWindow);
 }

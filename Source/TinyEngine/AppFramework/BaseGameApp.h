@@ -30,6 +30,7 @@ public:
 
 	virtual bool VLoadGame(void);
 	void AbortGame() { m_IsQuitting = true; }
+	void SetQuitting(bool quitting) { m_IsQuitting = quitting; }
 	bool AttachAsClient();
 
 	BaseGameLogic* GetGameLogic(void) const { return m_pGameLogic; }
@@ -49,6 +50,7 @@ protected:
 
 private:
 	static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	void OnClose();
 	void OnUpdate(const GameTime& gameTime);
 	void OnRender(const GameTime& gameTime);
 

@@ -68,7 +68,7 @@ void HumanView::VOnRender(const GameTime& gameTime)
 			}
 		}
 
-		VRenderText();
+		VRenderText(gameTime);
 	}
 
 	g_pApp->m_pRenderer->VPostRender();

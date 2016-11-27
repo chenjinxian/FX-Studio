@@ -104,8 +104,8 @@ bool D3D11Renderer::VInitRenderer(HWND hWnd)
 	SAFE_RELEASE(dxgiFactory);
 
 	CreateBuffers();
-	CreateImGuiBuffers();
 	InitImGui(hWnd);
+	CreateImGuiBuffers();
 
 	return true;
 }
@@ -678,8 +678,7 @@ bool D3D11Renderer::InitImGui(HWND hWnd)
 	io.KeyMap[ImGuiKey_Z] = 'Z';
 	io.RenderDrawListsFn = nullptr;
 	io.ImeWindowHandle = hWnd;
-	io.Fonts->AddFontDefault();
-	io.FontDefault = io.Fonts->AddFontFromFileTTF("Fonts/Cousine-Regular.ttf", 20.0f);
+	io.Fonts->AddFontFromFileTTF("Fonts/Cousine-Regular.ttf", 20.0f);
 
 	return true;
 }

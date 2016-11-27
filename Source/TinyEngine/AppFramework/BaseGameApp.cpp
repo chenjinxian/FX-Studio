@@ -207,6 +207,9 @@ HWND BaseGameApp::SetupWindow(HINSTANCE hInstance)
 
 	}
 
+	ShowWindow(m_hWindow, SW_SHOW);
+	UpdateWindow(m_hWindow);
+	SetForegroundWindow(m_hWindow);
 	return m_hWindow;
 }
 

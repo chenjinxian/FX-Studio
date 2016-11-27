@@ -36,9 +36,6 @@ INT WINAPI WindowBaseMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR l
 			HWND hWnd = g_pApp->SetupWindow(hInstance);
 			if (g_pApp->InitRenderer())
 			{
-				ShowWindow(hWnd, SW_SHOW);
-				SetForegroundWindow(hWnd);
-				SetFocus(hWnd);
 				g_pApp->RenderLoop();
 			}
 		}

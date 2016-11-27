@@ -19,7 +19,8 @@ BaseGameApp::BaseGameApp()
 	m_hWindow(nullptr),
 	m_pEventManager(nullptr),
 	m_HasModalDialog(false),
-	m_IsQuitting(false),
+	m_IsExiting(false),
+	m_IsRestoring(false),
 	m_IsEditorRunning(false)
 {
 	g_pApp = this;
@@ -92,19 +93,6 @@ bool BaseGameApp::InitEnvironment()
 		DEBUG_ERROR("Failed to create EventManager.");
 		return false;
 	}
-
-	m_pGameLogic = VCreateGameAndView();
-	if (m_pGameLogic == nullptr)
-		return false;
-
-
-// 	_tcscpy_s(m_saveGameDirectory, GetSaveGameDirectory(GetHwnd(), VGetGameAppDirectory()));
-
-// 	m_pResCache->Preload("*.dds", NULL);
-// 	m_pResCache->Preload("*.jpg", NULL);
-// 	m_pResCache->Preload("*.png", NULL);
-// 	m_pResCache->Preload("*.bmp", NULL);
-// 	m_pResCache->Preload("*.tiff", NULL);
 
 	return true;
 }
@@ -272,7 +260,7 @@ void BaseGameApp::OnUpdate(const GameTime& gameTime)
 		return;
 	}
 
-	if (g_pApp->m_IsQuitting)
+	if (g_pApp->m_IsExiting)
 	{
 		PostMessage(m_hWindow, WM_CLOSE, 0, 0);
 	}
@@ -304,9 +292,19 @@ LRESULT CALLBACK BaseGameApp::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARA
 	case WM_DISPLAYCHANGE:
 		break;
 	case WM_SYSCOMMAND:
+	{
+		switch (wParam)
+		{
+		case SC_CLOSE:
+			g_pApp->m_IsExiting = true;
+			return 0;
+		default:
+			break;
+		}
 		break;
+	}
 	case WM_CLOSE:
-		if (g_pApp->m_IsQuitting)
+		if (g_pApp->m_IsExiting)
 		{
 			g_pApp->OnClose();
 		}
@@ -466,4 +464,23 @@ void BaseGameApp::OnClose()
 	SAFE_DELETE(m_pEventManager);
 	m_pRenderer->VDeleteRenderer();
 	DestroyWindow(m_hWindow);
+	m_IsExiting = false;
+}
+
+bool BaseGameApp::InitResource()
+{
+
+	m_pGameLogic = VCreateGameAndView();
+	if (m_pGameLogic == nullptr)
+		return false;
+
+
+	// 	_tcscpy_s(m_saveGameDirectory, GetSaveGameDirectory(GetHwnd(), VGetGameAppDirectory()));
+
+	// 	m_pResCache->Preload("*.dds", NULL);
+	// 	m_pResCache->Preload("*.jpg", NULL);
+	// 	m_pResCache->Preload("*.png", NULL);
+	// 	m_pResCache->Preload("*.bmp", NULL);
+	// 	m_pResCache->Preload("*.tiff", NULL);
+	return true;
 }

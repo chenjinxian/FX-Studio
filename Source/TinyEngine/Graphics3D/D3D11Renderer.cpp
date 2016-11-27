@@ -113,6 +113,7 @@ bool D3D11Renderer::VInitRenderer(HWND hWnd)
 void D3D11Renderer::VDeleteRenderer()
 {
 	DeleteImGuiBuffers();
+	ImGui::Shutdown();
 	DeleteBuffers();
 
 	SAFE_RELEASE(m_pSwapChain);

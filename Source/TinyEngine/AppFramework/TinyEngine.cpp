@@ -31,14 +31,17 @@ INT WINAPI WindowBaseMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR l
 	if (g_pApp != nullptr)
 	{
 		g_pApp->m_Config.InitConfig("TinyEngineConfig.xml", lpCmdLine);
-		if (g_pApp->InitEnvironment())
+		do
 		{
-			HWND hWnd = g_pApp->SetupWindow(hInstance);
-			if (g_pApp->InitRenderer())
+			if (g_pApp->InitEnvironment())
 			{
-				g_pApp->RenderLoop();
+				HWND hWnd = g_pApp->SetupWindow(hInstance);
+				if (g_pApp->InitRenderer() && g_pApp->InitResource())
+				{
+					g_pApp->RenderLoop();
+				}
 			}
-		}
+		} while (g_pApp->IsRestoring());
 	}
 
 	Logger::Destroy();

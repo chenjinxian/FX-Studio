@@ -306,7 +306,7 @@ void BaseGameLogic::VChangeState(BaseGameState gameState)
 		if (!g_pApp->VLoadGame())
 		{
 			DEBUG_ERROR("The game failed to load.");
-			g_pApp->AbortGame();
+			g_pApp->SetQuitting(true, false);
 		}
 		else
 		{

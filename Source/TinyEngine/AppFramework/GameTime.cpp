@@ -26,6 +26,10 @@ void GameTime::Reset()
 	QueryPerformanceCounter(&m_StartTime);
 	m_CurrentTime = m_StartTime;
 	m_LastTime = m_CurrentTime;
+
+	m_FpsTime = 0.0f;
+	m_FrameCount = 0;
+	m_FrameRate = 0;
 }
 
 void GameTime::UpdateGameTime()

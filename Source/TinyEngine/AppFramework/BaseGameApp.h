@@ -18,6 +18,7 @@ public:
 	bool InitEnvironment();
 	HWND SetupWindow(HINSTANCE hInstance);
 	bool InitRenderer();
+	bool InitResource();
 	void RenderLoop();
 
 	enum Renderer
@@ -29,8 +30,8 @@ public:
 	Renderer GetRendererAPI();
 
 	virtual bool VLoadGame(void);
-	void AbortGame() { m_IsQuitting = true; }
-	void SetQuitting(bool quitting) { m_IsQuitting = quitting; }
+	bool IsRestoring() { return m_IsRestoring; }
+	void SetQuitting(bool isExiting, bool isRestoring) { m_IsExiting = isExiting; m_IsRestoring = isRestoring; }
 	bool AttachAsClient();
 
 	BaseGameLogic* GetGameLogic(void) const { return m_pGameLogic; }
@@ -69,7 +70,8 @@ private:
 	EventManager* m_pEventManager;
 
 	int m_HasModalDialog;
-	bool m_IsQuitting;
+	bool m_IsExiting;
+	bool m_IsRestoring;
 	bool m_IsEditorRunning;
 	std::map<std::wstring, std::wstring> m_TextResource;
 	std::map<std::wstring, UINT> m_Hotkeys;

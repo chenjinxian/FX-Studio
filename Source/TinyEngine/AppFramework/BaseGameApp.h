@@ -37,7 +37,7 @@ public:
 	BaseGameLogic* GetGameLogic(void) const { return m_pGameLogic; }
 
 	GameConfig m_Config;
-	unique_ptr<ResCache> m_pResCache;
+	ResCache* m_pResCache;
 	shared_ptr<IRenderer> m_pRenderer;
 
 protected:

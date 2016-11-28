@@ -135,7 +135,6 @@ bool D3D11Renderer::VPreRender(const GameTime& gameTime)
 	if (m_pDeviceContext != nullptr && m_pRenderTargetView != nullptr)
 	{
 		ImGuiIO& io = ImGui::GetIO();
-		io.DisplaySize = ImVec2((float)g_pApp->m_Config.m_ScreenWidth, (float)g_pApp->m_Config.m_ScreenHeight);
 		io.DeltaTime = gameTime.GetElapsedTime();
 		ImGui::NewFrame();
 
@@ -447,6 +446,7 @@ bool D3D11Renderer::CreateImGuiBuffers()
 		m_pDevice->CreateSamplerState(&desc, &g_pFontSampler);
 	}
 	
+	io.DisplaySize = ImVec2((float)g_pApp->m_Config.m_ScreenWidth, (float)g_pApp->m_Config.m_ScreenHeight);
 	return true;
 }
 

@@ -37,8 +37,6 @@ bool BaseGameApp::InitEnvironment()
 		return false;
 #endif
 
-	SetCursor(NULL);
-
 	bool resourceCheck = false;
 	while (!resourceCheck)
 	{
@@ -62,24 +60,27 @@ bool BaseGameApp::InitEnvironment()
 	RegisterEngineEvents();
 	VRegisterGameEvents();
 
-	IResourceFile *zipFile = (m_IsEditorRunning || !m_Config.m_IsZipResource) ?
-		DEBUG_NEW DevelopmentResourceZipFile(L"Assets.zip", DevelopmentResourceZipFile::Editor) :
-		DEBUG_NEW ResourceZipFile(L"Assets.zip");
-
-	m_pResCache = unique_ptr<ResCache>(DEBUG_NEW ResCache(50, zipFile));
-
-	if (!m_pResCache->Init())
+	if (m_pResCache == nullptr)
 	{
-		DEBUG_ERROR("Failed to initialize resource cache!  Are your paths set up correctly?");
-		return false;
-	}
+		IResourceFile *zipFile = (m_IsEditorRunning || !m_Config.m_IsZipResource) ?
+			DEBUG_NEW DevelopmentResourceZipFile(L"Assets.zip", DevelopmentResourceZipFile::Editor) :
+			DEBUG_NEW ResourceZipFile(L"Assets.zip");
 
-// 	m_pResCache->RegisterLoader(CreateDdsResourceLoader());
-// 	m_pResCache->RegisterLoader(CreateJpgResourceLoader());
-// 	m_pResCache->RegisterLoader(CreatePngResourceLoader());
-// 	m_pResCache->RegisterLoader(CreateBmpResourceLoader());
-// 	m_pResCache->RegisterLoader(CreateTiffResourceLoader());
-	m_pResCache->RegisterLoader(CreateXmlResourceLoader());
+		m_pResCache = DEBUG_NEW ResCache(50, zipFile);
+
+		if (!m_pResCache->Init())
+		{
+			DEBUG_ERROR("Failed to initialize resource cache!  Are your paths set up correctly?");
+			return false;
+		}
+
+		// 	m_pResCache->RegisterLoader(CreateDdsResourceLoader());
+		// 	m_pResCache->RegisterLoader(CreateJpgResourceLoader());
+		// 	m_pResCache->RegisterLoader(CreatePngResourceLoader());
+		// 	m_pResCache->RegisterLoader(CreateBmpResourceLoader());
+		// 	m_pResCache->RegisterLoader(CreateTiffResourceLoader());
+		m_pResCache->RegisterLoader(CreateXmlResourceLoader());
+	}
 
 	if (!LoadStrings("English"))
 	{
@@ -87,11 +88,14 @@ bool BaseGameApp::InitEnvironment()
 		return false;
 	}
 
-	m_pEventManager = DEBUG_NEW EventManager("TinyEngine Event Manager", true);
-	if (!m_pEventManager)
+	if (m_pEventManager == nullptr)
 	{
-		DEBUG_ERROR("Failed to create EventManager.");
-		return false;
+		m_pEventManager = DEBUG_NEW EventManager("TinyEngine Event Manager", true);
+		if (!m_pEventManager)
+		{
+			DEBUG_ERROR("Failed to create EventManager.");
+			return false;
+		}
 	}
 
 	return true;
@@ -460,19 +464,25 @@ bool BaseGameApp::VLoadGame(void)
 
 void BaseGameApp::OnClose()
 {
-	SAFE_DELETE(m_pGameLogic);
-	SAFE_DELETE(m_pEventManager);
+	if (!m_IsRestoring)
+	{
+		SAFE_DELETE(m_pGameLogic);
+		SAFE_DELETE(m_pEventManager);
+	}
 	m_pRenderer->VDeleteRenderer();
+	m_pRenderer.reset();
 	DestroyWindow(m_hWindow);
 	m_IsExiting = false;
 }
 
 bool BaseGameApp::InitResource()
 {
-
-	m_pGameLogic = VCreateGameAndView();
 	if (m_pGameLogic == nullptr)
-		return false;
+	{
+		m_pGameLogic = VCreateGameAndView();
+		if (m_pGameLogic == nullptr)
+			return false;
+	}
 
 
 	// 	_tcscpy_s(m_saveGameDirectory, GetSaveGameDirectory(GetHwnd(), VGetGameAppDirectory()));

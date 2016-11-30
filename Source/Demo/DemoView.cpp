@@ -47,7 +47,7 @@ void DemoView::VRenderText(const GameTime& gameTime)
 		return;
 	}
 
-	ImGui::Text(g_pApp->m_pRenderer->VGetDeviceName().c_str());
+	ImGui::Text(g_pApp->GetRendererAPI()->VGetDeviceName().c_str());
 	ImGui::Text("%d (fps)", gameTime.GetFrameRate());
 
 	ImGui::End();
@@ -62,8 +62,8 @@ void DemoView::VOnUpdate(const GameTime& gameTime)
 	// 		m_pTeapotController->OnUpdate(deltaMs);
 	// 	}
 
-	shared_ptr<EvtData_Update_Tick> pTickEvent(DEBUG_NEW EvtData_Update_Tick(gameTime.GetElapsedTime()));
-	IEventManager::Get()->VTriggerEvent(pTickEvent);
+// 	shared_ptr<EvtData_Update_Tick> pTickEvent(DEBUG_NEW EvtData_Update_Tick(gameTime.GetElapsedTime()));
+// 	IEventManager::Get()->VTriggerEvent(pTickEvent);
 }
 
 void DemoView::VOnAttach(GameViewId vid, ActorId aid)
@@ -135,8 +135,8 @@ void DemoView::RemoveAllDelegates(void)
 MainMenuUI::MainMenuUI()
 	: m_UIWidth(600),
 	m_UIHeight(600),
-	m_UIPositionX((g_pApp->m_Config.m_ScreenWidth - m_UIWidth) / 2),
-	m_UIPositionY((g_pApp->m_Config.m_ScreenHeight - m_UIHeight) / 2),
+	m_UIPositionX((g_pApp->GetGameConfig().m_ScreenWidth - m_UIWidth) / 2),
+	m_UIPositionY((g_pApp->GetGameConfig().m_ScreenHeight - m_UIHeight) / 2),
 	m_CurrentSelect(0)
 {
 
@@ -148,8 +148,8 @@ MainMenuUI::~MainMenuUI()
 
 HRESULT MainMenuUI::VOnInitScreenElements()
 {
-	m_UIPositionX = (g_pApp->m_Config.m_ScreenWidth - m_UIWidth) / 2;
-	m_UIPositionY = (g_pApp->m_Config.m_ScreenHeight - m_UIHeight) / 2;
+	m_UIPositionX = (g_pApp->GetGameConfig().m_ScreenWidth - m_UIWidth) / 2;
+	m_UIPositionY = (g_pApp->GetGameConfig().m_ScreenHeight - m_UIHeight) / 2;
 	return S_OK;
 }
 
@@ -190,7 +190,7 @@ HRESULT MainMenuUI::VOnRender(const GameTime& gameTime)
 
 	if (m_IsStarted && m_CurrentSelect >= 0)
 	{
-		g_pApp->m_Config.m_Project = projects[m_CurrentSelect];
+		g_pApp->GetGameConfig().m_Project = projects[m_CurrentSelect];
 
 		VSetVisible(false);
 
@@ -294,8 +294,8 @@ LRESULT CALLBACK MainMenuView::VOnMsgProc(AppMsg msg)
 StandardHUD::StandardHUD()
 	: m_UIWidth(400),
 	m_UIHeight(400),
-	m_UIPositionX((g_pApp->m_Config.m_ScreenWidth - m_UIWidth) / 2),
-	m_UIPositionY((g_pApp->m_Config.m_ScreenHeight - m_UIHeight) / 2),
+	m_UIPositionX((g_pApp->GetGameConfig().m_ScreenWidth - m_UIWidth) / 2),
+	m_UIPositionY((g_pApp->GetGameConfig().m_ScreenHeight - m_UIHeight) / 2),
 	m_isShowConfig(false)
 {
 }
@@ -307,8 +307,8 @@ StandardHUD::~StandardHUD()
 
 HRESULT StandardHUD::VOnInitScreenElements()
 {
-	m_UIPositionX = (g_pApp->m_Config.m_ScreenWidth - m_UIWidth) / 2;
-	m_UIPositionY = (g_pApp->m_Config.m_ScreenHeight - m_UIHeight) / 2;
+	m_UIPositionX = (g_pApp->GetGameConfig().m_ScreenWidth - m_UIWidth) / 2;
+	m_UIPositionY = (g_pApp->GetGameConfig().m_ScreenHeight - m_UIHeight) / 2;
 	return S_OK;
 }
 
@@ -336,8 +336,8 @@ HRESULT StandardHUD::VOnRender(const GameTime& gameTime)
 		ImGui::Text("App Options");
 		ImGui::NewLine();
 
-		ImGui::Checkbox("Full Screen", &g_pApp->m_Config.m_IsFullScreen);
-		ImGui::Checkbox("VSync", &g_pApp->m_Config.m_IsVSync);
+		ImGui::Checkbox("Full Screen", &g_pApp->GetGameConfig().m_IsFullScreen);
+		ImGui::Checkbox("VSync", &g_pApp->GetGameConfig().m_IsVSync);
 
 		ImGui::NewLine();
 		ImGui::NewLine();

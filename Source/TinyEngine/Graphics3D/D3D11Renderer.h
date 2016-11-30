@@ -8,13 +8,16 @@ public:
 	D3D11Renderer();
 	virtual ~D3D11Renderer();
 
-	virtual const std::string& VGetDeviceName() override { return m_DeviceName; }
-	virtual void VSetBackgroundColor(const Color& color) override;
 	virtual bool VInitRenderer(HWND hWnd) override;
 	virtual void VDeleteRenderer() override;
 	virtual void VResizeSwapChain() override;
 	virtual bool VPreRender(const GameTime& gameTime) override;
 	virtual bool VPostRender() override;
+	virtual void VSetBackgroundColor(const Color& color) override;
+
+	virtual bool VCreateDDSTextureResoure(char *rawBuffer, uint32_t rawSize, shared_ptr<IResourceExtraData> pExtraData) override;
+	virtual bool VCreateWICTextureResoure(char *rawBuffer, uint32_t rawSize, shared_ptr<IResourceExtraData> pExtraData) override;
+	virtual const std::string& VGetDeviceName() override { return m_DeviceName; }
 
 private:
 	void InitD3D11Device();

@@ -137,13 +137,13 @@ public:
 class IResourceFile
 {
 public:
+	virtual ~IResourceFile() { }
 	virtual bool VOpen() = 0;
 	virtual int VGetRawResourceSize(const Resource &r) = 0;
 	virtual int VGetRawResource(const Resource &r, char *buffer) = 0;
 	virtual int VGetNumResources() const = 0;
 	virtual std::string VGetResourceName(int num) const = 0;
 	virtual bool VIsUsingDevelopmentDirectories(void) const = 0;
-	virtual ~IResourceFile() { }
 };
 
 enum RenderPass
@@ -169,19 +169,23 @@ public:
 	virtual std::string VToString() = 0;
 };
 
+class IResourceExtraData;
 class IRenderer
 {
 public:
 	IRenderer() {}
 	~IRenderer() {}
 
-	virtual const std::string& VGetDeviceName() = 0;
-	virtual void VSetBackgroundColor(const Color& color) = 0;
 	virtual bool VInitRenderer(HWND hWnd) = 0;
 	virtual void VDeleteRenderer() = 0;
 	virtual void VResizeSwapChain() = 0;
 	virtual bool VPreRender(const GameTime& gameTime) = 0;
 	virtual bool VPostRender() = 0;
+	virtual void VSetBackgroundColor(const Color& color) = 0;
+
+	virtual bool VCreateDDSTextureResoure(char *rawBuffer, uint32_t rawSize, shared_ptr<IResourceExtraData> pExtraData) = 0;
+	virtual bool VCreateWICTextureResoure(char *rawBuffer, uint32_t rawSize, shared_ptr<IResourceExtraData> pExtraData) = 0;
+	virtual const std::string& VGetDeviceName() = 0;
 };
 
 class ISceneNode

@@ -197,8 +197,8 @@
     <ClInclude Include="Graphics3D\SceneNode.h" />
     <ClInclude Include="Graphics3D\Skybox.h" />
     <ClInclude Include="Graphics3D\TextureMappingMaterial.h" />
-    <ClInclude Include="Graphics3D\TextureResourceLoader.h" />
     <ClInclude Include="Graphics3D\VertexDeclarations.h" />
+    <ClInclude Include="ResourceCache\TextureResource.h" />
     <ClInclude Include="TinyEngine.h" />
     <ClInclude Include="TinyEngineBase.h" />
     <ClInclude Include="TinyEngineInterface.h" />
@@ -238,8 +238,8 @@
     <ClCompile Include="Graphics3D\SceneNode.cpp" />
     <ClCompile Include="Graphics3D\Skybox.cpp" />
     <ClCompile Include="Graphics3D\TextureMappingMaterial.cpp" />
-    <ClCompile Include="Graphics3D\TextureResourceLoader.cpp" />
     <ClCompile Include="ResourceCache\ResCache.cpp" />
+    <ClCompile Include="ResourceCache\TextureResource.cpp" />
     <ClCompile Include="ResourceCache\XmlResource.cpp" />
     <ClCompile Include="ResourceCache\ZipFile.cpp" />
     <ClCompile Include="UserInterface\HumanView.cpp" />

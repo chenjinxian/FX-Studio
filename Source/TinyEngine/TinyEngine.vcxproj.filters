@@ -127,9 +127,6 @@
     <ClInclude Include="Graphics3D\TextureMappingMaterial.h">
       <Filter>Graphics3D</Filter>
     </ClInclude>
-    <ClInclude Include="Graphics3D\TextureResourceLoader.h">
-      <Filter>Graphics3D</Filter>
-    </ClInclude>
     <ClInclude Include="Graphics3D\VertexDeclarations.h">
       <Filter>Graphics3D</Filter>
     </ClInclude>
@@ -153,6 +150,9 @@
     </ClInclude>
     <ClInclude Include="UserInterface\UserInterface.h">
       <Filter>UserInterface</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceCache\TextureResource.h">
+      <Filter>ResourceCache</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -228,9 +228,6 @@
     <ClCompile Include="Graphics3D\TextureMappingMaterial.cpp">
       <Filter>Graphics3D</Filter>
     </ClCompile>
-    <ClCompile Include="Graphics3D\TextureResourceLoader.cpp">
-      <Filter>Graphics3D</Filter>
-    </ClCompile>
     <ClCompile Include="Graphics3D\BasicMaterial.cpp">
       <Filter>Graphics3D</Filter>
     </ClCompile>
@@ -251,6 +248,9 @@
     </ClCompile>
     <ClCompile Include="UserInterface\HumanView.cpp">
       <Filter>UserInterface</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceCache\TextureResource.cpp">
+      <Filter>ResourceCache</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -27,7 +27,7 @@ public:
 		Renderer_D3D11,
 		Renderer_Vulkan
 	};
-	Renderer GetRendererAPI();
+	Renderer GetRendererType();
 
 	virtual bool VLoadGame(void);
 	bool IsRestoring() { return m_IsRestoring; }
@@ -35,10 +35,9 @@ public:
 	bool AttachAsClient();
 
 	BaseGameLogic* GetGameLogic(void) const { return m_pGameLogic; }
-
-	GameConfig m_Config;
-	ResCache* m_pResCache;
-	shared_ptr<IRenderer> m_pRenderer;
+	GameConfig& GetGameConfig() { return m_Config; }
+	ResCache* GetResCache() const { return m_pResCache; }
+	shared_ptr<IRenderer> GetRendererAPI() { return m_pRenderer; }
 
 protected:
 	virtual const wchar_t* VGetWindowTitle() = 0;
@@ -48,6 +47,9 @@ protected:
 	virtual BaseGameLogic* VCreateGameAndView() = 0;
 
 	BaseGameLogic* m_pGameLogic;
+	GameConfig m_Config;
+	ResCache* m_pResCache;
+	shared_ptr<IRenderer> m_pRenderer;
 
 private:
 	static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);

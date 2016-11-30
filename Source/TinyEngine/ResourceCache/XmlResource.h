@@ -1,15 +1,11 @@
 #pragma once
-#include "../TinyEngineBase.h"
-#include "../TinyEngineInterface.h"
 #include "ResCache.h"
-
-extern shared_ptr<IResourceLoader> CreateXmlResourceLoader();
 
 class XmlResourceExtraData : public IResourceExtraData
 {
 public:
 	virtual std::string VToString() { return "XmlResourceExtraData"; }
-	void ParseXml(const char* pRawBuffer, uint32_t rawSize);
+	bool ParseXml(const char* pRawBuffer, uint32_t rawSize);
 	tinyxml2::XMLElement* GetRoot(void) { return m_xmlDocument.RootElement(); }
 
 private:

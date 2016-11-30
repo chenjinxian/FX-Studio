@@ -4,7 +4,6 @@
 #include "../Graphics3D/D3D11Renderer.h"
 #include "../ResourceCache/ResCache.h"
 #include "../ResourceCache/XmlResource.h"
-#include "../Graphics3D/TextureResourceLoader.h"
 #include "../EventManager/EventManagerImpl.h"
 
 BaseGameApp* g_pApp = nullptr;
@@ -181,9 +180,7 @@ HWND BaseGameApp::SetupWindow(HINSTANCE hInstance)
 
 	AdjustWindowRectEx(&windowRect, dwStyle, FALSE, dwExStyle);
 
-	m_hWindow = CreateWindowEx(0,
-		VGetWindowClass(), VGetWindowTitle(),
-		dwStyle | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
+	m_hWindow = CreateWindowEx(dwExStyle, VGetWindowClass(), VGetWindowTitle(), dwStyle,
 		0, 0, windowRect.right - windowRect.left, windowRect.bottom - windowRect.top,
 		NULL, NULL, m_hInstance, NULL);
 
@@ -207,11 +204,11 @@ HWND BaseGameApp::SetupWindow(HINSTANCE hInstance)
 
 bool BaseGameApp::InitRenderer()
 {
-	if (GetRendererAPI() == Renderer_D3D11)
+	if (GetRendererType() == Renderer_D3D11)
 	{
 		m_pRenderer = shared_ptr<IRenderer>(DEBUG_NEW D3D11Renderer());
 	}
-	else if (GetRendererAPI() == Renderer_Vulkan)
+	else if (GetRendererType() == Renderer_Vulkan)
 	{
 // 		m_pRenderer = shared_ptr<IRenderer>(DEBUG_NEW VulkanRenderer());
 	}
@@ -436,7 +433,7 @@ UINT BaseGameApp::MapCharToKeycode(const char hotKey)
 	return 0;
 }
 
-BaseGameApp::Renderer BaseGameApp::GetRendererAPI()
+BaseGameApp::Renderer BaseGameApp::GetRendererType()
 {
 	if (m_Config.m_Renderer == "Direct3D 11")
 	{

@@ -4,7 +4,6 @@
 #include "ModelImporter.h"
 #include "Material.h"
 #include "TextureMappingMaterial.h"
-#include "TextureResourceLoader.h"
 #include "VertexDeclarations.h"
 #include "../Actors/Actor.h"
 #include "../Actors/RenderComponent.h"
@@ -72,17 +71,17 @@ HRESULT SceneNode::VOnUpdate(Scene* pScene, const GameTime& gameTime)
 
 HRESULT SceneNode::VPreRender(Scene* pScene)
 {
-// 	StrongActorPtr pActor = MakeStrongPtr(g_pApp->GetGameLogic()->VGetActor(m_Properties.GetActorId()));
-// 	if (pActor != nullptr)
-// 	{
-// 		shared_ptr<TransformComponent> pTransform = MakeStrongPtr(pActor->GetComponent<TransformComponent>(TransformComponent::m_Name));
-// 		if (pTransform)
-// 		{
-// 			m_Properties.m_worldMatrix = pTransform->GetTransform();
-// 		}
-// 	}
-// 
-// 	pScene->PushAndSetMatrix(m_Properties.m_worldMatrix);
+	StrongActorPtr pActor = MakeStrongPtr(g_pApp->GetGameLogic()->VGetActor(m_Properties.GetActorId()));
+	if (pActor != nullptr)
+	{
+		shared_ptr<TransformComponent> pTransform = MakeStrongPtr(pActor->GetComponent<TransformComponent>(TransformComponent::m_Name));
+		if (pTransform)
+		{
+			m_Properties.m_worldMatrix = pTransform->GetTransform();
+		}
+	}
+
+	pScene->PushAndSetMatrix(m_Properties.m_worldMatrix);
 
 	return S_OK;
 }
@@ -376,11 +375,11 @@ ModelNode::ModelNode(
 	}
 
 	Resource modelRes(m_ModelName);
-	shared_ptr<ResHandle> pModelResHandle = g_pApp->m_pResCache->GetHandle(&modelRes);
+	shared_ptr<ResHandle> pModelResHandle = g_pApp->GetResCache()->GetHandle(&modelRes);
 	std::unique_ptr<Model> model(new Model(pModelResHandle->Buffer(), pModelResHandle->Size(), true));
 
 	Resource effectRes(m_EffectName);
-	shared_ptr<ResHandle> pEffectResHandle = g_pApp->m_pResCache->GetHandle(&effectRes);
+	shared_ptr<ResHandle> pEffectResHandle = g_pApp->GetResCache()->GetHandle(&effectRes);
 	m_pEffect = new Effect();
 	m_pEffect->CompileFromMemory(pEffectResHandle->Buffer(), pEffectResHandle->Size());
 	m_pTextureMappingMaterial = new TextureMappingMaterial();

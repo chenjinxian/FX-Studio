@@ -1,6 +1,9 @@
 #include "D3D11Renderer.h"
 #include "../AppFramework/BaseGameApp.h"
+#include "../ResourceCache/TextureResource.h"
 #include "imgui.h"
+#include "DDSTextureLoader.h"
+#include "WICTextureLoader.h"
 #include <d3dcompiler.h>
 
 static ID3D11Buffer*            g_pVB = NULL;
@@ -40,21 +43,16 @@ D3D11Renderer::~D3D11Renderer()
 {
 }
 
-void D3D11Renderer::VSetBackgroundColor(const Color& color)
-{
-	m_BackgroundColor = color;
-}
-
 bool D3D11Renderer::VInitRenderer(HWND hWnd)
 {
 	HRESULT hr;
 
 	DXGI_SWAP_CHAIN_DESC1 swapChainDesc;
 	ZeroMemory(&swapChainDesc, sizeof(swapChainDesc));
-	swapChainDesc.Width = g_pApp->m_Config.m_ScreenWidth;
-	swapChainDesc.Height = g_pApp->m_Config.m_ScreenHeight;
+	swapChainDesc.Width = g_pApp->GetGameConfig().m_ScreenWidth;
+	swapChainDesc.Height = g_pApp->GetGameConfig().m_ScreenHeight;
 	swapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	swapChainDesc.SampleDesc.Count = g_pApp->m_Config.m_AntiAliasingSample;
+	swapChainDesc.SampleDesc.Count = g_pApp->GetGameConfig().m_AntiAliasingSample;
 	swapChainDesc.SampleDesc.Quality = 0;
 	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	swapChainDesc.BufferCount = 1;
@@ -89,7 +87,7 @@ bool D3D11Renderer::VInitRenderer(HWND hWnd)
 	ZeroMemory(&fullScreenDesc, sizeof(fullScreenDesc));
 	fullScreenDesc.RefreshRate.Numerator = 60;
 	fullScreenDesc.RefreshRate.Denominator = 1;
-	fullScreenDesc.Windowed = !g_pApp->m_Config.m_IsFullScreen;
+	fullScreenDesc.Windowed = !g_pApp->GetGameConfig().m_IsFullScreen;
 
 	if (FAILED(hr = dxgiFactory->CreateSwapChainForHwnd(dxgiDevice, hWnd, &swapChainDesc, &fullScreenDesc, nullptr, &m_pSwapChain)))
 	{
@@ -125,7 +123,7 @@ void D3D11Renderer::VResizeSwapChain()
 {
 	DeleteImGuiBuffers();
 	DeleteBuffers();
-	m_pSwapChain->ResizeBuffers(0, g_pApp->m_Config.m_ScreenWidth, g_pApp->m_Config.m_ScreenHeight, DXGI_FORMAT_UNKNOWN, 0);
+	m_pSwapChain->ResizeBuffers(0, g_pApp->GetGameConfig().m_ScreenWidth, g_pApp->GetGameConfig().m_ScreenHeight, DXGI_FORMAT_UNKNOWN, 0);
 	CreateBuffers();
 	CreateImGuiBuffers();
 }
@@ -148,7 +146,7 @@ bool D3D11Renderer::VPostRender()
 {
 	ImGui::Render();
 	RenderDrawLists();
-	m_pSwapChain->Present(g_pApp->m_Config.m_IsVSync ? 1 : 0, 0);
+	m_pSwapChain->Present(g_pApp->GetGameConfig().m_IsVSync ? 1 : 0, 0);
 	return true;
 }
 
@@ -188,17 +186,17 @@ void D3D11Renderer::InitD3D11Device()
 	SAFE_RELEASE(direct3DDevice);
 	SAFE_RELEASE(direct3DDeviceContext);
 
-	while (g_pApp->m_Config.m_AntiAliasingSample > 0)
+	while (g_pApp->GetGameConfig().m_AntiAliasingSample > 0)
 	{
 		uint32_t qualityLevel = 0;
 		if (SUCCEEDED(m_pDevice->CheckMultisampleQualityLevels(
-			DXGI_FORMAT_R8G8B8A8_UNORM, g_pApp->m_Config.m_AntiAliasingSample, &qualityLevel)) && qualityLevel > 0)
+			DXGI_FORMAT_R8G8B8A8_UNORM, g_pApp->GetGameConfig().m_AntiAliasingSample, &qualityLevel)) && qualityLevel > 0)
 		{
 			break;
 		}
 		else
 		{
-			g_pApp->m_Config.m_AntiAliasingSample /= 2;
+			g_pApp->GetGameConfig().m_AntiAliasingSample /= 2;
 		}
 	}
 }
@@ -224,14 +222,14 @@ void D3D11Renderer::CreateBuffers()
 
 	D3D11_TEXTURE2D_DESC depthStencilDesc;
 	ZeroMemory(&depthStencilDesc, sizeof(depthStencilDesc));
-	depthStencilDesc.Width = g_pApp->m_Config.m_ScreenWidth;
-	depthStencilDesc.Height = g_pApp->m_Config.m_ScreenHeight;
+	depthStencilDesc.Width = g_pApp->GetGameConfig().m_ScreenWidth;
+	depthStencilDesc.Height = g_pApp->GetGameConfig().m_ScreenHeight;
 	depthStencilDesc.MipLevels = 1;
 	depthStencilDesc.ArraySize = 1;
 	depthStencilDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
 	depthStencilDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 	depthStencilDesc.Usage = D3D11_USAGE_DEFAULT;
-	depthStencilDesc.SampleDesc.Count = g_pApp->m_Config.m_AntiAliasingSample;
+	depthStencilDesc.SampleDesc.Count = g_pApp->GetGameConfig().m_AntiAliasingSample;
 	depthStencilDesc.SampleDesc.Quality = 0;
 
 	if (FAILED(hr = m_pDevice->CreateTexture2D(&depthStencilDesc, nullptr, &m_pDepthStencilBuffer)))
@@ -248,8 +246,8 @@ void D3D11Renderer::CreateBuffers()
 
 	m_Viewport.TopLeftX = 0.0f;
 	m_Viewport.TopLeftY = 0.0f;
-	m_Viewport.Width = static_cast<float>(g_pApp->m_Config.m_ScreenWidth);
-	m_Viewport.Height = static_cast<float>(g_pApp->m_Config.m_ScreenHeight);
+	m_Viewport.Width = static_cast<float>(g_pApp->GetGameConfig().m_ScreenWidth);
+	m_Viewport.Height = static_cast<float>(g_pApp->GetGameConfig().m_ScreenHeight);
 	m_Viewport.MinDepth = 0.0f;
 	m_Viewport.MaxDepth = 1.0f;
 
@@ -446,7 +444,7 @@ bool D3D11Renderer::CreateImGuiBuffers()
 		m_pDevice->CreateSamplerState(&desc, &g_pFontSampler);
 	}
 	
-	io.DisplaySize = ImVec2((float)g_pApp->m_Config.m_ScreenWidth, (float)g_pApp->m_Config.m_ScreenHeight);
+	io.DisplaySize = ImVec2((float)g_pApp->GetGameConfig().m_ScreenWidth, (float)g_pApp->GetGameConfig().m_ScreenHeight);
 	return true;
 }
 
@@ -680,6 +678,56 @@ bool D3D11Renderer::InitImGui(HWND hWnd)
 	io.RenderDrawListsFn = nullptr;
 	io.ImeWindowHandle = hWnd;
 	io.Fonts->AddFontFromFileTTF("Fonts/Cousine-Regular.ttf", 20.0f);
+
+	return true;
+}
+
+void D3D11Renderer::VSetBackgroundColor(const Color& color)
+{
+	m_BackgroundColor = color;
+}
+
+bool D3D11Renderer::VCreateDDSTextureResoure(char *rawBuffer, uint32_t rawSize, shared_ptr<IResourceExtraData> pExtraData)
+{
+	if (m_pDevice == nullptr && m_pDeviceContext == nullptr)
+	{
+		return false;
+	}
+
+	shared_ptr<D3D11TextureResourceExtraData> pTextureExtra = dynamic_pointer_cast<D3D11TextureResourceExtraData>(pExtraData);
+	if (pTextureExtra == nullptr)
+	{
+		return false;
+	}
+
+	if (FAILED(CreateDDSTextureFromMemoryEx(
+		m_pDevice, m_pDeviceContext, (uint8_t*)rawBuffer, rawSize, 0,
+		D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE, 0, 0, true, nullptr, &pTextureExtra->m_pTexture)))
+	{
+		return false;
+	}
+	return true;
+}
+
+bool D3D11Renderer::VCreateWICTextureResoure(char *rawBuffer, uint32_t rawSize, shared_ptr<IResourceExtraData> pExtraData)
+{
+	if (m_pDevice == nullptr && m_pDeviceContext == nullptr)
+	{
+		return false;
+	}
+
+	shared_ptr<D3D11TextureResourceExtraData> pTextureExtra = dynamic_pointer_cast<D3D11TextureResourceExtraData>(pExtraData);
+	if (pTextureExtra == nullptr)
+	{
+		return false;
+	}
+
+	if (FAILED(CreateWICTextureFromMemoryEx(
+		m_pDevice, m_pDeviceContext, (uint8_t*)rawBuffer, rawSize, 0,
+		D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE, 0, 0, true, nullptr, &pTextureExtra->m_pTexture)))
+	{
+		return false;
+	}
 
 	return true;
 }

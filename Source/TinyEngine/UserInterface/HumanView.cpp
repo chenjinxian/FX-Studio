@@ -56,7 +56,7 @@ bool HumanView::LoadGame(tinyxml2::XMLElement* pLevelData)
 
 void HumanView::VOnRender(const GameTime& gameTime)
 {
-	if (g_pApp->m_pRenderer->VPreRender(gameTime))
+	if (g_pApp->GetRendererAPI()->VPreRender(gameTime))
 	{
 		m_ScreenElements.sort(SortBy_SharedPtr_Content<IScreenElement>());
 
@@ -71,7 +71,7 @@ void HumanView::VOnRender(const GameTime& gameTime)
 		VRenderText(gameTime);
 	}
 
-	g_pApp->m_pRenderer->VPostRender();
+	g_pApp->GetRendererAPI()->VPostRender();
 }
 
 HRESULT HumanView::VOnInitGameViews()

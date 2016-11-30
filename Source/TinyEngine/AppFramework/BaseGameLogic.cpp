@@ -23,7 +23,7 @@ BaseGameLogic::BaseGameLogic()
 {
 	m_pProjectManager = DEBUG_NEW ProjectManager;
 	DEBUG_ASSERT(m_pProjectManager);
-	m_pProjectManager->Initialize(g_pApp->m_pResCache->Match("world\\*.xml"));
+	m_pProjectManager->Initialize(g_pApp->GetResCache()->Match("world\\*.xml"));
 	
 // 	RegisterEngineScriptEvents();
 // 	IEventManager::Get()->VAddListener(
@@ -87,7 +87,7 @@ bool BaseGameLogic::VLoadGame(const std::string& projectXml)
 	if (preLoadScript)
 	{
 		Resource resource(preLoadScript);
-		shared_ptr<ResHandle> pResourceHandle = g_pApp->m_pResCache->GetHandle(&resource);
+		shared_ptr<ResHandle> pResourceHandle = g_pApp->GetResCache()->GetHandle(&resource);
 	}
 
 	tinyxml2::XMLElement* pActorsNode = pRoot->FirstChildElement("StaticActors");
@@ -119,7 +119,7 @@ bool BaseGameLogic::VLoadGame(const std::string& projectXml)
 	if (postLoadScript)
 	{
 		Resource resource(postLoadScript);
-		shared_ptr<ResHandle> pResourceHandle = g_pApp->m_pResCache->GetHandle(&resource);
+		shared_ptr<ResHandle> pResourceHandle = g_pApp->GetResCache()->GetHandle(&resource);
 	}
 
 	if (m_IsProxy)
@@ -254,7 +254,7 @@ void BaseGameLogic::VOnUpdate(const GameTime& gameTime)
 		break;
 
 	case BGS_WaitingForPlayers:
-		if (!g_pApp->m_Config.m_Project.empty())
+		if (!g_pApp->GetGameConfig().m_Project.empty())
 		{
 			VChangeState(BGS_LoadingGameEnvironment);
 		}

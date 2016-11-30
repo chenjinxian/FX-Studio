@@ -144,25 +144,25 @@ bool EventManager::VUpdate(uint32_t maxMillis /*= kINFINITE*/)
 	m_ActiveQueue = (m_ActiveQueue + 1) % EVENTMANAGER_NUM_QUEUES;
 	m_EventQueues[m_ActiveQueue].clear();
 
-	DEBUG_LOG("EventLoop", "Processing Event Queue " + boost::lexical_cast<std::string>(queueToProcess) + "; " + boost::lexical_cast<std::string>(m_EventQueues[queueToProcess].size()) + " events to process");
+// 	DEBUG_LOG("EventLoop", "Processing Event Queue " + boost::lexical_cast<std::string>(queueToProcess) + "; " + boost::lexical_cast<std::string>(m_EventQueues[queueToProcess].size()) + " events to process");
 
 	while (!m_EventQueues[queueToProcess].empty())
 	{
 		IEventDataPtr pEvent = m_EventQueues[queueToProcess].front();
 		m_EventQueues[queueToProcess].pop_front();
-		DEBUG_LOG("EventLoop", "\t\tProcessing Event " + std::string(pEvent->VGetName()));
+// 		DEBUG_LOG("EventLoop", "\t\tProcessing Event " + std::string(pEvent->VGetName()));
 
 		auto findIt = m_EventSignals.find(pEvent->VGetEventType());
 		if (findIt != m_EventSignals.end())
 		{
-			DEBUG_LOG("EventLoop", "\t\tSending event " + std::string(pEvent->VGetName()) + " to delegate");
+// 			DEBUG_LOG("EventLoop", "\t\tSending event " + std::string(pEvent->VGetName()) + " to delegate");
 			findIt->second(pEvent);
 		}
 
 		currMs = GetTickCount();
 		if (maxMillis != IEventManager::kINFINITE && currMs >= maxMs)
 		{
-			DEBUG_LOG("EventLoop", "Aborting event processing; time ran out");
+// 			DEBUG_LOG("EventLoop", "Aborting event processing; time ran out");
 			break;
 		}
 	}

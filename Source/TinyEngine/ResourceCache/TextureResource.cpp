@@ -1,33 +1,30 @@
-#include "TextureResourceLoader.h"
+#include "TextureResource.h"
 #include "../AppFramework/BaseGameApp.h"
-#include "DDSTextureLoader.h"
-#include "WICTextureLoader.h"
 
-D3DTextureResourceExtraData11::D3DTextureResourceExtraData11()
+D3D11TextureResourceExtraData::D3D11TextureResourceExtraData()
 	: m_pTexture(nullptr)
 {
 }
 
-D3DTextureResourceExtraData11::~D3DTextureResourceExtraData11()
+D3D11TextureResourceExtraData::~D3D11TextureResourceExtraData()
 {
 	SAFE_RELEASE(m_pTexture);
 }
 
 bool DdsResourceLoader::VLoadResource(char *rawBuffer, uint32_t rawSize, shared_ptr<ResHandle> handle)
 {
-// 	BaseGameApp::Renderer renderer = BaseGameApp::GetRendererImpl();
-// 	if (renderer == BaseGameApp::Renderer_D3D11)
-// 	{
-// 		shared_ptr<D3DTextureResourceExtraData11> extra = shared_ptr<D3DTextureResourceExtraData11>(DEBUG_NEW D3DTextureResourceExtraData11());
-// 
-// 		if (FAILED(CreateDDSTextureFromMemoryEx(
-// 			DXUTGetD3D11Device(), DXUTGetD3D11DeviceContext(), (uint8_t*)rawBuffer, rawSize, 0,
-// 			D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE, 0, 0, true, nullptr, &extra->m_pTexture)))
-// 			return false;
-// 
-// 		handle->SetExtra(shared_ptr<D3DTextureResourceExtraData11>(extra));
-// 		return true;
-// 	}
+	BaseGameApp::Renderer renderer = g_pApp->GetRendererType();
+	if (renderer == BaseGameApp::Renderer_D3D11)
+	{
+		shared_ptr<D3D11TextureResourceExtraData> extra =
+			shared_ptr<D3D11TextureResourceExtraData>(DEBUG_NEW D3D11TextureResourceExtraData());
+
+		if (g_pApp->GetRendererAPI()->VCreateDDSTextureResoure(rawBuffer, rawSize, extra))
+		{
+			handle->SetExtraData(shared_ptr<D3D11TextureResourceExtraData>(extra));
+			return true;
+		}
+	}
 
 	DEBUG_ASSERT(0 && "Unsupported Renderer in TextureResourceLoader::VLoadResource");
 	return false;
@@ -35,20 +32,18 @@ bool DdsResourceLoader::VLoadResource(char *rawBuffer, uint32_t rawSize, shared_
 
 bool WicResourceLoader::VLoadResource(char *rawBuffer, uint32_t rawSize, shared_ptr<ResHandle> handle)
 {
-// 	BaseGameApp::Renderer renderer = BaseGameApp::GetRendererImpl();
-// 	if (renderer == BaseGameApp::Renderer_D3D11)
-// 	{
-// 		shared_ptr<D3DTextureResourceExtraData11> extra =
-// 			shared_ptr<D3DTextureResourceExtraData11>(DEBUG_NEW D3DTextureResourceExtraData11());
-// 
-// 		if (FAILED(CreateWICTextureFromMemoryEx(
-// 			DXUTGetD3D11Device(), DXUTGetD3D11DeviceContext(), (uint8_t*)rawBuffer, rawSize, 0,
-// 			D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE, 0, 0, true, nullptr, &extra->m_pTexture)))
-// 			return false;
-// 
-// 		handle->SetExtra(shared_ptr<D3DTextureResourceExtraData11>(extra));
-// 		return true;
-// 	}
+	BaseGameApp::Renderer renderer = g_pApp->GetRendererType();
+	if (renderer == BaseGameApp::Renderer_D3D11)
+	{
+		shared_ptr<D3D11TextureResourceExtraData> extra =
+			shared_ptr<D3D11TextureResourceExtraData>(DEBUG_NEW D3D11TextureResourceExtraData());
+
+		if (g_pApp->GetRendererAPI()->VCreateWICTextureResoure(rawBuffer, rawSize, extra))
+		{
+			handle->SetExtraData(shared_ptr<D3D11TextureResourceExtraData>(extra));
+			return true;
+		}
+	}
 
 	DEBUG_ASSERT(0 && "Unsupported Renderer in TextureResourceLoader::VLoadResource");
 	return false;

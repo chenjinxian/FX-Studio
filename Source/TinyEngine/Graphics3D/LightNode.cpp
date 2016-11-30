@@ -23,11 +23,11 @@ LightNode::LightNode(
 	}
 
 	Resource modelRes(m_ModelName);
-	shared_ptr<ResHandle> pModelResHandle = g_pApp->m_pResCache->GetHandle(&modelRes);
+	shared_ptr<ResHandle> pModelResHandle = g_pApp->GetResCache()->GetHandle(&modelRes);
 	std::unique_ptr<Model> model(new Model(pModelResHandle->Buffer(), pModelResHandle->Size(), true));
 
 // 	Resource effectRes(m_EffectName);
-// 	shared_ptr<ResHandle> pEffectResHandle = g_pApp->m_pResCache->GetHandle(&effectRes);
+// 	shared_ptr<ResHandle> pEffectResHandle = g_pApp->GetResCache()->GetHandle(&effectRes);
 // 	m_pEffect = new Effect();
 // 	m_pEffect->CompileFromMemory(pEffectResHandle->Buffer(), pEffectResHandle->Size());
 	m_pEffect = DEBUG_NEW Effect();

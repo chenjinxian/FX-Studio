@@ -183,6 +183,8 @@ public:
 	virtual bool VPostRender() = 0;
 	virtual void VSetBackgroundColor(const Color& color) = 0;
 
+	virtual bool VCompileShaderFromMemory(const void* pBuffer, uint32_t lenght, shared_ptr<IResourceExtraData> pExtraData) = 0;
+	virtual bool VCreateShaderFromMemory(const void* pBuffer, uint32_t lenght, shared_ptr<IResourceExtraData> pExtraData) = 0;
 	virtual bool VCreateDDSTextureResoure(char *rawBuffer, uint32_t rawSize, shared_ptr<IResourceExtraData> pExtraData) = 0;
 	virtual bool VCreateWICTextureResoure(char *rawBuffer, uint32_t rawSize, shared_ptr<IResourceExtraData> pExtraData) = 0;
 	virtual const std::string& VGetDeviceName() = 0;

@@ -21,7 +21,7 @@ bool DdsResourceLoader::VLoadResource(char *rawBuffer, uint32_t rawSize, shared_
 
 		if (g_pApp->GetRendererAPI()->VCreateDDSTextureResoure(rawBuffer, rawSize, extra))
 		{
-			handle->SetExtraData(shared_ptr<D3D11TextureResourceExtraData>(extra));
+			handle->SetExtraData(extra);
 			return true;
 		}
 	}
@@ -40,7 +40,7 @@ bool WicResourceLoader::VLoadResource(char *rawBuffer, uint32_t rawSize, shared_
 
 		if (g_pApp->GetRendererAPI()->VCreateWICTextureResoure(rawBuffer, rawSize, extra))
 		{
-			handle->SetExtraData(shared_ptr<D3D11TextureResourceExtraData>(extra));
+			handle->SetExtraData(extra);
 			return true;
 		}
 	}

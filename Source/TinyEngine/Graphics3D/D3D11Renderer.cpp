@@ -1,6 +1,7 @@
 #include "D3D11Renderer.h"
 #include "../AppFramework/BaseGameApp.h"
 #include "../ResourceCache/TextureResource.h"
+#include "../ResourceCache/ShaderResource.h"
 #include "imgui.h"
 #include "DDSTextureLoader.h"
 #include "WICTextureLoader.h"
@@ -685,6 +686,42 @@ bool D3D11Renderer::InitImGui(HWND hWnd)
 void D3D11Renderer::VSetBackgroundColor(const Color& color)
 {
 	m_BackgroundColor = color;
+}
+
+bool D3D11Renderer::VCompileShaderFromMemory(const void* pBuffer, uint32_t lenght, shared_ptr<IResourceExtraData> pExtraData)
+{
+	if (m_pDevice == nullptr && m_pDeviceContext == nullptr)
+	{
+		return false;
+	}
+
+	shared_ptr<HlslResourceExtraData> pShaderExtra = dynamic_pointer_cast<HlslResourceExtraData>(pExtraData);
+	if (pShaderExtra == nullptr)
+	{
+		return false;
+	}
+
+	uint32_t shaderFlags = D3DCOMPILE_ENABLE_STRICTNESS;
+#ifdef _DEBUG
+	shaderFlags |= D3DCOMPILE_DEBUG;
+	shaderFlags |= D3DCOMPILE_SKIP_OPTIMIZATION;
+#endif
+
+	ID3D10Blob* errorMessages = nullptr;
+	HRESULT hr = D3DX11CompileEffectFromMemory(
+		pBuffer, lenght, nullptr, nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, shaderFlags, 0, m_pDevice, &pShaderExtra->m_pEffect, &errorMessages);
+
+	if (FAILED(hr))
+	{
+		char* errorMessage = (errorMessages != nullptr ? (char*)errorMessages->GetBufferPointer() : "D3DX11CompileEffectFromMemory() failed");
+		DEBUG_ERROR(errorMessage);
+		SAFE_RELEASE(errorMessages);
+	}
+}
+
+bool D3D11Renderer::VCreateShaderFromMemory(const void* pBuffer, uint32_t lenght, shared_ptr<IResourceExtraData> pExtraData)
+{
+
 }
 
 bool D3D11Renderer::VCreateDDSTextureResoure(char *rawBuffer, uint32_t rawSize, shared_ptr<IResourceExtraData> pExtraData)

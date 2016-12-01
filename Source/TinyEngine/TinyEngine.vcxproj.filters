@@ -154,6 +154,9 @@
     <ClInclude Include="ResourceCache\TextureResource.h">
       <Filter>ResourceCache</Filter>
     </ClInclude>
+    <ClInclude Include="ResourceCache\ShaderResource.h">
+      <Filter>ResourceCache</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Debugging\Logger.cpp">
@@ -250,6 +253,9 @@
       <Filter>UserInterface</Filter>
     </ClCompile>
     <ClCompile Include="ResourceCache\TextureResource.cpp">
+      <Filter>ResourceCache</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceCache\ShaderResource.cpp">
       <Filter>ResourceCache</Filter>
     </ClCompile>
   </ItemGroup>

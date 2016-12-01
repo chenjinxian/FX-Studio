@@ -15,6 +15,8 @@ public:
 	virtual bool VPostRender() override;
 	virtual void VSetBackgroundColor(const Color& color) override;
 
+	virtual bool VCompileShaderFromMemory(const void* pBuffer, uint32_t lenght, shared_ptr<IResourceExtraData> pExtraData) override;
+	virtual bool VCreateShaderFromMemory(const void* pBuffer, uint32_t lenght, shared_ptr<IResourceExtraData> pExtraData) override;
 	virtual bool VCreateDDSTextureResoure(char *rawBuffer, uint32_t rawSize, shared_ptr<IResourceExtraData> pExtraData) override;
 	virtual bool VCreateWICTextureResoure(char *rawBuffer, uint32_t rawSize, shared_ptr<IResourceExtraData> pExtraData) override;
 	virtual const std::string& VGetDeviceName() override { return m_DeviceName; }

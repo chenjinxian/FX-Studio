@@ -1,5 +1,6 @@
 #pragma once
 #include "ResCache.h"
+#include "../Graphics3D/Material.h"
 
 class HlslResourceExtraData : public IResourceExtraData
 {
@@ -13,9 +14,10 @@ public:
 
 	virtual std::string VToString() { return "ShaderResourceExtraData"; }
 
-protected:
-	ID3DX11Effect* m_pEffect;
-	std::vector<ID3DX11EffectTechnique*> m_Techniques;
+private:
+	Effect* m_pEffect;
+	Technique* mCurrentTechnique;
+	std::map<Pass*, ID3D11InputLayout*> mInputLayouts;
 };
 
 class ShaderResourceLoader : public IResourceLoader

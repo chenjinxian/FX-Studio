@@ -157,3 +157,5 @@ shared_ptr<IResourceLoader> CreatePngResourceLoader();
 shared_ptr<IResourceLoader> CreateBmpResourceLoader();
 shared_ptr<IResourceLoader> CreateTiffResourceLoader();
 shared_ptr<IResourceLoader> CreateXmlResourceLoader();
+shared_ptr<IResourceLoader> CreateFxEffectResourceLoader();
+shared_ptr<IResourceLoader> CreateCsoEffectResourceLoader();

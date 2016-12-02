@@ -1,4 +1,5 @@
 #include "D3D11Renderer.h"
+#include "Material.h"
 #include "../AppFramework/BaseGameApp.h"
 #include "../ResourceCache/TextureResource.h"
 #include "../ResourceCache/ShaderResource.h"
@@ -707,9 +708,10 @@ bool D3D11Renderer::VCompileShaderFromMemory(const void* pBuffer, uint32_t lengh
 	shaderFlags |= D3DCOMPILE_SKIP_OPTIMIZATION;
 #endif
 
+	ID3DX11Effect* pD3DX11Effect = nullptr;
 	ID3D10Blob* errorMessages = nullptr;
 	HRESULT hr = D3DX11CompileEffectFromMemory(
-		pBuffer, lenght, nullptr, nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, shaderFlags, 0, m_pDevice, &pShaderExtra->m_pEffect, &errorMessages);
+		pBuffer, lenght, nullptr, nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, shaderFlags, 0, m_pDevice, &pD3DX11Effect, &errorMessages);
 
 	if (FAILED(hr))
 	{
@@ -717,11 +719,15 @@ bool D3D11Renderer::VCompileShaderFromMemory(const void* pBuffer, uint32_t lengh
 		DEBUG_ERROR(errorMessage);
 		SAFE_RELEASE(errorMessages);
 	}
+
+	pShaderExtra->m_pEffect = DEBUG_NEW Effect(pD3DX11Effect);
+
+	return true;
 }
 
 bool D3D11Renderer::VCreateShaderFromMemory(const void* pBuffer, uint32_t lenght, shared_ptr<IResourceExtraData> pExtraData)
 {
-
+	return true;
 }
 
 bool D3D11Renderer::VCreateDDSTextureResoure(char *rawBuffer, uint32_t rawSize, shared_ptr<IResourceExtraData> pExtraData)

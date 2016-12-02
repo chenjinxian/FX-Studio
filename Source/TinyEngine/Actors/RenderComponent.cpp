@@ -2,7 +2,7 @@
 #include "Actor.h"
 #include "TransformComponent.h"
 #include "../EventManager/Events.h"
-#include "boost/lexical_cast.hpp"
+#include "../AppFramework/BaseGameApp.h"
 
 const std::string GridRenderComponent::m_Name = "GridRenderComponent";
 const std::string ModelRenderComponent::m_Name = "ModelRenderComponent";
@@ -125,7 +125,10 @@ void GridRenderComponent::VCreateInheritedXmlElement(tinyxml2::XMLElement* pBase
 
 ModelRenderComponent::ModelRenderComponent()
 	: m_ModelName(),
-	m_TextureName()
+	m_TextureName(),
+	m_EffectName(),
+	m_CurrentTechnique(),
+	m_CurrentPass()
 {
 
 }
@@ -153,6 +156,8 @@ bool ModelRenderComponent::VDelegateInit(tinyxml2::XMLElement* pData)
 	if (pEffect != nullptr)
 	{
 		m_EffectName = pEffect->FirstChild()->Value();
+		m_CurrentTechnique = pEffect->Attribute("technique");
+		m_CurrentPass = pEffect->Attribute("pass");
 	}
 
 	return true;
@@ -160,33 +165,24 @@ bool ModelRenderComponent::VDelegateInit(tinyxml2::XMLElement* pData)
 
 shared_ptr<SceneNode> ModelRenderComponent::VCreateSceneNode()
 {
-// 	shared_ptr<TransformComponent> pTransformComponent =
-// 		MakeStrongPtr(m_pOwner->GetComponent<TransformComponent>(TransformComponent::m_Name));
-// 	if (pTransformComponent)
-// 	{
-// 		WeakBaseRenderComponentPtr weakThis(this);
-// 
-// 		switch (BaseGameApp::GetRendererImpl())
-// 		{
-// 		case BaseGameApp::Renderer_D3D11:
-// 		{
-// 			std::string extension =  m_ModelName.substr(m_ModelName.find_last_of('.'));
-// 			if (!extension.compare("sdkmesh"))
-// 			{
-// 				return shared_ptr<SceneNode>(DEBUG_NEW D3DShaderMeshNode11(
-// 					m_pOwner->GetActorId(), weakThis, RenderPass_Actor, pTransformComponent->GetTransform()));
-// 			}
-// 			else
-// 			{
-// 				return shared_ptr<SceneNode>(DEBUG_NEW ModelNode(
-// 					m_pOwner->GetActorId(), weakThis, RenderPass_Actor, pTransformComponent->GetTransform()));
-// 			}
-// 		}
-// 
-// 		default:
-// 			DEBUG_ERROR("Unknown Renderer Implementation in ModelRenderComponent");
-// 		}
-// 	}
+	shared_ptr<TransformComponent> pTransformComponent =
+		MakeStrongPtr(m_pOwner->GetComponent<TransformComponent>(TransformComponent::m_Name));
+	if (pTransformComponent)
+	{
+		WeakBaseRenderComponentPtr weakThis(this);
+
+		switch (g_pApp->GetRendererType())
+		{
+		case BaseGameApp::Renderer_D3D11:
+		{
+			return shared_ptr<SceneNode>(DEBUG_NEW ModelNode(
+				m_pOwner->GetActorId(), weakThis, RenderPass_Actor, pTransformComponent->GetTransform()));
+		}
+
+		default:
+			DEBUG_ERROR("Unknown Renderer Implementation in ModelRenderComponent");
+		}
+	}
 
 	return shared_ptr<SceneNode>();
 }

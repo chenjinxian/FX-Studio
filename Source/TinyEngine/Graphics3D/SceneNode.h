@@ -142,4 +142,6 @@ private:
 	std::string m_ModelName;
 	std::string m_TextureName;
 	std::string m_EffectName;
+	std::string m_CurrentTechnique;
+	std::string m_CurrentPass;
 };

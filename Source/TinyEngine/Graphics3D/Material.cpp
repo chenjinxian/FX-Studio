@@ -122,15 +122,15 @@ void Material::CreateInputLayout(
 	m_InputLayouts.insert(std::make_pair(pPass, inputLayout));
 }
 
-Effect::Effect()
-	: m_pD3DX11Effect(nullptr),
+Effect::Effect(ID3DX11Effect* pD3DX11Effect)
+	: m_pD3DX11Effect(pD3DX11Effect),
 	m_D3DX11EffectDesc(),
 	m_Techniques(),
 	m_TechniquesByName(),
 	m_Variables(),
 	m_VariablesByName()
 {
-
+	Initialize();
 }
 
 Effect::~Effect()
@@ -148,108 +148,6 @@ Effect::~Effect()
 	m_Variables.clear();
 
 	SAFE_RELEASE(m_pD3DX11Effect);
-}
-
-void Effect::CompileEffectFromFile(ID3DX11Effect** ppEffect, const std::wstring& filename)
-{
-	uint32_t shaderFlags = 0;
-
-#if defined( DEBUG ) || defined( _DEBUG )
-	shaderFlags |= D3DCOMPILE_DEBUG;
-	shaderFlags |= D3DCOMPILE_SKIP_OPTIMIZATION;
-#endif
-
-	ID3D10Blob* compiledShader = nullptr;
-	ID3D10Blob* errorMessages = nullptr;
-	HRESULT hr = D3DCompileFromFile(filename.c_str(), nullptr, nullptr, nullptr, "fx_5_0", shaderFlags, 0, &compiledShader, &errorMessages);
-	if (FAILED(hr))
-	{
-		char* errorMessage = (errorMessages != nullptr ? (char*)errorMessages->GetBufferPointer() : "D3DX11CompileFromFile() failed");
-		DEBUG_ERROR(errorMessage);
-		SAFE_RELEASE(errorMessages);
-	}
-
-// 	hr = D3DX11CreateEffectFromMemory(compiledShader->GetBufferPointer(), compiledShader->GetBufferSize(), NULL, DXUTGetD3D11Device(), ppEffect);
-// 	if (FAILED(hr))
-// 	{
-// 		DEBUG_ERROR("D3DX11CreateEffectFromMemory() failed.");
-// 	}
-
-	SAFE_RELEASE(compiledShader);
-}
-
-void Effect::LoadCompiledEffect(ID3DX11Effect** ppEffect, const std::wstring& filename)
-{
-// 	std::vector<char> compiledShader;
-// 	Utility::LoadBinaryFile(filename, compiledShader);
-// 
-// 	HRESULT hr = D3DX11CreateEffectFromMemory(&compiledShader.front(), compiledShader.size(), NULL, DXUTGetD3D11Device(), ppEffect);
-// 	if (FAILED(hr))
-// 	{
-// 		DEBUG_ERROR("D3DX11CreateEffectFromMemory() failed.");
-// 	}
-}
-
-void Effect::CompileEffectFromFile(ID3DX11Effect** ppEffect, const void* pBuffer, uint32_t lenght)
-{
-// 	uint32_t shaderFlags = D3DCOMPILE_ENABLE_STRICTNESS;
-// #ifdef _DEBUG
-// 	shaderFlags |= D3DCOMPILE_DEBUG;
-// 	shaderFlags |= D3DCOMPILE_SKIP_OPTIMIZATION;
-// #endif
-// 
-// 	ID3D10Blob* errorMessages = nullptr;
-// 	HRESULT hr = D3DX11CompileEffectFromMemory(
-// 		pBuffer, lenght, nullptr, nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE,
-// 		shaderFlags, 0, DXUTGetD3D11Device(), ppEffect, &errorMessages);
-// 
-// 	if (FAILED(hr))
-// 	{
-// 		char* errorMessage = (errorMessages != nullptr ? (char*)errorMessages->GetBufferPointer() : "D3DX11CompileEffectFromMemory() failed");
-// 		DEBUG_ERROR(errorMessage);
-// 		SAFE_RELEASE(errorMessages);
-// 	}
-}
-
-void Effect::LoadCompiledEffect(ID3DX11Effect** ppEffect, const void* pBuffer, uint32_t lenght)
-{
-// 	HRESULT hr = D3DX11CreateEffectFromMemory(pBuffer, lenght, 0, DXUTGetD3D11Device(), ppEffect);
-// 	if (FAILED(hr))
-// 	{
-// 		DEBUG_ERROR("D3DX11CreateEffectFromMemory() failed.");
-// 	}
-}
-
-
-ID3DX11Effect* Effect::GetD3DX11Effect() const
-{
-	return m_pD3DX11Effect;
-}
-
-void Effect::SetD3DX11Effect(ID3DX11Effect* pD3DX11Effect)
-{
-	if (m_pD3DX11Effect != nullptr)
-	{
-		for (auto technique : m_Techniques)
-		{
-			delete technique;
-		}
-		m_Techniques.clear();
-
-		for (auto variable : m_Variables)
-		{
-			delete variable;
-		}
-		m_Variables.clear();
-	}
-
-	m_pD3DX11Effect = pD3DX11Effect;
-	Initialize();
-}
-
-const D3DX11_EFFECT_DESC& Effect::GetD3DX11EffectDesc() const
-{
-	return m_D3DX11EffectDesc;
 }
 
 const std::vector<Technique*>& Effect::GetTechniques() const
@@ -272,32 +170,9 @@ const std::map<std::string, Variable*>& Effect::GetVariablesByName() const
 	return m_VariablesByName;
 }
 
-void Effect::CompileFromFile(const std::wstring& filename)
-{
-	CompileEffectFromFile(&m_pD3DX11Effect, filename);
-	Initialize();
-}
-
-void Effect::LoadCompiledEffect(const std::wstring& filename)
-{
-	LoadCompiledEffect(&m_pD3DX11Effect, filename);
-	Initialize();
-}
-
-void Effect::CompileFromMemory(const void* pBuffer, uint32_t lenght)
-{
-	CompileEffectFromFile(&m_pD3DX11Effect, pBuffer, lenght);
-	Initialize();
-}
-
-void Effect::LoadCompiledEffect(const void* pBuffer, uint32_t lenght)
-{
-	LoadCompiledEffect(&m_pD3DX11Effect, pBuffer, lenght);
-	Initialize();
-}
-
 void Effect::Initialize()
 {
+	DEBUG_ASSERT(m_pD3DX11Effect != nullptr);
 	HRESULT hr = m_pD3DX11Effect->GetDesc(&m_D3DX11EffectDesc);
 	if (FAILED(hr))
 	{
@@ -306,22 +181,21 @@ void Effect::Initialize()
 
 	for (uint32_t i = 0; i < m_D3DX11EffectDesc.Techniques; i++)
 	{
-		Technique* technique = new Technique(this, m_pD3DX11Effect->GetTechniqueByIndex(i));
+		Technique* technique = new Technique(m_pD3DX11Effect->GetTechniqueByIndex(i));
 		m_Techniques.push_back(technique);
 		m_TechniquesByName.insert(std::make_pair(technique->GetTechniqueName(), technique));
 	}
 
 	for (uint32_t i = 0; i < m_D3DX11EffectDesc.GlobalVariables; i++)
 	{
-		Variable* variable = new Variable(this, m_pD3DX11Effect->GetVariableByIndex(i));
+		Variable* variable = new Variable(m_pD3DX11Effect->GetVariableByIndex(i));
 		m_Variables.push_back(variable);
 		m_VariablesByName.insert(std::make_pair(variable->GetVariableName(), variable));
 	}
 }
 
-Technique::Technique(Effect* pEffect, ID3DX11EffectTechnique* pD3DX11EffectTechnique)
-	: m_pEffect(pEffect),
-	m_pD3DX11EffectTechnique(pD3DX11EffectTechnique),
+Technique::Technique(ID3DX11EffectTechnique* pD3DX11EffectTechnique)
+	: m_pD3DX11EffectTechnique(pD3DX11EffectTechnique),
 	m_D3DX11TechniqueDesc(),
 	m_TechniqueName(),
 	m_Passes(),
@@ -331,7 +205,7 @@ Technique::Technique(Effect* pEffect, ID3DX11EffectTechnique* pD3DX11EffectTechn
 	m_TechniqueName = m_D3DX11TechniqueDesc.Name;
 	for (uint32_t i = 0; i < m_D3DX11TechniqueDesc.Passes; i++)
 	{
-		Pass* pass = DEBUG_NEW Pass(this, m_pD3DX11EffectTechnique->GetPassByIndex(i));
+		Pass* pass = DEBUG_NEW Pass(m_pD3DX11EffectTechnique->GetPassByIndex(i));
 		m_Passes.push_back(pass);
 		m_PassesByName.insert(std::make_pair(pass->GetPassName(), pass));
 	}
@@ -344,21 +218,6 @@ Technique::~Technique()
 		SAFE_DELETE(pass);
 	}
 	m_Passes.clear();
-}
-
-Effect* Technique::GetEffect()
-{
-	return m_pEffect;
-}
-
-ID3DX11EffectTechnique* Technique::GetD3DX11EffectTechnique() const
-{
-	return m_pD3DX11EffectTechnique;
-}
-
-const D3DX11_TECHNIQUE_DESC& Technique::GetD3DX11TechniqueDesc() const
-{
-	return m_D3DX11TechniqueDesc;
 }
 
 const std::string& Technique::GetTechniqueName() const
@@ -376,29 +235,46 @@ const std::map<std::string, Pass*>& Technique::GetPassesByName() const
 	return m_PassesByName;
 }
 
-Pass::Pass(Technique* pTechnique, ID3DX11EffectPass* pD3DX11EffectPass)
-	: m_pTechnique(pTechnique),
-	m_pD3DX11EffectPass(pD3DX11EffectPass),
+std::map<uint8_t, DXGI_FORMAT> Pass::m_FormatMap;
+
+Pass::Pass(ID3DX11EffectPass* pD3DX11EffectPass)
+	: m_pD3DX11EffectPass(pD3DX11EffectPass),
 	m_D3DX11PassDesc(),
 	m_PassName()
 {
 	m_pD3DX11EffectPass->GetDesc(&m_D3DX11PassDesc);
 	m_PassName = m_D3DX11PassDesc.Name;
-}
 
-Technique* Pass::GetTechnique()
-{
-	return m_pTechnique;
-}
 
-ID3DX11EffectPass* Pass::GetD3DX11EffectPass() const
-{
-	return m_pD3DX11EffectPass;
-}
+	D3DX11_PASS_SHADER_DESC vertexShaderDesc;
+	m_pD3DX11EffectPass->GetVertexShaderDesc(&vertexShaderDesc);
+	ID3DX11EffectShaderVariable* pShaderVariable = vertexShaderDesc.pShaderVariable;
+	if (pShaderVariable != nullptr)
+	{
+		D3DX11_EFFECT_SHADER_DESC shaderDesc;
+		pShaderVariable->GetShaderDesc(vertexShaderDesc.ShaderIndex, &shaderDesc);
+		std::vector<D3D11_INPUT_ELEMENT_DESC> inputElementDescs(shaderDesc.NumInputSignatureEntries);
 
-const D3DX11_PASS_DESC& Pass::GetD3DX11PassDesc() const
-{
-	return m_D3DX11PassDesc;
+		for (uint32_t i = 0; i < shaderDesc.NumInputSignatureEntries; i++)
+		{
+			D3D11_SIGNATURE_PARAMETER_DESC parameterDesc;
+			vertexShaderDesc.pShaderVariable->GetInputSignatureElementDesc(vertexShaderDesc.ShaderIndex, i, &parameterDesc);
+			inputElementDescs[i].SemanticName = parameterDesc.SemanticName;
+			inputElementDescs[i].SemanticIndex = parameterDesc.SemanticIndex;
+			if (parameterDesc.ComponentType == D3D_REGISTER_COMPONENT_FLOAT32)
+			{
+				inputElementDescs[i].Format = m_FormatMap.at(parameterDesc.Mask);
+			}
+			else
+			{
+				DEBUG_ERROR("Need to add new supportted format!");
+			}
+			inputElementDescs[i].InputSlot = 0;
+			inputElementDescs[i].AlignedByteOffset = parameterDesc.Register > 0 ? D3D11_APPEND_ALIGNED_ELEMENT : 0;
+			inputElementDescs[i].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+			inputElementDescs[i].InstanceDataStepRate = 0;
+		}
+	}
 }
 
 const std::string& Pass::GetPassName() const
@@ -419,9 +295,16 @@ void Pass::Apply(uint32_t flags)
 // 	m_pD3DX11EffectPass->Apply(flags, DXUTGetD3D11DeviceContext());
 }
 
-Variable::Variable(Effect* pEffect, ID3DX11EffectVariable* pD3DX11EffectVariable)
-	: m_pEffect(pEffect),
-	m_pD3DX11EffectVariable(pD3DX11EffectVariable),
+void Pass::BuildFormatMap()
+{
+	m_FormatMap[0x1] = DXGI_FORMAT_R32_FLOAT;
+	m_FormatMap[0x3] = DXGI_FORMAT_R32G32_FLOAT;
+	m_FormatMap[0x7] = DXGI_FORMAT_R32G32B32_FLOAT;
+	m_FormatMap[0xf] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+}
+
+Variable::Variable(ID3DX11EffectVariable* pD3DX11EffectVariable)
+	: m_pD3DX11EffectVariable(pD3DX11EffectVariable),
 	m_D3DX11EffectVariableDesc(),
 	m_pD3DX11EffectType(nullptr),
 	m_D3DX11EffectTypeDesc(),
@@ -431,11 +314,6 @@ Variable::Variable(Effect* pEffect, ID3DX11EffectVariable* pD3DX11EffectVariable
 	m_VariableName = m_D3DX11EffectVariableDesc.Name;
 	m_pD3DX11EffectType = m_pD3DX11EffectVariable->GetType();
 	m_pD3DX11EffectType->GetDesc(&m_D3DX11EffectTypeDesc);
-}
-
-Effect* Variable::GetEffect()
-{
-	return m_pEffect;
 }
 
 ID3DX11EffectVariable* Variable::GetD3DX11EffectVariable() const

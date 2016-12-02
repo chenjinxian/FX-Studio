@@ -43,26 +43,13 @@ protected:
 class Effect : public boost::noncopyable
 {
 public:
-	Effect();
+	Effect(ID3DX11Effect* pD3DX11Effect);
 	virtual ~Effect();
 
-	static void CompileEffectFromFile(ID3DX11Effect** ppEffect, const std::wstring& filename);
-	static void LoadCompiledEffect(ID3DX11Effect** ppEffect, const std::wstring& filename);
-	static void CompileEffectFromFile(ID3DX11Effect** ppEffect, const void* pBuffer, uint32_t lenght);
-	static void LoadCompiledEffect(ID3DX11Effect** ppEffect, const void* pBuffer, uint32_t lenght);
-
-	ID3DX11Effect* GetD3DX11Effect() const;
-	void SetD3DX11Effect(ID3DX11Effect* pD3DX11Effect);
-	const D3DX11_EFFECT_DESC& GetD3DX11EffectDesc() const;
 	const std::vector<Technique*>& GetTechniques() const;
 	const std::map<std::string, Technique*>& GetTechniquesByName() const;
 	const std::vector<Variable*>& GetVariables() const;
 	const std::map<std::string, Variable*>& GetVariablesByName() const;
-
-	void CompileFromFile(const std::wstring& filename);
-	void LoadCompiledEffect(const std::wstring& filename);
-	void CompileFromMemory(const void* pBuffer, uint32_t lenght);
-	void LoadCompiledEffect(const void* pBuffer, uint32_t lenght);
 
 private:
 	void Initialize();
@@ -78,18 +65,14 @@ private:
 class Technique : public boost::noncopyable
 {
 public:
-	Technique(Effect* pEffect, ID3DX11EffectTechnique* pD3DX11EffectTechnique);
+	Technique(ID3DX11EffectTechnique* pD3DX11EffectTechnique);
 	~Technique();
 
-	Effect* GetEffect();
-	ID3DX11EffectTechnique* GetD3DX11EffectTechnique() const;
-	const D3DX11_TECHNIQUE_DESC& GetD3DX11TechniqueDesc() const;
 	const std::string& GetTechniqueName() const;
 	const std::vector<Pass*>& GetPasses() const;
 	const std::map<std::string, Pass*>& GetPassesByName() const;
 
 private:
-	Effect* m_pEffect;
 	ID3DX11EffectTechnique* m_pD3DX11EffectTechnique;
 	D3DX11_TECHNIQUE_DESC m_D3DX11TechniqueDesc;
 	std::string m_TechniqueName;
@@ -100,29 +83,28 @@ private:
 class Pass : public boost::noncopyable
 {
 public:
-	Pass(Technique* pTechnique, ID3DX11EffectPass* pD3DX11EffectPass);
+	Pass(ID3DX11EffectPass* pD3DX11EffectPass);
 
-	Technique* GetTechnique();
-	ID3DX11EffectPass* GetD3DX11EffectPass() const;
-	const D3DX11_PASS_DESC& GetD3DX11PassDesc() const;
 	const std::string& GetPassName() const;
 
 	HRESULT CreateInputLayout(const D3D11_INPUT_ELEMENT_DESC* inputElementDesc, uint32_t numElements, ID3D11InputLayout **inputLayout);
 	void Apply(uint32_t flags);
 
 private:
-	Technique* m_pTechnique;
+	void BuildFormatMap();
+
 	ID3DX11EffectPass* m_pD3DX11EffectPass;
 	D3DX11_PASS_DESC m_D3DX11PassDesc;
+	ID3D11InputLayout* m_InputLayouts;
 	std::string m_PassName;
+	static std::map<uint8_t, DXGI_FORMAT> m_FormatMap;
 };
 
 class Variable : public boost::noncopyable
 {
 public:
-	Variable(Effect* pEffect, ID3DX11EffectVariable* pD3DX11EffectVariable);
+	Variable(ID3DX11EffectVariable* pD3DX11EffectVariable);
 
-	Effect* GetEffect();
 	ID3DX11EffectVariable* GetD3DX11EffectVariable() const;
 	const D3DX11_EFFECT_VARIABLE_DESC& GetD3DX11EffectVariableDesc() const;
 	ID3DX11EffectType* GetD3DX11EffectType() const;
@@ -140,7 +122,6 @@ public:
 	Variable& operator<<(const std::vector<XMFLOAT4X4>& values);
 
 private:
-	Effect* m_pEffect;
 	ID3DX11EffectVariable* m_pD3DX11EffectVariable;
 	D3DX11_EFFECT_VARIABLE_DESC m_D3DX11EffectVariableDesc;
 	ID3DX11EffectType* m_pD3DX11EffectType;

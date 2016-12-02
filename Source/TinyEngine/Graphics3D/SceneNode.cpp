@@ -9,6 +9,8 @@
 #include "../Actors/RenderComponent.h"
 #include "../Actors/TransformComponent.h"
 #include "../ResourceCache/ResCache.h"
+#include "../ResourceCache/TextureResource.h"
+#include "../ResourceCache/ShaderResource.h"
 #include "../AppFramework/BaseGameApp.h"
 #include "../AppFramework/BaseGameLogic.h"
 #include <DirectXColors.h>
@@ -372,30 +374,42 @@ ModelNode::ModelNode(
 		m_ModelName = pMeshRender->GetModelName();
 		m_TextureName = pMeshRender->GetTextureName();
 		m_EffectName = pMeshRender->GetEffectName();
+		m_CurrentTechnique = pMeshRender->GetCurrentTechniqueName();
+		m_CurrentPass = pMeshRender->GetCurrentPassName();
 	}
-
-	Resource modelRes(m_ModelName);
-	shared_ptr<ResHandle> pModelResHandle = g_pApp->GetResCache()->GetHandle(&modelRes);
-	std::unique_ptr<Model> model(new Model(pModelResHandle->Buffer(), pModelResHandle->Size(), true));
 
 	Resource effectRes(m_EffectName);
 	shared_ptr<ResHandle> pEffectResHandle = g_pApp->GetResCache()->GetHandle(&effectRes);
-	m_pEffect = new Effect();
-	m_pEffect->CompileFromMemory(pEffectResHandle->Buffer(), pEffectResHandle->Size());
-	m_pTextureMappingMaterial = new TextureMappingMaterial();
-	m_pTextureMappingMaterial->Initialize(m_pEffect);
-
-	for (auto mesh : model->GetMeshes())
+	if (pEffectResHandle != nullptr)
 	{
-		ID3D11Buffer* pVertexBuffer = nullptr;
-		ID3D11Buffer* pIndexBuffer = nullptr;
-		m_pTextureMappingMaterial->CreateVertexBuffer(mesh, &pVertexBuffer);
-		mesh->CreateIndexBuffer(&pIndexBuffer);
-
-		m_pVertexBuffers.push_back(pVertexBuffer);
-		m_pIndexBuffers.push_back(pIndexBuffer);
-		m_IndexCounts.push_back(mesh->GetIndices().size());
+		shared_ptr<ShaderResourceLoader> extra = static_pointer_cast<ShaderResourceLoader>(pEffectResHandle->GetExtraData());
+		if (extra != nullptr)
+		{
+		}
 	}
+
+// 	Resource modelRes(m_ModelName);
+// 	shared_ptr<ResHandle> pModelResHandle = g_pApp->GetResCache()->GetHandle(&modelRes);
+// 	std::unique_ptr<Model> model(new Model(pModelResHandle->Buffer(), pModelResHandle->Size(), true));
+// 
+// 	Resource effectRes(m_EffectName);
+// 	shared_ptr<ResHandle> pEffectResHandle = g_pApp->GetResCache()->GetHandle(&effectRes);
+// 	m_pEffect = new Effect();
+// 	m_pEffect->CompileFromMemory(pEffectResHandle->Buffer(), pEffectResHandle->Size());
+// 	m_pTextureMappingMaterial = new TextureMappingMaterial();
+// 	m_pTextureMappingMaterial->Initialize(m_pEffect);
+// 
+// 	for (auto mesh : model->GetMeshes())
+// 	{
+// 		ID3D11Buffer* pVertexBuffer = nullptr;
+// 		ID3D11Buffer* pIndexBuffer = nullptr;
+// 		m_pTextureMappingMaterial->CreateVertexBuffer(mesh, &pVertexBuffer);
+// 		mesh->CreateIndexBuffer(&pIndexBuffer);
+// 
+// 		m_pVertexBuffers.push_back(pVertexBuffer);
+// 		m_pIndexBuffers.push_back(pIndexBuffer);
+// 		m_IndexCounts.push_back(mesh->GetIndices().size());
+// 	}
 }
 
 ModelNode::~ModelNode()

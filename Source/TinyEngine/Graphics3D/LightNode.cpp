@@ -16,30 +16,30 @@ LightNode::LightNode(
 	m_WorldMatrix(Matrix::Identity),
 	m_ScaleMatrix(Matrix::Identity)
 {
-	LightRenderComponent* pModelRender = static_cast<LightRenderComponent*>(renderComponent);
-	if (pModelRender != nullptr)
-	{
-		m_ModelName = pModelRender->GetModelName();
-	}
-
-	Resource modelRes(m_ModelName);
-	shared_ptr<ResHandle> pModelResHandle = g_pApp->GetResCache()->GetHandle(&modelRes);
-	std::unique_ptr<Model> model(new Model(pModelResHandle->Buffer(), pModelResHandle->Size(), true));
-
+// 	LightRenderComponent* pModelRender = static_cast<LightRenderComponent*>(renderComponent);
+// 	if (pModelRender != nullptr)
+// 	{
+// 		m_ModelName = pModelRender->GetModelName();
+// 	}
+// 
+// 	Resource modelRes(m_ModelName);
+// 	shared_ptr<ResHandle> pModelResHandle = g_pApp->GetResCache()->GetHandle(&modelRes);
+// 	std::unique_ptr<Model> model(new Model(pModelResHandle->Buffer(), pModelResHandle->Size(), true));
+// 
 // 	Resource effectRes(m_EffectName);
 // 	shared_ptr<ResHandle> pEffectResHandle = g_pApp->GetResCache()->GetHandle(&effectRes);
 // 	m_pEffect = new Effect();
 // 	m_pEffect->CompileFromMemory(pEffectResHandle->Buffer(), pEffectResHandle->Size());
-	m_pEffect = DEBUG_NEW Effect();
-	m_pEffect->LoadCompiledEffect(L"Assets\\Effects\\BasicEffect.cso");
-
-	m_pMaterial = DEBUG_NEW BasicMaterial();
-	m_pMaterial->Initialize(m_pEffect);
-
-	Mesh* mesh = model->GetMeshes().at(0);
-	m_pMaterial->CreateVertexBuffer(mesh, &m_pVertexBuffer);
-	mesh->CreateIndexBuffer(&m_pIndexBuffer);
-	m_IndexCount = mesh->GetIndices().size();
+// 	m_pEffect = DEBUG_NEW Effect();
+// 	m_pEffect->LoadCompiledEffect(L"Assets\\Effects\\BasicEffect.cso");
+// 
+// 	m_pMaterial = DEBUG_NEW BasicMaterial();
+// 	m_pMaterial->Initialize(m_pEffect);
+// 
+// 	Mesh* mesh = model->GetMeshes().at(0);
+// 	m_pMaterial->CreateVertexBuffer(mesh, &m_pVertexBuffer);
+// 	mesh->CreateIndexBuffer(&m_pIndexBuffer);
+// 	m_IndexCount = mesh->GetIndices().size();
 }
 
 LightNode::~LightNode()

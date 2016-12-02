@@ -139,9 +139,6 @@
     <ClInclude Include="Graphics3D\LightNode.h">
       <Filter>Graphics3D</Filter>
     </ClInclude>
-    <ClInclude Include="Graphics3D\Material.h">
-      <Filter>Graphics3D</Filter>
-    </ClInclude>
     <ClInclude Include="Graphics3D\ModelImporter.h">
       <Filter>Graphics3D</Filter>
     </ClInclude>
@@ -156,6 +153,9 @@
     </ClInclude>
     <ClInclude Include="ResourceCache\ShaderResource.h">
       <Filter>ResourceCache</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics3D\Material.h">
+      <Filter>Graphics3D</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -240,9 +240,6 @@
     <ClCompile Include="Graphics3D\LightNode.cpp">
       <Filter>Graphics3D</Filter>
     </ClCompile>
-    <ClCompile Include="Graphics3D\Material.cpp">
-      <Filter>Graphics3D</Filter>
-    </ClCompile>
     <ClCompile Include="Graphics3D\ModelImporter.cpp">
       <Filter>Graphics3D</Filter>
     </ClCompile>
@@ -257,6 +254,9 @@
     </ClCompile>
     <ClCompile Include="ResourceCache\ShaderResource.cpp">
       <Filter>ResourceCache</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics3D\Material.cpp">
+      <Filter>Graphics3D</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

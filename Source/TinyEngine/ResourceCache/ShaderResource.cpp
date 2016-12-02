@@ -3,6 +3,8 @@
 #include <d3dcompiler.h>
 
 HlslResourceExtraData::HlslResourceExtraData()
+	: m_pD3DX11Effect(nullptr),
+	m_pEffect(nullptr)
 {
 
 }
@@ -21,23 +23,6 @@ bool FxEffectResourceLoader::VLoadResource(char *rawBuffer, uint32_t rawSize, sh
 
 		if (g_pApp->GetRendererAPI()->VCompileShaderFromMemory(rawBuffer, rawSize, extra))
 		{
-			ID3DX11Effect* pEffect = extra->m_pEffect;
-			D3DX11_EFFECT_DESC effectDesc;
-			if (FAILED(pEffect->GetDesc(&effectDesc)))
-			{
-				DEBUG_ERROR("ID3DX11Effect::GetDesc() failed.");
-			}
-
-			for (uint32_t i = 0; i < effectDesc.Techniques; i++)
-			{
-				ID3DX11EffectTechnique* pTechnique = pEffect->GetTechniqueByIndex(i);
-				D3DX11_TECHNIQUE_DESC techniqueDesc;
-				pTechnique->GetDesc(&techniqueDesc);
-				for (uint32_t i = 0; i < techniqueDesc.Passes; i++)
-				{
-				}
-			}
-
 			handle->SetExtraData(extra);
 			return true;
 		}
@@ -49,5 +34,15 @@ bool FxEffectResourceLoader::VLoadResource(char *rawBuffer, uint32_t rawSize, sh
 
 bool CsoEffectResourceLoader::VLoadResource(char *rawBuffer, uint32_t rawSize, shared_ptr<ResHandle> handle)
 {
+	return true;
+}
 
+shared_ptr<IResourceLoader> CreateFxEffectResourceLoader()
+{
+	return shared_ptr<IResourceLoader>(DEBUG_NEW FxEffectResourceLoader());
+}
+
+shared_ptr<IResourceLoader> CreateCsoEffectResourceLoader()
+{
+	return shared_ptr<IResourceLoader>(DEBUG_NEW CsoEffectResourceLoader());
 }

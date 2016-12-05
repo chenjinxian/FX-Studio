@@ -13,8 +13,6 @@ public:
 	virtual HRESULT VRender(Scene* pScene, const GameTime& gameTime) override;
 
 protected:
-	Effect* m_pEffect;
-	class BasicMaterial* m_pMaterial;
 	ID3D11Buffer* m_pVertexBuffer;
 	ID3D11Buffer* m_pIndexBuffer;
 	uint64_t m_IndexCount;

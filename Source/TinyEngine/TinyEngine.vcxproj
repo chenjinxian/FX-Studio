@@ -185,7 +185,6 @@
     <ClInclude Include="EventManager\EventManager.h" />
     <ClInclude Include="EventManager\EventManagerImpl.h" />
     <ClInclude Include="EventManager\Events.h" />
-    <ClInclude Include="Graphics3D\BasicMaterial.h" />
     <ClInclude Include="Graphics3D\CameraNode.h" />
     <ClInclude Include="Graphics3D\D3D11Renderer.h" />
     <ClInclude Include="Graphics3D\LightNode.h" />
@@ -196,8 +195,6 @@
     <ClInclude Include="Graphics3D\Scene.h" />
     <ClInclude Include="Graphics3D\SceneNode.h" />
     <ClInclude Include="Graphics3D\Skybox.h" />
-    <ClInclude Include="Graphics3D\TextureMappingMaterial.h" />
-    <ClInclude Include="Graphics3D\VertexDeclarations.h" />
     <ClInclude Include="ResourceCache\ShaderResource.h" />
     <ClInclude Include="ResourceCache\TextureResource.h" />
     <ClInclude Include="TinyEngine.h" />
@@ -227,7 +224,6 @@
     <ClCompile Include="EventManager\EventManager.cpp" />
     <ClCompile Include="EventManager\EventManagerImpl.cpp" />
     <ClCompile Include="EventManager\Events.cpp" />
-    <ClCompile Include="Graphics3D\BasicMaterial.cpp" />
     <ClCompile Include="Graphics3D\CameraNode.cpp" />
     <ClCompile Include="Graphics3D\D3D11Renderer.cpp" />
     <ClCompile Include="Graphics3D\LightNode.cpp" />
@@ -238,7 +234,6 @@
     <ClCompile Include="Graphics3D\Scene.cpp" />
     <ClCompile Include="Graphics3D\SceneNode.cpp" />
     <ClCompile Include="Graphics3D\Skybox.cpp" />
-    <ClCompile Include="Graphics3D\TextureMappingMaterial.cpp" />
     <ClCompile Include="ResourceCache\ResCache.cpp" />
     <ClCompile Include="ResourceCache\ShaderResource.cpp" />
     <ClCompile Include="ResourceCache\TextureResource.cpp" />

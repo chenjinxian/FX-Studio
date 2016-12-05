@@ -292,13 +292,13 @@ void BaseGameLogic::VChangeState(BaseGameState gameState)
 	{
 		m_GameViews.pop_front();
 
-		VSetProxy();
-
-		if (!g_pApp->AttachAsClient())
-		{
-			VChangeState(BGS_MainMenu);
-			return;
-		}
+// 		VSetProxy();
+// 
+// 		if (!g_pApp->AttachAsClient())
+// 		{
+// 			VChangeState(BGS_MainMenu);
+// 			return;
+// 		}
 	}
 	else if (gameState == BGS_LoadingGameEnvironment)
 	{

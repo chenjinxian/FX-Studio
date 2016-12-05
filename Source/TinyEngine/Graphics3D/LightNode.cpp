@@ -1,6 +1,5 @@
 #include "LightNode.h"
 #include "CameraNode.h"
-#include "BasicMaterial.h"
 #include "ModelImporter.h"
 #include "../Actors/RenderComponent.h"
 #include "../ResourceCache/ResCache.h"
@@ -9,8 +8,6 @@
 LightNode::LightNode(
 	ActorId actorId, WeakBaseRenderComponentPtr renderComponent, RenderPass renderPass, const Matrix& mat)
 	: SceneNode(actorId, renderComponent, renderPass),
-	m_pEffect(nullptr),
-	m_pMaterial(nullptr),
 	m_pVertexBuffer(nullptr),
 	m_pIndexBuffer(nullptr),
 	m_WorldMatrix(Matrix::Identity),
@@ -44,8 +41,6 @@ LightNode::LightNode(
 
 LightNode::~LightNode()
 {
-	SAFE_DELETE(m_pMaterial);
-	SAFE_DELETE(m_pEffect);
 	SAFE_RELEASE(m_pVertexBuffer);
 	SAFE_RELEASE(m_pIndexBuffer);
 }

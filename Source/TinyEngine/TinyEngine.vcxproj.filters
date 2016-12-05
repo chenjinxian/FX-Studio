@@ -124,15 +124,6 @@
     <ClInclude Include="Graphics3D\Skybox.h">
       <Filter>Graphics3D</Filter>
     </ClInclude>
-    <ClInclude Include="Graphics3D\TextureMappingMaterial.h">
-      <Filter>Graphics3D</Filter>
-    </ClInclude>
-    <ClInclude Include="Graphics3D\VertexDeclarations.h">
-      <Filter>Graphics3D</Filter>
-    </ClInclude>
-    <ClInclude Include="Graphics3D\BasicMaterial.h">
-      <Filter>Graphics3D</Filter>
-    </ClInclude>
     <ClInclude Include="Graphics3D\CameraNode.h">
       <Filter>Graphics3D</Filter>
     </ClInclude>
@@ -226,12 +217,6 @@
       <Filter>Graphics3D</Filter>
     </ClCompile>
     <ClCompile Include="Graphics3D\Skybox.cpp">
-      <Filter>Graphics3D</Filter>
-    </ClCompile>
-    <ClCompile Include="Graphics3D\TextureMappingMaterial.cpp">
-      <Filter>Graphics3D</Filter>
-    </ClCompile>
-    <ClCompile Include="Graphics3D\BasicMaterial.cpp">
       <Filter>Graphics3D</Filter>
     </ClCompile>
     <ClCompile Include="Graphics3D\CameraNode.cpp">

@@ -43,8 +43,8 @@ public:
 	const std::vector<Vector3>& GetNormals() const;
 	const std::vector<Vector3>& GetTangents() const;
 	const std::vector<Vector3>& GetBiNormals() const;
-	const std::vector<std::vector<Vector3>*>& GetTextureCoordinates() const;
-	const std::vector<std::vector<Vector4>*>& GetVertexColors() const;
+	const std::vector<std::vector<Vector3> >& GetTextureCoordinates() const;
+	const std::vector<std::vector<Vector4> >& GetVertexColors() const;
 	uint32_t GetFaceCount() const;
 	const std::vector<uint32_t>& GetIndices() const;
 
@@ -58,8 +58,8 @@ private:
 	std::vector<Vector3> m_Normals;
 	std::vector<Vector3> m_Tangents;
 	std::vector<Vector3> m_BiNormals;
-	std::vector<std::vector<Vector3>*> m_TextureCoordinates;
-	std::vector<std::vector<Vector4>*> m_VertexColors;
+	std::vector<std::vector<Vector3> > m_TextureCoordinates;
+	std::vector<std::vector<Vector4> > m_VertexColors;
 	uint32_t m_FaceCount;
 	std::vector<uint32_t> m_Indices;
 };

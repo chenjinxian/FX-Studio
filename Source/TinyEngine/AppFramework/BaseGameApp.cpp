@@ -73,12 +73,13 @@ bool BaseGameApp::InitEnvironment()
 			return false;
 		}
 
-		// 	m_pResCache->RegisterLoader(CreateDdsResourceLoader());
-		// 	m_pResCache->RegisterLoader(CreateJpgResourceLoader());
-		// 	m_pResCache->RegisterLoader(CreatePngResourceLoader());
-		// 	m_pResCache->RegisterLoader(CreateBmpResourceLoader());
-		// 	m_pResCache->RegisterLoader(CreateTiffResourceLoader());
+		m_pResCache->RegisterLoader(CreateDdsResourceLoader());
+		m_pResCache->RegisterLoader(CreateJpgResourceLoader());
+		m_pResCache->RegisterLoader(CreatePngResourceLoader());
+		m_pResCache->RegisterLoader(CreateBmpResourceLoader());
+		m_pResCache->RegisterLoader(CreateTiffResourceLoader());
 		m_pResCache->RegisterLoader(CreateXmlResourceLoader());
+		m_pResCache->RegisterLoader(CreateFxEffectResourceLoader());
 	}
 
 	if (!LoadStrings("English"))
@@ -484,10 +485,11 @@ bool BaseGameApp::InitResource()
 
 	// 	_tcscpy_s(m_saveGameDirectory, GetSaveGameDirectory(GetHwnd(), VGetGameAppDirectory()));
 
-	// 	m_pResCache->Preload("*.dds", NULL);
-	// 	m_pResCache->Preload("*.jpg", NULL);
-	// 	m_pResCache->Preload("*.png", NULL);
-	// 	m_pResCache->Preload("*.bmp", NULL);
-	// 	m_pResCache->Preload("*.tiff", NULL);
+	m_pResCache->Preload("*.dds", NULL);
+	m_pResCache->Preload("*.jpg", NULL);
+	m_pResCache->Preload("*.png", NULL);
+	m_pResCache->Preload("*.bmp", NULL);
+	m_pResCache->Preload("*.tiff", NULL);
+	m_pResCache->Preload("*.fx", NULL);
 	return true;
 }

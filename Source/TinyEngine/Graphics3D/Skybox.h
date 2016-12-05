@@ -4,25 +4,6 @@
 
 class Scene;
 
-class SkyboxMaterial : public Material
-{
-public:
-	SkyboxMaterial();
-	virtual ~SkyboxMaterial();
-
-	virtual void Initialize(Effect* pEffect) override;
-	virtual void CreateVertexBuffer(const Mesh* pMesh, ID3D11Buffer** ppVertexBuffer) const override;
-	virtual void CreateVertexBuffer(XMFLOAT4* vertices, uint32_t vertexCount, ID3D11Buffer** ppVertexBuffer) const;
-	virtual UINT VertexSize() const override;
-
-	Variable& WorldViewProjection() { return *m_pWorldViewProjection; }
-	Variable& SkyboxTexture() { return *m_pSkyboxTexutre; }
-
-private:
-	Variable* m_pWorldViewProjection;
-	Variable* m_pSkyboxTexutre;
-};
-
 class SkyboxNode : public SceneNode
 {
 public:
@@ -41,7 +22,6 @@ private:
 	void Reset();
 
 	Effect* m_pEffect;
-	SkyboxMaterial* m_pMaterial;
 	ID3D11ShaderResourceView* m_pCubeMapShaderResourceView;
 	ID3D11Buffer* m_pVertexBuffer;
 	ID3D11Buffer* m_pIndexBuffer;

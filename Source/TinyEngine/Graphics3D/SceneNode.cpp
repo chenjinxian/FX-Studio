@@ -3,8 +3,6 @@
 #include "Scene.h"
 #include "ModelImporter.h"
 #include "Material.h"
-#include "TextureMappingMaterial.h"
-#include "VertexDeclarations.h"
 #include "../Actors/Actor.h"
 #include "../Actors/RenderComponent.h"
 #include "../Actors/TransformComponent.h"
@@ -365,7 +363,6 @@ ModelNode::ModelNode(
 	ActorId actorId, WeakBaseRenderComponentPtr renderComponent, RenderPass renderPass, const Matrix& worldMatrix)
 	: SceneNode(actorId, renderComponent, renderPass, worldMatrix),
 	m_pEffect(nullptr),
-	m_pTextureMappingMaterial(nullptr),
 	m_WorldMatrix(worldMatrix)
 {
 	ModelRenderComponent* pMeshRender = static_cast<ModelRenderComponent*>(m_pRenderComponent);
@@ -382,34 +379,47 @@ ModelNode::ModelNode(
 	shared_ptr<ResHandle> pEffectResHandle = g_pApp->GetResCache()->GetHandle(&effectRes);
 	if (pEffectResHandle != nullptr)
 	{
-		shared_ptr<ShaderResourceLoader> extra = static_pointer_cast<ShaderResourceLoader>(pEffectResHandle->GetExtraData());
+		shared_ptr<HlslResourceExtraData> extra = static_pointer_cast<HlslResourceExtraData>(pEffectResHandle->GetExtraData());
 		if (extra != nullptr)
 		{
+			m_pEffect = extra->GetEffect();
 		}
 	}
 
-// 	Resource modelRes(m_ModelName);
-// 	shared_ptr<ResHandle> pModelResHandle = g_pApp->GetResCache()->GetHandle(&modelRes);
-// 	std::unique_ptr<Model> model(new Model(pModelResHandle->Buffer(), pModelResHandle->Size(), true));
-// 
+	Resource modelRes(m_ModelName);
+	shared_ptr<ResHandle> pModelResHandle = g_pApp->GetResCache()->GetHandle(&modelRes);
+	std::unique_ptr<Model> model(new Model(pModelResHandle->Buffer(), pModelResHandle->Size(), true));
+
 // 	Resource effectRes(m_EffectName);
 // 	shared_ptr<ResHandle> pEffectResHandle = g_pApp->GetResCache()->GetHandle(&effectRes);
 // 	m_pEffect = new Effect();
 // 	m_pEffect->CompileFromMemory(pEffectResHandle->Buffer(), pEffectResHandle->Size());
 // 	m_pTextureMappingMaterial = new TextureMappingMaterial();
 // 	m_pTextureMappingMaterial->Initialize(m_pEffect);
-// 
-// 	for (auto mesh : model->GetMeshes())
-// 	{
-// 		ID3D11Buffer* pVertexBuffer = nullptr;
-// 		ID3D11Buffer* pIndexBuffer = nullptr;
-// 		m_pTextureMappingMaterial->CreateVertexBuffer(mesh, &pVertexBuffer);
-// 		mesh->CreateIndexBuffer(&pIndexBuffer);
-// 
-// 		m_pVertexBuffers.push_back(pVertexBuffer);
-// 		m_pIndexBuffers.push_back(pIndexBuffer);
-// 		m_IndexCounts.push_back(mesh->GetIndices().size());
-// 	}
+
+	Technique* pCurrentTechnique = m_pEffect->GetTechniquesByName().at(m_CurrentTechnique);
+	if (pCurrentTechnique == nullptr)
+	{
+		DEBUG_ERROR("technique is not exist: " + m_CurrentTechnique);
+	}
+	Pass* pCurrentPass = pCurrentTechnique->GetPassesByName().at(m_CurrentPass);
+	if (pCurrentTechnique == nullptr)
+	{
+		DEBUG_ERROR("technique is not exist: " + m_CurrentTechnique);
+	}
+
+	std::map<std::string, DXGI_FORMAT> vertexFormat = pCurrentPass->GetVertexFormat();
+	for (auto mesh : model->GetMeshes())
+	{
+		ID3D11Buffer* pVertexBuffer = nullptr;
+		ID3D11Buffer* pIndexBuffer = nullptr;
+		pCurrentPass->CreateVertexBuffer(mesh, &pVertexBuffer);
+		mesh->CreateIndexBuffer(&pIndexBuffer);
+
+		m_pVertexBuffers.push_back(pVertexBuffer);
+		m_pIndexBuffers.push_back(pIndexBuffer);
+		m_IndexCounts.push_back(mesh->GetIndices().size());
+	}
 }
 
 ModelNode::~ModelNode()
@@ -426,7 +436,6 @@ ModelNode::~ModelNode()
 	m_pIndexBuffers.clear();
 
 	SAFE_DELETE(m_pEffect);
-	SAFE_DELETE(m_pTextureMappingMaterial);
 }
 
 HRESULT ModelNode::VOnInitSceneNode(Scene *pScene)

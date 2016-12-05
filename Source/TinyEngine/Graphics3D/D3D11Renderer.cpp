@@ -720,7 +720,9 @@ bool D3D11Renderer::VCompileShaderFromMemory(const void* pBuffer, uint32_t lengh
 		SAFE_RELEASE(errorMessages);
 	}
 
-	pShaderExtra->m_pEffect = DEBUG_NEW Effect(pD3DX11Effect);
+	pShaderExtra->m_pEffect = DEBUG_NEW Effect(m_pDevice, pD3DX11Effect);
+
+	SAFE_RELEASE(pD3DX11Effect);
 
 	return true;
 }

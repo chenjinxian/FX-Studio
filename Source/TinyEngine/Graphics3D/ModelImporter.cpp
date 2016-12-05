@@ -156,29 +156,29 @@ Mesh::Mesh(Model* pModel, aiMesh* mesh)
 	uint32_t uvChannelCount = mesh->GetNumUVChannels();
 	for (uint32_t i = 0; i < uvChannelCount; i++)
 	{
-		std::vector<Vector3>* textureCoordinates = DEBUG_NEW std::vector<Vector3>();
-		textureCoordinates->reserve(mesh->mNumVertices);
-		m_TextureCoordinates.push_back(textureCoordinates);
+		std::vector<Vector3> textureCoordinates(mesh->mNumVertices);
 
 		aiVector3D* aiTextureCoordinates = mesh->mTextureCoords[i];
 		for (uint32_t j = 0; j < mesh->mNumVertices; j++)
 		{
-			textureCoordinates->push_back(Vector3(reinterpret_cast<const float*>(&aiTextureCoordinates[j])));
+			textureCoordinates.push_back(Vector3(reinterpret_cast<const float*>(&aiTextureCoordinates[j])));
 		}
+
+		m_TextureCoordinates.push_back(textureCoordinates);
 	}
 
 	uint32_t colorChannelCount = mesh->GetNumColorChannels();
 	for (uint32_t i = 0; i < colorChannelCount; i++)
 	{
-		std::vector<Vector4>* vertexColors = DEBUG_NEW std::vector<Vector4>();
-		vertexColors->reserve(mesh->mNumVertices);
-		m_VertexColors.push_back(vertexColors);
+		std::vector<Vector4> vertexColors(mesh->mNumVertices);
 
 		aiColor4D* aiVertexColors = mesh->mColors[i];
 		for (uint32_t j = 0; j < mesh->mNumVertices; j++)
 		{
-			vertexColors->push_back(Vector4(reinterpret_cast<const float*>(&aiVertexColors[j])));
+			vertexColors.push_back(Vector4(reinterpret_cast<const float*>(&aiVertexColors[j])));
 		}
+
+		m_VertexColors.push_back(vertexColors);
 	}
 
 	if (mesh->HasFaces())
@@ -198,15 +198,7 @@ Mesh::Mesh(Model* pModel, aiMesh* mesh)
 
 Mesh::~Mesh()
 {
-	for (std::vector<Vector3>* textureCoordinates : m_TextureCoordinates)
-	{
-		delete textureCoordinates;
-	}
 
-	for (std::vector<Vector4>* vertexColors : m_VertexColors)
-	{
-		delete vertexColors;
-	}
 }
 
 Model* Mesh::GetModel()
@@ -244,12 +236,12 @@ const std::vector<Vector3>& Mesh::GetBiNormals() const
 	return m_BiNormals;
 }
 
-const std::vector<std::vector<Vector3>*>& Mesh::GetTextureCoordinates() const
+const std::vector<std::vector<Vector3> >& Mesh::GetTextureCoordinates() const
 {
 	return m_TextureCoordinates;
 }
 
-const std::vector<std::vector<Vector4>*>& Mesh::GetVertexColors() const
+const std::vector<std::vector<Vector4> >& Mesh::GetVertexColors() const
 {
 	return m_VertexColors;
 }

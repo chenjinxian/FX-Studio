@@ -13,11 +13,10 @@ public:
 	virtual ~HlslResourceExtraData();
 
 	virtual std::string VToString() { return "ShaderResourceExtraData"; }
+	Effect* GetEffect() const { return m_pEffect; }
 
 private:
 	Effect* m_pEffect;
-	Technique* mCurrentTechnique;
-	std::map<Pass*, ID3D11InputLayout*> mInputLayouts;
 };
 
 class ShaderResourceLoader : public IResourceLoader

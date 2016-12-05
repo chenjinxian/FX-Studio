@@ -118,7 +118,6 @@ private:
 };
 
 class Effect;
-class TextureMappingMaterial;
 class ModelNode : public SceneNode
 {
 public:
@@ -133,7 +132,6 @@ public:
 
 private:
 	Effect* m_pEffect;
-	TextureMappingMaterial* m_pTextureMappingMaterial;
 	std::vector<ID3D11Buffer*> m_pVertexBuffers;
 	std::vector<ID3D11Buffer*> m_pIndexBuffers;
 	std::vector<uint64_t> m_IndexCounts;

@@ -4,76 +4,9 @@
 #include "CameraNode.h"
 #include "DDSTextureLoader.h"
 
-SkyboxMaterial::SkyboxMaterial()
-	: Material("main11"),
-	m_pWorldViewProjection(nullptr),
-	m_pSkyboxTexutre(nullptr)
-{
-
-}
-
-SkyboxMaterial::~SkyboxMaterial()
-{
-
-}
-
-void SkyboxMaterial::Initialize(Effect* pEffect)
-{
-	Material::Initialize(pEffect);
-
-	m_pWorldViewProjection = pEffect->GetVariablesByName().at("WorldViewProjection");
-	m_pSkyboxTexutre = pEffect->GetVariablesByName().at("SkyboxTexture");
-
-	D3D11_INPUT_ELEMENT_DESC inputElementDescriptions[] =
-	{
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 }
-	};
-
-	CreateInputLayout("main11", "p0", inputElementDescriptions, ARRAYSIZE(inputElementDescriptions));
-}
-
-void SkyboxMaterial::CreateVertexBuffer(const Mesh* pMesh, ID3D11Buffer** ppVertexBuffer) const
-{
-	DEBUG_ASSERT(pMesh != nullptr);
-	const std::vector<Vector3>& sourceVertices = pMesh->GetVertices();
-
-	std::vector<XMFLOAT4> vertices;
-	vertices.reserve(sourceVertices.size());
-	for (UINT i = 0; i < sourceVertices.size(); i++)
-	{
-		XMFLOAT3 position = sourceVertices.at(i);
-		vertices.push_back(XMFLOAT4(position.x, position.y, position.z, 1.0f));
-	}
-
-// 	CreateVertexBuffer(&vertices[0], vertices.size(), ppVertexBuffer);
-}
-
-void SkyboxMaterial::CreateVertexBuffer(XMFLOAT4* vertices, uint32_t vertexCount, ID3D11Buffer** ppVertexBuffer) const
-{
-// 	D3D11_BUFFER_DESC vertexBufferDesc;
-// 	ZeroMemory(&vertexBufferDesc, sizeof(vertexBufferDesc));
-// 	vertexBufferDesc.ByteWidth = VertexSize() * vertexCount;
-// 	vertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
-// 	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-// 
-// 	D3D11_SUBRESOURCE_DATA vertexSubResourceData;
-// 	ZeroMemory(&vertexSubResourceData, sizeof(vertexSubResourceData));
-// 	vertexSubResourceData.pSysMem = vertices;
-// 	if (FAILED(DXUTGetD3D11Device()->CreateBuffer(&vertexBufferDesc, &vertexSubResourceData, ppVertexBuffer)))
-// 	{
-// 		DEBUG_ERROR("ID3D11Device::CreateBuffer() failed.");
-// 	}
-}
-
-UINT SkyboxMaterial::VertexSize() const
-{
-	return sizeof(XMFLOAT4);
-}
-
 SkyboxNode::SkyboxNode(const std::wstring& textureFile)
 	: SceneNode(INVALID_ACTOR_ID, WeakBaseRenderComponentPtr(), RenderPass_Sky),
 	m_pEffect(nullptr),
-	m_pMaterial(nullptr),
 	m_pCubeMapShaderResourceView(nullptr),
 	m_pVertexBuffer(nullptr),
 	m_pIndexBuffer(nullptr),
@@ -172,7 +105,6 @@ HRESULT SkyboxNode::VOnUpdate(Scene* pScene, const GameTime& gameTime)
 void SkyboxNode::Reset()
 {
 	SAFE_RELEASE(m_pCubeMapShaderResourceView);
-	SAFE_DELETE(m_pMaterial);
 	SAFE_DELETE(m_pEffect);
 	SAFE_RELEASE(m_pVertexBuffer);
 	SAFE_RELEASE(m_pIndexBuffer);

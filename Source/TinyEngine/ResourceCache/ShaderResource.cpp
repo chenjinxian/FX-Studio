@@ -3,8 +3,7 @@
 #include <d3dcompiler.h>
 
 HlslResourceExtraData::HlslResourceExtraData()
-	: m_pD3DX11Effect(nullptr),
-	m_pEffect(nullptr)
+	: m_pEffect(nullptr)
 {
 
 }

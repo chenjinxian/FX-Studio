@@ -468,27 +468,17 @@ HRESULT ModelNode::VOnUpdate(Scene* pScene, const GameTime& gameTime)
 
 HRESULT ModelNode::VRender(Scene* pScene, const GameTime& gameTime)
 {
-	std::vector<Variable*> variables = m_pEffect->GetVariables();
+	const std::vector<Variable*>& variables = m_pEffect->GetVariables();
 	for (auto variable : variables)
 	{
-		std::string semantic = variable->GetVariableSemantic();
-		std::string name = variable->GetVariableName();
-		if (semantic.empty())
+		const std::string& semantic = variable->GetVariableSemantic();
+		if (semantic == "worldviewprojection")
 		{
-// 			if (variable->GetVariableType() == "Texture2D")
-// 			{
-// 				variable->SetResource(m_pTextures[0]);
-// 			}
-		}
-		else
-		{
-			if (semantic == "worldviewprojection")
+			const std::string& type = variable->GetVariableType();
+			if (type == "float4x4")
 			{
-				if (variable->GetVariableType() == "float4x4")
-				{
-					XMMATRIX wvp = pScene->GetCamera()->GetWorldViewProjection(pScene);
-					variable->SetMatrix(wvp);
-				}
+				const XMMATRIX& wvp = pScene->GetCamera()->GetWorldViewProjection(pScene);
+				variable->SetMatrix(wvp);
 			}
 		}
 	}
@@ -499,7 +489,8 @@ HRESULT ModelNode::VRender(Scene* pScene, const GameTime& gameTime)
 	{
 		for (auto variable : variables)
 		{
-			if (variable->GetVariableType() == "Texture2D")
+			const std::string& type = variable->GetVariableType();
+			if (type == "Texture2D")
 			{
 				variable->SetResource(m_pTextures[i]);
 				break;

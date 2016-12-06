@@ -74,21 +74,21 @@ bool BaseGameLogic::VLoadGame(const std::string& projectXml)
 		return false;
 	}
 
-	const char* preLoadScript = NULL;
-	const char* postLoadScript = NULL;
-
-	tinyxml2::XMLElement* pScriptElement = pRoot->FirstChildElement("Script");
-	if (pScriptElement)
-	{
-		preLoadScript = pScriptElement->Attribute("preLoad");
-		postLoadScript = pScriptElement->Attribute("postLoad");
-	}
-
-	if (preLoadScript)
-	{
-		Resource resource(preLoadScript);
-		shared_ptr<ResHandle> pResourceHandle = g_pApp->GetResCache()->GetHandle(&resource);
-	}
+// 	const char* preLoadScript = NULL;
+// 	const char* postLoadScript = NULL;
+// 
+// 	tinyxml2::XMLElement* pScriptElement = pRoot->FirstChildElement("Script");
+// 	if (pScriptElement)
+// 	{
+// 		preLoadScript = pScriptElement->Attribute("preLoad");
+// 		postLoadScript = pScriptElement->Attribute("postLoad");
+// 	}
+// 
+// 	if (preLoadScript)
+// 	{
+// 		Resource resource(preLoadScript);
+// 		shared_ptr<ResHandle> pResourceHandle = g_pApp->GetResCache()->GetHandle(&resource);
+// 	}
 
 	tinyxml2::XMLElement* pActorsNode = pRoot->FirstChildElement("StaticActors");
 	if (pActorsNode)
@@ -116,11 +116,11 @@ bool BaseGameLogic::VLoadGame(const std::string& projectXml)
 	if (!VLoadGameDelegate(pRoot))
 		return false;
 
-	if (postLoadScript)
-	{
-		Resource resource(postLoadScript);
-		shared_ptr<ResHandle> pResourceHandle = g_pApp->GetResCache()->GetHandle(&resource);
-	}
+// 	if (postLoadScript)
+// 	{
+// 		Resource resource(postLoadScript);
+// 		shared_ptr<ResHandle> pResourceHandle = g_pApp->GetResCache()->GetHandle(&resource);
+// 	}
 
 	if (m_IsProxy)
 	{

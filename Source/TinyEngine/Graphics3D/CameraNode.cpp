@@ -1,5 +1,6 @@
 #include "CameraNode.h"
 #include "Scene.h"
+#include "../AppFramework/BaseGameApp.h"
 
 Frustum::Frustum()
 	: m_Fov(XM_PIDIV4),
@@ -94,8 +95,8 @@ CameraNode::~CameraNode()
 
 HRESULT CameraNode::VOnInitSceneNode(Scene* pScene)
 {
-// 	m_Frustum.SetAspect((float)DXUTGetWindowWidth() / DXUTGetWindowHeight());
-// 	m_ProjectionMatrix = Matrix::CreatePerspectiveFieldOfView(m_Frustum.m_Fov, m_Frustum.m_Aspect, m_Frustum.m_Near, m_Frustum.m_Far);
+	m_Frustum.SetAspect(static_cast<float>(g_pApp->GetGameConfig().m_ScreenWidth) / static_cast<float>(g_pApp->GetGameConfig().m_ScreenHeight));
+	m_ProjectionMatrix = Matrix::CreatePerspectiveFieldOfView(m_Frustum.m_Fov, m_Frustum.m_Aspect, m_Frustum.m_Near, m_Frustum.m_Far);
 	return S_OK;
 }
 

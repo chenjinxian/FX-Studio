@@ -125,10 +125,10 @@ void GridRenderComponent::VCreateInheritedXmlElement(tinyxml2::XMLElement* pBase
 
 ModelRenderComponent::ModelRenderComponent()
 	: m_ModelName(),
-	m_TextureName(),
 	m_EffectName(),
 	m_CurrentTechnique(),
-	m_CurrentPass()
+	m_CurrentPass(),
+	m_TextureNames()
 {
 
 }
@@ -146,10 +146,13 @@ bool ModelRenderComponent::VDelegateInit(tinyxml2::XMLElement* pData)
 		m_ModelName = pModel->FirstChild()->Value();
 	}
 
-	tinyxml2::XMLElement* pTexture = pData->FirstChildElement("Texture");
-	if (pTexture != nullptr)
+	tinyxml2::XMLElement* pTextures = pData->FirstChildElement("Textures");
+	if (pTextures != nullptr)
 	{
-		m_TextureName = pTexture->FirstChild()->Value();
+		for (tinyxml2::XMLNode* pNode = pTextures->FirstChild(); pNode; pNode = pNode->NextSibling())
+		{
+			m_TextureNames.push_back(pNode->FirstChild()->Value());
+		}
 	}
 
 	tinyxml2::XMLElement* pEffect = pData->FirstChildElement("Effect");
@@ -189,20 +192,20 @@ shared_ptr<SceneNode> ModelRenderComponent::VCreateSceneNode()
 
 void ModelRenderComponent::VCreateInheritedXmlElement(tinyxml2::XMLElement* pBaseElement, tinyxml2::XMLDocument* pDocument)
 {
-	tinyxml2::XMLElement* pSdkMesh = pDocument->NewElement("Model");
-	tinyxml2::XMLText* pSdkMeshName = pDocument->NewText(m_ModelName.c_str());
-	pSdkMesh->LinkEndChild(pSdkMeshName);
-	pBaseElement->LinkEndChild(pSdkMesh);
-
-	tinyxml2::XMLElement* pTexture = pDocument->NewElement("Texture");
-	tinyxml2::XMLText* pTextureName = pDocument->NewText(m_TextureName.c_str());
-	pTexture->LinkEndChild(pTextureName);
-	pBaseElement->LinkEndChild(pTexture);
-
-	tinyxml2::XMLElement* pEffect = pDocument->NewElement("Effect");
-	tinyxml2::XMLText* pEffectName = pDocument->NewText(m_EffectName.c_str());
-	pEffect->LinkEndChild(pEffectName);
-	pBaseElement->LinkEndChild(pEffect);
+// 	tinyxml2::XMLElement* pSdkMesh = pDocument->NewElement("Model");
+// 	tinyxml2::XMLText* pSdkMeshName = pDocument->NewText(m_ModelName.c_str());
+// 	pSdkMesh->LinkEndChild(pSdkMeshName);
+// 	pBaseElement->LinkEndChild(pSdkMesh);
+// 
+// 	tinyxml2::XMLElement* pTexture = pDocument->NewElement("Texture");
+// 	tinyxml2::XMLText* pTextureName = pDocument->NewText(m_TextureName.c_str());
+// 	pTexture->LinkEndChild(pTextureName);
+// 	pBaseElement->LinkEndChild(pTexture);
+// 
+// 	tinyxml2::XMLElement* pEffect = pDocument->NewElement("Effect");
+// 	tinyxml2::XMLText* pEffectName = pDocument->NewText(m_EffectName.c_str());
+// 	pEffect->LinkEndChild(pEffectName);
+// 	pBaseElement->LinkEndChild(pEffect);
 }
 
 SkyboxRenderComponent::SkyboxRenderComponent()

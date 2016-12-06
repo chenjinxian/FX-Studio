@@ -118,6 +118,7 @@ private:
 };
 
 class Effect;
+class Pass;
 class ModelNode : public SceneNode
 {
 public:
@@ -132,13 +133,15 @@ public:
 
 private:
 	Effect* m_pEffect;
+	Pass* m_pCurrentPass;
 	std::vector<ID3D11Buffer*> m_pVertexBuffers;
 	std::vector<ID3D11Buffer*> m_pIndexBuffers;
-	std::vector<uint64_t> m_IndexCounts;
+	std::vector<uint32_t> m_IndexCounts;
+	std::vector<ID3D11ShaderResourceView*> m_pTextures;
 	Matrix m_WorldMatrix;
 
 	std::string m_ModelName;
-	std::string m_TextureName;
+	std::vector<std::string> m_TextureNames;
 	std::string m_EffectName;
 	std::string m_CurrentTechnique;
 	std::string m_CurrentPass;

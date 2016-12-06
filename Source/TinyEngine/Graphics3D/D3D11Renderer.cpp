@@ -689,6 +689,25 @@ void D3D11Renderer::VSetBackgroundColor(const Color& color)
 	m_BackgroundColor = color;
 }
 
+void D3D11Renderer::VInputSetup(D3D_PRIMITIVE_TOPOLOGY topology, ID3D11InputLayout* pInputLayout)
+{
+	m_pDeviceContext->IASetPrimitiveTopology(topology);
+	m_pDeviceContext->IASetInputLayout(pInputLayout);
+}
+
+void D3D11Renderer::VDrawMeshe(uint32_t vertexSize, ID3D11Buffer* pVertexBuffer,
+	ID3D11Buffer* pIndexBuffer, uint32_t indexCount, ID3DX11EffectPass* pD3DX11EffectPass)
+{
+	UINT stride = vertexSize;
+	UINT offset = 0;
+
+	m_pDeviceContext->IASetVertexBuffers(0, 1, &pVertexBuffer, &stride, &offset);
+	m_pDeviceContext->IASetIndexBuffer(pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+
+	pD3DX11EffectPass->Apply(0, m_pDeviceContext);
+	m_pDeviceContext->DrawIndexed(indexCount, 0, 0);
+}
+
 bool D3D11Renderer::VCompileShaderFromMemory(const void* pBuffer, uint32_t lenght, shared_ptr<IResourceExtraData> pExtraData)
 {
 	if (m_pDevice == nullptr && m_pDeviceContext == nullptr)
@@ -708,10 +727,9 @@ bool D3D11Renderer::VCompileShaderFromMemory(const void* pBuffer, uint32_t lengh
 	shaderFlags |= D3DCOMPILE_SKIP_OPTIMIZATION;
 #endif
 
-	ID3DX11Effect* pD3DX11Effect = nullptr;
 	ID3D10Blob* errorMessages = nullptr;
-	HRESULT hr = D3DX11CompileEffectFromMemory(
-		pBuffer, lenght, nullptr, nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, shaderFlags, 0, m_pDevice, &pD3DX11Effect, &errorMessages);
+	HRESULT hr = D3DX11CompileEffectFromMemory( pBuffer, lenght, nullptr, nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE,
+		shaderFlags, 0, m_pDevice, &pShaderExtra->m_pD3DX11Effect, &errorMessages);
 
 	if (FAILED(hr))
 	{
@@ -720,9 +738,7 @@ bool D3D11Renderer::VCompileShaderFromMemory(const void* pBuffer, uint32_t lengh
 		SAFE_RELEASE(errorMessages);
 	}
 
-	pShaderExtra->m_pEffect = DEBUG_NEW Effect(m_pDevice, pD3DX11Effect);
-
-	SAFE_RELEASE(pD3DX11Effect);
+	pShaderExtra->m_pEffect = DEBUG_NEW Effect(m_pDevice, pShaderExtra->m_pD3DX11Effect);
 
 	return true;
 }
@@ -747,7 +763,7 @@ bool D3D11Renderer::VCreateDDSTextureResoure(char *rawBuffer, uint32_t rawSize, 
 
 	if (FAILED(CreateDDSTextureFromMemoryEx(
 		m_pDevice, m_pDeviceContext, (uint8_t*)rawBuffer, rawSize, 0,
-		D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE, 0, 0, true, nullptr, &pTextureExtra->m_pTexture)))
+		D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE, 0, 0, false, nullptr, &pTextureExtra->m_pTexture)))
 	{
 		return false;
 	}
@@ -769,7 +785,7 @@ bool D3D11Renderer::VCreateWICTextureResoure(char *rawBuffer, uint32_t rawSize, 
 
 	if (FAILED(CreateWICTextureFromMemoryEx(
 		m_pDevice, m_pDeviceContext, (uint8_t*)rawBuffer, rawSize, 0,
-		D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE, 0, 0, true, nullptr, &pTextureExtra->m_pTexture)))
+		D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE, 0, 0, false, nullptr, &pTextureExtra->m_pTexture)))
 	{
 		return false;
 	}

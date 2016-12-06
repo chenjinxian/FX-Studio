@@ -3,14 +3,16 @@
 #include <d3dcompiler.h>
 
 HlslResourceExtraData::HlslResourceExtraData()
-	: m_pEffect(nullptr)
+	: m_pD3DX11Effect(nullptr),
+	m_pEffect(nullptr)
 {
 
 }
 
 HlslResourceExtraData::~HlslResourceExtraData()
 {
-
+	SAFE_RELEASE(m_pD3DX11Effect);
+	SAFE_DELETE(m_pEffect);
 }
 
 bool FxEffectResourceLoader::VLoadResource(char *rawBuffer, uint32_t rawSize, shared_ptr<ResHandle> handle)

@@ -53,7 +53,7 @@ public:
 	virtual ~ModelRenderComponent();
 
 	const std::string& GetModelName() { return m_ModelName; }
-	const std::string& GetTextureName() { return m_TextureName; }
+	const std::vector<std::string>& GetTextureName() { return m_TextureNames; }
 	const std::string& GetEffectName() { return m_EffectName; }
 	const std::string& GetCurrentTechniqueName() { return m_CurrentTechnique; }
 	const std::string& GetCurrentPassName() { return m_CurrentPass; }
@@ -68,10 +68,10 @@ protected:
 
 private:
 	std::string m_ModelName;
-	std::string m_TextureName;
 	std::string m_EffectName;
 	std::string m_CurrentTechnique;
 	std::string m_CurrentPass;
+	std::vector<std::string> m_TextureNames;
 };
 
 class SkyboxRenderComponent : public BaseRenderComponent

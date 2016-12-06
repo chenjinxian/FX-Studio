@@ -52,11 +52,13 @@ public:
 
 	const std::string& GetPassName() const { return m_PassName; }
 	ID3D11InputLayout* GetInputLayout() { return m_pInputLayouts; }
-	std::map<std::string, DXGI_FORMAT>& GetVertexFormat() { return m_VertexFormat; }
+	uint32_t GetVertexSize() { return m_VertexSize; }
+	ID3DX11EffectPass* GetEffectPass() { return m_pD3DX11EffectPass; }
 
-	void CreateVertexBuffer(const Mesh* mesh, ID3D11Buffer** vertexBuffer) const;
+	void CreateVertexBuffer(const Mesh* mesh, ID3D11Buffer** ppVertexBuffer) const;
+	void CreateIndexBuffer(const Mesh* mesh, ID3D11Buffer** ppIndexBuffer) const;
 
-	void Apply(uint32_t flags);
+	void Apply(uint32_t flags, ID3D11DeviceContext1* pDeviceContext);
 
 private:
 	DXGI_FORMAT GetElementFormat(D3D_REGISTER_COMPONENT_TYPE compoentType, uint8_t mask);
@@ -65,7 +67,8 @@ private:
 	ID3DX11EffectPass* m_pD3DX11EffectPass;
 	std::string m_PassName;
 	ID3D11InputLayout* m_pInputLayouts;
-	std::map<std::string, DXGI_FORMAT> m_VertexFormat;
+	uint32_t m_VertexSize;
+	std::vector<std::string> m_VertexFormat;
 };
 
 class Variable : public boost::noncopyable
@@ -73,12 +76,12 @@ class Variable : public boost::noncopyable
 public:
 	Variable(ID3D11Device1* pDevice, ID3DX11EffectVariable* pD3DX11EffectVariable);
 
-	ID3DX11EffectVariable* GetD3DX11EffectVariable() const;
-	const D3DX11_EFFECT_VARIABLE_DESC& GetD3DX11EffectVariableDesc() const;
-	ID3DX11EffectType* GetD3DX11EffectType() const;
-	const D3DX11_EFFECT_TYPE_DESC& GetD3DX11EffectTypeDesc() const;
-	const std::string& GetVariableName() const;
+	const std::string& GetVariableName() const { return m_VariableName; }
+	const std::string& GetVariableSemantic() const { return m_VariableSemantic; }
+	const std::string& GetVariableType() const { return m_VariableType; }
 
+	void SetMatrix(XMMATRIX value);
+	void SetResource(ID3D11ShaderResourceView* value);
 	Variable& operator<<(CXMMATRIX value);
 	Variable& operator<<(ID3D11ShaderResourceView* value);
 	Variable& operator<<(ID3D11UnorderedAccessView* value);
@@ -91,8 +94,8 @@ public:
 
 private:
 	ID3DX11EffectVariable* m_pD3DX11EffectVariable;
-	D3DX11_EFFECT_VARIABLE_DESC m_D3DX11EffectVariableDesc;
 	ID3DX11EffectType* m_pD3DX11EffectType;
-	D3DX11_EFFECT_TYPE_DESC m_D3DX11EffectTypeDesc;
 	std::string m_VariableName;
+	std::string m_VariableSemantic;
+	std::string m_VariableType;
 };

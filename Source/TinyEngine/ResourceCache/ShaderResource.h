@@ -16,6 +16,7 @@ public:
 	Effect* GetEffect() const { return m_pEffect; }
 
 private:
+	ID3DX11Effect* m_pD3DX11Effect;
 	Effect* m_pEffect;
 };
 

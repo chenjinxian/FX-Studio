@@ -48,8 +48,6 @@ public:
 	uint32_t GetFaceCount() const;
 	const std::vector<uint32_t>& GetIndices() const;
 
-	void CreateIndexBuffer(ID3D11Buffer** ppIndexBuffer);
-
 private:
 	Model* m_pModel;
 	ModelMaterial* m_pModelMaterial;

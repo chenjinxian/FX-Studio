@@ -1,6 +1,7 @@
 #include "Material.h"
 #include "ModelImporter.h"
 #include <d3dcompiler.h>
+#include <cctype>
 
 Effect::Effect(ID3D11Device1* pDevice, ID3DX11Effect* pD3DX11Effect)
 	: m_Techniques(),
@@ -114,7 +115,8 @@ Pass::Pass(ID3D11Device1* pDevice, ID3DX11EffectPass* pD3DX11EffectPass)
 	m_pD3DX11EffectPass(pD3DX11EffectPass),
 	m_PassName(),
 	m_pInputLayouts(nullptr),
-	m_VertexFormat()
+	m_VertexFormat(),
+	m_VertexSize(0)
 {
 	D3DX11_PASS_DESC passDesc;
 	m_pD3DX11EffectPass->GetDesc(&passDesc);
@@ -142,7 +144,7 @@ Pass::Pass(ID3D11Device1* pDevice, ID3DX11EffectPass* pD3DX11EffectPass)
 			inputElementDescs[i].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
 			inputElementDescs[i].InstanceDataStepRate = 0;
 
-			m_VertexFormat.insert(std::make_pair(inputElementDescs[i].SemanticName, inputElementDescs[i].Format));
+			m_VertexFormat.push_back(inputElementDescs[i].SemanticName);
 		}
 	
 		pDevice->CreateInputLayout(
@@ -152,37 +154,34 @@ Pass::Pass(ID3D11Device1* pDevice, ID3DX11EffectPass* pD3DX11EffectPass)
 
 void Pass::CreateVertexBuffer(const Mesh* mesh, ID3D11Buffer** ppVertexBuffer) const
 {
-	std::vector<float> vertexData;
-	uint32_t vertexSize = 0;
-	uint32_t vertexCount = mesh->GetVertices().size();
+	std::vector<Vector3> vertices = mesh->GetVertices();
+	uint32_t vertexCount = vertices.size();
 	std::vector<Vector3> textureCoordinates;
 	if (!mesh->GetTextureCoordinates().empty())
 	{
-		std::vector<Vector3> textureCoordinates = mesh->GetTextureCoordinates().at(0);
+		textureCoordinates = mesh->GetTextureCoordinates().at(0);
 	}
+
+	std::vector<float> vertexData;
+	vertexData.reserve(vertexCount * m_VertexSize);
 
 	for (uint32_t i = 0; i < vertexCount; i++)
 	{
-		for (auto vertexFormat : m_VertexFormat)
+		for (auto& vertexFormat : m_VertexFormat)
 		{
-			std::string type = vertexFormat.first;
-			DXGI_FORMAT format = vertexFormat.second;
-
-			if (type == "POSITION")
+			if (vertexFormat == "POSITION")
 			{
-				vertexData.push_back(mesh->GetVertices().at(i).x);
-				vertexData.push_back(mesh->GetVertices().at(i).y);
-				vertexData.push_back(mesh->GetVertices().at(i).z);
+				vertexData.push_back(vertices.at(i).x);
+				vertexData.push_back(vertices.at(i).y);
+				vertexData.push_back(vertices.at(i).z);
 				vertexData.push_back(1.0f);
-				vertexSize += 16;
 			}
-			else if (type == "TEXCOORD")
+			else if (vertexFormat == "TEXCOORD")
 			{
 				if (textureCoordinates.size() > i)
 				{
 					vertexData.push_back(textureCoordinates.at(i).x);
 					vertexData.push_back(textureCoordinates.at(i).y);
-					vertexSize += 8;
 				}
 			}
 		}
@@ -190,22 +189,41 @@ void Pass::CreateVertexBuffer(const Mesh* mesh, ID3D11Buffer** ppVertexBuffer) c
 
 	D3D11_BUFFER_DESC vertexBufferDesc;
 	ZeroMemory(&vertexBufferDesc, sizeof(vertexBufferDesc));
-	vertexBufferDesc.ByteWidth = vertexSize * vertexCount;
+	vertexBufferDesc.ByteWidth = m_VertexSize * vertexCount;
 	vertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
 	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 
 	D3D11_SUBRESOURCE_DATA vertexSubResourceData;
 	ZeroMemory(&vertexSubResourceData, sizeof(vertexSubResourceData));
 	vertexSubResourceData.pSysMem = &vertexData[0];
+
 	if (FAILED(p_Device->CreateBuffer(&vertexBufferDesc, &vertexSubResourceData, ppVertexBuffer)))
 	{
 		DEBUG_ERROR("ID3D11Device::CreateBuffer() failed.");
 	}
 }
 
-void Pass::Apply(uint32_t flags)
+void Pass::CreateIndexBuffer(const Mesh* mesh, ID3D11Buffer** ppIndexBuffer) const
 {
-// 	m_pD3DX11EffectPass->Apply(flags, DXUTGetD3D11DeviceContext());
+	D3D11_BUFFER_DESC indexBufferDesc;
+	ZeroMemory(&indexBufferDesc, sizeof(indexBufferDesc));
+	indexBufferDesc.ByteWidth = sizeof(uint32_t) * (uint32_t)mesh->GetIndices().size();
+	indexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+
+	D3D11_SUBRESOURCE_DATA indexSubResourceData;
+	ZeroMemory(&indexSubResourceData, sizeof(indexSubResourceData));
+	indexSubResourceData.pSysMem = &(mesh->GetIndices()[0]);
+
+	if (FAILED(p_Device->CreateBuffer(&indexBufferDesc, &indexSubResourceData, ppIndexBuffer)))
+	{
+		DEBUG_ERROR("ID3D11Device::CreateBuffer() failed.");
+	}
+}
+
+void Pass::Apply(uint32_t flags, ID3D11DeviceContext1* pDeviceContext)
+{
+	m_pD3DX11EffectPass->Apply(flags, pDeviceContext);
 }
 
 DXGI_FORMAT Pass::GetElementFormat(D3D_REGISTER_COMPONENT_TYPE compoentType, uint8_t mask)
@@ -217,23 +235,23 @@ DXGI_FORMAT Pass::GetElementFormat(D3D_REGISTER_COMPONENT_TYPE compoentType, uin
 	case D3D_REGISTER_COMPONENT_UINT32:
 		switch (mask & 0xf)
 		{
-		case 15: return DXGI_FORMAT_R32G32B32A32_UINT;
-		case 7: return DXGI_FORMAT_R32G32B32_UINT;
-		case 3: return DXGI_FORMAT_R32G32_UINT;
-		case 1: return DXGI_FORMAT_R32_UINT;
+		case 15: m_VertexSize += 16; return DXGI_FORMAT_R32G32B32A32_UINT;
+		case 7: m_VertexSize += 12; return DXGI_FORMAT_R32G32B32_UINT;
+		case 3: m_VertexSize += 8; return DXGI_FORMAT_R32G32_UINT;
+		case 1: m_VertexSize += 4; return DXGI_FORMAT_R32_UINT;
 		default: return DXGI_FORMAT_UNKNOWN;
 		}
 	case D3D_REGISTER_COMPONENT_SINT32:
 		DEBUG_ERROR("need to add new format!");
-		break;
+		return DXGI_FORMAT_UNKNOWN;
 	case D3D_REGISTER_COMPONENT_FLOAT32:
 	{
 		switch (mask & 0xf)
 		{
-		case 15: return DXGI_FORMAT_R32G32B32A32_FLOAT;
-		case 7: return DXGI_FORMAT_R32G32B32_FLOAT;
-		case 3: return DXGI_FORMAT_R32G32_FLOAT;
-		case 1: return DXGI_FORMAT_R32_FLOAT;
+		case 15: m_VertexSize += 16; return DXGI_FORMAT_R32G32B32A32_FLOAT;
+		case 7: m_VertexSize += 12; return DXGI_FORMAT_R32G32B32_FLOAT;
+		case 3: m_VertexSize += 8; return DXGI_FORMAT_R32G32_FLOAT;
+		case 1: m_VertexSize += 4; return DXGI_FORMAT_R32_FLOAT;
 		default: return DXGI_FORMAT_UNKNOWN;
 		}
 	}
@@ -244,43 +262,25 @@ DXGI_FORMAT Pass::GetElementFormat(D3D_REGISTER_COMPONENT_TYPE compoentType, uin
 
 Variable::Variable(ID3D11Device1* pDevice, ID3DX11EffectVariable* pD3DX11EffectVariable)
 	: m_pD3DX11EffectVariable(pD3DX11EffectVariable),
-	m_D3DX11EffectVariableDesc(),
 	m_pD3DX11EffectType(nullptr),
-	m_D3DX11EffectTypeDesc(),
 	m_VariableName()
 {
-	m_pD3DX11EffectVariable->GetDesc(&m_D3DX11EffectVariableDesc);
-	m_VariableName = m_D3DX11EffectVariableDesc.Name;
+	D3DX11_EFFECT_VARIABLE_DESC variableDesc;
+	m_pD3DX11EffectVariable->GetDesc(&variableDesc);
+	m_VariableName = variableDesc.Name;
+	if (variableDesc.Semantic != nullptr)
+	{
+		m_VariableSemantic = variableDesc.Semantic;
+		std::transform(m_VariableSemantic.begin(), m_VariableSemantic.end(), m_VariableSemantic.begin(), (int(*)(int)) std::tolower);
+	}
+
 	m_pD3DX11EffectType = m_pD3DX11EffectVariable->GetType();
-	m_pD3DX11EffectType->GetDesc(&m_D3DX11EffectTypeDesc);
+	D3DX11_EFFECT_TYPE_DESC typeDesc;
+	m_pD3DX11EffectType->GetDesc(&typeDesc);
+	m_VariableType = typeDesc.TypeName;
 }
 
-ID3DX11EffectVariable* Variable::GetD3DX11EffectVariable() const
-{
-	return m_pD3DX11EffectVariable;
-}
-
-const D3DX11_EFFECT_VARIABLE_DESC& Variable::GetD3DX11EffectVariableDesc() const
-{
-	return m_D3DX11EffectVariableDesc;
-}
-
-ID3DX11EffectType* Variable::GetD3DX11EffectType() const
-{
-	return m_pD3DX11EffectType;
-}
-
-const D3DX11_EFFECT_TYPE_DESC& Variable::GetD3DX11EffectTypeDesc() const
-{
-	return m_D3DX11EffectTypeDesc;
-}
-
-const std::string& Variable::GetVariableName() const
-{
-	return m_VariableName;
-}
-
-Variable& Variable::operator<<(CXMMATRIX value)
+void Variable::SetMatrix(XMMATRIX value)
 {
 	ID3DX11EffectMatrixVariable* variable = m_pD3DX11EffectVariable->AsMatrix();
 	if (!variable->IsValid())
@@ -289,11 +289,9 @@ Variable& Variable::operator<<(CXMMATRIX value)
 	}
 
 	variable->SetMatrix(reinterpret_cast<const float*>(&value));
-
-	return *this;
 }
 
-Variable& Variable::operator<<(ID3D11ShaderResourceView* value)
+void Variable::SetResource(ID3D11ShaderResourceView* value)
 {
 	ID3DX11EffectShaderResourceVariable* variable = m_pD3DX11EffectVariable->AsShaderResource();
 	if (!variable->IsValid())
@@ -302,8 +300,6 @@ Variable& Variable::operator<<(ID3D11ShaderResourceView* value)
 	}
 
 	variable->SetResource(value);
-
-	return *this;
 }
 
 Variable& Variable::operator<<(ID3D11UnorderedAccessView* value)

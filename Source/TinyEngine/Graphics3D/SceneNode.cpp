@@ -363,13 +363,14 @@ ModelNode::ModelNode(
 	ActorId actorId, WeakBaseRenderComponentPtr renderComponent, RenderPass renderPass, const Matrix& worldMatrix)
 	: SceneNode(actorId, renderComponent, renderPass, worldMatrix),
 	m_pEffect(nullptr),
+	m_pCurrentPass(nullptr),
 	m_WorldMatrix(worldMatrix)
 {
 	ModelRenderComponent* pMeshRender = static_cast<ModelRenderComponent*>(m_pRenderComponent);
 	if (pMeshRender != nullptr)
 	{
 		m_ModelName = pMeshRender->GetModelName();
-		m_TextureName = pMeshRender->GetTextureName();
+		m_TextureNames = pMeshRender->GetTextureName();
 		m_EffectName = pMeshRender->GetEffectName();
 		m_CurrentTechnique = pMeshRender->GetCurrentTechniqueName();
 		m_CurrentPass = pMeshRender->GetCurrentPassName();
@@ -390,35 +391,48 @@ ModelNode::ModelNode(
 	shared_ptr<ResHandle> pModelResHandle = g_pApp->GetResCache()->GetHandle(&modelRes);
 	std::unique_ptr<Model> model(new Model(pModelResHandle->Buffer(), pModelResHandle->Size(), true));
 
-// 	Resource effectRes(m_EffectName);
-// 	shared_ptr<ResHandle> pEffectResHandle = g_pApp->GetResCache()->GetHandle(&effectRes);
-// 	m_pEffect = new Effect();
-// 	m_pEffect->CompileFromMemory(pEffectResHandle->Buffer(), pEffectResHandle->Size());
-// 	m_pTextureMappingMaterial = new TextureMappingMaterial();
-// 	m_pTextureMappingMaterial->Initialize(m_pEffect);
-
 	Technique* pCurrentTechnique = m_pEffect->GetTechniquesByName().at(m_CurrentTechnique);
 	if (pCurrentTechnique == nullptr)
 	{
 		DEBUG_ERROR("technique is not exist: " + m_CurrentTechnique);
 	}
-	Pass* pCurrentPass = pCurrentTechnique->GetPassesByName().at(m_CurrentPass);
-	if (pCurrentTechnique == nullptr)
+	m_pCurrentPass = pCurrentTechnique->GetPassesByName().at(m_CurrentPass);
+	if (m_pCurrentPass == nullptr)
 	{
 		DEBUG_ERROR("technique is not exist: " + m_CurrentTechnique);
 	}
 
-	std::map<std::string, DXGI_FORMAT> vertexFormat = pCurrentPass->GetVertexFormat();
-	for (auto mesh : model->GetMeshes())
+	uint32_t meshSize = model->GetMeshes().size();
+	m_pVertexBuffers.resize(meshSize);
+	m_pIndexBuffers.resize(meshSize);
+	m_IndexCounts.resize(meshSize);
+	m_pTextures.resize(meshSize);
+	for (uint32_t i = 0; i < meshSize; i++)
 	{
+		auto mesh = model->GetMeshes().at(i);
 		ID3D11Buffer* pVertexBuffer = nullptr;
 		ID3D11Buffer* pIndexBuffer = nullptr;
-		pCurrentPass->CreateVertexBuffer(mesh, &pVertexBuffer);
-		mesh->CreateIndexBuffer(&pIndexBuffer);
+		m_pCurrentPass->CreateVertexBuffer(mesh, &pVertexBuffer);
+		m_pCurrentPass->CreateIndexBuffer(mesh, &pIndexBuffer);
 
-		m_pVertexBuffers.push_back(pVertexBuffer);
-		m_pIndexBuffers.push_back(pIndexBuffer);
-		m_IndexCounts.push_back(mesh->GetIndices().size());
+		m_pVertexBuffers[i] = pVertexBuffer;
+		m_pIndexBuffers[i] = pIndexBuffer;
+		m_IndexCounts[i] = mesh->GetIndices().size();
+
+		if (m_TextureNames.size() > i)
+		{
+			Resource resource(m_TextureNames[i]);
+			shared_ptr<ResHandle> pTextureRes = g_pApp->GetResCache()->GetHandle(&resource);
+			if (pTextureRes != nullptr)
+			{
+				shared_ptr<D3D11TextureResourceExtraData> extra =
+					static_pointer_cast<D3D11TextureResourceExtraData>(pTextureRes->GetExtraData());
+				if (extra != nullptr)
+				{
+					m_pTextures[i] = extra->GetTexture();
+				}
+			}
+		}
 	}
 }
 
@@ -429,13 +443,12 @@ ModelNode::~ModelNode()
 		SAFE_RELEASE(pVertexBuffer);
 	}
 	m_pVertexBuffers.clear();
+
 	for (auto pIndexBuffer : m_pIndexBuffers)
 	{
 		SAFE_RELEASE(pIndexBuffer);
 	}
 	m_pIndexBuffers.clear();
-
-	SAFE_DELETE(m_pEffect);
 }
 
 HRESULT ModelNode::VOnInitSceneNode(Scene *pScene)
@@ -455,39 +468,47 @@ HRESULT ModelNode::VOnUpdate(Scene* pScene, const GameTime& gameTime)
 
 HRESULT ModelNode::VRender(Scene* pScene, const GameTime& gameTime)
 {
-// 	ID3D11DeviceContext* direct3DDeviceContext = DXUTGetD3D11DeviceContext();
-// 	direct3DDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-// 
-// 	Pass* pass = m_pTextureMappingMaterial->GetCurrentTechnique()->GetPasses().at(0);
-// 	ID3D11InputLayout* inputLayout = m_pTextureMappingMaterial->GetInputLayouts().at(pass);
-// 	direct3DDeviceContext->IASetInputLayout(inputLayout);
-// 
-// 	XMMATRIX wvp = pScene->GetCamera()->GetWorldViewProjection(pScene);
-// 	m_pTextureMappingMaterial->GetWorldViewProjection() << wvp;
-// 
-// 	UINT stride = m_pTextureMappingMaterial->VertexSize();
-// 	UINT offset = 0;
-// 
-// 	for (uint32_t i = 0, count = m_IndexCounts.size(); i < count; i++)
-// 	{
-// 		direct3DDeviceContext->IASetVertexBuffers(0, 1, &m_pVertexBuffers[i], &stride, &offset);
-// 		direct3DDeviceContext->IASetIndexBuffer(m_pIndexBuffers[i], DXGI_FORMAT_R32_UINT, 0);
-// 
-// 		Resource resource(m_TextureName);
-// 		shared_ptr<ResHandle> pTextureRes = g_pApp->m_pResCache->GetHandle(&resource);
-// 		if (pTextureRes != nullptr)
-// 		{
-// 			shared_ptr<D3DTextureResourceExtraData11> extra = static_pointer_cast<D3DTextureResourceExtraData11>(pTextureRes->GetExtra());
-// 			if (extra != nullptr)
+	std::vector<Variable*> variables = m_pEffect->GetVariables();
+	for (auto variable : variables)
+	{
+		std::string semantic = variable->GetVariableSemantic();
+		std::string name = variable->GetVariableName();
+		if (semantic.empty())
+		{
+// 			if (variable->GetVariableType() == "Texture2D")
 // 			{
-// 				m_pTextureMappingMaterial->GetColorTexture() << extra->GetTexture();
+// 				variable->SetResource(m_pTextures[0]);
 // 			}
-// 		}
-// 
-// 		pass->Apply(0);
-// 
-// 		direct3DDeviceContext->DrawIndexed(m_IndexCounts[i], 0, 0);
-// 	}
+		}
+		else
+		{
+			if (semantic == "worldviewprojection")
+			{
+				if (variable->GetVariableType() == "float4x4")
+				{
+					XMMATRIX wvp = pScene->GetCamera()->GetWorldViewProjection(pScene);
+					variable->SetMatrix(wvp);
+				}
+			}
+		}
+	}
+
+	g_pApp->GetRendererAPI()->VInputSetup(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, m_pCurrentPass->GetInputLayout());
+
+	for (uint32_t i = 0, count = m_IndexCounts.size(); i < count; i++)
+	{
+		for (auto variable : variables)
+		{
+			if (variable->GetVariableType() == "Texture2D")
+			{
+				variable->SetResource(m_pTextures[i]);
+				break;
+			}
+		}
+
+		g_pApp->GetRendererAPI()->VDrawMeshe(
+			m_pCurrentPass->GetVertexSize(), m_pVertexBuffers[i], m_pIndexBuffers[i], m_IndexCounts[i], m_pCurrentPass->GetEffectPass());
+	}
 
 	return S_OK;
 }

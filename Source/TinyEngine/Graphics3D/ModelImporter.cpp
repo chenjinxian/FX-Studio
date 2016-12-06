@@ -60,6 +60,7 @@ Model::Model(const void* pBuffer, uint32_t length, bool flipUVs /*= false*/)
 
 	if (scene->HasMaterials())
 	{
+		m_Materials.reserve(scene->mNumMaterials);
 		for (uint32_t i = 0; i < scene->mNumMaterials; i++)
 		{
 			m_Materials.push_back(DEBUG_NEW ModelMaterial(*this, scene->mMaterials[i]));
@@ -68,6 +69,7 @@ Model::Model(const void* pBuffer, uint32_t length, bool flipUVs /*= false*/)
 
 	if (scene->HasMeshes())
 	{
+		m_Meshes.reserve(scene->mNumMeshes);
 		for (uint32_t i = 0; i < scene->mNumMeshes; i++)
 		{
 			Mesh* mesh = DEBUG_NEW Mesh(this, (scene->mMeshes[i]));
@@ -161,7 +163,7 @@ Mesh::Mesh(Model* pModel, aiMesh* mesh)
 		aiVector3D* aiTextureCoordinates = mesh->mTextureCoords[i];
 		for (uint32_t j = 0; j < mesh->mNumVertices; j++)
 		{
-			textureCoordinates.push_back(Vector3(reinterpret_cast<const float*>(&aiTextureCoordinates[j])));
+			textureCoordinates[j] = Vector3(reinterpret_cast<const float*>(&aiTextureCoordinates[j]));
 		}
 
 		m_TextureCoordinates.push_back(textureCoordinates);
@@ -175,7 +177,7 @@ Mesh::Mesh(Model* pModel, aiMesh* mesh)
 		aiColor4D* aiVertexColors = mesh->mColors[i];
 		for (uint32_t j = 0; j < mesh->mNumVertices; j++)
 		{
-			vertexColors.push_back(Vector4(reinterpret_cast<const float*>(&aiVertexColors[j])));
+			vertexColors[j] = Vector4(reinterpret_cast<const float*>(&aiVertexColors[j]));
 		}
 
 		m_VertexColors.push_back(vertexColors);
@@ -254,21 +256,4 @@ uint32_t Mesh::GetFaceCount() const
 const std::vector<uint32_t>& Mesh::GetIndices() const
 {
 	return m_Indices;
-}
-
-void Mesh::CreateIndexBuffer(ID3D11Buffer** ppIndexBuffer)
-{
-	DEBUG_ASSERT(ppIndexBuffer != nullptr);
-
-	D3D11_BUFFER_DESC indexBufferDesc;
-	ZeroMemory(&indexBufferDesc, sizeof(indexBufferDesc));
-	indexBufferDesc.ByteWidth = sizeof(uint32_t) * (uint32_t)m_Indices.size();
-	indexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
-	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-
-	D3D11_SUBRESOURCE_DATA indexSubResourceData;
-	ZeroMemory(&indexSubResourceData, sizeof(indexSubResourceData));
-	indexSubResourceData.pSysMem = &m_Indices[0];
-// 	HRESULT hr;
-// 	VTrace(DXUTGetD3D11Device()->CreateBuffer(&indexBufferDesc, &indexSubResourceData, ppIndexBuffer));
 }

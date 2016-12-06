@@ -63,6 +63,10 @@ void GameConfig::InitConfig(const std::string& xmlFileName, LPWSTR lpCmdLine)
 			if (pNode->Attribute("anti-aliasing") != nullptr)
 			{
 				m_AntiAliasingSample = pNode->IntAttribute("anti-aliasing");
+				if (m_AntiAliasingSample < 1)
+				{
+					m_AntiAliasingSample = 1;
+				}
 			}
 		}
 

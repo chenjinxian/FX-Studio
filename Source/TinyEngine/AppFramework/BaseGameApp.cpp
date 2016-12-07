@@ -318,19 +318,19 @@ LRESULT CALLBACK BaseGameApp::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARA
 	{
 		if (wParam != SIZE_MINIMIZED && g_pApp->m_pGameLogic != nullptr && g_pApp->m_pRenderer != nullptr)
 		{
-// 			for (auto gameView : g_pApp->m_pGameLogic->m_GameViews)
-// 			{
-// 				gameView->VOnDeleteGameViews();
-// 			}
+			for (auto gameView : g_pApp->m_pGameLogic->m_GameViews)
+			{
+				gameView->VOnDeleteGameViews();
+			}
 
 			g_pApp->m_Config.m_ScreenWidth = LOWORD(lParam);
 			g_pApp->m_Config.m_ScreenHeight = HIWORD(lParam);
 			g_pApp->m_pRenderer->VResizeSwapChain();
 
-// 			for (auto gameView : g_pApp->m_pGameLogic->m_GameViews)
-// 			{
-// 				gameView->VOnInitGameViews();
-// 			}
+			for (auto gameView : g_pApp->m_pGameLogic->m_GameViews)
+			{
+				gameView->VOnInitGameViews();
+			}
 		}
 		break;
 	}

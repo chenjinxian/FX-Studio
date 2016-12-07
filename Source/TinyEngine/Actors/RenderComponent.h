@@ -80,6 +80,11 @@ public:
 	SkyboxRenderComponent();
 	virtual ~SkyboxRenderComponent();
 
+	const std::vector<std::string>& GetTextureName() { return m_TextureNames; }
+	const std::string& GetEffectName() { return m_EffectName; }
+	const std::string& GetCurrentTechniqueName() { return m_CurrentTechnique; }
+	const std::string& GetCurrentPassName() { return m_CurrentPass; }
+
 	virtual const std::string& VGetComponentName() const override { return m_Name; }
 	static const std::string m_Name;
 
@@ -87,6 +92,12 @@ protected:
 	virtual bool VDelegateInit(tinyxml2::XMLElement* pData);
 	virtual shared_ptr<SceneNode> VCreateSceneNode();
 	virtual void VCreateInheritedXmlElement(tinyxml2::XMLElement* pBaseElement, tinyxml2::XMLDocument* pDocument);
+
+private:
+	std::string m_EffectName;
+	std::string m_CurrentTechnique;
+	std::string m_CurrentPass;
+	std::vector<std::string> m_TextureNames;
 };
 
 class LightRenderComponent : public BaseRenderComponent

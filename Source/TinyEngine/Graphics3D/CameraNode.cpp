@@ -77,7 +77,7 @@ void Frustum::Render()
 
 CameraNode::CameraNode(const Frustum& frustum)
 	: SceneNode(INVALID_ACTOR_ID, WeakBaseRenderComponentPtr(), RenderPass_0,
-		Matrix::CreateFromYawPitchRoll(0.059f, 1.59f, 0.0f) * Matrix::CreateTranslation(Vector3(125.0f, 50.0f, 70.0f))),
+		Matrix::CreateFromYawPitchRoll(0.16f, -0.91f, 0.0f) * Matrix::CreateTranslation(Vector3(-985.0f, 105.0f, -860.0f))),
 	m_Frustum(frustum),
 	m_IsDebugCamera(false),
 	m_pTarget(nullptr),

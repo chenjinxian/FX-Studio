@@ -7,11 +7,11 @@ class Scene;
 class SkyboxNode : public SceneNode
 {
 public:
-	SkyboxNode(const std::wstring& textureFile);
+	SkyboxNode(ActorId actorId, WeakBaseRenderComponentPtr renderComponent, RenderPass renderPass);
 	virtual ~SkyboxNode();
 
-	virtual HRESULT VPreRender(Scene* pScene);
 	virtual bool VIsVisible(Scene* pScene);
+	virtual HRESULT VPreRender(Scene* pScene) override;
 
 	virtual HRESULT VOnInitSceneNode(Scene* pScene) override;
 	virtual HRESULT VOnDeleteSceneNode(Scene *pScene) override;
@@ -19,15 +19,16 @@ public:
 	virtual HRESULT VOnUpdate(Scene* pScene, const GameTime& gameTime) override;
 
 private:
-	void Reset();
-
 	Effect* m_pEffect;
-	ID3D11ShaderResourceView* m_pCubeMapShaderResourceView;
+	Pass* m_pCurrentPass;
 	ID3D11Buffer* m_pVertexBuffer;
 	ID3D11Buffer* m_pIndexBuffer;
-	Matrix m_WorldMatrix;
+	uint32_t m_IndexCount;
+	std::vector<ID3D11ShaderResourceView*> m_pTextures;
 	Matrix m_ScaleMatrix;
-	std::wstring m_TextureFile;
-	UINT m_IndexCount;
-	bool m_IsActive;
+
+	std::vector<std::string> m_TextureNames;
+	std::string m_EffectName;
+	std::string m_CurrentTechnique;
+	std::string m_CurrentPass;
 };

@@ -343,6 +343,10 @@ copy "$(TargetPath)" "$(SolutionDir)..\Lib\"</Command>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
+    <PostBuildEvent>
+      <Command>mkdir "$(SolutionDir)..\Lib\x64\"
+copy "$(TargetPath)" "$(SolutionDir)..\Lib\x64\"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>

@@ -3,6 +3,7 @@
 #include "TransformComponent.h"
 #include "../EventManager/Events.h"
 #include "../AppFramework/BaseGameApp.h"
+#include "../Graphics3D/Skybox.h"
 
 const std::string GridRenderComponent::m_Name = "GridRenderComponent";
 const std::string ModelRenderComponent::m_Name = "ModelRenderComponent";
@@ -220,26 +221,41 @@ SkyboxRenderComponent::~SkyboxRenderComponent()
 
 bool SkyboxRenderComponent::VDelegateInit(tinyxml2::XMLElement* pData)
 {
-	tinyxml2::XMLElement* pTexture = pData->FirstChildElement("Texture");
-	if (pTexture)
+	tinyxml2::XMLElement* pTextures = pData->FirstChildElement("Textures");
+	if (pTextures != nullptr)
 	{
-// 		m_textureResource = pTexture->FirstChild()->Value();
+		for (tinyxml2::XMLNode* pNode = pTextures->FirstChild(); pNode; pNode = pNode->NextSibling())
+		{
+			m_TextureNames.push_back(pNode->FirstChild()->Value());
+		}
 	}
+
+	tinyxml2::XMLElement* pEffect = pData->FirstChildElement("Effect");
+	if (pEffect != nullptr)
+	{
+		m_EffectName = pEffect->FirstChild()->Value();
+		m_CurrentTechnique = pEffect->Attribute("technique");
+		m_CurrentPass = pEffect->Attribute("pass");
+	}
+
 	return true;
 }
 
 shared_ptr<SceneNode> SkyboxRenderComponent::VCreateSceneNode()
 {
-// 	shared_ptr<SkyboxNode> sky;
-// 	if (BaseGameApp::GetRendererImpl() == BaseGameApp::Renderer_D3D11)
-// 	{
-// 		sky = shared_ptr<SkyboxNode>(DEBUG_NEW SkyboxNode(L"Assets\\Textures\\Plains_of_abraham.dds"));
-// 	}
-// 	else
-// 	{
-// 		DEBUG_ERROR("Unknown Renderer Implementation in SkyboxRenderComponent");
-// 	}
-// 	return sky;
+	WeakBaseRenderComponentPtr weakThis(this);
+
+	switch (g_pApp->GetRendererType())
+	{
+	case BaseGameApp::Renderer_D3D11:
+	{
+		return shared_ptr<SkyboxNode>(DEBUG_NEW SkyboxNode(m_pOwner->GetActorId(), weakThis, RenderPass_Actor));
+	}
+
+	default:
+		DEBUG_ERROR("Unknown Renderer Implementation in SkyboxRenderComponent");
+		break;
+	}
 
 	return shared_ptr<SceneNode>();
 }

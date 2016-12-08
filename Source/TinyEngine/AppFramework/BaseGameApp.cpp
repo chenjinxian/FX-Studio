@@ -101,8 +101,14 @@ bool BaseGameApp::InitEnvironment()
 	return true;
 }
 
-HWND BaseGameApp::SetupWindow(HINSTANCE hInstance)
+bool BaseGameApp::SetupWindow(HINSTANCE hInstance, HWND hWnd)
 {
+	if (hWnd)
+	{
+		m_hWindow = hWnd;
+		return true;
+	}
+
 	m_hInstance = hInstance;
 
 	WNDCLASSEX wndClass;
@@ -123,6 +129,7 @@ HWND BaseGameApp::SetupWindow(HINSTANCE hInstance)
 
 	if (!RegisterClassEx(&wndClass))
 	{
+		return false;
 	}
 
 	const int screenWidth = GetSystemMetrics(SM_CXSCREEN);
@@ -149,7 +156,7 @@ HWND BaseGameApp::SetupWindow(HINSTANCE hInstance)
 				}
 				else
 				{
-					return nullptr;
+					return false;
 				}
 			}
 		}
@@ -185,6 +192,11 @@ HWND BaseGameApp::SetupWindow(HINSTANCE hInstance)
 		0, 0, windowRect.right - windowRect.left, windowRect.bottom - windowRect.top,
 		NULL, NULL, m_hInstance, NULL);
 
+	if (!m_hWindow)
+	{
+		return false;
+	}
+
 	if (!m_Config.m_IsFullScreen)
 	{
 		uint32_t x = (screenWidth - windowRect.right) / 2;
@@ -192,15 +204,11 @@ HWND BaseGameApp::SetupWindow(HINSTANCE hInstance)
 		SetWindowPos(m_hWindow, 0, x, y, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
 	}
 
-	if (!m_hWindow)
-	{
-
-	}
-
 	ShowWindow(m_hWindow, SW_SHOW);
 	UpdateWindow(m_hWindow);
 	SetForegroundWindow(m_hWindow);
-	return m_hWindow;
+
+	return true;
 }
 
 bool BaseGameApp::InitRenderer()
@@ -316,21 +324,9 @@ LRESULT CALLBACK BaseGameApp::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARA
 		return 0;
 	case WM_SIZE:
 	{
-		if (wParam != SIZE_MINIMIZED && g_pApp->m_pGameLogic != nullptr && g_pApp->m_pRenderer != nullptr)
+		if (wParam != SIZE_MINIMIZED)
 		{
-			for (auto gameView : g_pApp->m_pGameLogic->m_GameViews)
-			{
-				gameView->VOnDeleteGameViews();
-			}
-
-			g_pApp->m_Config.m_ScreenWidth = LOWORD(lParam);
-			g_pApp->m_Config.m_ScreenHeight = HIWORD(lParam);
-			g_pApp->m_pRenderer->VResizeSwapChain();
-
-			for (auto gameView : g_pApp->m_pGameLogic->m_GameViews)
-			{
-				gameView->VOnInitGameViews();
-			}
+			g_pApp->OnResize(LOWORD(lParam), HIWORD(lParam));
 		}
 		break;
 	}
@@ -356,13 +352,7 @@ LRESULT CALLBACK BaseGameApp::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARA
 			msg.m_wParam = wParam;
 			msg.m_lParam = lParam;
 
-			for (auto gameView : g_pApp->m_pGameLogic->m_GameViews)
-			{
-				if (gameView->VOnMsgProc(msg))
-				{
-					return true;
-				}
-			}
+			g_pApp->OnDispatchMsg(msg);
 		}
 		break;
 	}
@@ -450,11 +440,6 @@ BaseGameApp::Renderer BaseGameApp::GetRendererType()
 	}
 }
 
-bool BaseGameApp::AttachAsClient()
-{
-	return true;
-}
-
 bool BaseGameApp::VLoadGame(void)
 {
 	return m_pGameLogic->VLoadGame(m_Config.m_Project);
@@ -467,8 +452,12 @@ void BaseGameApp::OnClose()
 		SAFE_DELETE(m_pGameLogic);
 		SAFE_DELETE(m_pEventManager);
 	}
-	m_pRenderer->VDeleteRenderer();
-	m_pRenderer.reset();
+
+	if (m_pRenderer != nullptr)
+	{
+		m_pRenderer->VDeleteRenderer();
+		m_pRenderer.reset();
+	}
 	DestroyWindow(m_hWindow);
 	m_IsExiting = false;
 }
@@ -492,4 +481,46 @@ bool BaseGameApp::InitResource()
 	m_pResCache->Preload("*.tiff", NULL);
 	m_pResCache->Preload("*.fx", NULL);
 	return true;
+}
+
+void BaseGameApp::OnResize(int screenWidth, int screenHeight)
+{
+	if (g_pApp->m_pGameLogic != nullptr && g_pApp->m_pRenderer != nullptr)
+	{
+		for (auto gameView : g_pApp->m_pGameLogic->m_GameViews)
+		{
+			gameView->VOnDeleteGameViews();
+		}
+
+		g_pApp->m_Config.m_ScreenWidth = screenWidth;
+		g_pApp->m_Config.m_ScreenHeight = screenHeight;
+		g_pApp->m_pRenderer->VResizeSwapChain();
+
+		for (auto gameView : g_pApp->m_pGameLogic->m_GameViews)
+		{
+			gameView->VOnInitGameViews();
+		}
+	}
+}
+
+void BaseGameApp::OnDispatchMsg(AppMsg msg)
+{
+	if (g_pApp->m_pGameLogic != nullptr)
+	{
+		for (auto gameView : g_pApp->m_pGameLogic->m_GameViews)
+		{
+			if (gameView->VOnMsgProc(msg))
+			{
+				break;
+			}
+		}
+	}
+}
+
+void BaseGameApp::OnRenderFrame()
+{
+	OnRender(m_GameTime);
+
+	m_GameTime.UpdateGameTime();
+	OnUpdate(m_GameTime);
 }

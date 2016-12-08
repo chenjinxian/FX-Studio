@@ -16,7 +16,7 @@ public:
 	virtual ~BaseGameApp();
 
 	bool InitEnvironment();
-	HWND SetupWindow(HINSTANCE hInstance);
+	bool SetupWindow(HINSTANCE hInstance, HWND hWnd);
 	bool InitRenderer();
 	bool InitResource();
 	void RenderLoop();
@@ -32,7 +32,11 @@ public:
 	virtual bool VLoadGame(void);
 	bool IsRestoring() { return m_IsRestoring; }
 	void SetQuitting(bool isExiting, bool isRestoring) { m_IsExiting = isExiting; m_IsRestoring = isRestoring; }
-	bool AttachAsClient();
+	void OnResize(int screenWidth, int screenHeight);
+	void OnDispatchMsg(AppMsg msg);
+	void OnStartRender() { m_GameTime.Reset(); }
+	void OnRenderFrame();
+	void OnClose();
 
 	BaseGameLogic* GetGameLogic(void) const { return m_pGameLogic; }
 	GameConfig& GetGameConfig() { return m_Config; }
@@ -53,7 +57,6 @@ protected:
 
 private:
 	static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-	void OnClose();
 	void OnUpdate(const GameTime& gameTime);
 	void OnRender(const GameTime& gameTime);
 

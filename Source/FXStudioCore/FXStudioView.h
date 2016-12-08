@@ -1,5 +1,5 @@
 #pragma once
-#include "../RenderEngine/RenderEngine.h"
+#include "../TinyEngine/TinyEngine.h"
 
 class FXStudioView : public HumanView
 {
@@ -7,10 +7,10 @@ public:
 	FXStudioView(shared_ptr<IRenderer> pRenderer);
 	virtual ~FXStudioView();
 
-	virtual void VOnUpdate(double fTime, float fElapsedTime) override;
+	virtual void VOnUpdate(const GameTime& gameTime) override;
 	shared_ptr<ScreenElementScene> GetScene() { return m_pScene; }
 
 protected:
-	virtual bool VLoadGameDelegate(TiXmlElement* pProjectData) override;
+	virtual bool VLoadGameDelegate(tinyxml2::XMLElement* pLevelData) override;
 };
 

@@ -19,6 +19,10 @@ namespace FXStudio
         const int WM_MBUTTONUP = 0x0208;
         const int WM_MBUTTONDBLCLK = 0x0209;
 
+        const int WM_MOUSEMOVE = 0x0200;
+        const int WM_MOUSEHWHEEL = 0x020E;
+
+        const int WM_CHAR = 0x0102;
         const int WM_KEYDOWN = 0x0100;
         const int WM_KEYUP = 0x0101;
         const int WM_SYSKEYDOWN = 0x0104;
@@ -27,21 +31,15 @@ namespace FXStudio
 
         FXStudioForm m_formMain;
         Panel m_renderPanel;
-        IntPtr m_handle;
         bool m_fakeFocus;
         System.Drawing.Point m_mouseDownPosition;
 
-        public MessageHandler(FXStudioForm formMain)
+        public MessageHandler(FXStudioForm formMain, Panel renderPanel)
         {
             m_formMain = formMain;
+            m_renderPanel = renderPanel;
             m_fakeFocus = false;
             m_mouseDownPosition = new System.Drawing.Point(0, 0);
-        }
-
-        public void SetRenderPanel(Panel renderPanel)
-        {
-            m_renderPanel = renderPanel;
-            m_handle = renderPanel.Handle;
         }
 
         void CheckFakeFocus()
@@ -63,7 +61,7 @@ namespace FXStudio
                 if (m.Msg == WM_LBUTTONDOWN || m.Msg == WM_RBUTTONDOWN || m.Msg == WM_MBUTTONDOWN)
                     CheckFakeFocus();
 
-                if (m.HWnd == m_handle || (m_fakeFocus && (m.Msg == WM_KEYDOWN || m.Msg == WM_KEYUP)))
+                if (m.HWnd == m_renderPanel.Handle || (m_fakeFocus && (m.Msg == WM_KEYDOWN || m.Msg == WM_KEYUP)))
                 {
                     switch (m.Msg)
                     {
@@ -80,9 +78,12 @@ namespace FXStudio
                         case WM_RBUTTONDBLCLK:
                         case WM_MBUTTONUP:
                         case WM_MBUTTONDBLCLK:
+                        case WM_MOUSEMOVE:
+                        case WM_MOUSEHWHEEL:
+                        case WM_CHAR:
                         case WM_CLOSE:
                             {
-                                RenderMethods.WndProc(m_handle, m.Msg, m.WParam.ToInt32(), m.LParam.ToInt32());
+                                RenderMethods.WndProc(m_renderPanel.Handle, m.Msg, m.WParam, m.LParam);
 //                                 // If the left mouse button is up, try doing a 
 //                                 // ray cast to see if it intersects with an actor
 //                                 if (m_fakeFocus && m.Msg == WM_LBUTTONUP)
@@ -104,19 +105,16 @@ namespace FXStudio
 
         public void Application_Idle(object sender, EventArgs e)
         {
-            if (m_formMain.WindowState != FormWindowState.Minimized)
+            try
             {
-                try
-                {
-                    // Render the scene if we are idle
-                    RenderMethods.RenderFrame();
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
-                }
-                m_formMain.Invalidate();
+                // Render the scene if we are idle
+                RenderMethods.RenderFrame();
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            m_formMain.Invalidate();
         }
     }
 }

@@ -35,7 +35,7 @@ INT WINAPI WindowBaseMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR l
 		{
 			if (g_pApp->InitEnvironment())
 			{
-				HWND hWnd = g_pApp->SetupWindow(hInstance);
+				g_pApp->SetupWindow(hInstance, nullptr);
 				if (g_pApp->InitRenderer() && g_pApp->InitResource())
 				{
 					g_pApp->RenderLoop();

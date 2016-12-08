@@ -13,27 +13,16 @@ FXStudioView::~FXStudioView()
 {
 }
 
-void FXStudioView::VOnUpdate(double fTime, float fElapsedTime)
+void FXStudioView::VOnUpdate(const GameTime& gameTime)
 {
-	HumanView::VOnUpdate(fTime, fElapsedTime);
-
-// 	if (m_pFreeCameraController)
-// 	{
-// 		m_pFreeCameraController->OnUpdate(deltaMilliseconds);
-// 	}
+	HumanView::VOnUpdate(gameTime);
 }
 
-bool FXStudioView::VLoadGameDelegate(TiXmlElement* pProjectData)
+bool FXStudioView::VLoadGameDelegate(tinyxml2::XMLElement* pLevelData)
 {
-	if (!HumanView::VLoadGameDelegate(pProjectData))
+	if (!HumanView::VLoadGameDelegate(pLevelData))
 		return false;
 
-// 	m_pFreeCameraController.reset(GCC_NEW MovementController(m_pCamera, 90, 0, true));
-// 	m_pCamera->ClearTarget();
-// 
-// 	m_KeyboardHandler = m_pFreeCameraController;
-// 	m_PointerHandler = m_pFreeCameraController;
-
-	m_pScene->VOnRestore();
+	m_pScene->VOnInitScreenElements();
 	return true;
 }

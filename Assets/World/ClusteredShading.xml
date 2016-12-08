@@ -11,10 +11,10 @@
         <Color r="0.4" g="0.4" b="0.4" a="1.0" />
         <Model>Models\Map.obj</Model>
         <Textures>
-          <Texture>Textures\Tx_wood_brown_shelf_small.dds</Texture>
           <Texture>Textures\wallpaper20.dds</Texture>
-          <Texture>Textures\floor_wood_4.dds</Texture>
+          <Texture>Textures\Tx_wood_brown_shelf_small.dds</Texture>
           <Texture>Textures\floor_wood_3.dds</Texture>
+          <Texture>Textures\floor_wood_4.dds</Texture>
           <Texture>Textures\light2.dds</Texture>
         </Textures>
         <Effect technique="main11" pass="p0">Effects\TextureMapping.fx</Effect>

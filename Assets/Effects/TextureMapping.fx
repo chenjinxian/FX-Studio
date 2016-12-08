@@ -15,9 +15,14 @@ Texture2D ColorTexture <
 
 SamplerState ColorSampler
 {
-	Filter = MIN_MAG_MIP_LINEAR;
+	Filter = ANISOTROPIC;
 	AddressU = WRAP;
 	AddressV = WRAP;
+};
+
+RasterizerState DisableCulling
+{
+	CullMode = NONE;
 };
 
 /************* Data Structures *************/
@@ -73,5 +78,7 @@ technique11 main11
 		SetVertexShader(CompileShader(vs_5_0, vertex_shader()));
 		SetGeometryShader(NULL);
 		SetPixelShader(CompileShader(ps_5_0, pixel_shader()));
+
+		SetRasterizerState(DisableCulling);
 	}
 }

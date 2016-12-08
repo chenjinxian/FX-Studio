@@ -16,41 +16,28 @@ FXSTUDIOCORE_API int CreateInstance(
 	HINSTANCE hInstance = (HINSTANCE)instancePtrAddress;
 	HINSTANCE hPrevInstance = (HINSTANCE)hPrevInstancePtrAddress;
 	HWND hWnd = (HWND)hWndPtrAddress;
-	WCHAR *lpCmdLine = L"";
 
 	int tmpDbgFlag = _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG);
-	tmpDbgFlag |= _CRTDBG_DELAY_FREE_MEM_DF;
 	tmpDbgFlag |= _CRTDBG_LEAK_CHECK_DF;
+	tmpDbgFlag |= _CRTDBG_CHECK_ALWAYS_DF;
 	_CrtSetDbgFlag(tmpDbgFlag);
 
+	SetCurrentDirectory(Utility::GetExecutableDirectory().c_str());
 	Logger::Init("logging.xml");
 
-	g_pApp->m_Options.Init("EditorOptions.xml", lpCmdLine);
-
-	DXUTSetCallbackMsgProc(RenderEngineApp::MsgProc);
-	DXUTSetCallbackFrameMove(RenderEngineApp::OnFrameMove);
-	DXUTSetCallbackDeviceChanging(RenderEngineApp::ModifyDeviceSettings);
-
-	if (g_pApp->m_Options.m_Renderer == "Direct3D 11")
+	if (g_pApp != nullptr)
 	{
-		DXUTSetCallbackD3D11DeviceAcceptable(RenderEngineApp::IsD3D11DeviceAcceptable);
-		DXUTSetCallbackD3D11DeviceCreated(RenderEngineApp::OnD3D11CreateDevice);
-		DXUTSetCallbackD3D11SwapChainResized(RenderEngineApp::OnD3D11ResizedSwapChain);
-		DXUTSetCallbackD3D11SwapChainReleasing(RenderEngineApp::OnD3D11ReleasingSwapChain);
-		DXUTSetCallbackD3D11DeviceDestroyed(RenderEngineApp::OnD3D11DestroyDevice);
-		DXUTSetCallbackD3D11FrameRender(RenderEngineApp::OnD3D11FrameRender);
-	}
-	else
-	{
-		GCC_ASSERT(0 && "Unknown renderer specified in game options.");
-		return false;
-	}
-
-	DXUTSetCursorSettings(true, true);
-
-	if (!g_pApp->InitInstance(hInstance, lpCmdLine, hWnd, screenWidth, screenHeight))
-	{
-		return FALSE;
+		g_pApp->GetGameConfig().InitConfig("EditorOptions.xml", nullptr);
+		if (g_pApp->InitEnvironment())
+		{
+			g_pApp->GetGameConfig().m_ScreenWidth = screenWidth;
+			g_pApp->GetGameConfig().m_ScreenWidth = screenHeight;
+			g_pApp->SetupWindow(hInstance, hWnd);
+			if (g_pApp->InitRenderer() && g_pApp->InitResource())
+			{
+				g_pApp->OnStartRender();
+			}
+		}
 	}
 
 	return true;
@@ -58,36 +45,72 @@ FXSTUDIOCORE_API int CreateInstance(
 
 FXSTUDIOCORE_API int DestroyInstance()
 {
-	DXUTShutdown();
-	return g_pApp->GetExitCode();
+	Logger::Destroy();
+	return 0;
 }
 
-FXSTUDIOCORE_API void WndProc(int *hWndPtrAddress, int msg, int wParam, int lParam)
+FXSTUDIOCORE_API void ResizeWnd(int screenWidth, int screenHeight)
+{
+	g_pApp->OnResize(screenWidth, screenHeight);
+}
+
+FXSTUDIOCORE_API void WndProc(int *hWndPtrAddress, int uMsg, int* wParam, int* lParam)
 {
 	HWND hWnd = (HWND)hWndPtrAddress;
-	DXUTStaticWndProc(hWnd, msg, WPARAM(wParam), LPARAM(lParam));
+
+	switch (uMsg)
+	{
+	case WM_CLOSE:
+		g_pApp->OnClose();
+		break;
+	case WM_KEYDOWN:
+	case WM_KEYUP:
+	case WM_CHAR:
+	case WM_MOUSEMOVE:
+	case WM_MOUSEWHEEL:
+	case WM_LBUTTONDOWN:
+	case WM_LBUTTONUP:
+	case WM_RBUTTONDOWN:
+	case WM_RBUTTONUP:
+	case WM_MBUTTONDOWN:
+	case WM_MBUTTONUP:
+	case WM_LBUTTONDBLCLK:
+	case WM_RBUTTONDBLCLK:
+	{
+		if (g_pApp->GetGameLogic() != nullptr)
+		{
+			AppMsg msg;
+			msg.m_hWnd = hWnd;
+			msg.m_uMsg = uMsg;
+			msg.m_wParam = WPARAM(wParam);
+			msg.m_lParam = LPARAM(lParam);
+
+			g_pApp->OnDispatchMsg(msg);
+		}
+		break;
+	}
+	}
 }
 
 FXSTUDIOCORE_API void RenderFrame()
 {
-	DXUTRender3DEnvironment();
+	g_pApp->OnRenderFrame();
 }
 
 FXSTUDIOCORE_API bool IsGameRunning()
 {
-	FXStudioLogic* game = (FXStudioLogic*)g_pApp->m_pGameLogic;
-	return (game) ? game->IsRunning() : false;
+	return true;
 }
 
 FXSTUDIOCORE_API void OpenLevel(BSTR lFileName)
 {
-	std::string levelFile = ws2s(std::wstring(lFileName, SysStringLen(lFileName)));
+	std::string levelFile = Utility::WS2S(std::wstring(lFileName, SysStringLen(lFileName)));
 	FXStudioLogic* pEditorLogic = dynamic_cast<FXStudioLogic*>(g_pApp->GetGameLogic());
 	if (pEditorLogic != nullptr)
 	{
 		std::string assetsDir = "\\Assets\\";
 		int projDirLength = pEditorLogic->GetProjectDirectory().length() + assetsDir.length();
-		g_pApp->m_Options.m_Level = levelFile.substr(projDirLength, levelFile.length() - projDirLength);
+		g_pApp->GetGameConfig().m_Project = levelFile.substr(projDirLength, levelFile.length() - projDirLength);
 		pEditorLogic->VChangeState(BGS_LoadingGameEnvironment);
 	}
 }

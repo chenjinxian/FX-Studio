@@ -31,13 +31,13 @@ namespace FXStudio
         public FXStudioForm()
         {
             InitializeComponent();
-            m_messageHandler = new MessageHandler(this);
 
             CreateStandardViews();
             m_dockContent = new DeserializeDockContent(GetContentFromString);
-
             toolStripEx.DefaultRenderer = renderEx;
             SetScheme();
+
+            m_messageHandler = new MessageHandler(this, m_renderView.GetRenderPanel());
         }
 
         public MessageHandler GetMessageHandler()
@@ -60,7 +60,6 @@ namespace FXStudio
             m_taskView = new TaskListView();
             m_editorView = new EditorView();
             m_renderView = new RenderView();
-            m_messageHandler.SetRenderPanel(m_renderView.GetRenderPanel());
         }
 
         private void DestoryStandardViews()

@@ -30,7 +30,6 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RenderView));
             this.toolStripRender = new System.Windows.Forms.ToolStrip();
-            this.panelRender = new System.Windows.Forms.Panel();
             this.toolStripButtonInstance = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonNavigation = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
@@ -44,6 +43,7 @@
             this.toolStripButtonScale = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripButtonBackground = new System.Windows.Forms.ToolStripButton();
+            this.panelRender = new System.Windows.Forms.Panel();
             this.toolStripRender.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -69,14 +69,6 @@
             this.toolStripRender.Size = new System.Drawing.Size(756, 25);
             this.toolStripRender.TabIndex = 0;
             this.toolStripRender.Text = "toolStripRender";
-            // 
-            // panelRender
-            // 
-            this.panelRender.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelRender.Location = new System.Drawing.Point(0, 25);
-            this.panelRender.Name = "panelRender";
-            this.panelRender.Size = new System.Drawing.Size(756, 523);
-            this.panelRender.TabIndex = 1;
             // 
             // toolStripButtonInstance
             // 
@@ -184,6 +176,14 @@
             this.toolStripButtonBackground.Text = "Set the background color";
             this.toolStripButtonBackground.ToolTipText = "Set the background color (for scenes without a full screen effect)";
             // 
+            // panelRender
+            // 
+            this.panelRender.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelRender.Location = new System.Drawing.Point(0, 25);
+            this.panelRender.Name = "panelRender";
+            this.panelRender.Size = new System.Drawing.Size(756, 523);
+            this.panelRender.TabIndex = 1;
+            // 
             // RenderView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -194,6 +194,7 @@
             this.Name = "RenderView";
             this.TabText = "Render";
             this.Text = "RenderView";
+            this.Resize += new System.EventHandler(this.RenderView_Resize);
             this.toolStripRender.ResumeLayout(false);
             this.toolStripRender.PerformLayout();
             this.ResumeLayout(false);

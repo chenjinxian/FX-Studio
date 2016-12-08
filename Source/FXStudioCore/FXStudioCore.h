@@ -26,7 +26,9 @@ extern "C" {
 
 	FXSTUDIOCORE_API int DestroyInstance();
 
-	FXSTUDIOCORE_API void WndProc(int *hWndPtrAddress, int msg, int wParam, int lParam);
+	FXSTUDIOCORE_API void ResizeWnd(int screenWidth, int screenHeight);
+
+	FXSTUDIOCORE_API void WndProc(int *hWndPtrAddress, int msg, int* wParam, int* lParam);
 
 	FXSTUDIOCORE_API void RenderFrame();
 

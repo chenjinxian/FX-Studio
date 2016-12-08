@@ -12,7 +12,7 @@ TextureCube SkyboxTexture <
 
 SamplerState TrilinearSampler
 {
-    Filter = MIN_MAG_MIP_LINEAR;
+	Filter = ANISOTROPIC;
 };
 
 RasterizerState DisableCulling

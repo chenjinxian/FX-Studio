@@ -1,17 +1,17 @@
 #pragma once
-#include "../RenderEngine/RenderEngine.h"
+#include "../TinyEngine/TinyEngine.h"
 
 class FXStudioView;
 
-class FXStudioApp : public RenderEngineApp
+class FXStudioApp : public BaseGameApp
 {
 public:
-	FXStudioApp() : RenderEngineApp() { m_IsEditorRunning = true; }
+	FXStudioApp() : BaseGameApp() {}
 	virtual ~FXStudioApp() {}
 
-	TCHAR *VGetGameTitle() { return _T("FX-Studio Editor"); }
-	TCHAR *VGetGameAppDirectory() { return _T("FX-Studio"); }
-	HICON VGetIcon();
+	virtual const wchar_t* VGetWindowTitle() override { return _T("FX-Studio Editor"); }
+	virtual const wchar_t* VGetWindowClass() override { return _T("FX-Studio"); }
+	virtual HICON VGetIcon() override;
 
 protected:
 	BaseGameLogic* VCreateGameAndView() override;

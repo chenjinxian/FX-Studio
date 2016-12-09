@@ -45,6 +45,7 @@ FXSTUDIOCORE_API int CreateInstance(
 
 FXSTUDIOCORE_API int DestroyInstance()
 {
+	g_pApp->OnClose();
 	Logger::Destroy();
 	return 0;
 }

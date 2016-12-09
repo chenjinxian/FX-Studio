@@ -252,3 +252,5 @@ paket-files/
 *.exe
 *.ipdb
 *.iobj
+Bin/FXStudioCored.lib
+Bin/FXStudio.Layout.config

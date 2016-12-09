@@ -13,12 +13,11 @@
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
-            ShutDown();
             if (disposing && (components != null))
             {
                 components.Dispose();
             }
-//             base.Dispose(disposing);
+            base.Dispose(disposing);
         }
 
         #region Windows Form Designer generated code
@@ -432,9 +431,11 @@
             this.MainMenuStrip = this.menuStripMain;
             this.Name = "FXStudioForm";
             this.Text = "FX Studio 1.0";
-            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FXStudioForm_FormClosing);
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FXStudioForm_FormClosed);
             this.Load += new System.EventHandler(this.FXStudioForm_Load);
+            this.Shown += new System.EventHandler(this.FXStudioForm_Shown);
             this.menuStripMain.ResumeLayout(false);
             this.menuStripMain.PerformLayout();
             this.toolStripMain.ResumeLayout(false);

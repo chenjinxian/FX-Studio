@@ -37,18 +37,13 @@ namespace FXStudio
             toolStripEx.DefaultRenderer = renderEx;
             SetScheme();
 
+            m_renderView.Focus();
             m_messageHandler = new MessageHandler(this, m_renderView.GetRenderPanel());
         }
 
         public MessageHandler GetMessageHandler()
         {
             return m_messageHandler;
-        }
-
-        private void ShutDown()
-        {
-            RenderMethods.DestroyInstance();
-            Application.Exit();
         }
 
         private void CreateStandardViews()
@@ -178,6 +173,17 @@ namespace FXStudio
             {
                 RenderMethods.OpenLevel(dialog.FileName);
             }
+        }
+
+        private void FXStudioForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            RenderMethods.DestroyInstance();
+        }
+
+        private void FXStudioForm_Shown(object sender, EventArgs e)
+        {
+            StartPage startForm = new StartPage();
+            startForm.ShowDialog(this);
         }
     }
 }

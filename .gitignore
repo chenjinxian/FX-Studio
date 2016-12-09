@@ -254,3 +254,6 @@ paket-files/
 *.iobj
 Bin/FXStudioCored.lib
 Bin/FXStudio.Layout.config
+Bin/FXStudio.Layout.config
+Bin/FXStudioCored.dll
+Bin/FXStudioCored.exp

@@ -108,7 +108,8 @@ namespace FXStudio
             try
             {
                 // Render the scene if we are idle
-                RenderMethods.RenderFrame();
+                if (m_renderPanel.Handle != null)
+                    RenderMethods.RenderFrame();
             }
             catch (Exception ex)
             {

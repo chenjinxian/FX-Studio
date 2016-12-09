@@ -10,7 +10,7 @@ MovementController::MovementController(
 	m_TargetYaw(m_Yaw),
 	m_TargetPitch(m_Pitch),
 	m_CurrentSpeed(0.0f),
-	m_MaxSpeed(300.0f),
+	m_MaxSpeed(50.0f),
 	m_IsLButtonDown(false),
 	m_IsRotateWithLButtonDown(rotateWithLButtonDown)
 {

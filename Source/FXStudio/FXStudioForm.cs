@@ -182,8 +182,11 @@ namespace FXStudio
 
         private void FXStudioForm_Shown(object sender, EventArgs e)
         {
-            StartPage startForm = new StartPage();
-            startForm.ShowDialog(this);
+            StartPageDialog startForm = new StartPageDialog();
+            if (startForm.ShowDialog(this) == DialogResult.OK)
+            {
+                RenderMethods.OpenLevel(startForm.GetProjectPath());
+            }
         }
     }
 }

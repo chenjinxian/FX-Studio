@@ -29,11 +29,12 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\Build\Release\</OutputPath>
+    <OutputPath>..\..\Bin\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>application.ico</ApplicationIcon>
@@ -84,11 +85,17 @@
     <Compile Include="EditorView.designer.cs">
       <DependentUpon>EditorView.cs</DependentUpon>
     </Compile>
-    <Compile Include="StartPage.cs">
+    <Compile Include="NewProjectDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="StartPage.Designer.cs">
-      <DependentUpon>StartPage.cs</DependentUpon>
+    <Compile Include="NewProjectDialog.Designer.cs">
+      <DependentUpon>NewProjectDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="StartPageDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="StartPageDialog.Designer.cs">
+      <DependentUpon>StartPageDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="TaskListView.cs">
       <SubType>Form</SubType>
@@ -145,8 +152,11 @@
     <EmbeddedResource Include="EditorView.resx">
       <DependentUpon>EditorView.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="StartPage.resx">
-      <DependentUpon>StartPage.cs</DependentUpon>
+    <EmbeddedResource Include="NewProjectDialog.resx">
+      <DependentUpon>NewProjectDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="StartPageDialog.resx">
+      <DependentUpon>StartPageDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="TaskListView.resx">
       <DependentUpon>TaskListView.cs</DependentUpon>

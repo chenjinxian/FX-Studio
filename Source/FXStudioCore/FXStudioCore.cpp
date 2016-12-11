@@ -115,3 +115,8 @@ FXSTUDIOCORE_API void OpenLevel(BSTR lFileName)
 		pEditorLogic->VChangeState(BGS_LoadingGameEnvironment);
 	}
 }
+
+FXSTUDIOCORE_API void CreateNewProject(BSTR lFileName)
+{
+
+}

@@ -36,6 +36,8 @@ extern "C" {
 
 	FXSTUDIOCORE_API void OpenLevel(BSTR lFileName);
 
+	FXSTUDIOCORE_API void CreateNewProject(BSTR lFileName);
+
 
 #ifdef __cplusplus
 }

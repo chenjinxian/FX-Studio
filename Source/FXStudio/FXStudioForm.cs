@@ -16,6 +16,7 @@ namespace FXStudio
     public partial class FXStudioForm : Form
     {
         private MessageHandler m_messageHandler;
+        private string m_DefaultLocation;
 
         private DeserializeDockContent m_dockContent;
         private AssetsView m_assetsView;
@@ -32,6 +33,12 @@ namespace FXStudio
         {
             InitializeComponent();
 
+            m_DefaultLocation = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\FX Studio\Projects";
+            if (!Directory.Exists(m_DefaultLocation))
+            {
+                Directory.CreateDirectory(m_DefaultLocation);
+            }
+
             CreateStandardViews();
             m_dockContent = new DeserializeDockContent(GetContentFromString);
             toolStripEx.DefaultRenderer = renderEx;
@@ -44,6 +51,11 @@ namespace FXStudio
         public MessageHandler GetMessageHandler()
         {
             return m_messageHandler;
+        }
+
+        public string GetDefaultLocation()
+        {
+            return m_DefaultLocation;
         }
 
         private void CreateStandardViews()
@@ -182,7 +194,7 @@ namespace FXStudio
 
         private void FXStudioForm_Shown(object sender, EventArgs e)
         {
-            StartPageDialog startForm = new StartPageDialog();
+            StartPageDialog startForm = new StartPageDialog("", m_DefaultLocation);
             if (startForm.ShowDialog(this) == DialogResult.OK)
             {
                 RenderMethods.OpenLevel(startForm.GetProjectPath());

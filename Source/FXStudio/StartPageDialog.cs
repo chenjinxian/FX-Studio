@@ -13,10 +13,13 @@ namespace FXStudio
 {
     public partial class StartPageDialog : Form
     {
+        private string m_DefaultLocation;
         private string m_ProjectPath;
-        public StartPageDialog()
+        public StartPageDialog(string recentProjects, string defaultLocation)
         {
             InitializeComponent();
+
+            m_DefaultLocation = defaultLocation;
         }
 
         public string GetProjectPath()
@@ -26,10 +29,15 @@ namespace FXStudio
 
         private void linkLabelNewProject_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            NewProjectDialog dialog = new NewProjectDialog();
+            NewProjectDialog dialog = new NewProjectDialog(m_DefaultLocation);
             if (dialog.ShowDialog() == DialogResult.OK)
             {
+                string location = dialog.GetProjectLocation();
+                Directory.CreateDirectory(location);
+                m_ProjectPath = location + @"\" + dialog.GetProjectName() + @".fxsproj";
 
+                this.DialogResult = DialogResult.OK;
+                this.Close();
             }
         }
 

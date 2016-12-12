@@ -74,6 +74,7 @@ public:
 
 	virtual void VOnUpdate(const GameTime& gameTime) override;
 	virtual bool VLoadGame(const std::string& projectXml) override;
+	virtual bool VCreateNewProject(const std::string& project) override;
 
 	virtual void VAddView(shared_ptr<IGameView> pView, ActorId actorId = INVALID_ACTOR_ID);
 	virtual void VRemoveView(shared_ptr<IGameView> pView);
@@ -114,5 +115,9 @@ protected:
 	bool m_IsRenderDiagnostics;
 	shared_ptr<IGamePhysics> m_pPhysics;
 	ProjectManager* m_pProjectManager;
+
+private:
+	bool CreateDefaultProject(const std::string& project, const std::string& defautAsset);
+	bool CreateDefaultAsset(const std::string& asset);
 };
 

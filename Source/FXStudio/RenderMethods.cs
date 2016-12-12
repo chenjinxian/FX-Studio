@@ -37,5 +37,8 @@ namespace FXStudio
 
         [DllImport(editorDllName, CallingConvention = CallingConvention.Cdecl)]
         public static extern void OpenLevel([MarshalAs(UnmanagedType.BStr)] string lFileName);
+
+        [DllImport(editorDllName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern void CreateNewProject([MarshalAs(UnmanagedType.BStr)] string lFileName);
     }
 }

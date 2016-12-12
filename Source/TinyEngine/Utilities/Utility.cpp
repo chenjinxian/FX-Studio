@@ -2,6 +2,7 @@
 #include <Shlwapi.h>
 #include <shlobj.h>
 #include <direct.h>
+#include <fstream>
 
 bool Utility::AnsiToWideCch(WCHAR* dest, const CHAR* src, int charCount)
 {
@@ -198,4 +199,33 @@ const TCHAR * Utility::GetSaveGameDirectory(HWND hWnd, const TCHAR *gameAppDirec
 	_tcscat_s(saveGameDirectory, _T("\\"));
 
 	return saveGameDirectory;
+}
+
+std::string Utility::GetFileName(const std::string& filePath)
+{
+	std::string fullPath(filePath);
+	std::replace(fullPath.begin(), fullPath.end(), '\\', '/');
+
+	std::string::size_type lastSlashIndex = fullPath.find_last_of('/');
+
+	if (lastSlashIndex == std::string::npos)
+	{
+		return fullPath;
+	}
+	else
+	{
+		return fullPath.substr(lastSlashIndex + 1, fullPath.size() - lastSlashIndex - 1);
+	}
+}
+
+bool Utility::WriteFileData(const std::string& filePath, const char* fileData, uint32_t fileSize)
+{
+	std::ofstream file(filePath.c_str(), std::ios::out | std::ios::binary);
+	if (file.bad())
+	{
+		return false;
+	}
+
+	file.write(fileData, fileSize);
+	file.close();
 }

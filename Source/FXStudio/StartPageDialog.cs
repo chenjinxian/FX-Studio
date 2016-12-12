@@ -35,6 +35,7 @@ namespace FXStudio
                 string location = dialog.GetProjectLocation();
                 Directory.CreateDirectory(location);
                 m_ProjectPath = location + @"\" + dialog.GetProjectName() + @".fxsproj";
+                RenderMethods.CreateNewProject(m_ProjectPath);
 
                 this.DialogResult = DialogResult.OK;
                 this.Close();

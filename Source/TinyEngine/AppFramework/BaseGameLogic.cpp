@@ -135,6 +135,15 @@ bool BaseGameLogic::VLoadGame(const std::string& projectXml)
 	return true;
 }
 
+bool BaseGameLogic::VCreateNewProject(const std::string& project)
+{
+	std::string asset = project;
+	asset.replace(asset.find_last_of('.'), asset.length(), ".asset");
+
+	return CreateDefaultProject(project, Utility::GetFileName(asset)) &&
+		CreateDefaultAsset(asset);
+}
+
 void BaseGameLogic::VSetProxy()
 {
 	m_IsProxy = true;
@@ -352,4 +361,59 @@ void BaseGameLogic::RequestNewActorDelegate(IEventDataPtr pEventData)
 // 		shared_ptr<EvtData_New_Actor> pNewActorEvent(DEBUG_NEW EvtData_New_Actor(pActor->GetId(), pCastEventData->GetViewId()));
 // 		IEventManager::Get()->VQueueEvent(pNewActorEvent);
 // 	}
+}
+
+bool BaseGameLogic::CreateDefaultProject(const std::string& project, const std::string& defautAsset)
+{
+	tinyxml2::XMLDocument outDoc;
+	outDoc.InsertFirstChild(outDoc.NewDeclaration());
+
+	tinyxml2::XMLElement* pRoot = outDoc.NewElement("Project");
+	outDoc.InsertEndChild(pRoot);
+
+	tinyxml2::XMLElement* pAsset = outDoc.NewElement("AssetFile");
+	pAsset->InsertFirstChild(outDoc.NewText(defautAsset.c_str()));
+	pRoot->InsertFirstChild(pAsset);
+
+	tinyxml2::XMLElement* pScene = outDoc.NewElement("SceneService");
+	pRoot->InsertEndChild(pScene);
+
+	tinyxml2::XMLElement* pCamera = outDoc.NewElement("Camera");
+	tinyxml2::XMLElement* pGrid = outDoc.NewElement("Grid");
+	pScene->InsertFirstChild(pCamera);
+	pScene->InsertEndChild(pGrid);
+
+	pCamera->SetAttribute("type", "Perspective");
+	tinyxml2::XMLElement* pTranslation = outDoc.NewElement("Translation");
+	pTranslation->SetAttribute("x", 0.0f);
+	pTranslation->SetAttribute("y", 0.0f);
+	pTranslation->SetAttribute("z", 0.0f);
+	tinyxml2::XMLElement* pRotation = outDoc.NewElement("Rotation");
+	pRotation->SetAttribute("x", 0.0f);
+	pRotation->SetAttribute("y", 0.0f);
+	pRotation->SetAttribute("z", 0.0f);
+	pCamera->InsertFirstChild(pTranslation);
+	pCamera->InsertEndChild(pRotation);
+
+	pGrid->SetAttribute("visible", 1);
+	tinyxml2::XMLElement* pMajorTicks = outDoc.NewElement("MajorTicksColor");
+	pMajorTicks->SetAttribute("r", 0.25f);
+	pMajorTicks->SetAttribute("g", 0.25f);
+	pMajorTicks->SetAttribute("b", 0.25f);
+	tinyxml2::XMLElement* pTicks = outDoc.NewElement("TicksColor");
+	pTicks->SetAttribute("r", 0.425f);
+	pTicks->SetAttribute("g", 0.425f);
+	pTicks->SetAttribute("b", 0.425f);
+	pGrid->InsertFirstChild(pMajorTicks);
+	pGrid->InsertEndChild(pTicks);
+
+	tinyxml2::XMLPrinter printer;
+	outDoc.Accept(&printer);
+
+	return Utility::WriteFileData(project, printer.CStr(), printer.CStrSize() - 1);
+}
+
+bool BaseGameLogic::CreateDefaultAsset(const std::string& asset)
+{
+	return true;
 }

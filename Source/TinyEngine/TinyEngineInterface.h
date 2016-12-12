@@ -69,6 +69,7 @@ public:
 
 	virtual void VOnUpdate(const GameTime& gameTime) = 0;
 	virtual bool VLoadGame(const std::string& projectXml) = 0;
+	virtual bool VCreateNewProject(const std::string& project) = 0;
 	virtual void VSetProxy() = 0;
 	virtual void VChangeState(enum BaseGameState newState) = 0;
 	virtual shared_ptr<IGamePhysics> VGetGamePhysics(void) = 0;

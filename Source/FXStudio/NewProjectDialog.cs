@@ -29,9 +29,9 @@ namespace FXStudio
         public string GetProjectLocation()
         {
             if (checkBoxCreateDir.Checked)
-                return this.textBoxLocation.Text;
+                return this.textBoxLocation.Text + @"\" + this.textBoxName.Text;
             else
-                return this.textBoxLocation.Text + @"\" + this.textBoxName;
+                return this.textBoxLocation.Text;
         }
 
         private void buttonBrowse_Click(object sender, EventArgs e)

@@ -415,5 +415,51 @@ bool BaseGameLogic::CreateDefaultProject(const std::string& project, const std::
 
 bool BaseGameLogic::CreateDefaultAsset(const std::string& asset)
 {
-	return true;
+	tinyxml2::XMLDocument outDoc;
+	outDoc.InsertFirstChild(outDoc.NewDeclaration());
+
+	tinyxml2::XMLElement* pRoot = outDoc.NewElement("Assets");
+	outDoc.InsertEndChild(pRoot);
+
+	tinyxml2::XMLElement* pCameras = outDoc.NewElement("Cameras");
+	tinyxml2::XMLElement* pEffects = outDoc.NewElement("Effects");
+	tinyxml2::XMLElement* pGeometries = outDoc.NewElement("Geometries");
+	tinyxml2::XMLElement* pLights = outDoc.NewElement("Lights");
+	tinyxml2::XMLElement* pMaterials = outDoc.NewElement("Materials");
+	tinyxml2::XMLElement* pModels = outDoc.NewElement("Models");
+	tinyxml2::XMLElement* pScenes = outDoc.NewElement("Scenes");
+	tinyxml2::XMLElement* pSkybox = outDoc.NewElement("Skybox");
+	tinyxml2::XMLElement* pTextures = outDoc.NewElement("Textures");
+	pRoot->InsertFirstChild(pCameras);
+	pRoot->InsertEndChild(pEffects);
+	pRoot->InsertEndChild(pGeometries);
+	pRoot->InsertEndChild(pLights);
+	pRoot->InsertEndChild(pMaterials);
+	pRoot->InsertEndChild(pModels);
+	pRoot->InsertEndChild(pScenes);
+	pRoot->InsertEndChild(pSkybox);
+	pRoot->InsertEndChild(pTextures);
+
+	tinyxml2::XMLElement* pEffect = outDoc.NewElement("Effect");
+	pEffect->SetAttribute("name", "DefaultEffect");
+	pEffect->InsertFirstChild(outDoc.NewText("Effects\\DefaultEffect.fx"));
+	pEffects->InsertFirstChild(pEffect);
+
+	pMaterials->SetAttribute("name", "DefaultMaterial");
+	tinyxml2::XMLElement* pTechnique = outDoc.NewElement("Technique");
+	pTechnique->SetAttribute("name", "main11");
+	tinyxml2::XMLElement* pPass = outDoc.NewElement("Pass");
+	pPass->InsertFirstChild(outDoc.NewText("p0"));
+	pTechnique->InsertFirstChild(pPass);
+	pMaterials->InsertFirstChild(pTechnique);
+
+	tinyxml2::XMLElement* pImage = outDoc.NewElement("Image");
+	pImage->SetAttribute("name", "DefaultColor");
+	pImage->InsertFirstChild(outDoc.NewText("Textures\\DefaultColor.dds"));
+	pTextures->InsertFirstChild(pImage);
+
+	tinyxml2::XMLPrinter printer;
+	outDoc.Accept(&printer);
+
+	return Utility::WriteFileData(asset, printer.CStr(), printer.CStrSize() - 1);
 }

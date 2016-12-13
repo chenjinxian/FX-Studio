@@ -12,6 +12,7 @@ public:
 
 	static std::wstring GetExecutableDirectory();
 	static std::string GetFileName(const std::string& filePath);
+	static std::string GetDirectory(const std::string& filePath);
 	static bool WriteFileData(const std::string& filePath, const char* fileData, uint32_t fileSize);
 
 	static bool CheckStorage(DWORDLONG diskSpaceNeeded);

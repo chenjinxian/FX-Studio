@@ -218,6 +218,23 @@ std::string Utility::GetFileName(const std::string& filePath)
 	}
 }
 
+std::string Utility::GetDirectory(const std::string& filePath)
+{
+	std::string fullPath(filePath);
+	std::replace(fullPath.begin(), fullPath.end(), '\\', '/');
+
+	std::string::size_type lastSlashIndex = fullPath.find_last_of('/');
+
+	if (lastSlashIndex == std::string::npos)
+	{
+		return "";
+	}
+	else
+	{
+		return fullPath.substr(0, lastSlashIndex);
+	}
+}
+
 bool Utility::WriteFileData(const std::string& filePath, const char* fileData, uint32_t fileSize)
 {
 	std::ofstream file(filePath.c_str(), std::ios::out | std::ios::binary);

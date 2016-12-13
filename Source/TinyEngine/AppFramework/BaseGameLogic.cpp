@@ -21,9 +21,9 @@ BaseGameLogic::BaseGameLogic()
 	m_IsRenderDiagnostics(false),
 	m_pPhysics(nullptr)
 {
-	m_pProjectManager = DEBUG_NEW ProjectManager;
-	DEBUG_ASSERT(m_pProjectManager);
-	m_pProjectManager->Initialize(g_pApp->GetResCache()->Match("world\\*.xml"));
+// 	m_pProjectManager = DEBUG_NEW ProjectManager;
+// 	DEBUG_ASSERT(m_pProjectManager);
+// 	m_pProjectManager->Initialize(g_pApp->GetResCache()->Match("world\\*.xml"));
 	
 // 	RegisterEngineScriptEvents();
 // 	IEventManager::Get()->VAddListener(
@@ -38,7 +38,7 @@ BaseGameLogic::~BaseGameLogic()
 	}
 
 	SAFE_DELETE(m_pActorFactory);
-	SAFE_DELETE(m_pProjectManager);
+// 	SAFE_DELETE(m_pProjectManager);
 
 	for (auto& actor : m_Actors)
 	{
@@ -67,41 +67,31 @@ std::string BaseGameLogic::GetActorXml(ActorId id)
 
 bool BaseGameLogic::VLoadGame(const std::string& projectXml)
 {
-	tinyxml2::XMLElement* pRoot = XmlResourceLoader::LoadAndReturnRootXmlElement(projectXml.c_str());
-	if (!pRoot)
+	unique_ptr<tinyxml2::XMLDocument> pDoc = std::make_unique<tinyxml2::XMLDocument>(DEBUG_NEW tinyxml2::XMLDocument());
+	if (pDoc == nullptr || (pDoc->LoadFile(projectXml.c_str()) != tinyxml2::XML_SUCCESS))
 	{
 		DEBUG_ERROR("Failed to find level resource file: " + projectXml);
 		return false;
 	}
 
-// 	const char* preLoadScript = NULL;
-// 	const char* postLoadScript = NULL;
-// 
-// 	tinyxml2::XMLElement* pScriptElement = pRoot->FirstChildElement("Script");
-// 	if (pScriptElement)
-// 	{
-// 		preLoadScript = pScriptElement->Attribute("preLoad");
-// 		postLoadScript = pScriptElement->Attribute("postLoad");
-// 	}
-// 
-// 	if (preLoadScript)
-// 	{
-// 		Resource resource(preLoadScript);
-// 		shared_ptr<ResHandle> pResourceHandle = g_pApp->GetResCache()->GetHandle(&resource);
-// 	}
-
-	tinyxml2::XMLElement* pActorsNode = pRoot->FirstChildElement("StaticActors");
-	if (pActorsNode)
+	tinyxml2::XMLElement *pRoot = pDoc->RootElement();
+	if (pRoot == nullptr)
 	{
-		for (tinyxml2::XMLElement* pNode = pActorsNode->FirstChildElement(); pNode; pNode = pNode->NextSiblingElement())
-		{
-			StrongActorPtr pActor = VCreateActor(pNode);
-			if (pActor)
-			{
-				shared_ptr<EvtData_New_Actor> pNewActorEvent(DEBUG_NEW EvtData_New_Actor(pActor->GetActorId()));
-				IEventManager::Get()->VQueueEvent(pNewActorEvent);
-			}
-		}
+		return false;
+	}
+
+	tinyxml2::XMLElement* pAssetNode = pRoot->FirstChildElement("AssetFile");
+	if (pAssetNode != nullptr)
+	{
+// 		for (tinyxml2::XMLElement* pNode = pActorsNode->FirstChildElement(); pNode; pNode = pNode->NextSiblingElement())
+// 		{
+// 			StrongActorPtr pActor = VCreateActor(pNode);
+// 			if (pActor)
+// 			{
+// 				shared_ptr<EvtData_New_Actor> pNewActorEvent(DEBUG_NEW EvtData_New_Actor(pActor->GetActorId()));
+// 				IEventManager::Get()->VQueueEvent(pNewActorEvent);
+// 			}
+// 		}
 	}
 
 	for (auto& gameView : m_GameViews)
@@ -115,12 +105,6 @@ bool BaseGameLogic::VLoadGame(const std::string& projectXml)
 
 	if (!VLoadGameDelegate(pRoot))
 		return false;
-
-// 	if (postLoadScript)
-// 	{
-// 		Resource resource(postLoadScript);
-// 		shared_ptr<ResHandle> pResourceHandle = g_pApp->GetResCache()->GetHandle(&resource);
-// 	}
 
 	if (m_IsProxy)
 	{

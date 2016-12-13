@@ -27,6 +27,19 @@ namespace FXStudio
             return m_ProjectPath;
         }
 
+        private void CopyDefaultData(string sourceDir, string destDir)
+        {
+            foreach (string dirPath in Directory.GetDirectories(sourceDir))
+            {
+                Directory.CreateDirectory(dirPath.Replace(sourceDir, destDir));
+
+                foreach (string sourceFile in Directory.GetFiles(dirPath))
+                {
+                    File.Copy(sourceFile, sourceFile.Replace(sourceDir, destDir), true);
+                }
+            }
+        }
+
         private void linkLabelNewProject_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             NewProjectDialog dialog = new NewProjectDialog(m_DefaultLocation);
@@ -36,6 +49,9 @@ namespace FXStudio
                 Directory.CreateDirectory(location);
                 m_ProjectPath = location + @"\" + dialog.GetProjectName() + @".fxsproj";
                 RenderMethods.CreateNewProject(m_ProjectPath);
+
+                string sourcePath = Directory.GetCurrentDirectory() + @"\Data";
+                CopyDefaultData(sourcePath, location);
 
                 this.DialogResult = DialogResult.OK;
                 this.Close();

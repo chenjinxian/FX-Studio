@@ -19,8 +19,7 @@ BaseGameApp::BaseGameApp()
 	m_pEventManager(nullptr),
 	m_HasModalDialog(false),
 	m_IsExiting(false),
-	m_IsRestoring(false),
-	m_IsEditorRunning(false)
+	m_IsRestoring(false)
 {
 	g_pApp = this;
 }
@@ -58,29 +57,6 @@ bool BaseGameApp::InitEnvironment()
 
 	RegisterEngineEvents();
 	VRegisterGameEvents();
-
-	if (m_pResCache == nullptr)
-	{
-		IResourceFile *zipFile = (m_IsEditorRunning || !m_Config.m_IsZipResource) ?
-			DEBUG_NEW DevelopmentResourceZipFile(L"Assets.zip", DevelopmentResourceZipFile::Editor) :
-			DEBUG_NEW ResourceZipFile(L"Assets.zip");
-
-		m_pResCache = DEBUG_NEW ResCache(50, zipFile);
-
-		if (!m_pResCache->Init())
-		{
-			DEBUG_ERROR("Failed to initialize resource cache!  Are your paths set up correctly?");
-			return false;
-		}
-
-		m_pResCache->RegisterLoader(CreateDdsResourceLoader());
-		m_pResCache->RegisterLoader(CreateJpgResourceLoader());
-		m_pResCache->RegisterLoader(CreatePngResourceLoader());
-		m_pResCache->RegisterLoader(CreateBmpResourceLoader());
-		m_pResCache->RegisterLoader(CreateTiffResourceLoader());
-		m_pResCache->RegisterLoader(CreateXmlResourceLoader());
-		m_pResCache->RegisterLoader(CreateFxEffectResourceLoader());
-	}
 
 	if (!LoadStrings("English"))
 	{
@@ -226,8 +202,24 @@ bool BaseGameApp::InitRenderer()
 
 	if (m_pRenderer != nullptr)
 	{
-		m_pRenderer->VSetBackgroundColor(Color(0.392156899f, 0.584313750f, 0.929411829f, 1.000000000f));
-		return m_pRenderer->VInitRenderer(m_hWindow);
+		if (m_pRenderer->VInitRenderer(m_hWindow))
+		{
+			m_pRenderer->VSetBackgroundColor(Color(0.392156899f, 0.584313750f, 0.929411829f, 1.000000000f));
+
+			if (m_pGameLogic == nullptr)
+			{
+				m_pGameLogic = VCreateGameAndView();
+				if (m_pGameLogic == nullptr)
+					return false;
+			}
+
+			return true;
+		}
+		else
+		{
+			DEBUG_ERROR("Renderer init failed.");
+			return false;
+		}
 	}
 	else
 	{
@@ -372,32 +364,34 @@ bool BaseGameApp::LoadStrings(std::string language)
 	languageFile += language;
 	languageFile += ".xml";
 
-	tinyxml2::XMLElement* pRoot = XmlResourceLoader::LoadAndReturnRootXmlElement(languageFile.c_str());
-	if (!pRoot)
+	unique_ptr<tinyxml2::XMLDocument> pDoc = std::make_unique<tinyxml2::XMLDocument>(DEBUG_NEW tinyxml2::XMLDocument());
+	if (pDoc != nullptr && (pDoc->LoadFile(languageFile.c_str()) == tinyxml2::XML_SUCCESS))
 	{
-		DEBUG_ERROR("Strings are missing.");
-		return false;
-	}
+		tinyxml2::XMLElement *pRoot = pDoc->RootElement();
+		if (pRoot == nullptr)
+			return false;
 
-	for (tinyxml2::XMLElement* pElem = pRoot->FirstChildElement(); pElem; pElem = pElem->NextSiblingElement())
-	{
-		const char *pKey = pElem->Attribute("id");
-		const char *pText = pElem->Attribute("value");
-		const char *pHotkey = pElem->Attribute("hotkey");
-		if (pKey && pText)
+		for (tinyxml2::XMLElement* pElem = pRoot->FirstChildElement(); pElem; pElem = pElem->NextSiblingElement())
 		{
-			wchar_t wideKey[64];
-			wchar_t wideText[1024];
-			Utility::AnsiToWideCch(wideKey, pKey, 64);
-			Utility::AnsiToWideCch(wideText, pText, 1024);
-			m_TextResource[std::wstring(wideKey)] = std::wstring(wideText);
-
-			if (pHotkey)
+			const char *pKey = pElem->Attribute("id");
+			const char *pText = pElem->Attribute("value");
+			const char *pHotkey = pElem->Attribute("hotkey");
+			if (pKey && pText)
 			{
-				m_Hotkeys[std::wstring(wideKey)] = MapCharToKeycode(*pHotkey);
+				wchar_t wideKey[64];
+				wchar_t wideText[1024];
+				Utility::AnsiToWideCch(wideKey, pKey, 64);
+				Utility::AnsiToWideCch(wideText, pText, 1024);
+				m_TextResource[std::wstring(wideKey)] = std::wstring(wideText);
+
+				if (pHotkey)
+				{
+					m_Hotkeys[std::wstring(wideKey)] = MapCharToKeycode(*pHotkey);
+				}
 			}
 		}
 	}
+
 	return true;
 }
 
@@ -442,6 +436,7 @@ BaseGameApp::Renderer BaseGameApp::GetRendererType()
 
 bool BaseGameApp::VLoadGame(void)
 {
+	InitResource();
 	return m_pGameLogic->VLoadGame(m_Config.m_Project);
 }
 
@@ -451,6 +446,7 @@ void BaseGameApp::OnClose()
 	{
 		SAFE_DELETE(m_pGameLogic);
 		SAFE_DELETE(m_pEventManager);
+		SAFE_DELETE(m_pResCache);
 	}
 
 	if (m_pRenderer != nullptr)
@@ -464,15 +460,24 @@ void BaseGameApp::OnClose()
 
 bool BaseGameApp::InitResource()
 {
-	if (m_pGameLogic == nullptr)
+	if (m_pResCache == nullptr)
 	{
-		m_pGameLogic = VCreateGameAndView();
-		if (m_pGameLogic == nullptr)
+		m_pResCache = DEBUG_NEW ResCache(50, Utility::GetDirectory(m_Config.m_Project), m_Config.m_IsZipResource);
+
+		if (!m_pResCache->Init())
+		{
+			DEBUG_ERROR("Failed to initialize resource cache!  Are your paths set up correctly?");
 			return false;
+		}
+
+		m_pResCache->RegisterLoader(CreateDdsResourceLoader());
+		m_pResCache->RegisterLoader(CreateJpgResourceLoader());
+		m_pResCache->RegisterLoader(CreatePngResourceLoader());
+		m_pResCache->RegisterLoader(CreateBmpResourceLoader());
+		m_pResCache->RegisterLoader(CreateTiffResourceLoader());
+		m_pResCache->RegisterLoader(CreateXmlResourceLoader());
+		m_pResCache->RegisterLoader(CreateFxEffectResourceLoader());
 	}
-
-
-	// 	_tcscpy_s(m_saveGameDirectory, GetSaveGameDirectory(GetHwnd(), VGetGameAppDirectory()));
 
 	m_pResCache->Preload("*.dds", NULL);
 	m_pResCache->Preload("*.jpg", NULL);

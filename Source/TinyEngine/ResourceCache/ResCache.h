@@ -22,7 +22,7 @@ public:
 class ResourceZipFile : public IResourceFile
 {
 public:
-	ResourceZipFile(const std::wstring resFileName) { m_pZipFile = NULL; m_ResFileName = resFileName; }
+	ResourceZipFile();
 	virtual ~ResourceZipFile();
 
 	virtual bool VOpen() override;
@@ -33,7 +33,7 @@ public:
 	virtual bool VIsUsingDevelopmentDirectories(void) const  override { return false; }
 
 private:
-	ZipFile *m_pZipFile;
+	unique_ptr<ZipFile> m_pZipFile;
 	std::wstring m_ResFileName;
 };
 
@@ -46,7 +46,7 @@ public:
 		Editor
 	};
 
-	DevelopmentResourceZipFile(const std::wstring resFileName, const Mode mode);
+	DevelopmentResourceZipFile(const std::string assetDir, const Mode mode);
 
 	virtual bool VOpen();
 	virtual int VGetRawResourceSize(const Resource &r);
@@ -58,7 +58,7 @@ public:
 	int Find(const std::string &path);
 
 	Mode m_Mode;
-	std::wstring m_AssetsDir;
+	std::string m_AssetsDir;
 	std::vector<WIN32_FIND_DATA> m_AssetFileInfo;
 	ZipContentsMap m_DirectoryContentsMap;
 
@@ -111,7 +111,7 @@ class ResCache
 	friend class ResHandle;
 
 public:
-	ResCache(const uint32_t sizeInMb, IResourceFile *file);
+	ResCache(const uint32_t sizeInMb, const std::string& assetDir, bool isZipResource);
 	virtual ~ResCache();
 
 	bool Init();
@@ -145,7 +145,7 @@ private:
 	ResHandleMap m_ResMap;
 	ResourceLoaders m_ResourceLoaders;
 
-	IResourceFile* m_pResFile;
+	unique_ptr<IResourceFile> m_pResFile;
 
 	uint32_t m_CacheSize;
 	uint32_t m_Allocated;

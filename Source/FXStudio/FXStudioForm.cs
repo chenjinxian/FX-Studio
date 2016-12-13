@@ -183,7 +183,7 @@ namespace FXStudio
 
             if (dialog.ShowDialog() == DialogResult.OK)
             {
-                RenderMethods.OpenLevel(dialog.FileName);
+                RenderMethods.OpenProject(dialog.FileName);
             }
         }
 
@@ -197,7 +197,7 @@ namespace FXStudio
             StartPageDialog startForm = new StartPageDialog("", m_DefaultLocation);
             if (startForm.ShowDialog(this) == DialogResult.OK)
             {
-                RenderMethods.OpenLevel(startForm.GetProjectPath());
+                RenderMethods.OpenProject(startForm.GetProjectPath());
             }
         }
     }

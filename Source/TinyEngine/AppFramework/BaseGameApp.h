@@ -18,7 +18,6 @@ public:
 	bool InitEnvironment();
 	bool SetupWindow(HINSTANCE hInstance, HWND hWnd);
 	bool InitRenderer();
-	bool InitResource();
 	void RenderLoop();
 
 	enum Renderer
@@ -60,6 +59,7 @@ private:
 	void OnUpdate(const GameTime& gameTime);
 	void OnRender(const GameTime& gameTime);
 
+	bool InitResource();
 	bool HasModalDialog() { return m_HasModalDialog != 0; }
 	void RegisterEngineEvents(void);
 	bool LoadStrings(std::string language);
@@ -77,7 +77,6 @@ private:
 	int m_HasModalDialog;
 	bool m_IsExiting;
 	bool m_IsRestoring;
-	bool m_IsEditorRunning;
 	std::map<std::wstring, std::wstring> m_TextResource;
 	std::map<std::wstring, UINT> m_Hotkeys;
 };

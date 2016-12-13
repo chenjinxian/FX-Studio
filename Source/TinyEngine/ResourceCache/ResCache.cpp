@@ -8,15 +8,22 @@ Resource::Resource(const std::string &name)
 	std::transform(m_name.begin(), m_name.end(), m_name.begin(), (int(*)(int)) std::tolower);
 }
 
+ResourceZipFile::ResourceZipFile()
+	: m_pZipFile(nullptr),
+	m_ResFileName(L"Assets.zip")
+{
+
+}
+
 ResourceZipFile::~ResourceZipFile()
 {
-	SAFE_DELETE(m_pZipFile);
+
 }
 
 bool ResourceZipFile::VOpen()
 {
-	m_pZipFile = DEBUG_NEW ZipFile;
-	if (m_pZipFile)
+	m_pZipFile = unique_ptr<ZipFile>(DEBUG_NEW ZipFile);
+	if (m_pZipFile != nullptr)
 	{
 		return m_pZipFile->Init(m_ResFileName.c_str());
 	}
@@ -59,18 +66,12 @@ std::string ResourceZipFile::VGetResourceName(int num) const
 	return resName;
 }
 
-DevelopmentResourceZipFile::DevelopmentResourceZipFile(const std::wstring resFileName, const Mode mode)
-	: ResourceZipFile(resFileName)
+DevelopmentResourceZipFile::DevelopmentResourceZipFile(const std::string assetDir, const Mode mode)
+	: ResourceZipFile(),
+	m_Mode(mode),
+	m_AssetsDir(assetDir)
 {
-	m_Mode = mode;
 
-	TCHAR dir[MAX_PATH];
-	GetCurrentDirectory(MAX_PATH, dir);
-
-	m_AssetsDir = dir;
-	int lastSlash = m_AssetsDir.find_last_of(L"\\");
-	m_AssetsDir = m_AssetsDir.substr(0, lastSlash);
-	m_AssetsDir += L"\\Assets\\";
 }
 
 int DevelopmentResourceZipFile::Find(const std::string &name)
@@ -132,7 +133,7 @@ int DevelopmentResourceZipFile::VGetRawResource(const Resource &r, char *buffer)
 		if (num == -1)
 			return -1;
 
-		std::string fullFileSpec = Utility::WS2S(m_AssetsDir) + r.m_name.c_str();
+		std::string fullFileSpec = m_AssetsDir + r.m_name.c_str();
 		FILE *f = nullptr;
 		fopen_s(&f, fullFileSpec.c_str(), "rb");
 		size_t bytes = fread(buffer, 1, m_AssetFileInfo[num].nFileSizeLow, f);
@@ -165,7 +166,7 @@ void DevelopmentResourceZipFile::ReadAssetsDirectory(std::wstring fileSpec)
 	HANDLE fileHandle;
 	WIN32_FIND_DATA findData;
 
-	std::wstring pathSpec = m_AssetsDir + fileSpec;
+	std::wstring pathSpec = Utility::S2WS(m_AssetsDir) + fileSpec;
 	fileHandle = FindFirstFile(pathSpec.c_str(), &findData);
 	if (fileHandle != INVALID_HANDLE_VALUE)
 	{
@@ -214,11 +215,18 @@ ResHandle::~ResHandle()
 	m_pResCache->MemoryHasBeenFreed(m_Size);
 }
 
-ResCache::ResCache(const uint32_t sizeInMb, IResourceFile *resFile)
+ResCache::ResCache(const uint32_t sizeInMb, const std::string& assetDir, bool isZipResource)
+	: m_CacheSize(sizeInMb * 1024 * 1024),
+	m_Allocated(0)
 {
-	m_CacheSize = sizeInMb * 1024 * 1024;
-	m_Allocated = 0;
-	m_pResFile = resFile;
+	if (isZipResource)
+	{
+		m_pResFile = unique_ptr<IResourceFile>(DEBUG_NEW ResourceZipFile());
+	}
+	else
+	{
+		m_pResFile = unique_ptr<IResourceFile>(DEBUG_NEW DevelopmentResourceZipFile(assetDir, DevelopmentResourceZipFile::Editor));
+	}
 }
 
 ResCache::~ResCache()
@@ -227,7 +235,6 @@ ResCache::~ResCache()
 	{
 		FreeOneResource();
 	}
-	SAFE_DELETE(m_pResFile);
 }
 
 bool ResCache::Init()

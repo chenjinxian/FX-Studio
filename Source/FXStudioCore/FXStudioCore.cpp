@@ -33,7 +33,7 @@ FXSTUDIOCORE_API int CreateInstance(
 			g_pApp->GetGameConfig().m_ScreenWidth = screenWidth;
 			g_pApp->GetGameConfig().m_ScreenWidth = screenHeight;
 			g_pApp->SetupWindow(hInstance, hWnd);
-			if (g_pApp->InitRenderer() && g_pApp->InitResource())
+			if (g_pApp->InitRenderer())
 			{
 				g_pApp->OnStartRender();
 			}
@@ -103,15 +103,13 @@ FXSTUDIOCORE_API bool IsGameRunning()
 	return true;
 }
 
-FXSTUDIOCORE_API void OpenLevel(BSTR lFileName)
+FXSTUDIOCORE_API void OpenProject(BSTR lFileName)
 {
-	std::string levelFile = Utility::WS2S(std::wstring(lFileName, SysStringLen(lFileName)));
+	std::string project = Utility::WS2S(std::wstring(lFileName, SysStringLen(lFileName)));
 	FXStudioLogic* pEditorLogic = dynamic_cast<FXStudioLogic*>(g_pApp->GetGameLogic());
 	if (pEditorLogic != nullptr)
 	{
-		std::string assetsDir = "\\Assets\\";
-		int projDirLength = pEditorLogic->GetProjectDirectory().length() + assetsDir.length();
-		g_pApp->GetGameConfig().m_Project = levelFile.substr(projDirLength, levelFile.length() - projDirLength);
+		g_pApp->GetGameConfig().m_Project = project;
 		pEditorLogic->VChangeState(BGS_LoadingGameEnvironment);
 	}
 }

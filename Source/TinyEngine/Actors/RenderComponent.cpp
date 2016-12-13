@@ -100,21 +100,17 @@ bool GridRenderComponent::VDelegateInit(tinyxml2::XMLElement* pData)
 
 shared_ptr<SceneNode> GridRenderComponent::VCreateSceneNode()
 {
-// 	shared_ptr<TransformComponent> pTransformComponent =
-// 		MakeStrongPtr(m_pOwner->GetComponent<TransformComponent>(TransformComponent::m_Name));
-// 	if (pTransformComponent)
-// 	{
-// 		WeakBaseRenderComponentPtr weakThis(this);
-// 
-// 		switch (BaseGameApp::GetRendererImpl())
-// 		{
-// 		case BaseGameApp::Renderer_D3D11:
-// 			return shared_ptr<SceneNode>(DEBUG_NEW GridNode(m_pOwner->GetActorId(), weakThis, pTransformComponent->GetTransform()));
-// 
-// 		default:
-// 			DEBUG_ERROR("Unknown Renderer Implementation in GridRenderComponent");
-// 		}
-// 	}
+	WeakBaseRenderComponentPtr weakThis(this);
+
+	switch (g_pApp->GetRendererType())
+	{
+	case BaseGameApp::Renderer_D3D11:
+		return shared_ptr<SceneNode>(DEBUG_NEW GridNode(m_pOwner->GetActorId(), weakThis));
+
+	default:
+		DEBUG_ERROR("Unknown Renderer Implementation in SkyboxRenderComponent");
+		break;
+	}
 
 	return shared_ptr<SceneNode>();
 }
@@ -144,7 +140,7 @@ bool ModelRenderComponent::VDelegateInit(tinyxml2::XMLElement* pData)
 	tinyxml2::XMLElement* pModel = pData->FirstChildElement("Model");
 	if (pModel != nullptr)
 	{
-		m_ModelName = pModel->FirstChild()->Value();
+		m_ModelName = pModel->GetText();
 	}
 
 	tinyxml2::XMLElement* pTextures = pData->FirstChildElement("Textures");
@@ -159,7 +155,7 @@ bool ModelRenderComponent::VDelegateInit(tinyxml2::XMLElement* pData)
 	tinyxml2::XMLElement* pEffect = pData->FirstChildElement("Effect");
 	if (pEffect != nullptr)
 	{
-		m_EffectName = pEffect->FirstChild()->Value();
+		m_EffectName = pEffect->GetText();
 		m_CurrentTechnique = pEffect->Attribute("technique");
 		m_CurrentPass = pEffect->Attribute("pass");
 	}
@@ -233,7 +229,7 @@ bool SkyboxRenderComponent::VDelegateInit(tinyxml2::XMLElement* pData)
 	tinyxml2::XMLElement* pEffect = pData->FirstChildElement("Effect");
 	if (pEffect != nullptr)
 	{
-		m_EffectName = pEffect->FirstChild()->Value();
+		m_EffectName = pEffect->GetText();
 		m_CurrentTechnique = pEffect->Attribute("technique");
 		m_CurrentPass = pEffect->Attribute("pass");
 	}
@@ -283,7 +279,7 @@ bool LightRenderComponent::VDelegateInit(tinyxml2::XMLElement* pData)
 	tinyxml2::XMLElement* pModel = pData->FirstChildElement("Model");
 	if (pModel != nullptr)
 	{
-		m_ModelName = pModel->FirstChild()->Value();
+		m_ModelName = pModel->GetText();
 	}
 
 	return true;

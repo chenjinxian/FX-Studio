@@ -251,13 +251,8 @@ paket-files/
 *.exe
 *.ipdb
 *.iobj
+*.config
+*.exp
+*.manifest
 Bin/FXStudioCored.lib
-Bin/FXStudio.Layout.config
-Bin/FXStudio.Layout.config
 Bin/FXStudioCored.dll
-Bin/FXStudioCored.exp
-Bin/FXStudio.vshost.exe.manifest
-Bin/FXStudioCored.exp
-Bin/FXStudioCored.exp
-Bin/FXStudioCored.exp
-Bin/FXStudioCored.exp

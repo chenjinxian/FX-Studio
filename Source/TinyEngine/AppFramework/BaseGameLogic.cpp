@@ -65,12 +65,12 @@ std::string BaseGameLogic::GetActorXml(ActorId id)
 	return std::string();
 }
 
-bool BaseGameLogic::VLoadGame(const std::string& projectXml)
+bool BaseGameLogic::VLoadGame(const std::string& projectFile)
 {
-	unique_ptr<tinyxml2::XMLDocument> pDoc = std::make_unique<tinyxml2::XMLDocument>(DEBUG_NEW tinyxml2::XMLDocument());
-	if (pDoc == nullptr || (pDoc->LoadFile(projectXml.c_str()) != tinyxml2::XML_SUCCESS))
+	unique_ptr<tinyxml2::XMLDocument> pDoc = unique_ptr<tinyxml2::XMLDocument>(DEBUG_NEW tinyxml2::XMLDocument());
+	if (pDoc == nullptr || (pDoc->LoadFile(projectFile.c_str()) != tinyxml2::XML_SUCCESS))
 	{
-		DEBUG_ERROR("Failed to find level resource file: " + projectXml);
+		DEBUG_ERROR("Failed to find level resource file: " + projectFile);
 		return false;
 	}
 
@@ -80,18 +80,23 @@ bool BaseGameLogic::VLoadGame(const std::string& projectXml)
 		return false;
 	}
 
-	tinyxml2::XMLElement* pAssetNode = pRoot->FirstChildElement("AssetFile");
-	if (pAssetNode != nullptr)
+	tinyxml2::XMLElement* pAsset = pRoot->FirstChildElement("AssetFile");
+	if (pAsset != nullptr)
 	{
-// 		for (tinyxml2::XMLElement* pNode = pActorsNode->FirstChildElement(); pNode; pNode = pNode->NextSiblingElement())
-// 		{
-// 			StrongActorPtr pActor = VCreateActor(pNode);
-// 			if (pActor)
-// 			{
-// 				shared_ptr<EvtData_New_Actor> pNewActorEvent(DEBUG_NEW EvtData_New_Actor(pActor->GetActorId()));
-// 				IEventManager::Get()->VQueueEvent(pNewActorEvent);
-// 			}
-// 		}
+		std::string assetFile = pAsset->GetText();
+	}
+
+	tinyxml2::XMLElement* pSceneService = pRoot->FirstChildElement("SceneService");
+	if (pSceneService != nullptr)
+	{
+		tinyxml2::XMLElement* pCamera = pSceneService->FirstChildElement("Camera");
+		tinyxml2::XMLElement* pGrid = pSceneService->FirstChildElement("Grid");
+		StrongActorPtr pActor = VCreateActor(pGrid);
+		if (pActor)
+		{
+			shared_ptr<EvtData_New_Actor> pNewActorEvent(DEBUG_NEW EvtData_New_Actor(pActor->GetActorId()));
+			IEventManager::Get()->VQueueEvent(pNewActorEvent);
+		}
 	}
 
 	for (auto& gameView : m_GameViews)
@@ -379,7 +384,10 @@ bool BaseGameLogic::CreateDefaultProject(const std::string& project, const std::
 	pCamera->InsertFirstChild(pTranslation);
 	pCamera->InsertEndChild(pRotation);
 
-	pGrid->SetAttribute("visible", 1);
+	pGrid->SetAttribute("type", "Grid");
+	tinyxml2::XMLElement* pComponent = outDoc.NewElement("GridRenderComponent");
+	pGrid->InsertFirstChild(pComponent);
+
 	tinyxml2::XMLElement* pMajorTicks = outDoc.NewElement("MajorTicksColor");
 	pMajorTicks->SetAttribute("r", 0.25f);
 	pMajorTicks->SetAttribute("g", 0.25f);
@@ -388,8 +396,8 @@ bool BaseGameLogic::CreateDefaultProject(const std::string& project, const std::
 	pTicks->SetAttribute("r", 0.425f);
 	pTicks->SetAttribute("g", 0.425f);
 	pTicks->SetAttribute("b", 0.425f);
-	pGrid->InsertFirstChild(pMajorTicks);
-	pGrid->InsertEndChild(pTicks);
+	pComponent->InsertFirstChild(pMajorTicks);
+	pComponent->InsertEndChild(pTicks);
 
 	tinyxml2::XMLPrinter printer;
 	outDoc.Accept(&printer);

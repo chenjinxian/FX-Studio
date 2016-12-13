@@ -93,7 +93,7 @@ public:
 class GridNode : public SceneNode
 {
 public:
-	GridNode(ActorId actorId, WeakBaseRenderComponentPtr renderComponent, const Matrix& worldMatrix);
+	GridNode(ActorId actorId, WeakBaseRenderComponentPtr renderComponent);
 	virtual ~GridNode();
 
 	virtual HRESULT VOnInitSceneNode(Scene* pScene) override;

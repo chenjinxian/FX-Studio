@@ -213,8 +213,8 @@ bool RootNode::VRemoveChild(ActorId actorId)
 	return anythingRemoved;
 }
 
-GridNode::GridNode(ActorId actorId, WeakBaseRenderComponentPtr renderComponent, const Matrix& worldMatrix)
-	: SceneNode(actorId, renderComponent, RenderPass_0, worldMatrix),
+GridNode::GridNode(ActorId actorId, WeakBaseRenderComponentPtr renderComponent)
+	: SceneNode(actorId, renderComponent, RenderPass_0),
 	mEffect(nullptr),
 	mTechnique(nullptr),
 	mPass(nullptr), 

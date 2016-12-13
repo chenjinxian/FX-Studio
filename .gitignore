@@ -48,7 +48,6 @@ artifacts/
 *_i.h
 *.ilk
 *.meta
-*.obj
 *.pch
 *.pdb
 *.pgc
@@ -258,6 +257,7 @@ Bin/FXStudio.Layout.config
 Bin/FXStudioCored.dll
 Bin/FXStudioCored.exp
 Bin/FXStudio.vshost.exe.manifest
+Bin/FXStudioCored.exp
 Bin/FXStudioCored.exp
 Bin/FXStudioCored.exp
 Bin/FXStudioCored.exp

@@ -10,6 +10,8 @@ class MovementController;
 class IResourceExtraData;
 class ActorComponent;
 class BaseRenderComponent;
+class Effect;
+class Pass;
 
 typedef BaseRenderComponent* WeakBaseRenderComponentPtr;
 
@@ -102,24 +104,15 @@ public:
 	virtual HRESULT VOnUpdate(Scene* pScene, const GameTime& gameTime) override;
 
 private:
-	ID3DX11Effect* mEffect;
-	ID3DX11EffectTechnique* mTechnique;
-	ID3DX11EffectPass* mPass;
-	ID3DX11EffectMatrixVariable* mWvpVariable;
-
-	ID3D11InputLayout* mInputLayout;
-	ID3D11Buffer* mVertexBuffer;
-
-	Vector3 mPosition;
-	Matrix mWorldMatrix;
-	UINT mSize;
-	UINT mScale;
+	Effect* m_pEffect;
+	Pass* m_pCurrentPass;
+	ID3D11Buffer* m_pVertexBuffer;
+	ID3D11Buffer* m_pIndexBuffer;
+	uint32_t m_IndexCount;
 	Color m_MajorTicksColor;
 	Color m_TicksColor;
 };
 
-class Effect;
-class Pass;
 class ModelNode : public SceneNode
 {
 public:

@@ -215,70 +215,35 @@ bool RootNode::VRemoveChild(ActorId actorId)
 
 GridNode::GridNode(ActorId actorId, WeakBaseRenderComponentPtr renderComponent)
 	: SceneNode(actorId, renderComponent, RenderPass_0),
-	mEffect(nullptr),
-	mTechnique(nullptr),
-	mPass(nullptr), 
-	mWvpVariable(nullptr),
-	mInputLayout(nullptr),
-	mVertexBuffer(nullptr),
-	mPosition(0, 0, 0),
-	mWorldMatrix(Matrix::Identity),
-	mSize(16),
-	mScale(16),
-	mColor(0.961f, 0.871f, 0.702f, 1.0f)
+	m_pEffect(nullptr),
+	m_pCurrentPass(nullptr),
+	m_pVertexBuffer(nullptr),
+	m_pIndexBuffer(nullptr),
+	m_IndexCount(0)
 {
-// 	HRESULT hr;
-// 	auto pd3dImmediateContext = DXUTGetD3D11DeviceContext();
-// 	ID3D11Device* pd3dDevice = DXUTGetD3D11Device();
-// 	DWORD dwShaderFlags = D3DCOMPILE_ENABLE_STRICTNESS;
-// #ifdef _DEBUG
-// 	dwShaderFlags |= D3DCOMPILE_DEBUG;
-// 	dwShaderFlags |= D3DCOMPILE_SKIP_OPTIMIZATION;
-// #endif
-// 
-// #if D3D_COMPILER_VERSION >= 46
-// 
-// 	WCHAR str[MAX_PATH];
-// 	VTrace(DXUTFindDXSDKMediaFileCch(str, MAX_PATH, L"BasicEffect.fx"));
-// 
-// 	VTrace(D3DX11CompileEffectFromFile(str, nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, dwShaderFlags, 0, pd3dDevice, &mEffect, nullptr));
-// 
-// #else
-// 
-// 	ID3DBlob* pEffectBuffer = nullptr;
-// 	V_RETURN(DXUTCompileFromFile(L"BasicEffect.fx", nullptr, "none", "fx_5_0", dwShaderFlags, 0, &pEffectBuffer));
-// 	hr = D3DX11CreateEffectFromMemory(pEffectBuffer->GetBufferPointer(), pEffectBuffer->GetBufferSize(), 0, pd3dDevice, &mEffect);
-// 	SAFE_RELEASE(pEffectBuffer);
-// 	if (FAILED(hr))
-// 		return hr;
-// 
-// #endif
-// 
-// 	mTechnique = mEffect->GetTechniqueByName("main11");
-// 	mPass = mTechnique->GetPassByName("p0");
-// 	ID3DX11EffectVariable* variable = mEffect->GetVariableByName("WorldViewProjection");
-// 	mWvpVariable = variable->AsMatrix();
-// 
-// 	D3DX11_PASS_DESC passDesc;
-// 	mPass->GetDesc(&passDesc);
-// 
-// 	D3D11_INPUT_ELEMENT_DESC inputElementDescriptions[] =
-// 	{
-// 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-// 		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
-// 	};
-// 	VTrace(pd3dDevice->CreateInputLayout(inputElementDescriptions, ARRAYSIZE(inputElementDescriptions),
-// 		passDesc.pIAInputSignature, passDesc.IAInputSignatureSize, &mInputLayout));
+	GridRenderComponent* pGridRender = static_cast<GridRenderComponent*>(m_pRenderComponent);
+	if (pGridRender != nullptr)
+	{
+		m_MajorTicksColor = pGridRender->GetMajorTicksColor();
+		m_TicksColor = pGridRender->GetTicksColor();
+	}
+
+	Resource effectRes("Effects\\Skybox.fx");
+	shared_ptr<ResHandle> pEffectResHandle = g_pApp->GetResCache()->GetHandle(&effectRes);
+	if (pEffectResHandle != nullptr)
+	{
+		shared_ptr<HlslResourceExtraData> extra = static_pointer_cast<HlslResourceExtraData>(pEffectResHandle->GetExtraData());
+		if (extra != nullptr)
+		{
+			m_pEffect = extra->GetEffect();
+		}
+	}
 }
 
 GridNode::~GridNode()
 {
-	SAFE_RELEASE(mWvpVariable);
-	SAFE_RELEASE(mPass);
-	SAFE_RELEASE(mTechnique);
-	SAFE_RELEASE(mEffect);
-	SAFE_RELEASE(mInputLayout);
-	SAFE_RELEASE(mVertexBuffer);
+	SAFE_RELEASE(m_pVertexBuffer);
+	SAFE_RELEASE(m_pIndexBuffer);
 }
 
 HRESULT GridNode::VOnDeleteSceneNode(Scene *pScene)

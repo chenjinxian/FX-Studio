@@ -219,7 +219,10 @@ GridNode::GridNode(ActorId actorId, WeakBaseRenderComponentPtr renderComponent)
 	m_pCurrentPass(nullptr),
 	m_pVertexBuffer(nullptr),
 	m_pIndexBuffer(nullptr),
-	m_IndexCount(0)
+	m_IndexCount(0),
+	m_TicksInterval(0.4),
+	m_GridSize(20),
+	m_MajorTickUnit(10)
 {
 	GridRenderComponent* pGridRender = static_cast<GridRenderComponent*>(m_pRenderComponent);
 	if (pGridRender != nullptr)
@@ -228,7 +231,7 @@ GridNode::GridNode(ActorId actorId, WeakBaseRenderComponentPtr renderComponent)
 		m_TicksColor = pGridRender->GetTicksColor();
 	}
 
-	Resource effectRes("Effects\\Skybox.fx");
+	Resource effectRes("Effects\\Grid.fx");
 	shared_ptr<ResHandle> pEffectResHandle = g_pApp->GetResCache()->GetHandle(&effectRes);
 	if (pEffectResHandle != nullptr)
 	{
@@ -246,76 +249,39 @@ GridNode::~GridNode()
 	SAFE_RELEASE(m_pIndexBuffer);
 }
 
+void GridNode::InitGridVertex()
+{
+	Technique* pCurrentTechnique = m_pEffect->GetTechniquesByName().at("main11");
+	if (pCurrentTechnique == nullptr)
+	{
+		DEBUG_ERROR(std::string("technique is not exist: ") + "main11");
+	}
+	m_pCurrentPass = pCurrentTechnique->GetPassesByName().at("p0");
+	if (m_pCurrentPass == nullptr)
+	{
+		DEBUG_ERROR(std::string("technique is not exist: ") + "p0");
+	}
+
+// 	std::vector<Vector3> vertices;
+// 	vertices.reserve(m_GridSize / m_TicksInterval * 2 + 1);
+// 	Mesh* mesh = model->GetMeshes().at(0);
+// 	m_pCurrentPass->CreateVertexBuffer(mesh, &m_pVertexBuffer);
+// 	m_pCurrentPass->CreateIndexBuffer(mesh, &m_pIndexBuffer);
+// 	m_IndexCount = mesh->GetIndices().size();
+}
+
+HRESULT GridNode::VOnInitSceneNode(Scene* pScene)
+{
+	return S_OK;
+}
+
 HRESULT GridNode::VOnDeleteSceneNode(Scene *pScene)
 {
 	return S_OK;
 }
 
-HRESULT GridNode::VOnInitSceneNode(Scene* pScene)
-{
-// 	HRESULT hr;
-// 
-// 	V_RETURN(SceneNode::VOnInitSceneNode(pScene));
-// 
-// 	SAFE_RELEASE(mVertexBuffer);
-// 
-// 	auto pd3dImmediateContext = DXUTGetD3D11DeviceContext();
-// 	ID3D11Device* pd3dDevice = DXUTGetD3D11Device();
-// 	int length = 4 * (mSize + 1);
-// 	int size = sizeof(VertexPositionColor) * length;
-// 	std::unique_ptr<VertexPositionColor> vertexData(new VertexPositionColor[length]);
-// 	VertexPositionColor* vertices = vertexData.get();
-// 
-// 	float adjustedScale = mScale * 0.1f;
-// 	float maxPosition = mSize * adjustedScale / 2;
-// 
-// 	for (uint32_t i = 0, j = 0; i < mSize + 1; i++, j = 4 * i)
-// 	{
-// 		float position = maxPosition - (i * adjustedScale);
-// 
-// 		// Vertical line
-// 		vertices[j] = VertexPositionColor(XMFLOAT4(position, 0.0f, maxPosition, 1.0f), mColor);
-// 		vertices[j + 1] = VertexPositionColor(XMFLOAT4(position, 0.0f, -maxPosition, 1.0f), mColor);
-// 
-// 		// Horizontal line
-// 		vertices[j + 2] = VertexPositionColor(XMFLOAT4(maxPosition, 0.0f, position, 1.0f), mColor);
-// 		vertices[j + 3] = VertexPositionColor(XMFLOAT4(-maxPosition, 0.0f, position, 1.0f), mColor);
-// 	}
-// 
-// 	D3D11_BUFFER_DESC vertexBufferDesc;
-// 	ZeroMemory(&vertexBufferDesc, sizeof(vertexBufferDesc));
-// 	vertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
-// 	vertexBufferDesc.ByteWidth = size;
-// 	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-// 
-// 	D3D11_SUBRESOURCE_DATA vertexSubResourceData;
-// 	ZeroMemory(&vertexSubResourceData, sizeof(vertexSubResourceData));
-// 	vertexSubResourceData.pSysMem = vertices;
-// 
-// 	V_RETURN(pd3dDevice->CreateBuffer(&vertexBufferDesc, &vertexSubResourceData, &mVertexBuffer));
-// 
-// 	return hr;
-
-	return S_OK;
-}
-
 HRESULT GridNode::VRender(Scene* pScene, const GameTime& gameTime)
 {
-// 	auto pd3dImmediateContext = DXUTGetD3D11DeviceContext();
-// 	pd3dImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
-// 	pd3dImmediateContext->IASetInputLayout(mInputLayout);
-// 
-// 	UINT stride = sizeof(VertexPositionColor);
-// 	UINT offset = 0;
-// 	pd3dImmediateContext->IASetVertexBuffers(0, 1, &mVertexBuffer, &stride, &offset);
-// 
-// 	XMMATRIX wvp = mWorldMatrix * pScene->GetCamera()->GetViewMatrix() * pScene->GetCamera()->GetProjectMatrix();
-// 	mWvpVariable->SetMatrix(reinterpret_cast<const float*>(&wvp));
-// 
-// 	mPass->Apply(0, pd3dImmediateContext);
-// 
-// 	pd3dImmediateContext->Draw((mSize + 1) * 4, 0);
-
 	return S_OK;
 }
 
@@ -466,5 +432,123 @@ HRESULT ModelNode::VRender(Scene* pScene, const GameTime& gameTime)
 			m_pCurrentPass->GetVertexSize(), m_pVertexBuffers[i], m_pIndexBuffers[i], m_IndexCounts[i], m_pCurrentPass->GetEffectPass());
 	}
 
+	return S_OK;
+}
+
+SkyboxNode::SkyboxNode(ActorId actorId, WeakBaseRenderComponentPtr renderComponent, RenderPass renderPass)
+	: SceneNode(actorId, renderComponent, renderPass),
+	m_pEffect(nullptr),
+	m_pCurrentPass(nullptr),
+	m_pVertexBuffer(nullptr),
+	m_pIndexBuffer(nullptr),
+	m_IndexCount(0),
+	m_ScaleMatrix(Matrix::CreateScale(100.0f))
+{
+	SkyboxRenderComponent* pSkyboxRender = static_cast<SkyboxRenderComponent*>(m_pRenderComponent);
+	if (pSkyboxRender != nullptr)
+	{
+		m_TextureName = pSkyboxRender->GetTextureName();
+	}
+
+	Resource effectRes("Effects\\Skybox.fx");
+	shared_ptr<ResHandle> pEffectResHandle = g_pApp->GetResCache()->GetHandle(&effectRes);
+	if (pEffectResHandle != nullptr)
+	{
+		shared_ptr<HlslResourceExtraData> extra = static_pointer_cast<HlslResourceExtraData>(pEffectResHandle->GetExtraData());
+		if (extra != nullptr)
+		{
+			m_pEffect = extra->GetEffect();
+		}
+	}
+
+	Resource modelRes("Models\\Sphere.obj");
+	shared_ptr<ResHandle> pModelResHandle = g_pApp->GetResCache()->GetHandle(&modelRes);
+	std::unique_ptr<Model> model(new Model(pModelResHandle->Buffer(), pModelResHandle->Size(), true));
+
+	Technique* pCurrentTechnique = m_pEffect->GetTechniquesByName().at("main11");
+	if (pCurrentTechnique == nullptr)
+	{
+		DEBUG_ERROR(std::string("technique is not exist: ") + "main11");
+	}
+	m_pCurrentPass = pCurrentTechnique->GetPassesByName().at("p0");
+	if (m_pCurrentPass == nullptr)
+	{
+		DEBUG_ERROR(std::string("technique is not exist: ") + "p0");
+	}
+
+	Mesh* mesh = model->GetMeshes().at(0);
+	m_pCurrentPass->CreateVertexBuffer(mesh, &m_pVertexBuffer);
+	m_pCurrentPass->CreateIndexBuffer(mesh, &m_pIndexBuffer);
+	m_IndexCount = mesh->GetIndices().size();
+}
+
+SkyboxNode::~SkyboxNode()
+{
+	SAFE_RELEASE(m_pVertexBuffer);
+	SAFE_RELEASE(m_pIndexBuffer);
+}
+
+bool SkyboxNode::VIsVisible(Scene* pScene)
+{
+	return true;
+}
+
+HRESULT SkyboxNode::VPreRender(Scene* pScene)
+{
+	m_ScaleMatrix.Translation(pScene->GetCamera()->GetPosition());
+	VSetTransform(m_ScaleMatrix);
+
+	return SceneNode::VPreRender(pScene);
+}
+
+HRESULT SkyboxNode::VOnInitSceneNode(Scene* pScene)
+{
+	return S_OK;
+}
+
+HRESULT SkyboxNode::VOnDeleteSceneNode(Scene *pScene)
+{
+	return S_OK;
+}
+
+HRESULT SkyboxNode::VRender(Scene* pScene, const GameTime& gameTime)
+{
+	const std::vector<Variable*>& variables = m_pEffect->GetVariables();
+	for (auto variable : m_pEffect->GetVariables())
+	{
+		if (variable->GetVariableSemantic() == "worldviewprojection")
+		{
+			if (variable->GetVariableType() == "float4x4")
+			{
+				const XMMATRIX& wvp = pScene->GetCamera()->GetWorldViewProjection(pScene);
+				variable->SetMatrix(wvp);
+			}
+		}
+		else if (variable->GetVariableType() == "TextureCube")
+		{
+			Resource resource(m_TextureName);
+			shared_ptr<ResHandle> pTextureRes = g_pApp->GetResCache()->GetHandle(&resource);
+			if (pTextureRes != nullptr)
+			{
+				shared_ptr<D3D11TextureResourceExtraData> extra =
+					static_pointer_cast<D3D11TextureResourceExtraData>(pTextureRes->GetExtraData());
+				if (extra != nullptr)
+				{
+					variable->SetResource(extra->GetTexture());
+				}
+			}
+		}
+	}
+
+	g_pApp->GetRendererAPI()->VInputSetup(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, m_pCurrentPass->GetInputLayout());
+	g_pApp->GetRendererAPI()->VDrawMeshe(
+		m_pCurrentPass->GetVertexSize(), m_pVertexBuffer, m_pIndexBuffer, m_IndexCount, m_pCurrentPass->GetEffectPass());
+
+	return S_OK;
+}
+
+
+HRESULT SkyboxNode::VOnUpdate(Scene* pScene, const GameTime& gameTime)
+{
 	return S_OK;
 }

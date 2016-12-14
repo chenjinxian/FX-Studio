@@ -121,9 +121,6 @@
     <ClInclude Include="Graphics3D\Scene.h">
       <Filter>Graphics3D</Filter>
     </ClInclude>
-    <ClInclude Include="Graphics3D\Skybox.h">
-      <Filter>Graphics3D</Filter>
-    </ClInclude>
     <ClInclude Include="Graphics3D\CameraNode.h">
       <Filter>Graphics3D</Filter>
     </ClInclude>
@@ -214,9 +211,6 @@
       <Filter>Graphics3D</Filter>
     </ClCompile>
     <ClCompile Include="Graphics3D\Scene.cpp">
-      <Filter>Graphics3D</Filter>
-    </ClCompile>
-    <ClCompile Include="Graphics3D\Skybox.cpp">
       <Filter>Graphics3D</Filter>
     </ClCompile>
     <ClCompile Include="Graphics3D\CameraNode.cpp">

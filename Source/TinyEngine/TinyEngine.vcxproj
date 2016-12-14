@@ -201,7 +201,6 @@
     <ClInclude Include="Graphics3D\MovementController.h" />
     <ClInclude Include="Graphics3D\Scene.h" />
     <ClInclude Include="Graphics3D\SceneNode.h" />
-    <ClInclude Include="Graphics3D\Skybox.h" />
     <ClInclude Include="ResourceCache\ShaderResource.h" />
     <ClInclude Include="ResourceCache\TextureResource.h" />
     <ClInclude Include="TinyEngine.h" />
@@ -240,7 +239,6 @@
     <ClCompile Include="Graphics3D\MovementController.cpp" />
     <ClCompile Include="Graphics3D\Scene.cpp" />
     <ClCompile Include="Graphics3D\SceneNode.cpp" />
-    <ClCompile Include="Graphics3D\Skybox.cpp" />
     <ClCompile Include="ResourceCache\ResCache.cpp" />
     <ClCompile Include="ResourceCache\ShaderResource.cpp" />
     <ClCompile Include="ResourceCache\TextureResource.cpp" />

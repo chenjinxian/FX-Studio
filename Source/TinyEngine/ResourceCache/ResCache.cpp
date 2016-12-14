@@ -225,7 +225,7 @@ ResCache::ResCache(const uint32_t sizeInMb, const std::string& assetDir, bool is
 	}
 	else
 	{
-		m_pResFile = unique_ptr<IResourceFile>(DEBUG_NEW DevelopmentResourceZipFile(assetDir, DevelopmentResourceZipFile::Editor));
+		m_pResFile = unique_ptr<IResourceFile>(DEBUG_NEW DevelopmentResourceZipFile(assetDir + "\\", DevelopmentResourceZipFile::Editor));
 	}
 }
 

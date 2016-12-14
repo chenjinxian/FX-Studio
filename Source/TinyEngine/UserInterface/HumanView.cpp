@@ -46,12 +46,12 @@ HumanView::~HumanView()
 	}
 }
 
-bool HumanView::LoadGame(tinyxml2::XMLElement* pLevelData)
+bool HumanView::LoadGame()
 {
 	m_pFreeCameraController.reset(DEBUG_NEW MovementController(m_pCamera, 0, 0, true));
 	m_pPointerHandler = m_pFreeCameraController;
 	m_pKeyboardHandler = m_pFreeCameraController;
-	return VLoadGameDelegate(pLevelData);
+	return VLoadGameDelegate();
 }
 
 void HumanView::VOnRender(const GameTime& gameTime)

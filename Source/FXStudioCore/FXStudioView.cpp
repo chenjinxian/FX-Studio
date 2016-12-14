@@ -18,9 +18,9 @@ void FXStudioView::VOnUpdate(const GameTime& gameTime)
 	HumanView::VOnUpdate(gameTime);
 }
 
-bool FXStudioView::VLoadGameDelegate(tinyxml2::XMLElement* pLevelData)
+bool FXStudioView::VLoadGameDelegate()
 {
-	if (!HumanView::VLoadGameDelegate(pLevelData))
+	if (!HumanView::VLoadGameDelegate())
 		return false;
 
 	m_pScene->VOnInitScreenElements();

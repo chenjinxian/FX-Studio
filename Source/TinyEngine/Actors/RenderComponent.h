@@ -37,6 +37,9 @@ public:
 	GridRenderComponent();
 	virtual ~GridRenderComponent();
 
+	const Color& GetMajorTicksColor() const { return m_MajorTicksColor; }
+	const Color& GetTicksColor() const { return m_TicksColor; }
+
 	virtual const std::string& VGetComponentName() const override { return m_Name; }
 	static const std::string m_Name;
 
@@ -44,6 +47,9 @@ protected:
 	virtual bool VDelegateInit(tinyxml2::XMLElement* pData);
 	virtual shared_ptr<SceneNode> VCreateSceneNode();
 	virtual void VCreateInheritedXmlElement(tinyxml2::XMLElement* pBaseElement, tinyxml2::XMLDocument* pDocument);
+
+	Color m_MajorTicksColor;
+	Color m_TicksColor;
 };
 
 class ModelRenderComponent : public BaseRenderComponent
@@ -80,10 +86,7 @@ public:
 	SkyboxRenderComponent();
 	virtual ~SkyboxRenderComponent();
 
-	const std::vector<std::string>& GetTextureName() { return m_TextureNames; }
-	const std::string& GetEffectName() { return m_EffectName; }
-	const std::string& GetCurrentTechniqueName() { return m_CurrentTechnique; }
-	const std::string& GetCurrentPassName() { return m_CurrentPass; }
+	const std::string& GetTextureName() { return m_TextureName; }
 
 	virtual const std::string& VGetComponentName() const override { return m_Name; }
 	static const std::string m_Name;
@@ -94,10 +97,7 @@ protected:
 	virtual void VCreateInheritedXmlElement(tinyxml2::XMLElement* pBaseElement, tinyxml2::XMLDocument* pDocument);
 
 private:
-	std::string m_EffectName;
-	std::string m_CurrentTechnique;
-	std::string m_CurrentPass;
-	std::vector<std::string> m_TextureNames;
+	std::string m_TextureName;
 };
 
 class LightRenderComponent : public BaseRenderComponent

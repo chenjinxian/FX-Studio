@@ -67,36 +67,9 @@ std::string BaseGameLogic::GetActorXml(ActorId id)
 
 bool BaseGameLogic::VLoadGame(const std::string& projectFile)
 {
-	unique_ptr<tinyxml2::XMLDocument> pDoc = unique_ptr<tinyxml2::XMLDocument>(DEBUG_NEW tinyxml2::XMLDocument());
-	if (pDoc == nullptr || (pDoc->LoadFile(projectFile.c_str()) != tinyxml2::XML_SUCCESS))
-	{
-		DEBUG_ERROR("Failed to find level resource file: " + projectFile);
-		return false;
-	}
-
-	tinyxml2::XMLElement *pRoot = pDoc->RootElement();
-	if (pRoot == nullptr)
+	if (!LoadProject(projectFile))
 	{
 		return false;
-	}
-
-	tinyxml2::XMLElement* pAsset = pRoot->FirstChildElement("AssetFile");
-	if (pAsset != nullptr)
-	{
-		std::string assetFile = pAsset->GetText();
-	}
-
-	tinyxml2::XMLElement* pSceneService = pRoot->FirstChildElement("SceneService");
-	if (pSceneService != nullptr)
-	{
-		tinyxml2::XMLElement* pCamera = pSceneService->FirstChildElement("Camera");
-		tinyxml2::XMLElement* pGrid = pSceneService->FirstChildElement("Grid");
-		StrongActorPtr pActor = VCreateActor(pGrid);
-		if (pActor)
-		{
-			shared_ptr<EvtData_New_Actor> pNewActorEvent(DEBUG_NEW EvtData_New_Actor(pActor->GetActorId()));
-			IEventManager::Get()->VQueueEvent(pNewActorEvent);
-		}
 	}
 
 	for (auto& gameView : m_GameViews)
@@ -104,11 +77,11 @@ bool BaseGameLogic::VLoadGame(const std::string& projectFile)
 		if (gameView->VGetType() == GameView_Human)
 		{
 			shared_ptr<HumanView> pHumanView = static_pointer_cast<HumanView, IGameView>(gameView);
-			pHumanView->LoadGame(pRoot);
+			pHumanView->LoadGame();
 		}
 	}
 
-	if (!VLoadGameDelegate(pRoot))
+	if (!VLoadGameDelegate())
 		return false;
 
 	if (m_IsProxy)
@@ -177,6 +150,8 @@ StrongActorPtr BaseGameLogic::VCreateActor(
 // 			shared_ptr<EvtData_Request_New_Actor> pNewActor(DEBUG_NEW EvtData_Request_New_Actor(actorResource, initialTransform, pActor->GetId()));
 // 			IEventManager::Get()->VTriggerEvent(pNewActor);
 		}
+		shared_ptr<EvtData_New_Actor> pNewActorEvent(DEBUG_NEW EvtData_New_Actor(pActor->GetActorId()));
+		IEventManager::Get()->VQueueEvent(pNewActorEvent);
 		return pActor;
 	}
 	else
@@ -392,10 +367,12 @@ bool BaseGameLogic::CreateDefaultProject(const std::string& project, const std::
 	pMajorTicks->SetAttribute("r", 0.25f);
 	pMajorTicks->SetAttribute("g", 0.25f);
 	pMajorTicks->SetAttribute("b", 0.25f);
+	pMajorTicks->SetAttribute("a", 1.0f);
 	tinyxml2::XMLElement* pTicks = outDoc.NewElement("TicksColor");
 	pTicks->SetAttribute("r", 0.425f);
 	pTicks->SetAttribute("g", 0.425f);
 	pTicks->SetAttribute("b", 0.425f);
+	pTicks->SetAttribute("a", 1.0f);
 	pComponent->InsertFirstChild(pMajorTicks);
 	pComponent->InsertEndChild(pTicks);
 
@@ -450,8 +427,86 @@ bool BaseGameLogic::CreateDefaultAsset(const std::string& asset)
 	pImage->InsertFirstChild(outDoc.NewText("Textures\\DefaultColor.dds"));
 	pTextures->InsertFirstChild(pImage);
 
+	pSkybox->SetAttribute("type", "Skybox");
+	tinyxml2::XMLElement* pComponent = outDoc.NewElement("SkyboxRenderComponent");
+	pSkybox->InsertFirstChild(pComponent);
+
+	tinyxml2::XMLElement* pColor = outDoc.NewElement("Color");
+	pColor->SetAttribute("r", 1.0f);
+	pColor->SetAttribute("g", 1.0f);
+	pColor->SetAttribute("b", 1.0f);
+	pColor->SetAttribute("a", 1.0f);
+	tinyxml2::XMLElement* pTexture = outDoc.NewElement("Texture");
+	pTexture->SetText("Textures\\Skybox.dds");
+	pComponent->InsertFirstChild(pColor);
+	pComponent->InsertEndChild(pTexture);
+
 	tinyxml2::XMLPrinter printer;
 	outDoc.Accept(&printer);
 
 	return Utility::WriteFileData(asset, printer.CStr(), printer.CStrSize() - 1);
+}
+
+bool BaseGameLogic::LoadProject(const std::string& project)
+{
+	unique_ptr<tinyxml2::XMLDocument> pDoc = unique_ptr<tinyxml2::XMLDocument>(DEBUG_NEW tinyxml2::XMLDocument());
+	if (pDoc == nullptr || (pDoc->LoadFile(project.c_str()) != tinyxml2::XML_SUCCESS))
+	{
+		DEBUG_ERROR("Failed to find level resource file: " + project);
+		return false;
+	}
+
+	tinyxml2::XMLElement *pRoot = pDoc->RootElement();
+	if (pRoot == nullptr)
+	{
+		return false;
+	}
+
+	tinyxml2::XMLElement* pAsset = pRoot->FirstChildElement("AssetFile");
+	if (pAsset != nullptr)
+	{
+		std::string assetFile = Utility::GetDirectory(project) + "\\" + pAsset->GetText();
+		LoadAssets(assetFile);
+	}
+
+	tinyxml2::XMLElement* pSceneService = pRoot->FirstChildElement("SceneService");
+	if (pSceneService != nullptr)
+	{
+		tinyxml2::XMLElement* pCamera = pSceneService->FirstChildElement("Camera");
+		tinyxml2::XMLElement* pGrid = pSceneService->FirstChildElement("Grid");
+		VCreateActor(pGrid);
+	}
+
+	return true;
+}
+
+bool BaseGameLogic::LoadAssets(const std::string& asset)
+{
+	unique_ptr<tinyxml2::XMLDocument> pDoc = unique_ptr<tinyxml2::XMLDocument>(DEBUG_NEW tinyxml2::XMLDocument());
+	if (pDoc == nullptr || (pDoc->LoadFile(asset.c_str()) != tinyxml2::XML_SUCCESS))
+	{
+		DEBUG_ERROR("Failed to find level resource file: " + asset);
+		return false;
+	}
+
+	tinyxml2::XMLElement *pRoot = pDoc->RootElement();
+	if (pRoot == nullptr)
+	{
+		return false;
+	}
+
+	tinyxml2::XMLElement* pSkybox = pRoot->FirstChildElement("Skybox");
+	if (pSkybox != nullptr)
+	{
+		VCreateActor(pSkybox);
+	}
+
+	tinyxml2::XMLElement* pModels = pRoot->FirstChildElement("Models");
+	if (pModels)
+	{
+		for (tinyxml2::XMLElement* pNode = pModels->FirstChildElement(); pNode; pNode = pNode->NextSiblingElement())
+		{
+			VCreateActor(pNode);
+		}
+	}
 }

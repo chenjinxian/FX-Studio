@@ -96,7 +96,7 @@ public:
 
 protected:
 	virtual ActorFactory* VCreateActorFactory();
-	virtual bool VLoadGameDelegate(tinyxml2::XMLElement* pData) { return true; }
+	virtual bool VLoadGameDelegate() { return true; }
 	void MoveActorDelegate(IEventDataPtr pEventData);
 	void RequestNewActorDelegate(IEventDataPtr pEventData);
 
@@ -119,5 +119,7 @@ protected:
 private:
 	bool CreateDefaultProject(const std::string& project, const std::string& defautAsset);
 	bool CreateDefaultAsset(const std::string& asset);
+	bool LoadProject(const std::string& project);
+	bool LoadAssets(const std::string& asset);
 };
 

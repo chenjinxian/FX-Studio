@@ -217,21 +217,10 @@ SkyboxRenderComponent::~SkyboxRenderComponent()
 
 bool SkyboxRenderComponent::VDelegateInit(tinyxml2::XMLElement* pData)
 {
-	tinyxml2::XMLElement* pTextures = pData->FirstChildElement("Textures");
-	if (pTextures != nullptr)
+	tinyxml2::XMLElement* pTexture = pData->FirstChildElement("Texture");
+	if (pTexture != nullptr)
 	{
-		for (tinyxml2::XMLNode* pNode = pTextures->FirstChild(); pNode; pNode = pNode->NextSibling())
-		{
-			m_TextureNames.push_back(pNode->FirstChild()->Value());
-		}
-	}
-
-	tinyxml2::XMLElement* pEffect = pData->FirstChildElement("Effect");
-	if (pEffect != nullptr)
-	{
-		m_EffectName = pEffect->GetText();
-		m_CurrentTechnique = pEffect->Attribute("technique");
-		m_CurrentPass = pEffect->Attribute("pass");
+		m_TextureName = pTexture->GetText();
 	}
 
 	return true;

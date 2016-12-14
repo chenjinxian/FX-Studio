@@ -364,7 +364,7 @@ bool BaseGameApp::LoadStrings(std::string language)
 	languageFile += language;
 	languageFile += ".xml";
 
-	unique_ptr<tinyxml2::XMLDocument> pDoc = std::make_unique<tinyxml2::XMLDocument>(DEBUG_NEW tinyxml2::XMLDocument());
+	unique_ptr<tinyxml2::XMLDocument> pDoc = unique_ptr<tinyxml2::XMLDocument>(DEBUG_NEW tinyxml2::XMLDocument());
 	if (pDoc != nullptr && (pDoc->LoadFile(languageFile.c_str()) == tinyxml2::XML_SUCCESS))
 	{
 		tinyxml2::XMLElement *pRoot = pDoc->RootElement();

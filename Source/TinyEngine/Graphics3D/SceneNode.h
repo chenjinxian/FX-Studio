@@ -114,7 +114,8 @@ private:
 	Matrix mWorldMatrix;
 	UINT mSize;
 	UINT mScale;
-	Color mColor;
+	Color m_MajorTicksColor;
+	Color m_TicksColor;
 };
 
 class Effect;

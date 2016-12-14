@@ -11,6 +11,6 @@ public:
 	shared_ptr<ScreenElementScene> GetScene() { return m_pScene; }
 
 protected:
-	virtual bool VLoadGameDelegate(tinyxml2::XMLElement* pLevelData) override;
+	virtual bool VLoadGameDelegate() override;
 };
 

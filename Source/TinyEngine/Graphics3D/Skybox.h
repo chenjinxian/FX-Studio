@@ -24,11 +24,7 @@ private:
 	ID3D11Buffer* m_pVertexBuffer;
 	ID3D11Buffer* m_pIndexBuffer;
 	uint32_t m_IndexCount;
-	std::vector<ID3D11ShaderResourceView*> m_pTextures;
 	Matrix m_ScaleMatrix;
 
-	std::vector<std::string> m_TextureNames;
-	std::string m_EffectName;
-	std::string m_CurrentTechnique;
-	std::string m_CurrentPass;
+	std::string m_TextureName;
 };

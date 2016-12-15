@@ -65,7 +65,7 @@ namespace FXStudio
             var currentDirectory = Directory.GetCurrentDirectory();
             var parentDirectory = Directory.GetParent(currentDirectory);
             dialog.InitialDirectory = parentDirectory.FullName;
-            dialog.Filter = "XML files (*.xml)|*.xml";
+            dialog.Filter = "FX Studio files (*.fxsproj)|*.fxsproj";
             dialog.FilterIndex = 1;
             dialog.RestoreDirectory = true;
 

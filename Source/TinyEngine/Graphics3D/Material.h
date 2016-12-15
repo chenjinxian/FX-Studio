@@ -55,6 +55,7 @@ public:
 	uint32_t GetVertexSize() { return m_VertexSize; }
 	ID3DX11EffectPass* GetEffectPass() { return m_pD3DX11EffectPass; }
 
+	void CreateVertexBuffer(const void* pVertexData, uint32_t size, ID3D11Buffer** ppVertexBuffer) const;
 	void CreateVertexBuffer(const Mesh* mesh, ID3D11Buffer** ppVertexBuffer) const;
 	void CreateIndexBuffer(const Mesh* mesh, ID3D11Buffer** ppIndexBuffer) const;
 

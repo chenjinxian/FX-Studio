@@ -94,6 +94,24 @@ GridRenderComponent::~GridRenderComponent()
 
 bool GridRenderComponent::VDelegateInit(tinyxml2::XMLElement* pData)
 {
+	tinyxml2::XMLElement* pMajorTicksColor = pData->FirstChildElement("MajorTicksColor");
+	if (pMajorTicksColor != nullptr)
+	{
+		m_MajorTicksColor.x = pMajorTicksColor->FloatAttribute("r");
+		m_MajorTicksColor.y = pMajorTicksColor->FloatAttribute("g");
+		m_MajorTicksColor.z = pMajorTicksColor->FloatAttribute("b");
+		m_MajorTicksColor.w = pMajorTicksColor->FloatAttribute("a");
+	}
+
+	tinyxml2::XMLElement* pTicksColor = pData->FirstChildElement("TicksColor");
+	if (pTicksColor != nullptr)
+	{
+		m_TicksColor.x = pTicksColor->FloatAttribute("r");
+		m_TicksColor.y = pTicksColor->FloatAttribute("g");
+		m_TicksColor.z = pTicksColor->FloatAttribute("b");
+		m_TicksColor.w = pTicksColor->FloatAttribute("a");
+	}
+
 	return true;
 }
 

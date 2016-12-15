@@ -152,6 +152,24 @@ Pass::Pass(ID3D11Device1* pDevice, ID3DX11EffectPass* pD3DX11EffectPass)
 	}
 }
 
+void Pass::CreateVertexBuffer(const void* pVertexData, uint32_t size, ID3D11Buffer** ppVertexBuffer) const
+{
+	D3D11_BUFFER_DESC vertexBufferDesc;
+	ZeroMemory(&vertexBufferDesc, sizeof(vertexBufferDesc));
+	vertexBufferDesc.ByteWidth = size;
+	vertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+
+	D3D11_SUBRESOURCE_DATA vertexSubResourceData;
+	ZeroMemory(&vertexSubResourceData, sizeof(vertexSubResourceData));
+	vertexSubResourceData.pSysMem = pVertexData;
+
+	if (FAILED(p_Device->CreateBuffer(&vertexBufferDesc, &vertexSubResourceData, ppVertexBuffer)))
+	{
+		DEBUG_ERROR("ID3D11Device::CreateBuffer() failed.");
+	}
+}
+
 void Pass::CreateVertexBuffer(const Mesh* mesh, ID3D11Buffer** ppVertexBuffer) const
 {
 	std::vector<Vector3> vertices = mesh->GetVertices();

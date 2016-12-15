@@ -218,8 +218,7 @@ GridNode::GridNode(ActorId actorId, WeakBaseRenderComponentPtr renderComponent)
 	m_pEffect(nullptr),
 	m_pCurrentPass(nullptr),
 	m_pVertexBuffer(nullptr),
-	m_pIndexBuffer(nullptr),
-	m_IndexCount(0),
+	m_VertexCount(0),
 	m_TicksInterval(0.4),
 	m_GridSize(20),
 	m_MajorTickUnit(10)
@@ -241,12 +240,13 @@ GridNode::GridNode(ActorId actorId, WeakBaseRenderComponentPtr renderComponent)
 			m_pEffect = extra->GetEffect();
 		}
 	}
+
+	InitGridVertex();
 }
 
 GridNode::~GridNode()
 {
 	SAFE_RELEASE(m_pVertexBuffer);
-	SAFE_RELEASE(m_pIndexBuffer);
 }
 
 void GridNode::InitGridVertex()
@@ -262,12 +262,42 @@ void GridNode::InitGridVertex()
 		DEBUG_ERROR(std::string("technique is not exist: ") + "p0");
 	}
 
-// 	std::vector<Vector3> vertices;
-// 	vertices.reserve(m_GridSize / m_TicksInterval * 2 + 1);
-// 	Mesh* mesh = model->GetMeshes().at(0);
-// 	m_pCurrentPass->CreateVertexBuffer(mesh, &m_pVertexBuffer);
-// 	m_pCurrentPass->CreateIndexBuffer(mesh, &m_pIndexBuffer);
-// 	m_IndexCount = mesh->GetIndices().size();
+	uint32_t ticksCount = m_GridSize / m_TicksInterval;
+	m_VertexCount = (ticksCount * 2 + 1) * 4;
+	std::vector<VertexPositionColor> vertices;
+	vertices.reserve(m_VertexCount);
+
+	// X-Axes line
+	vertices.push_back(VertexPositionColor(Vector4(-m_GridSize, 0, 0, 1.0f), m_AxesColor));
+	vertices.push_back(VertexPositionColor(Vector4(m_GridSize, 0, 0, 1.0f), m_AxesColor));
+	
+	// Y-Axes line
+	vertices.push_back(VertexPositionColor(Vector4(0, 0, -m_GridSize, 1.0f), m_AxesColor));
+	vertices.push_back(VertexPositionColor(Vector4(0, 0, m_GridSize, 1.0f), m_AxesColor));
+
+	for (uint32_t i = 1; i <= ticksCount; i++)
+	{
+		Color color = m_TicksColor;
+		if (0 == (i % 10))
+		{
+			color = m_MajorTicksColor;
+		}
+
+		// Vertical line
+		vertices.push_back(VertexPositionColor(Vector4(-m_TicksInterval * i, 0, -m_GridSize, 1.0f), color));
+		vertices.push_back(VertexPositionColor(Vector4(-m_TicksInterval * i, 0, m_GridSize, 1.0f), color));
+		vertices.push_back(VertexPositionColor(Vector4(m_TicksInterval * i, 0, -m_GridSize, 1.0f), color));
+		vertices.push_back(VertexPositionColor(Vector4(m_TicksInterval * i, 0, m_GridSize, 1.0f), color));
+
+		// Horizontal line
+		vertices.push_back(VertexPositionColor(Vector4(-m_GridSize, 0, m_TicksInterval * i, 1.0f), color));
+		vertices.push_back(VertexPositionColor(Vector4(m_GridSize, 0, m_TicksInterval * i, 1.0f), color));
+		vertices.push_back(VertexPositionColor(Vector4(-m_GridSize, 0, -m_TicksInterval * i, 1.0f), color));
+		vertices.push_back(VertexPositionColor(Vector4(m_GridSize, 0, -m_TicksInterval * i, 1.0f), color));
+	}
+
+	uint32_t size = vertices.size() * sizeof(VertexPositionColor);
+	m_pCurrentPass->CreateVertexBuffer(&vertices.front(), size, &m_pVertexBuffer);
 }
 
 HRESULT GridNode::VOnInitSceneNode(Scene* pScene)
@@ -282,6 +312,23 @@ HRESULT GridNode::VOnDeleteSceneNode(Scene *pScene)
 
 HRESULT GridNode::VRender(Scene* pScene, const GameTime& gameTime)
 {
+	const std::vector<Variable*>& variables = m_pEffect->GetVariables();
+	for (auto variable : m_pEffect->GetVariables())
+	{
+		if (variable->GetVariableSemantic() == "worldviewprojection")
+		{
+			if (variable->GetVariableType() == "float4x4")
+			{
+				const XMMATRIX& wvp = pScene->GetCamera()->GetWorldViewProjection(pScene);
+				variable->SetMatrix(wvp);
+			}
+		}
+	}
+
+	g_pApp->GetRendererAPI()->VInputSetup(D3D11_PRIMITIVE_TOPOLOGY_LINELIST, m_pCurrentPass->GetInputLayout());
+	g_pApp->GetRendererAPI()->VDrawMeshe(
+		m_pCurrentPass->GetVertexSize(), m_pVertexBuffer, m_VertexCount, nullptr, 0, m_pCurrentPass->GetEffectPass());
+
 	return S_OK;
 }
 
@@ -429,7 +476,7 @@ HRESULT ModelNode::VRender(Scene* pScene, const GameTime& gameTime)
 		}
 
 		g_pApp->GetRendererAPI()->VDrawMeshe(
-			m_pCurrentPass->GetVertexSize(), m_pVertexBuffers[i], m_pIndexBuffers[i], m_IndexCounts[i], m_pCurrentPass->GetEffectPass());
+			m_pCurrentPass->GetVertexSize(), m_pVertexBuffers[i], 0, m_pIndexBuffers[i], m_IndexCounts[i], m_pCurrentPass->GetEffectPass());
 	}
 
 	return S_OK;
@@ -542,7 +589,7 @@ HRESULT SkyboxNode::VRender(Scene* pScene, const GameTime& gameTime)
 
 	g_pApp->GetRendererAPI()->VInputSetup(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, m_pCurrentPass->GetInputLayout());
 	g_pApp->GetRendererAPI()->VDrawMeshe(
-		m_pCurrentPass->GetVertexSize(), m_pVertexBuffer, m_pIndexBuffer, m_IndexCount, m_pCurrentPass->GetEffectPass());
+		m_pCurrentPass->GetVertexSize(), m_pVertexBuffer, 0, m_pIndexBuffer, m_IndexCount, m_pCurrentPass->GetEffectPass());
 
 	return S_OK;
 }

@@ -364,14 +364,14 @@ bool BaseGameLogic::CreateDefaultProject(const std::string& project, const std::
 	pGrid->InsertFirstChild(pComponent);
 
 	tinyxml2::XMLElement* pMajorTicks = outDoc.NewElement("MajorTicksColor");
-	pMajorTicks->SetAttribute("r", 0.25f);
-	pMajorTicks->SetAttribute("g", 0.25f);
-	pMajorTicks->SetAttribute("b", 0.25f);
+	pMajorTicks->SetAttribute("r", 0.961f);
+	pMajorTicks->SetAttribute("g", 0.871f);
+	pMajorTicks->SetAttribute("b", 0.702f);
 	pMajorTicks->SetAttribute("a", 1.0f);
 	tinyxml2::XMLElement* pTicks = outDoc.NewElement("TicksColor");
-	pTicks->SetAttribute("r", 0.425f);
-	pTicks->SetAttribute("g", 0.425f);
-	pTicks->SetAttribute("b", 0.425f);
+	pTicks->SetAttribute("r", 0.25f);
+	pTicks->SetAttribute("g", 0.25f);
+	pTicks->SetAttribute("b", 0.25f);
 	pTicks->SetAttribute("a", 1.0f);
 	pComponent->InsertFirstChild(pMajorTicks);
 	pComponent->InsertEndChild(pTicks);

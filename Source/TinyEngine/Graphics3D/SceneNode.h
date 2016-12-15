@@ -126,7 +126,7 @@ private:
 	Color m_AxesColor;
 	float m_TicksInterval;
 	float m_GridSize;
-	float m_MajorTickUnit;
+	uint32_t m_MajorTickUnit;
 };
 
 class ModelNode : public SceneNode

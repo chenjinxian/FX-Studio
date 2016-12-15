@@ -1,12 +1,10 @@
-#include "MovementController.h"
-#include "SceneNode.h"
-#include "../AppFramework/BaseGameApp.h"
+#include "stdafx.h"
+#include "ModelController.h"
 
-MovementController::MovementController(
-	shared_ptr<SceneNode> pOjbect, float initialYaw, float initialPitch, bool rotateWithLButtonDown)
+ModelController::ModelController(shared_ptr<SceneNode> pOjbect, float initialYaw, float initialPitch, bool rotateWithLButtonDown)
 	: m_pObject(pOjbect),
-	m_Yaw(XMConvertToRadians(-initialYaw)),
-	m_Pitch(XMConvertToRadians(initialPitch)),
+	m_Yaw(-initialYaw),
+	m_Pitch(initialPitch),
 	m_TargetYaw(m_Yaw),
 	m_TargetPitch(m_Pitch),
 	m_CurrentSpeed(0.0f),
@@ -18,11 +16,11 @@ MovementController::MovementController(
 	GetCursorPos(&ptCursor);
 	m_LastMousePos.x = static_cast<float>(ptCursor.x);
 	m_LastMousePos.y = static_cast<float>(ptCursor.y);
-	
+
 	memset(m_Keys, 0x00, sizeof(m_Keys));
 }
 
-void MovementController::OnUpdate(const GameTime& gameTime)
+void ModelController::OnUpdate(const GameTime& gameTime)
 {
 	bool isTranslating = false;
 	Vector3 forward = Vector3::Zero;
@@ -86,7 +84,7 @@ void MovementController::OnUpdate(const GameTime& gameTime)
 	}
 }
 
-bool MovementController::VOnPointerButtonDown(const Vector2 &pos, int radius, const std::string &buttonName)
+bool ModelController::VOnPointerButtonDown(const Vector2 &pos, int radius, const std::string &buttonName)
 {
 	if (buttonName == "PointerLeft")
 	{
@@ -97,7 +95,7 @@ bool MovementController::VOnPointerButtonDown(const Vector2 &pos, int radius, co
 	return false;
 }
 
-bool MovementController::VOnPointerButtonUp(const Vector2 &pos, int radius, const std::string &buttonName)
+bool ModelController::VOnPointerButtonUp(const Vector2 &pos, int radius, const std::string &buttonName)
 {
 	if (buttonName == "PointerLeft")
 	{
@@ -107,7 +105,7 @@ bool MovementController::VOnPointerButtonUp(const Vector2 &pos, int radius, cons
 	return false;
 }
 
-bool MovementController::VOnPointerMove(const Vector2 &pos, int radius)
+bool ModelController::VOnPointerMove(const Vector2 &pos, int radius)
 {
 	if (m_IsRotateWithLButtonDown)
 	{
@@ -131,3 +129,9 @@ bool MovementController::VOnPointerMove(const Vector2 &pos, int radius)
 
 	return true;
 }
+
+bool ModelController::VOnPointerWheel(int16_t delta)
+{
+	return true;
+}
+

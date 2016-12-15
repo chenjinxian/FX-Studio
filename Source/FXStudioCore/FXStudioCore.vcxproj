@@ -170,6 +170,7 @@
     <ClInclude Include="FXStudioApp.h" />
     <ClInclude Include="FXStudioCore.h" />
     <ClInclude Include="FXStudioView.h" />
+    <ClInclude Include="ModelController.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
@@ -191,6 +192,7 @@
     <ClCompile Include="FXStudioApp.cpp" />
     <ClCompile Include="FXStudioCore.cpp" />
     <ClCompile Include="FXStudioView.cpp" />
+    <ClCompile Include="ModelController.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

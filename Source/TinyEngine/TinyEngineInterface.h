@@ -117,6 +117,7 @@ class IPointerHandler
 {
 public:
 	virtual bool VOnPointerMove(const Vector2 &pos, int radius) = 0;
+	virtual bool VOnPointerWheel(int16_t delta) = 0;
 	virtual bool VOnPointerButtonDown(const Vector2 &pos, int radius, const std::string &buttonName) = 0;
 	virtual bool VOnPointerButtonUp(const Vector2 &pos, int radius, const std::string &buttonName) = 0;
 };

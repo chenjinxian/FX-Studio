@@ -1,13 +1,12 @@
 #pragma once
-#include "../TinyEngineBase.h"
-#include "../TinyEngineInterface.h"
+#include "../TinyEngine/TinyEngine.h"
 
 class SceneNode;
 
-class MovementController : public IPointerHandler, public IKeyboardHandler
+class ModelController : public IPointerHandler, public IKeyboardHandler
 {
 public:
-	MovementController(shared_ptr<SceneNode> pOjbect, float initialYaw, float initialPitch, bool rotateWithLButtonDown);
+	ModelController(shared_ptr<SceneNode> pOjbect, float initialYaw, float initialPitch, bool rotateWithLButtonDown);
 
 	void SetObject(shared_ptr<SceneNode> newObject) { m_pObject = newObject; }
 	void OnUpdate(const GameTime& gameTime);
@@ -15,10 +14,10 @@ public:
 	virtual bool VOnPointerButtonDown(const Vector2 &pos, int radius, const std::string &buttonName) override;
 	virtual bool VOnPointerButtonUp(const Vector2 &pos, int radius, const std::string &buttonName) override;
 	virtual bool VOnPointerMove(const Vector2 &pos, int radius) override;
-	virtual bool VOnPointerWheel(int16_t delta) override { return true; }
+	virtual bool VOnPointerWheel(int16_t delta) override;
 
-	bool VOnKeyDown(uint8_t c) { m_Keys[c] = true; return true; }
-	bool VOnKeyUp(uint8_t c) { m_Keys[c] = false; return true; }
+	virtual bool VOnKeyDown(uint8_t c) override { m_Keys[c] = true; return true; }
+	virtual bool VOnKeyUp(uint8_t c) override { m_Keys[c] = false; return true; }
 
 protected:
 	shared_ptr<SceneNode> m_pObject;

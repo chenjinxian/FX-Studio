@@ -67,18 +67,41 @@ std::string BaseGameLogic::GetActorXml(ActorId id)
 
 bool BaseGameLogic::VLoadGame(const std::string& projectFile)
 {
-	if (!LoadProject(projectFile))
+	unique_ptr<tinyxml2::XMLDocument> pDoc = unique_ptr<tinyxml2::XMLDocument>(DEBUG_NEW tinyxml2::XMLDocument());
+	if (pDoc == nullptr || (pDoc->LoadFile(projectFile.c_str()) != tinyxml2::XML_SUCCESS))
+	{
+		DEBUG_ERROR("Failed to find level resource file: " + projectFile);
+		return false;
+	}
+
+	tinyxml2::XMLElement *pRoot = pDoc->RootElement();
+	if (pRoot == nullptr)
 	{
 		return false;
 	}
 
-	for (auto& gameView : m_GameViews)
+	tinyxml2::XMLElement* pAsset = pRoot->FirstChildElement("AssetFile");
+	if (pAsset != nullptr)
 	{
-		if (gameView->VGetType() == GameView_Human)
+		std::string assetFile = Utility::GetDirectory(projectFile) + "\\" + pAsset->GetText();
+		LoadAssets(assetFile);
+	}
+
+	tinyxml2::XMLElement* pSceneService = pRoot->FirstChildElement("SceneService");
+	if (pSceneService != nullptr)
+	{
+		tinyxml2::XMLElement* pCamera = pSceneService->FirstChildElement("Camera");
+		for (auto& gameView : m_GameViews)
 		{
-			shared_ptr<HumanView> pHumanView = static_pointer_cast<HumanView, IGameView>(gameView);
-			pHumanView->LoadGame();
+			if (gameView->VGetType() == GameView_Human)
+			{
+				shared_ptr<HumanView> pHumanView = static_pointer_cast<HumanView, IGameView>(gameView);
+				pHumanView->LoadGame(pCamera);
+			}
 		}
+
+		tinyxml2::XMLElement* pGrid = pSceneService->FirstChildElement("Grid");
+		VCreateActor(pGrid);
 	}
 
 	if (!VLoadGameDelegate())
@@ -447,39 +470,6 @@ bool BaseGameLogic::CreateDefaultAsset(const std::string& asset)
 	return Utility::WriteFileData(asset, printer.CStr(), printer.CStrSize() - 1);
 }
 
-bool BaseGameLogic::LoadProject(const std::string& project)
-{
-	unique_ptr<tinyxml2::XMLDocument> pDoc = unique_ptr<tinyxml2::XMLDocument>(DEBUG_NEW tinyxml2::XMLDocument());
-	if (pDoc == nullptr || (pDoc->LoadFile(project.c_str()) != tinyxml2::XML_SUCCESS))
-	{
-		DEBUG_ERROR("Failed to find level resource file: " + project);
-		return false;
-	}
-
-	tinyxml2::XMLElement *pRoot = pDoc->RootElement();
-	if (pRoot == nullptr)
-	{
-		return false;
-	}
-
-	tinyxml2::XMLElement* pAsset = pRoot->FirstChildElement("AssetFile");
-	if (pAsset != nullptr)
-	{
-		std::string assetFile = Utility::GetDirectory(project) + "\\" + pAsset->GetText();
-		LoadAssets(assetFile);
-	}
-
-	tinyxml2::XMLElement* pSceneService = pRoot->FirstChildElement("SceneService");
-	if (pSceneService != nullptr)
-	{
-		tinyxml2::XMLElement* pCamera = pSceneService->FirstChildElement("Camera");
-		tinyxml2::XMLElement* pGrid = pSceneService->FirstChildElement("Grid");
-		VCreateActor(pGrid);
-	}
-
-	return true;
-}
-
 bool BaseGameLogic::LoadAssets(const std::string& asset)
 {
 	unique_ptr<tinyxml2::XMLDocument> pDoc = unique_ptr<tinyxml2::XMLDocument>(DEBUG_NEW tinyxml2::XMLDocument());
@@ -509,4 +499,6 @@ bool BaseGameLogic::LoadAssets(const std::string& asset)
 			VCreateActor(pNode);
 		}
 	}
+
+	return true;
 }

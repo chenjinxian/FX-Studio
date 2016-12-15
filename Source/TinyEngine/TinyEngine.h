@@ -5,3 +5,5 @@
 #include "AppFramework/BaseGameLogic.h"
 #include "UserInterface/HumanView.h"
 #include "EventManager/Events.h"
+#include "Graphics3D/SceneNode.h"
+#include "Graphics3D/CameraNode.h"

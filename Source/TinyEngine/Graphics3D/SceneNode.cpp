@@ -219,8 +219,8 @@ GridNode::GridNode(ActorId actorId, WeakBaseRenderComponentPtr renderComponent)
 	m_pCurrentPass(nullptr),
 	m_pVertexBuffer(nullptr),
 	m_VertexCount(0),
-	m_TicksInterval(0.4),
-	m_GridSize(20),
+	m_TicksInterval(0.4f),
+	m_GridSize(20.0f),
 	m_MajorTickUnit(10)
 {
 	GridRenderComponent* pGridRender = static_cast<GridRenderComponent*>(m_pRenderComponent);

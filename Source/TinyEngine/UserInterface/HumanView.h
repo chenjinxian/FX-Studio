@@ -32,7 +32,7 @@ public:
 	virtual void VSetCameraOffset(const Vector4& camOffset);
 	virtual void VSetControlledActor(ActorId actorId) { m_ActorId = actorId; }
 
-	bool LoadGame();
+	bool LoadGame(tinyxml2::XMLElement* pCameraNode);
 	void TogglePause(bool active);
 	bool InitAudio();
 	void PlaySoundDelegate(IEventDataPtr pEventData);
@@ -42,13 +42,13 @@ public:
 	int m_PointerRadius;
 	shared_ptr<IPointerHandler> m_pPointerHandler;
 	shared_ptr<IKeyboardHandler> m_pKeyboardHandler;
-	shared_ptr<MovementController> m_pFreeCameraController;
+	shared_ptr<MovementController> m_pMovementController;
 	shared_ptr<ScreenElementScene> m_pScene;
 	shared_ptr<CameraNode> m_pCamera;
 
 protected:
 	virtual void VRenderText(const GameTime& gameTime) { };
-	virtual bool VLoadGameDelegate() { VPushElement(m_pScene);  return true; }
+	virtual bool VLoadGameDelegate(tinyxml2::XMLElement* pCameraNode) { VPushElement(m_pScene);  return true; }
 
 	GameViewId m_ViewId;
 	ActorId m_ActorId;

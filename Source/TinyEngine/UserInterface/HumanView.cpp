@@ -32,7 +32,7 @@ HumanView::HumanView(shared_ptr<IRenderer> renderer)
 
 	m_pPointerHandler = nullptr;
 	m_pKeyboardHandler = nullptr;
-	m_pFreeCameraController = nullptr;
+	m_pMovementController = nullptr;
 }
 
 
@@ -46,12 +46,12 @@ HumanView::~HumanView()
 	}
 }
 
-bool HumanView::LoadGame()
+bool HumanView::LoadGame(tinyxml2::XMLElement* pCameraNode)
 {
-	m_pFreeCameraController.reset(DEBUG_NEW MovementController(m_pCamera, 0, 0, true));
-	m_pPointerHandler = m_pFreeCameraController;
-	m_pKeyboardHandler = m_pFreeCameraController;
-	return VLoadGameDelegate();
+	m_pMovementController.reset(DEBUG_NEW MovementController(m_pCamera, 0, 0, true));
+	m_pPointerHandler = m_pMovementController;
+	m_pKeyboardHandler = m_pMovementController;
+	return VLoadGameDelegate(pCameraNode);
 }
 
 void HumanView::VOnRender(const GameTime& gameTime)
@@ -125,7 +125,7 @@ LRESULT CALLBACK HumanView::VOnMsgProc(AppMsg msg)
 	case WM_KEYDOWN:
 		if (m_pKeyboardHandler)
 		{
-			result = m_pKeyboardHandler->VOnKeyDown(static_cast<uint8_t>(msg.m_wParam));
+			result = m_pKeyboardHandler->VOnKeyDown(GET_KEYSTATE_WPARAM(msg.m_wParam));
 		}
 		break;
 
@@ -137,6 +137,13 @@ LRESULT CALLBACK HumanView::VOnMsgProc(AppMsg msg)
 	case WM_MOUSEMOVE:
 		if (m_pPointerHandler)
 			result = m_pPointerHandler->VOnPointerMove(Vector2(LOWORD(msg.m_lParam), HIWORD(msg.m_lParam)), 1);
+		break;
+
+	case WM_MOUSEWHEEL:
+		if (m_pPointerHandler)
+		{
+			result = m_pPointerHandler->VOnPointerWheel(GET_WHEEL_DELTA_WPARAM(msg.m_wParam));
+		}
 		break;
 
 	case WM_LBUTTONDOWN:
@@ -185,10 +192,10 @@ void HumanView::VOnUpdate(const GameTime& gameTime)
 		(*i)->VOnUpdate(gameTime);
 	}
 
-	if (m_pFreeCameraController)
-	{
-		m_pFreeCameraController->OnUpdate(gameTime);
-	}
+// 	if (m_pMovementController != nullptr)
+// 	{
+// 		m_pMovementController->OnUpdate(gameTime);
+// 	}
 }
 
 void HumanView::VPushElement(shared_ptr<IScreenElement> pElement)

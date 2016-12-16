@@ -54,7 +54,7 @@ bool FXStudioView::VLoadGameDelegate(tinyxml2::XMLElement* pCameraNode)
 		}
 	}
 
-	m_pModelController.reset(DEBUG_NEW ModelController(m_pCamera, yaw, 90.0f, true));
+	m_pModelController.reset(DEBUG_NEW ModelController(m_pCamera, position, yaw, pitch));
 	m_pCamera->ClearTarget();
 
 	m_pPointerHandler = m_pModelController;

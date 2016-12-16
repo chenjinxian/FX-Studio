@@ -204,7 +204,7 @@ bool BaseGameApp::InitRenderer()
 	{
 		if (m_pRenderer->VInitRenderer(m_hWindow))
 		{
-			m_pRenderer->VSetBackgroundColor(Color(0.392156899f, 0.584313750f, 0.929411829f, 1.000000000f));
+			m_pRenderer->VSetBackgroundColor(Color(0.1f, 0.1f, 0.1f, 1.0f));
 
 			if (m_pGameLogic == nullptr)
 			{

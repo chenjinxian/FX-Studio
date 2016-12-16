@@ -6,7 +6,7 @@ class SceneNode;
 class ModelController : public IPointerHandler, public IKeyboardHandler
 {
 public:
-	ModelController(shared_ptr<SceneNode> pOjbect, float initialYaw, float initialPitch, bool rotateWithLButtonDown);
+	ModelController(shared_ptr<SceneNode> pOjbect, const Vector3& initialPostition, float initialYaw, float initialPitch);
 
 	void SetObject(shared_ptr<SceneNode> newObject) { m_pObject = newObject; }
 	void OnUpdate(const GameTime& gameTime);
@@ -22,15 +22,14 @@ public:
 protected:
 	shared_ptr<SceneNode> m_pObject;
 
+	Vector3 m_Position;
 	float m_Yaw;
 	float m_Pitch;
 	float m_TargetYaw;
 	float m_TargetPitch;
-	float m_MaxSpeed;
-	float m_CurrentSpeed;
+	float m_Delta;
 
 	bool m_IsLButtonDown;
-	bool m_IsRotateWithLButtonDown;
 	Vector2 m_LastMousePos;
 	bool m_Keys[256];
 };

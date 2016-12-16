@@ -22,7 +22,7 @@ HumanView::HumanView(shared_ptr<IRenderer> renderer)
 		m_pScene.reset(DEBUG_NEW ScreenElementScene(renderer));
 
 		Frustum frustum;
-		frustum.Init(XM_PIDIV4, 1.0f, 0.1f, 1000.0f);
+		frustum.Init(XM_PIDIV4, 1.0f, 0.1f, 5000.0f);
 		m_pCamera.reset(DEBUG_NEW CameraNode(frustum));
 		DEBUG_ASSERT(m_pScene && m_pCamera && _T("Out of memory"));
 

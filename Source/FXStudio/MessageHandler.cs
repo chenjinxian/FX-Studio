@@ -20,7 +20,7 @@ namespace FXStudio
         const int WM_MBUTTONDBLCLK = 0x0209;
 
         const int WM_MOUSEMOVE = 0x0200;
-        const int WM_MOUSEHWHEEL = 0x020E;
+        const int WM_MOUSEHWHEEL = 0x020A;
 
         const int WM_CHAR = 0x0102;
         const int WM_KEYDOWN = 0x0100;

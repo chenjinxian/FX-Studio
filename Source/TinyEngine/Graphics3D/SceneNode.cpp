@@ -219,8 +219,8 @@ GridNode::GridNode(ActorId actorId, WeakBaseRenderComponentPtr renderComponent)
 	m_pCurrentPass(nullptr),
 	m_pVertexBuffer(nullptr),
 	m_VertexCount(0),
-	m_TicksInterval(0.4f),
-	m_GridSize(20.0f),
+	m_TicksInterval(10.0f),
+	m_GridSize(500.0f),
 	m_MajorTickUnit(10)
 {
 	GridRenderComponent* pGridRender = static_cast<GridRenderComponent*>(m_pRenderComponent);
@@ -268,12 +268,12 @@ void GridNode::InitGridVertex()
 	vertices.reserve(m_VertexCount);
 
 	// X-Axes line
-	vertices.push_back(VertexPositionColor(Vector4(-m_GridSize, 0, 0, 1.0f), m_AxesColor));
-	vertices.push_back(VertexPositionColor(Vector4(m_GridSize, 0, 0, 1.0f), m_AxesColor));
+	vertices.push_back(VertexPositionColor(Vector4(-m_GridSize, 0, 0, 1.0f), Color(1.0f, 0.0f, 0.0f)));
+	vertices.push_back(VertexPositionColor(Vector4(m_GridSize, 0, 0, 1.0f), Color(1.0f, 0.0f, 0.0f)));
 	
-	// Y-Axes line
-	vertices.push_back(VertexPositionColor(Vector4(0, 0, -m_GridSize, 1.0f), m_AxesColor));
-	vertices.push_back(VertexPositionColor(Vector4(0, 0, m_GridSize, 1.0f), m_AxesColor));
+	// Z-Axes line
+	vertices.push_back(VertexPositionColor(Vector4(0, 0, -m_GridSize, 1.0f), Color(0.0f, 0.0f, 1.0f)));
+	vertices.push_back(VertexPositionColor(Vector4(0, 0, m_GridSize, 1.0f), Color(0.0f, 0.0f, 1.0f)));
 
 	for (uint32_t i = 1; i <= ticksCount; i++)
 	{
@@ -489,7 +489,7 @@ SkyboxNode::SkyboxNode(ActorId actorId, WeakBaseRenderComponentPtr renderCompone
 	m_pVertexBuffer(nullptr),
 	m_pIndexBuffer(nullptr),
 	m_IndexCount(0),
-	m_ScaleMatrix(Matrix::CreateScale(100.0f))
+	m_ScaleMatrix(Matrix::CreateScale(500.0f))
 {
 	SkyboxRenderComponent* pSkyboxRender = static_cast<SkyboxRenderComponent*>(m_pRenderComponent);
 	if (pSkyboxRender != nullptr)

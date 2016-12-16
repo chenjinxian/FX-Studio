@@ -374,7 +374,7 @@ bool BaseGameLogic::CreateDefaultProject(const std::string& project, const std::
 	tinyxml2::XMLElement* pTranslation = outDoc.NewElement("Translation");
 	pTranslation->SetAttribute("x", 0.0f);
 	pTranslation->SetAttribute("y", 0.0f);
-	pTranslation->SetAttribute("z", 0.0f);
+	pTranslation->SetAttribute("z", 50.0f);
 	tinyxml2::XMLElement* pRotation = outDoc.NewElement("Rotation");
 	pRotation->SetAttribute("x", 0.0f);
 	pRotation->SetAttribute("y", 0.0f);
@@ -387,14 +387,14 @@ bool BaseGameLogic::CreateDefaultProject(const std::string& project, const std::
 	pGrid->InsertFirstChild(pComponent);
 
 	tinyxml2::XMLElement* pMajorTicks = outDoc.NewElement("MajorTicksColor");
-	pMajorTicks->SetAttribute("r", 0.961f);
-	pMajorTicks->SetAttribute("g", 0.871f);
-	pMajorTicks->SetAttribute("b", 0.702f);
+	pMajorTicks->SetAttribute("r", 0.2f);
+	pMajorTicks->SetAttribute("g", 0.2f);
+	pMajorTicks->SetAttribute("b", 0.2f);
 	pMajorTicks->SetAttribute("a", 1.0f);
 	tinyxml2::XMLElement* pTicks = outDoc.NewElement("TicksColor");
-	pTicks->SetAttribute("r", 0.25f);
-	pTicks->SetAttribute("g", 0.25f);
-	pTicks->SetAttribute("b", 0.25f);
+	pTicks->SetAttribute("r", 0.345f);
+	pTicks->SetAttribute("g", 0.345f);
+	pTicks->SetAttribute("b", 0.345f);
 	pTicks->SetAttribute("a", 1.0f);
 	pComponent->InsertFirstChild(pMajorTicks);
 	pComponent->InsertEndChild(pTicks);

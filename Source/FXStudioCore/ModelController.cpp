@@ -29,7 +29,7 @@ void ModelController::OnUpdate(const GameTime& gameTime)
 	Matrix rotation = Matrix::CreateFromYawPitchRoll(radiansYaw, radiansPitch, 0.0f);
 	rotation.Translation(Vector3::TransformNormal(m_Position, rotation));
 
-	float speed = m_Delta * gameTime.GetElapsedTime() * 5.0f;
+	float speed = m_Delta * 0.1f;
 	m_Position += Vector3::Forward * speed;
 	m_Delta = 0;
 

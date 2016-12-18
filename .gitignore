@@ -258,3 +258,5 @@ paket-files/
 Bin/FXStudioCored.lib
 Bin/FXStudioCored.dll
 *.exp
+*.config
+*.exp

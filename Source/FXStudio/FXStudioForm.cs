@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
+using System.Configuration;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace FXStudio
@@ -194,10 +195,27 @@ namespace FXStudio
 
         private void FXStudioForm_Shown(object sender, EventArgs e)
         {
-            StartPageDialog startForm = new StartPageDialog("", m_DefaultLocation);
-            if (startForm.ShowDialog(this) == DialogResult.OK)
+            Configuration appConfig = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+
+            bool isShow = true;
+            if (appConfig.AppSettings.Settings["show"] != null)
             {
-                RenderMethods.OpenProject(startForm.GetProjectPath());
+                isShow = bool.Parse(appConfig.AppSettings.Settings["show"].Value);
+            }
+            else
+            {
+                appConfig.AppSettings.Settings.Add("show", bool.TrueString);
+                appConfig.Save(ConfigurationSaveMode.Modified);
+                isShow = true;
+            }
+
+            if (isShow)
+            {
+                StartPageDialog startForm = new StartPageDialog("", m_DefaultLocation);
+                if (startForm.ShowDialog(this) == DialogResult.OK)
+                {
+                    RenderMethods.OpenProject(startForm.GetProjectPath());
+                }
             }
         }
     }

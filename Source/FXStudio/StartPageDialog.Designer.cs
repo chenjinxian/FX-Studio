@@ -35,7 +35,7 @@
             this.linkLabelNewProject = new System.Windows.Forms.LinkLabel();
             this.groupBoxRecent = new System.Windows.Forms.GroupBox();
             this.groupBoxIntroduction = new System.Windows.Forms.GroupBox();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.checkBoxShow = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxStarted)).BeginInit();
             this.groupBoxStart.SuspendLayout();
             this.SuspendLayout();
@@ -118,18 +118,19 @@
             this.groupBoxIntroduction.TabStop = false;
             this.groupBoxIntroduction.Text = "Introduction";
             // 
-            // checkBox1
+            // checkBoxShow
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Checked = true;
-            this.checkBox1.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox1.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.checkBox1.Location = new System.Drawing.Point(12, 326);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(156, 21);
-            this.checkBox1.TabIndex = 7;
-            this.checkBox1.Text = "Show page on startup";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkBoxShow.AutoSize = true;
+            this.checkBoxShow.Checked = true;
+            this.checkBoxShow.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxShow.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.checkBoxShow.Location = new System.Drawing.Point(12, 326);
+            this.checkBoxShow.Name = "checkBoxShow";
+            this.checkBoxShow.Size = new System.Drawing.Size(156, 21);
+            this.checkBoxShow.TabIndex = 7;
+            this.checkBoxShow.Text = "Show page on startup";
+            this.checkBoxShow.UseVisualStyleBackColor = true;
+            this.checkBoxShow.CheckedChanged += new System.EventHandler(this.checkBoxShow_CheckedChanged);
             // 
             // StartPageDialog
             // 
@@ -137,7 +138,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Window;
             this.ClientSize = new System.Drawing.Size(695, 354);
-            this.Controls.Add(this.checkBox1);
+            this.Controls.Add(this.checkBoxShow);
             this.Controls.Add(this.groupBoxIntroduction);
             this.Controls.Add(this.groupBoxRecent);
             this.Controls.Add(this.groupBoxStart);
@@ -168,6 +169,6 @@
         private System.Windows.Forms.LinkLabel linkLabelNewProject;
         private System.Windows.Forms.GroupBox groupBoxRecent;
         private System.Windows.Forms.GroupBox groupBoxIntroduction;
-        private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.CheckBox checkBoxShow;
     }
 }

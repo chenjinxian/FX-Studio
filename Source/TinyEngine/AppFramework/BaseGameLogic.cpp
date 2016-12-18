@@ -392,9 +392,9 @@ bool BaseGameLogic::CreateDefaultProject(const std::string& project, const std::
 	pMajorTicks->SetAttribute("b", 0.2f);
 	pMajorTicks->SetAttribute("a", 1.0f);
 	tinyxml2::XMLElement* pTicks = outDoc.NewElement("TicksColor");
-	pTicks->SetAttribute("r", 0.345f);
-	pTicks->SetAttribute("g", 0.345f);
-	pTicks->SetAttribute("b", 0.345f);
+	pTicks->SetAttribute("r", 0.961f);
+	pTicks->SetAttribute("g", 0.871f);
+	pTicks->SetAttribute("b", 0.702f);
 	pTicks->SetAttribute("a", 1.0f);
 	pComponent->InsertFirstChild(pMajorTicks);
 	pComponent->InsertEndChild(pTicks);

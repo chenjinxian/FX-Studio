@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
+using System.Configuration;
 
 namespace FXStudio
 {
@@ -75,6 +76,21 @@ namespace FXStudio
                 this.DialogResult = DialogResult.OK;
                 this.Close();
             }
+        }
+
+        private void checkBoxShow_CheckedChanged(object sender, EventArgs e)
+        {
+            Configuration appConfig = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+
+            if (appConfig.AppSettings.Settings["show"] != null)
+            {
+                appConfig.AppSettings.Settings["show"].Value = checkBoxShow.Checked.ToString();
+            }
+            else
+            {
+                appConfig.AppSettings.Settings.Add("show", bool.TrueString);
+            }
+            appConfig.Save(ConfigurationSaveMode.Modified);
         }
     }
 }

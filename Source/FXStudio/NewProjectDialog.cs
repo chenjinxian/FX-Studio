@@ -17,7 +17,15 @@ namespace FXStudio
         {
             InitializeComponent();
 
-            this.textBoxName.Text = "Project1";
+            string newProject = "Project1";
+            int i = 2;
+            while (Directory.Exists(defaultLocation + @"\" + newProject))
+            {
+                newProject = "Project" + i.ToString();
+                i++;
+            }
+            
+            this.textBoxName.Text = newProject;
             this.textBoxLocation.Text = defaultLocation;
         }
 
@@ -45,6 +53,24 @@ namespace FXStudio
             {
                 this.textBoxLocation.Text = dialog.SelectedPath;
             }
+        }
+
+        private void buttonOK_Click(object sender, EventArgs e)
+        {
+            string project = GetProjectLocation() + @"\" + GetProjectName() + @".fxsproj";
+            if (File.Exists(project))
+            {
+                string message = "Selected directory already contains an FX Studio Project\r\n" + project +
+                    "\r\n\r\nClick OK to overwrite the file (Not Recommended)\r\nClick Cancel to choose a different project location";
+                if (DialogResult.Cancel == MessageBox.Show(this.Owner, message, "FX Studio",
+                    MessageBoxButtons.OKCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2))
+                {
+                    return;
+                }
+            }
+
+            this.DialogResult = DialogResult.OK;
+            this.Close();
         }
     }
 }

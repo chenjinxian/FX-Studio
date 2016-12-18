@@ -61,7 +61,7 @@ namespace FXStudio
                 if (m.Msg == WM_LBUTTONDOWN || m.Msg == WM_RBUTTONDOWN || m.Msg == WM_MBUTTONDOWN)
                     CheckFakeFocus();
 
-                if (m.HWnd == m_renderPanel.Handle || (m_fakeFocus && (m.Msg == WM_KEYDOWN || m.Msg == WM_KEYUP)))
+                if (m.HWnd == m_renderPanel.Handle/* || (m_fakeFocus && (m.Msg == WM_KEYDOWN || m.Msg == WM_KEYUP))*/)
                 {
                     switch (m.Msg)
                     {

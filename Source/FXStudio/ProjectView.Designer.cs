@@ -28,23 +28,23 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.treeView1 = new System.Windows.Forms.TreeView();
+            this.treeViewProject = new System.Windows.Forms.TreeView();
             this.SuspendLayout();
             // 
-            // treeView1
+            // treeViewProject
             // 
-            this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.treeView1.Location = new System.Drawing.Point(0, 0);
-            this.treeView1.Name = "treeView1";
-            this.treeView1.Size = new System.Drawing.Size(327, 669);
-            this.treeView1.TabIndex = 0;
+            this.treeViewProject.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.treeViewProject.Location = new System.Drawing.Point(0, 0);
+            this.treeViewProject.Name = "treeViewProject";
+            this.treeViewProject.Size = new System.Drawing.Size(327, 669);
+            this.treeViewProject.TabIndex = 0;
             // 
             // ProjectView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(327, 669);
-            this.Controls.Add(this.treeView1);
+            this.Controls.Add(this.treeViewProject);
             this.Name = "ProjectView";
             this.TabText = "Project";
             this.Text = "ProjectView";
@@ -54,6 +54,6 @@
 
         #endregion
 
-        private System.Windows.Forms.TreeView treeView1;
+        private System.Windows.Forms.TreeView treeViewProject;
     }
 }

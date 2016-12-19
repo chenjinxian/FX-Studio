@@ -30,7 +30,8 @@ namespace FXStudio
         private void RenderView_Resize(object sender, EventArgs e)
         {
             Control control = (Control)sender;
-            RenderMethods.ResizeWnd(control.Width, control.Height);
+            if (control.Width != 0 && control.Height != 0)
+                RenderMethods.ResizeWnd(control.Width, control.Height);
         }
     }
 }

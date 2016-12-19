@@ -105,17 +105,20 @@ namespace FXStudio
 
         public void Application_Idle(object sender, EventArgs e)
         {
-            try
+            if (m_formMain.WindowState != FormWindowState.Minimized)
             {
-                // Render the scene if we are idle
-                if (m_renderPanel.Handle != null)
-                    RenderMethods.RenderFrame();
+                try
+                {
+                    // Render the scene if we are idle
+                    if (m_renderPanel.Handle != null)
+                        RenderMethods.RenderFrame();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+                m_formMain.Invalidate();
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-            m_formMain.Invalidate();
         }
     }
 }

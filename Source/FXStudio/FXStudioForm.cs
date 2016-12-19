@@ -32,13 +32,13 @@ namespace FXStudio
 
         public FXStudioForm()
         {
-            InitializeComponent();
-
             m_DefaultLocation = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\FX Studio\Projects";
             if (!Directory.Exists(m_DefaultLocation))
             {
                 Directory.CreateDirectory(m_DefaultLocation);
             }
+
+            InitializeComponent();
 
             CreateStandardViews();
             m_dockContent = new DeserializeDockContent(GetContentFromString);
@@ -57,6 +57,16 @@ namespace FXStudio
         public string GetDefaultLocation()
         {
             return m_DefaultLocation;
+        }
+
+        private void UpdateProjectTreeView(string project)
+        {
+            m_projectView.UpdateProject(project);
+        }
+
+        private void UpdateAssetsTreeView(string assets)
+        {
+
         }
 
         private void CreateStandardViews()
@@ -183,6 +193,7 @@ namespace FXStudio
             if (dialog.ShowDialog() == DialogResult.OK)
             {
                 RenderMethods.OpenProject(dialog.FileName);
+                UpdateProjectTreeView(dialog.FileName);
             }
         }
 
@@ -213,6 +224,7 @@ namespace FXStudio
                 if (startForm.ShowDialog(this) == DialogResult.OK)
                 {
                     RenderMethods.OpenProject(startForm.GetProjectPath());
+                    UpdateProjectTreeView(startForm.GetProjectPath());
                 }
             }
         }

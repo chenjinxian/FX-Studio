@@ -376,8 +376,8 @@ bool BaseGameLogic::CreateDefaultProject(const std::string& project, const std::
 	pTranslation->SetAttribute("y", 0.0f);
 	pTranslation->SetAttribute("z", 50.0f);
 	tinyxml2::XMLElement* pRotation = outDoc.NewElement("Rotation");
-	pRotation->SetAttribute("x", 0.0f);
-	pRotation->SetAttribute("y", 0.0f);
+	pRotation->SetAttribute("x", 45.0f);
+	pRotation->SetAttribute("y", 45.0f);
 	pRotation->SetAttribute("z", 0.0f);
 	pCamera->InsertFirstChild(pTranslation);
 	pCamera->InsertEndChild(pRotation);

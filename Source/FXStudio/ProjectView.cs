@@ -19,7 +19,7 @@ namespace FXStudio
             InitializeComponent();
         }
 
-        public void UpdateProject(string project)
+        public void UpdateProject(string project, ref string assetFile)
         {
             treeViewProject.Nodes.Clear();
             var rootTree = new TreeNode(Path.GetFileNameWithoutExtension(project)) { Tag = project };
@@ -30,13 +30,9 @@ namespace FXStudio
             XmlNode assetNode = root.SelectSingleNode("AssetFile");
             if (assetNode != null)
             {
-                var assetTreeNode = new TreeNode(Path.GetFileName(assetNode.FirstChild.Value)) { Tag = Path.GetDirectoryName(project) };
+                assetFile = assetNode.FirstChild.Value;
+                var assetTreeNode = new TreeNode(Path.GetFileNameWithoutExtension(assetFile)) { Tag = Path.GetDirectoryName(project) };
                 rootTree.Nodes.Add(assetTreeNode);
-            }
-
-            foreach (XmlNode node in root.ChildNodes)
-            {
-
             }
 
             treeViewProject.Nodes.Add(rootTree);

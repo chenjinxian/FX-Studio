@@ -20,8 +20,8 @@ namespace FXStudio
         private string m_DefaultLocation;
 
         private DeserializeDockContent m_dockContent;
-        private AssetsView m_assetsView;
-        private ProjectView m_projectView;
+        private AssetsView m_AssetsView;
+        private ProjectView m_ProjectView;
         private EditorView m_editorView;
         private RenderView m_renderView;
         private PropertiesView m_propertiesView;
@@ -59,20 +59,19 @@ namespace FXStudio
             return m_DefaultLocation;
         }
 
-        private void UpdateProjectTreeView(string project)
+        private void OpenProject(string project)
         {
-            m_projectView.UpdateProject(project);
-        }
+            RenderMethods.OpenProject(project);
 
-        private void UpdateAssetsTreeView(string assets)
-        {
-
+            string assetFile = "";
+            m_ProjectView.UpdateProject(project, ref assetFile);
+            m_AssetsView.UpdateAssets(Path.GetDirectoryName(project) + @"\" + assetFile);
         }
 
         private void CreateStandardViews()
         {
-            m_assetsView = new AssetsView();
-            m_projectView = new ProjectView();
+            m_AssetsView = new AssetsView();
+            m_ProjectView = new ProjectView();
             m_propertiesView = new PropertiesView();
             m_outputView = new OutputView();
             m_taskView = new TaskListView();
@@ -82,8 +81,8 @@ namespace FXStudio
 
         private void DestoryStandardViews()
         {
-            m_assetsView.DockPanel = null;
-            m_projectView.DockPanel = null;
+            m_AssetsView.DockPanel = null;
+            m_ProjectView.DockPanel = null;
             m_renderView.DockPanel = null;
             m_propertiesView.DockPanel = null;
             m_outputView.DockPanel = null;
@@ -103,11 +102,11 @@ namespace FXStudio
         {
             if (viewString == typeof(AssetsView).ToString())
             {
-                return m_assetsView;
+                return m_AssetsView;
             }
             else if (viewString == typeof(ProjectView).ToString())
             {
-                return m_projectView;
+                return m_ProjectView;
             }
             else if (viewString == typeof(EditorView).ToString())
             {
@@ -150,8 +149,8 @@ namespace FXStudio
             DestoryStandardViews();
             CreateStandardViews();
 
-            m_assetsView.Show(panelAllView, DockState.DockLeft);
-            m_projectView.Show(panelAllView, DockState.DockLeft);
+            m_AssetsView.Show(panelAllView, DockState.DockLeft);
+            m_ProjectView.Show(panelAllView, DockState.DockLeft);
             m_propertiesView.Show(panelAllView, DockState.DockRight);
             m_editorView.Show(panelAllView, DockState.Document);
             m_renderView.Show(panelAllView, DockState.Document);
@@ -192,8 +191,7 @@ namespace FXStudio
 
             if (dialog.ShowDialog() == DialogResult.OK)
             {
-                RenderMethods.OpenProject(dialog.FileName);
-                UpdateProjectTreeView(dialog.FileName);
+                OpenProject(dialog.FileName);
             }
         }
 
@@ -223,8 +221,7 @@ namespace FXStudio
                 StartPageDialog startForm = new StartPageDialog("", m_DefaultLocation);
                 if (startForm.ShowDialog(this) == DialogResult.OK)
                 {
-                    RenderMethods.OpenProject(startForm.GetProjectPath());
-                    UpdateProjectTreeView(startForm.GetProjectPath());
+                    OpenProject(startForm.GetProjectPath());
                 }
             }
         }

@@ -40,14 +40,14 @@
             System.Windows.Forms.TreeNode treeNode10 = new System.Windows.Forms.TreeNode("Scene");
             System.Windows.Forms.TreeNode treeNode11 = new System.Windows.Forms.TreeNode("Deformers");
             System.Windows.Forms.TreeNode treeNode12 = new System.Windows.Forms.TreeNode("Textures");
-            this.treeView1 = new System.Windows.Forms.TreeView();
+            this.treeViewAssets = new System.Windows.Forms.TreeView();
             this.SuspendLayout();
             // 
-            // treeView1
+            // treeViewAssets
             // 
-            this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.treeView1.Location = new System.Drawing.Point(0, 0);
-            this.treeView1.Name = "treeView1";
+            this.treeViewAssets.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.treeViewAssets.Location = new System.Drawing.Point(0, 0);
+            this.treeViewAssets.Name = "treeViewAssets";
             treeNode1.Name = "Animations";
             treeNode1.Text = "Animations";
             treeNode2.Name = "Animation Clips";
@@ -72,7 +72,7 @@
             treeNode11.Text = "Deformers";
             treeNode12.Name = "Textures";
             treeNode12.Text = "Textures";
-            this.treeView1.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
+            this.treeViewAssets.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
             treeNode1,
             treeNode2,
             treeNode3,
@@ -85,15 +85,15 @@
             treeNode10,
             treeNode11,
             treeNode12});
-            this.treeView1.Size = new System.Drawing.Size(355, 706);
-            this.treeView1.TabIndex = 0;
+            this.treeViewAssets.Size = new System.Drawing.Size(355, 706);
+            this.treeViewAssets.TabIndex = 0;
             // 
             // AssetsView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(355, 706);
-            this.Controls.Add(this.treeView1);
+            this.Controls.Add(this.treeViewAssets);
             this.Name = "AssetsView";
             this.TabText = "Assets";
             this.Text = "AssetsView";
@@ -103,6 +103,6 @@
 
         #endregion
 
-        private System.Windows.Forms.TreeView treeView1;
+        private System.Windows.Forms.TreeView treeViewAssets;
     }
 }

@@ -85,23 +85,22 @@ bool BaseGameLogic::VLoadGame(const std::string& projectFile)
 	{
 		std::string assetFile = Utility::GetDirectory(projectFile) + "\\" + pAsset->GetText();
 		LoadAssets(assetFile);
-	}
 
-	tinyxml2::XMLElement* pSceneService = pRoot->FirstChildElement("SceneService");
-	if (pSceneService != nullptr)
-	{
-		tinyxml2::XMLElement* pCamera = pSceneService->FirstChildElement("Camera");
-		for (auto& gameView : m_GameViews)
+		for (tinyxml2::XMLElement* pSceneNode = pAsset->NextSiblingElement(); pSceneNode != nullptr; pSceneNode = pSceneNode->NextSiblingElement())
 		{
-			if (gameView->VGetType() == GameView_Human)
+			tinyxml2::XMLElement* pCamera = pSceneNode->FirstChildElement("Camera");
+			for (auto& gameView : m_GameViews)
 			{
-				shared_ptr<HumanView> pHumanView = static_pointer_cast<HumanView, IGameView>(gameView);
-				pHumanView->LoadGame(pCamera);
+				if (gameView->VGetType() == GameView_Human)
+				{
+					shared_ptr<HumanView> pHumanView = static_pointer_cast<HumanView, IGameView>(gameView);
+					pHumanView->LoadGame(pCamera);
+				}
 			}
-		}
 
-		tinyxml2::XMLElement* pGrid = pSceneService->FirstChildElement("Grid");
-		VCreateActor(pGrid);
+			tinyxml2::XMLElement* pGrid = pSceneNode->FirstChildElement("Grid");
+			VCreateActor(pGrid);
+		}
 	}
 
 	if (!VLoadGameDelegate())
@@ -362,7 +361,7 @@ bool BaseGameLogic::CreateDefaultProject(const std::string& project, const std::
 	pAsset->InsertFirstChild(outDoc.NewText(defautAsset.c_str()));
 	pRoot->InsertFirstChild(pAsset);
 
-	tinyxml2::XMLElement* pScene = outDoc.NewElement("SceneService");
+	tinyxml2::XMLElement* pScene = outDoc.NewElement("DefaultScene");
 	pRoot->InsertEndChild(pScene);
 
 	tinyxml2::XMLElement* pCamera = outDoc.NewElement("Camera");
@@ -432,23 +431,26 @@ bool BaseGameLogic::CreateDefaultAsset(const std::string& asset)
 	pRoot->InsertEndChild(pSkybox);
 	pRoot->InsertEndChild(pTextures);
 
-	tinyxml2::XMLElement* pEffect = outDoc.NewElement("Effect");
-	pEffect->SetAttribute("name", "DefaultEffect");
-	pEffect->InsertFirstChild(outDoc.NewText("Effects\\DefaultEffect.fx"));
-	pEffects->InsertFirstChild(pEffect);
+	tinyxml2::XMLElement* pChildEffect = outDoc.NewElement("Effect");
+	pChildEffect->SetAttribute("name", "DefaultEffect");
+	pChildEffect->InsertFirstChild(outDoc.NewText("Effects\\DefaultEffect.fx"));
+	pEffects->InsertFirstChild(pChildEffect);
 
-	pMaterials->SetAttribute("name", "DefaultMaterial");
-	tinyxml2::XMLElement* pTechnique = outDoc.NewElement("Technique");
-	pTechnique->SetAttribute("name", "main11");
-	tinyxml2::XMLElement* pPass = outDoc.NewElement("Pass");
-	pPass->InsertFirstChild(outDoc.NewText("p0"));
-	pTechnique->InsertFirstChild(pPass);
-	pMaterials->InsertFirstChild(pTechnique);
+	tinyxml2::XMLElement* pChildMaterial = outDoc.NewElement("Material");
+	pMaterials->InsertFirstChild(pChildMaterial);
 
-	tinyxml2::XMLElement* pImage = outDoc.NewElement("Image");
-	pImage->SetAttribute("name", "DefaultColor");
-	pImage->InsertFirstChild(outDoc.NewText("Textures\\DefaultColor.dds"));
-	pTextures->InsertFirstChild(pImage);
+	pChildMaterial->SetAttribute("name", "DefaultMaterial");
+	tinyxml2::XMLElement* pChildTechnique = outDoc.NewElement("Technique");
+	pChildTechnique->SetAttribute("name", "main11");
+	tinyxml2::XMLElement* pChildPass = outDoc.NewElement("Pass");
+	pChildPass->InsertFirstChild(outDoc.NewText("p0"));
+	pChildTechnique->InsertFirstChild(pChildPass);
+	pChildMaterial->InsertFirstChild(pChildTechnique);
+
+	tinyxml2::XMLElement* pChildImage = outDoc.NewElement("Image");
+	pChildImage->SetAttribute("name", "DefaultColor");
+	pChildImage->InsertFirstChild(outDoc.NewText("Textures\\DefaultColor.dds"));
+	pTextures->InsertFirstChild(pChildImage);
 
 	pSkybox->SetAttribute("type", "Skybox");
 	tinyxml2::XMLElement* pComponent = outDoc.NewElement("SkyboxRenderComponent");

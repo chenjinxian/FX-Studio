@@ -53,7 +53,7 @@
             // toolStripLabelHelp
             // 
             this.toolStripLabelHelp.Name = "toolStripLabelHelp";
-            this.toolStripLabelHelp.Size = new System.Drawing.Size(116, 22);
+            this.toolStripLabelHelp.Size = new System.Drawing.Size(107, 22);
             this.toolStripLabelHelp.Text = "Show output from:";
             // 
             // toolStripComboBoxType
@@ -83,7 +83,7 @@
             this.richTextBox1.ReadOnly = true;
             this.richTextBox1.Size = new System.Drawing.Size(637, 427);
             this.richTextBox1.TabIndex = 1;
-            this.richTextBox1.Text = resources.GetString("richTextBox1.Text");
+            this.richTextBox1.Text = "";
             // 
             // OutputView
             // 

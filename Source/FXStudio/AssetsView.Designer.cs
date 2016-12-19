@@ -36,10 +36,7 @@
             System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("Lights");
             System.Windows.Forms.TreeNode treeNode7 = new System.Windows.Forms.TreeNode("Materials");
             System.Windows.Forms.TreeNode treeNode8 = new System.Windows.Forms.TreeNode("Models");
-            System.Windows.Forms.TreeNode treeNode9 = new System.Windows.Forms.TreeNode("Particle Emitters");
-            System.Windows.Forms.TreeNode treeNode10 = new System.Windows.Forms.TreeNode("Scene");
-            System.Windows.Forms.TreeNode treeNode11 = new System.Windows.Forms.TreeNode("Deformers");
-            System.Windows.Forms.TreeNode treeNode12 = new System.Windows.Forms.TreeNode("Textures");
+            System.Windows.Forms.TreeNode treeNode9 = new System.Windows.Forms.TreeNode("Textures");
             this.treeViewAssets = new System.Windows.Forms.TreeView();
             this.SuspendLayout();
             // 
@@ -64,14 +61,8 @@
             treeNode7.Text = "Materials";
             treeNode8.Name = "Models";
             treeNode8.Text = "Models";
-            treeNode9.Name = "Particle Emitters";
-            treeNode9.Text = "Particle Emitters";
-            treeNode10.Name = "Scene";
-            treeNode10.Text = "Scene";
-            treeNode11.Name = "Deformers";
-            treeNode11.Text = "Deformers";
-            treeNode12.Name = "Textures";
-            treeNode12.Text = "Textures";
+            treeNode9.Name = "Textures";
+            treeNode9.Text = "Textures";
             this.treeViewAssets.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
             treeNode1,
             treeNode2,
@@ -81,10 +72,7 @@
             treeNode6,
             treeNode7,
             treeNode8,
-            treeNode9,
-            treeNode10,
-            treeNode11,
-            treeNode12});
+            treeNode9});
             this.treeViewAssets.Size = new System.Drawing.Size(355, 706);
             this.treeViewAssets.TabIndex = 0;
             // 

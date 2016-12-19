@@ -21,21 +21,40 @@ namespace FXStudio
 
         public void UpdateProject(string project, ref string assetFile)
         {
+            treeViewProject.BeginUpdate();
             treeViewProject.Nodes.Clear();
             var rootTree = new TreeNode(Path.GetFileNameWithoutExtension(project)) { Tag = project };
 
             XmlDocument doc = new XmlDocument();
             doc.Load(project);
             XmlElement root = doc.DocumentElement;
+
             XmlNode assetNode = root.SelectSingleNode("AssetFile");
             if (assetNode != null)
             {
                 assetFile = assetNode.FirstChild.Value;
-                var assetTreeNode = new TreeNode(Path.GetFileNameWithoutExtension(assetFile)) { Tag = Path.GetDirectoryName(project) };
-                rootTree.Nodes.Add(assetTreeNode);
+            }
+
+            foreach (XmlNode sceneXml in root.ChildNodes)
+            {
+                XmlNode typeNode = sceneXml.Attributes.GetNamedItem("type");
+                if (typeNode != null && typeNode.Value == "Scene")
+                {
+                    var sceneTree = new TreeNode(sceneXml.Name);
+
+                    foreach (XmlNode childScene in sceneXml.ChildNodes)
+                    {
+                        sceneTree.Nodes.Add(new TreeNode(childScene.Name));
+                    }
+
+                    rootTree.Nodes.Add(sceneTree);
+                }
             }
 
             treeViewProject.Nodes.Add(rootTree);
+            treeViewProject.EndUpdate();
+
+            treeViewProject.ExpandAll();
         }
     }
 }

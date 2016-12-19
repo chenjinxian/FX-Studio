@@ -83,8 +83,8 @@ bool BaseGameLogic::VLoadGame(const std::string& projectFile)
 	tinyxml2::XMLElement* pAsset = pRoot->FirstChildElement("AssetFile");
 	if (pAsset != nullptr)
 	{
-		std::string assetFile = Utility::GetDirectory(projectFile) + "\\" + pAsset->GetText();
-		LoadAssets(assetFile);
+// 		std::string assetFile = Utility::GetDirectory(projectFile) + "\\" + pAsset->GetText();
+// 		LoadAssets(assetFile);
 
 		for (tinyxml2::XMLElement* pSceneNode = pAsset->NextSiblingElement(); pSceneNode != nullptr; pSceneNode = pSceneNode->NextSiblingElement())
 		{
@@ -97,6 +97,9 @@ bool BaseGameLogic::VLoadGame(const std::string& projectFile)
 					pHumanView->LoadGame(pCamera);
 				}
 			}
+
+			tinyxml2::XMLElement* pSkybox = pSceneNode->FirstChildElement("Skybox");
+			VCreateActor(pSkybox);
 
 			tinyxml2::XMLElement* pGrid = pSceneNode->FirstChildElement("Grid");
 			VCreateActor(pGrid);
@@ -358,15 +361,18 @@ bool BaseGameLogic::CreateDefaultProject(const std::string& project, const std::
 	outDoc.InsertEndChild(pRoot);
 
 	tinyxml2::XMLElement* pAsset = outDoc.NewElement("AssetFile");
-	pAsset->InsertFirstChild(outDoc.NewText(defautAsset.c_str()));
+	pAsset->SetText(defautAsset.c_str());
 	pRoot->InsertFirstChild(pAsset);
 
 	tinyxml2::XMLElement* pScene = outDoc.NewElement("DefaultScene");
 	pRoot->InsertEndChild(pScene);
+	pScene->SetAttribute("type", "Scene");
 
 	tinyxml2::XMLElement* pCamera = outDoc.NewElement("Camera");
+	tinyxml2::XMLElement* pSkybox = outDoc.NewElement("Skybox");
 	tinyxml2::XMLElement* pGrid = outDoc.NewElement("Grid");
 	pScene->InsertFirstChild(pCamera);
+	pScene->InsertEndChild(pSkybox);
 	pScene->InsertEndChild(pGrid);
 
 	pCamera->SetAttribute("type", "Perspective");
@@ -381,9 +387,23 @@ bool BaseGameLogic::CreateDefaultProject(const std::string& project, const std::
 	pCamera->InsertFirstChild(pTranslation);
 	pCamera->InsertEndChild(pRotation);
 
+	pSkybox->SetAttribute("type", "Skybox");
+	tinyxml2::XMLElement* pSkyboxRenderComponent = outDoc.NewElement("SkyboxRenderComponent");
+	pSkybox->InsertFirstChild(pSkyboxRenderComponent);
+
+	tinyxml2::XMLElement* pColor = outDoc.NewElement("Color");
+	pColor->SetAttribute("r", 1.0f);
+	pColor->SetAttribute("g", 1.0f);
+	pColor->SetAttribute("b", 1.0f);
+	pColor->SetAttribute("a", 1.0f);
+	tinyxml2::XMLElement* pTexture = outDoc.NewElement("Texture");
+	pTexture->SetText("Textures\\Skybox.dds");
+	pSkyboxRenderComponent->InsertFirstChild(pColor);
+	pSkyboxRenderComponent->InsertEndChild(pTexture);
+
 	pGrid->SetAttribute("type", "Grid");
-	tinyxml2::XMLElement* pComponent = outDoc.NewElement("GridRenderComponent");
-	pGrid->InsertFirstChild(pComponent);
+	tinyxml2::XMLElement* pGridRenderComponent = outDoc.NewElement("GridRenderComponent");
+	pGrid->InsertFirstChild(pGridRenderComponent);
 
 	tinyxml2::XMLElement* pMajorTicks = outDoc.NewElement("MajorTicksColor");
 	pMajorTicks->SetAttribute("r", 0.2f);
@@ -395,8 +415,8 @@ bool BaseGameLogic::CreateDefaultProject(const std::string& project, const std::
 	pTicks->SetAttribute("g", 0.871f);
 	pTicks->SetAttribute("b", 0.702f);
 	pTicks->SetAttribute("a", 1.0f);
-	pComponent->InsertFirstChild(pMajorTicks);
-	pComponent->InsertEndChild(pTicks);
+	pGridRenderComponent->InsertFirstChild(pMajorTicks);
+	pGridRenderComponent->InsertEndChild(pTicks);
 
 	tinyxml2::XMLPrinter printer;
 	outDoc.Accept(&printer);
@@ -418,8 +438,6 @@ bool BaseGameLogic::CreateDefaultAsset(const std::string& asset)
 	tinyxml2::XMLElement* pLights = outDoc.NewElement("Lights");
 	tinyxml2::XMLElement* pMaterials = outDoc.NewElement("Materials");
 	tinyxml2::XMLElement* pModels = outDoc.NewElement("Models");
-	tinyxml2::XMLElement* pScenes = outDoc.NewElement("Scenes");
-	tinyxml2::XMLElement* pSkybox = outDoc.NewElement("Skybox");
 	tinyxml2::XMLElement* pTextures = outDoc.NewElement("Textures");
 	pRoot->InsertFirstChild(pCameras);
 	pRoot->InsertEndChild(pEffects);
@@ -427,8 +445,6 @@ bool BaseGameLogic::CreateDefaultAsset(const std::string& asset)
 	pRoot->InsertEndChild(pLights);
 	pRoot->InsertEndChild(pMaterials);
 	pRoot->InsertEndChild(pModels);
-	pRoot->InsertEndChild(pScenes);
-	pRoot->InsertEndChild(pSkybox);
 	pRoot->InsertEndChild(pTextures);
 
 	tinyxml2::XMLElement* pChildEffect = outDoc.NewElement("Effect");
@@ -452,20 +468,6 @@ bool BaseGameLogic::CreateDefaultAsset(const std::string& asset)
 	pChildImage->InsertFirstChild(outDoc.NewText("Textures\\DefaultColor.dds"));
 	pTextures->InsertFirstChild(pChildImage);
 
-	pSkybox->SetAttribute("type", "Skybox");
-	tinyxml2::XMLElement* pComponent = outDoc.NewElement("SkyboxRenderComponent");
-	pSkybox->InsertFirstChild(pComponent);
-
-	tinyxml2::XMLElement* pColor = outDoc.NewElement("Color");
-	pColor->SetAttribute("r", 1.0f);
-	pColor->SetAttribute("g", 1.0f);
-	pColor->SetAttribute("b", 1.0f);
-	pColor->SetAttribute("a", 1.0f);
-	tinyxml2::XMLElement* pTexture = outDoc.NewElement("Texture");
-	pTexture->SetText("Textures\\Skybox.dds");
-	pComponent->InsertFirstChild(pColor);
-	pComponent->InsertEndChild(pTexture);
-
 	tinyxml2::XMLPrinter printer;
 	outDoc.Accept(&printer);
 
@@ -485,12 +487,6 @@ bool BaseGameLogic::LoadAssets(const std::string& asset)
 	if (pRoot == nullptr)
 	{
 		return false;
-	}
-
-	tinyxml2::XMLElement* pSkybox = pRoot->FirstChildElement("Skybox");
-	if (pSkybox != nullptr)
-	{
-		VCreateActor(pSkybox);
 	}
 
 	tinyxml2::XMLElement* pModels = pRoot->FirstChildElement("Models");

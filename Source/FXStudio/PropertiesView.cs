@@ -20,10 +20,11 @@ namespace FXStudio
 
         public void UpdateProperties(XmlNode selectedNode)
         {
-//             propertyGridView.SelectedObject = new XmlNodeWrapper(selectedNode);
+            propertyGridView.SelectedObject = new XmlNodeWrapper(selectedNode);
         }
     }
 
+    [TypeConverter(typeof(XmlNodeConverter))]
     class XmlNodeWrapper
     {
         private readonly XmlNode m_Node;
@@ -38,17 +39,16 @@ namespace FXStudio
             public override PropertyDescriptorCollection GetProperties(ITypeDescriptorContext context, object value, Attribute[] attributes)
             {
                 List<PropertyDescriptor> props = new List<PropertyDescriptor>();
-//                 XmlElement rootNode = ((XmlNodeWrapper)value).m_Node as XmlElement;
-//                 if (rootNode != null)
-//                 {
-//                     foreach (XmlAttribute attr in rootNode.Attributes)
-//                     {
-//                         props.Add(new XmlNodePropertyDescriptor(attr));
-//                     }
-//                 }
-                foreach (XmlNode child in ((XmlNodeWrapper)value).m_Node.ChildNodes)
+                foreach (XmlNode category in ((XmlNodeWrapper)value).m_Node.ChildNodes)
                 {
-                    props.Add(new XmlNodePropertyDescriptor(child));
+                    string categoryName = category.Attributes["Name"].Value;
+                    foreach (XmlNode property in category.ChildNodes)
+                    {
+                        Attribute[] attr = { new CategoryAttribute(categoryName),
+                            new DisplayNameAttribute(property.Attributes["Name"].Value),
+                            new DescriptionAttribute(property.Attributes["Description"].Value) };
+                        props.Add(new XmlNodePropertyDescriptor(property, attr));
+                    }
                 }
                 return new PropertyDescriptorCollection(props.ToArray(), true);
             }
@@ -56,33 +56,24 @@ namespace FXStudio
 
         class XmlNodePropertyDescriptor : PropertyDescriptor
         {
-            private static readonly Attribute[] nix = new Attribute[0];
-            private readonly XmlNode node;
-            public XmlNodePropertyDescriptor(XmlNode node)
-                : base(GetName(node), nix)
+            private readonly XmlNode m_Property;
+            public XmlNodePropertyDescriptor(XmlNode node, Attribute[] attributes)
+                : base(node.Attributes["Name"].Value, attributes)
             {
-                this.node = node;
+                this.m_Property = node;
             }
-            static string GetName(XmlNode node)
-            {
-                switch (node.NodeType)
-                {
-                    case XmlNodeType.Attribute: return "@" + node.Name;
-                    case XmlNodeType.Element: return node.Name;
-                    case XmlNodeType.Comment: return "<!-- -->";
-                    case XmlNodeType.Text: return "(text)";
-                    default: return node.NodeType + ":" + node.Name;
-                }
-            }
-            public override string Category { get { return "Properties"; } }
-            public override string Description { get { return "Test Description"; } }
+
             public override bool ShouldSerializeValue(object component)
             {
                 return false;
             }
+            public override object GetValue(object component)
+            {
+                return m_Property.Attributes["Value"].Value;
+            }
             public override void SetValue(object component, object value)
             {
-                node.Value = (string)value;
+                m_Property.Attributes["Value"].Value = (string)value;
             }
             public override bool CanResetValue(object component)
             {
@@ -96,38 +87,12 @@ namespace FXStudio
             {
                 get
                 {
-                    switch (node.NodeType)
-                    {
-                        case XmlNodeType.Element:
-                            return typeof(XmlNodeWrapper);
-                        default:
-                            return typeof(string);
-                    }
+                    return Type.GetType(m_Property.Attributes["Type"].Value);
                 }
             }
             public override bool IsReadOnly
             {
-                get
-                {
-                    switch (node.NodeType)
-                    {
-                        case XmlNodeType.Attribute:
-                        case XmlNodeType.Text:
-                            return false;
-                        default:
-                            return true;
-                    }
-                }
-            }
-            public override object GetValue(object component)
-            {
-                switch (node.NodeType)
-                {
-                    case XmlNodeType.Element:
-                        return new XmlNodeWrapper(node);
-                    default:
-                        return node.Value;
-                }
+                get { return false; }
             }
             public override Type ComponentType
             {

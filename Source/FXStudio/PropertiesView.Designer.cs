@@ -29,22 +29,22 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PropertiesView));
-            this.propertyGrid1 = new System.Windows.Forms.PropertyGrid();
+            this.propertyGridView = new System.Windows.Forms.PropertyGrid();
             this.toolStrip2 = new System.Windows.Forms.ToolStrip();
-            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripComboBox1 = new System.Windows.Forms.ToolStripComboBox();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
+            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStrip2.SuspendLayout();
             this.SuspendLayout();
             // 
-            // propertyGrid1
+            // propertyGridView
             // 
-            this.propertyGrid1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.propertyGrid1.Location = new System.Drawing.Point(0, 50);
-            this.propertyGrid1.Name = "propertyGrid1";
-            this.propertyGrid1.PropertySort = System.Windows.Forms.PropertySort.Categorized;
-            this.propertyGrid1.Size = new System.Drawing.Size(424, 782);
-            this.propertyGrid1.TabIndex = 2;
+            this.propertyGridView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.propertyGridView.Location = new System.Drawing.Point(0, 50);
+            this.propertyGridView.Name = "propertyGridView";
+            this.propertyGridView.PropertySort = System.Windows.Forms.PropertySort.Categorized;
+            this.propertyGridView.Size = new System.Drawing.Size(424, 782);
+            this.propertyGridView.TabIndex = 2;
             // 
             // toolStrip2
             // 
@@ -57,15 +57,6 @@
             this.toolStrip2.Size = new System.Drawing.Size(424, 25);
             this.toolStrip2.TabIndex = 1;
             this.toolStrip2.Text = "toolStrip2";
-            // 
-            // toolStrip1
-            // 
-            this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-            this.toolStrip1.Location = new System.Drawing.Point(0, 0);
-            this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(424, 25);
-            this.toolStrip1.TabIndex = 0;
-            this.toolStrip1.Text = "toolStrip1";
             // 
             // toolStripComboBox1
             // 
@@ -82,12 +73,21 @@
             this.toolStripButton1.Size = new System.Drawing.Size(23, 22);
             this.toolStripButton1.Text = "toolStripButton1";
             // 
+            // toolStrip1
+            // 
+            this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            this.toolStrip1.Location = new System.Drawing.Point(0, 0);
+            this.toolStrip1.Name = "toolStrip1";
+            this.toolStrip1.Size = new System.Drawing.Size(424, 25);
+            this.toolStrip1.TabIndex = 0;
+            this.toolStrip1.Text = "toolStrip1";
+            // 
             // PropertiesView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(424, 832);
-            this.Controls.Add(this.propertyGrid1);
+            this.Controls.Add(this.propertyGridView);
             this.Controls.Add(this.toolStrip2);
             this.Controls.Add(this.toolStrip1);
             this.Name = "PropertiesView";
@@ -104,7 +104,7 @@
 
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStrip toolStrip2;
-        private System.Windows.Forms.PropertyGrid propertyGrid1;
+        private System.Windows.Forms.PropertyGrid propertyGridView;
         private System.Windows.Forms.ToolStripComboBox toolStripComboBox1;
         private System.Windows.Forms.ToolStripButton toolStripButton1;
     }

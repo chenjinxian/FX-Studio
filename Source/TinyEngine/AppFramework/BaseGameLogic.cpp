@@ -359,6 +359,7 @@ bool BaseGameLogic::CreateDefaultProject(const std::string& project, const std::
 
 	tinyxml2::XMLElement* pRoot = outDoc.NewElement("Project");
 	outDoc.InsertEndChild(pRoot);
+	pRoot->SetAttribute("type", "Project");
 
 	tinyxml2::XMLElement* pAsset = outDoc.NewElement("AssetFile");
 	pAsset->SetText(defautAsset.c_str());
@@ -375,7 +376,7 @@ bool BaseGameLogic::CreateDefaultProject(const std::string& project, const std::
 	pScene->InsertEndChild(pSkybox);
 	pScene->InsertEndChild(pGrid);
 
-	pCamera->SetAttribute("type", "Perspective");
+	pCamera->SetAttribute("type", "Camera");
 	tinyxml2::XMLElement* pTranslation = outDoc.NewElement("Translation");
 	pTranslation->SetAttribute("x", 0.0f);
 	pTranslation->SetAttribute("y", 0.0f);

@@ -64,7 +64,7 @@ namespace FXStudio
             RenderMethods.OpenProject(project);
 
             string assetFile = string.Empty;
-            m_ProjectView.UpdateProject(project, ref assetFile);
+            m_ProjectView.UpdateProject(project, ref assetFile, m_propertiesView.UpdateProperties);
             if (string.Empty != assetFile)
                 m_AssetsView.UpdateAssets(Path.GetDirectoryName(project) + @"\" + assetFile);
         }

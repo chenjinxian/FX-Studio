@@ -43,6 +43,7 @@
             // treeViewAssets
             // 
             this.treeViewAssets.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.treeViewAssets.Font = new System.Drawing.Font("Microsoft YaHei UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.treeViewAssets.Location = new System.Drawing.Point(0, 0);
             this.treeViewAssets.Name = "treeViewAssets";
             treeNode1.Name = "Animations";

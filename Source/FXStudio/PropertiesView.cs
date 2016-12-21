@@ -85,14 +85,11 @@ namespace FXStudio
             }
             public override Type PropertyType
             {
-                get
-                {
-                    return Type.GetType(m_Property.Attributes["Type"].Value);
-                }
+                get { return Type.GetType(m_Property.Attributes["Type"].Value); }
             }
             public override bool IsReadOnly
             {
-                get { return false; }
+                get { return bool.Parse(m_Property.Attributes["ReadOnly"].Value); }
             }
             public override Type ComponentType
             {

@@ -53,7 +53,7 @@
             // toolStripLabelHelp
             // 
             this.toolStripLabelHelp.Name = "toolStripLabelHelp";
-            this.toolStripLabelHelp.Size = new System.Drawing.Size(107, 22);
+            this.toolStripLabelHelp.Size = new System.Drawing.Size(116, 22);
             this.toolStripLabelHelp.Text = "Show output from:";
             // 
             // toolStripComboBoxType

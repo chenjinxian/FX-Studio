@@ -40,6 +40,7 @@
             // propertyGridView
             // 
             this.propertyGridView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.propertyGridView.Font = new System.Drawing.Font("Microsoft YaHei UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.propertyGridView.Location = new System.Drawing.Point(0, 50);
             this.propertyGridView.Name = "propertyGridView";
             this.propertyGridView.PropertySort = System.Windows.Forms.PropertySort.Categorized;

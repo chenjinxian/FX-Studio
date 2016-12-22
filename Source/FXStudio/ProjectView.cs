@@ -61,31 +61,7 @@ namespace FXStudio
 
                     foreach (XmlNode childScene in sceneXml.ChildNodes)
                     {
-                        XmlNode sceneType = childScene.Attributes["type"];
-                        if (sceneType != null)
-                        {
-                            switch (sceneType.Value)
-                            {
-                                case "Camera":
-                                    sceneTree.Nodes.Add(new TreeNode(childScene.Name) { Tag = CreateCameraXmlNode(childScene) });
-                                    break;
-                                case "Skybox":
-                                    sceneTree.Nodes.Add(new TreeNode(childScene.Name) { Tag = CreateSkyboxXmlNode(childScene) });
-                                    break;
-                                case "Grid":
-                                    sceneTree.Nodes.Add(new TreeNode(childScene.Name) { Tag = CreateGridXmlNode(childScene) });
-                                    break;
-                                case "Lights":
-                                    sceneTree.Nodes.Add(new TreeNode(childScene.Name) { Tag = CreateLightsXmlNode(childScene) });
-                                    break;
-                                case "Geometry":
-                                    sceneTree.Nodes.Add(new TreeNode(childScene.Name) { Tag = CreateGeometryXmlNode(childScene) });
-                                    break;
-                                default:
-                                    sceneTree.Nodes.Add(new TreeNode(childScene.Name) { Tag = new XmlDocument().CreateElement("Unknown") });
-                                    break;
-                            }
-                        }
+                        sceneTree.Nodes.Add(new TreeNode(childScene.Name) { Tag = childScene });
                     }
 
                     rootTree.Nodes.Add(sceneTree);

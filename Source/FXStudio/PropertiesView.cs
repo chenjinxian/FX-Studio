@@ -35,7 +35,7 @@ namespace FXStudio
 
         public void UpdateProperties(XmlNode selectedNode)
         {
-            propertyGridView.SelectedObject = new XmlNodeWrapper(selectedNode, m_ComponentsByName);
+//             propertyGridView.SelectedObject = new XmlNodeWrapper(selectedNode, m_ComponentsByName);
         }
 
         private void CreateDefaultCategorys()

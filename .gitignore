@@ -260,3 +260,8 @@ Bin/FXStudioCored.dll
 *.exp
 *.config
 *.exp
+Lib/x64/Effects11d.lib
+Lib/x64/DirectXTKd.lib
+Bin/imgui.ini
+Bin/WeifenLuo.WinFormsUI.Docking.dll
+Bin/WeifenLuo.WinFormsUI.Docking.ThemeVS2013.dll

@@ -94,22 +94,23 @@ GridRenderComponent::~GridRenderComponent()
 
 bool GridRenderComponent::VDelegateInit(tinyxml2::XMLElement* pData)
 {
-	tinyxml2::XMLElement* pMajorTicksColor = pData->FirstChildElement("MajorTicksColor");
-	if (pMajorTicksColor != nullptr)
+	tinyxml2::XMLElement* pTexture = pData->FirstChildElement("Texture");
+	if (pTexture != nullptr)
 	{
-		m_MajorTicksColor.x = pMajorTicksColor->FloatAttribute("r");
-		m_MajorTicksColor.y = pMajorTicksColor->FloatAttribute("g");
-		m_MajorTicksColor.z = pMajorTicksColor->FloatAttribute("b");
-		m_MajorTicksColor.w = pMajorTicksColor->FloatAttribute("a");
+		m_TextureName = pTexture->GetText();
 	}
 
-	tinyxml2::XMLElement* pTicksColor = pData->FirstChildElement("TicksColor");
-	if (pTicksColor != nullptr)
+	tinyxml2::XMLElement* pGridSize = pData->FirstChildElement("GridSize");
+	if (pGridSize != nullptr)
 	{
-		m_TicksColor.x = pTicksColor->FloatAttribute("r");
-		m_TicksColor.y = pTicksColor->FloatAttribute("g");
-		m_TicksColor.z = pTicksColor->FloatAttribute("b");
-		m_TicksColor.w = pTicksColor->FloatAttribute("a");
+		m_GridSize.x = pGridSize->FloatAttribute("x");
+		m_GridSize.y = pGridSize->FloatAttribute("y");
+	}
+
+	tinyxml2::XMLElement* pTicksInterval = pData->FirstChildElement("TicksInterval");
+	if (pTicksInterval != nullptr)
+	{
+		m_TicksInterval = atof(pTexture->GetText());
 	}
 
 	return true;

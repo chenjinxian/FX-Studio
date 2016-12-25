@@ -406,18 +406,22 @@ bool BaseGameLogic::CreateDefaultProject(const std::string& project, const std::
 	tinyxml2::XMLElement* pGridRenderComponent = outDoc.NewElement("GridRenderComponent");
 	pGrid->InsertFirstChild(pGridRenderComponent);
 
-	tinyxml2::XMLElement* pMajorTicks = outDoc.NewElement("MajorTicksColor");
-	pMajorTicks->SetAttribute("r", 0.2f);
-	pMajorTicks->SetAttribute("g", 0.2f);
-	pMajorTicks->SetAttribute("b", 0.2f);
-	pMajorTicks->SetAttribute("a", 1.0f);
-	tinyxml2::XMLElement* pTicks = outDoc.NewElement("TicksColor");
-	pTicks->SetAttribute("r", 0.961f);
-	pTicks->SetAttribute("g", 0.871f);
-	pTicks->SetAttribute("b", 0.702f);
-	pTicks->SetAttribute("a", 1.0f);
-	pGridRenderComponent->InsertFirstChild(pMajorTicks);
-	pGridRenderComponent->InsertEndChild(pTicks);
+	tinyxml2::XMLElement* pGridColor = outDoc.NewElement("Color");
+	pGridColor->SetAttribute("r", 1.0f);
+	pGridColor->SetAttribute("g", 1.0f);
+	pGridColor->SetAttribute("b", 1.0f);
+	pGridColor->SetAttribute("a", 1.0f);
+	tinyxml2::XMLElement* pGridTexture = outDoc.NewElement("Texture");
+	pGridTexture->SetText("Textures\\Grid.dds");
+	tinyxml2::XMLElement* pGridSize = outDoc.NewElement("GridSize");
+	pGridSize->SetAttribute("x", 20.0f);
+	pGridSize->SetAttribute("y", 30.0f);
+	tinyxml2::XMLElement* pTicksInterval = outDoc.NewElement("TicksInterval");
+	pTicksInterval->SetText("0.5");
+	pGridRenderComponent->InsertFirstChild(pGridColor);
+	pGridRenderComponent->InsertEndChild(pGridTexture);
+	pGridRenderComponent->InsertEndChild(pGridSize);
+	pGridRenderComponent->InsertEndChild(pTicksInterval);
 
 	tinyxml2::XMLPrinter printer;
 	outDoc.Accept(&printer);

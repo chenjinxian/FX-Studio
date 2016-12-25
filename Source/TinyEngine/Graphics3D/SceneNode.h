@@ -104,29 +104,29 @@ public:
 	virtual HRESULT VOnUpdate(Scene* pScene, const GameTime& gameTime) override;
 
 private:
-	typedef struct _VertexPositionColor
+	typedef struct _VertexPositionTexture
 	{
 		Vector4 position;
-		Color color;
+		Vector2 texture;
 
-		_VertexPositionColor() { }
+		_VertexPositionTexture() { }
 
-		_VertexPositionColor(const Vector4& position, const Color& color)
-			: position(position), color(color) { }
-	} VertexPositionColor;
+		_VertexPositionTexture(const Vector4& position, const Vector2& texture)
+			: position(position), texture(texture) { }
+	} VertexPositionTexture;
 
 	void InitGridVertex();
 
 	Effect* m_pEffect;
 	Pass* m_pCurrentPass;
 	ID3D11Buffer* m_pVertexBuffer;
+	ID3D11Buffer* m_pIndexBuffer;
 	uint32_t m_VertexCount;
-	Color m_MajorTicksColor;
-	Color m_TicksColor;
-	Color m_AxesColor;
+	uint32_t m_IndexCount;
+
+	std::string m_TextureName;
+	Vector2 m_GridSize;
 	float m_TicksInterval;
-	float m_GridSize;
-	uint32_t m_MajorTickUnit;
 };
 
 class ModelNode : public SceneNode

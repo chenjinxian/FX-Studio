@@ -37,8 +37,9 @@ public:
 	GridRenderComponent();
 	virtual ~GridRenderComponent();
 
-	const Color& GetMajorTicksColor() const { return m_MajorTicksColor; }
-	const Color& GetTicksColor() const { return m_TicksColor; }
+	const std::string& GetTextureName() { return m_TextureName; }
+	const Vector2& GetGridSize() const { return m_GridSize; }
+	const float GetTicksInterval() const { return m_TicksInterval; }
 
 	virtual const std::string& VGetComponentName() const override { return m_Name; }
 	static const std::string m_Name;
@@ -48,8 +49,9 @@ protected:
 	virtual shared_ptr<SceneNode> VCreateSceneNode();
 	virtual void VCreateInheritedXmlElement(tinyxml2::XMLElement* pBaseElement, tinyxml2::XMLDocument* pDocument);
 
-	Color m_MajorTicksColor;
-	Color m_TicksColor;
+	std::string m_TextureName;
+	Vector2 m_GridSize;
+	float m_TicksInterval;
 };
 
 class ModelRenderComponent : public BaseRenderComponent

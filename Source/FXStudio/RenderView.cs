@@ -17,9 +17,6 @@ namespace FXStudio
         public RenderView()
         {
             InitializeComponent();
-
-            IntPtr hInstance = Marshal.GetHINSTANCE(this.GetType().Module);
-            RenderMethods.CreateInstance(hInstance, IntPtr.Zero, panelRender.Handle, 1, panelRender.Width, panelRender.Height);
         }
 
         public Panel GetRenderPanel()

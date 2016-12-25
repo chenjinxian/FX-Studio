@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Diagnostics;
 
 namespace FXStudio
 {
@@ -105,6 +106,7 @@ namespace FXStudio
 
         public void Application_Idle(object sender, EventArgs e)
         {
+            Debug.WriteLine("OnIdle " + new DateTime().Millisecond.ToString());
             if (m_formMain.WindowState != FormWindowState.Minimized)
             {
                 try
@@ -117,7 +119,7 @@ namespace FXStudio
                 {
                     MessageBox.Show(ex.Message);
                 }
-                m_formMain.Invalidate();
+//                 m_formMain.Invalidate();
             }
         }
     }

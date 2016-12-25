@@ -44,7 +44,7 @@
             this.propertyGridView.Location = new System.Drawing.Point(0, 50);
             this.propertyGridView.Name = "propertyGridView";
             this.propertyGridView.PropertySort = System.Windows.Forms.PropertySort.Categorized;
-            this.propertyGridView.Size = new System.Drawing.Size(424, 782);
+            this.propertyGridView.Size = new System.Drawing.Size(424, 851);
             this.propertyGridView.TabIndex = 2;
             // 
             // toolStrip2
@@ -85,9 +85,9 @@
             // 
             // PropertiesView
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(424, 832);
+            this.ClientSize = new System.Drawing.Size(424, 901);
             this.Controls.Add(this.propertyGridView);
             this.Controls.Add(this.toolStrip2);
             this.Controls.Add(this.toolStrip1);

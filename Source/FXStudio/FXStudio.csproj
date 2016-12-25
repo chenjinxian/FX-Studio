@@ -144,6 +144,7 @@
     <Compile Include="ViewWindow.designer.cs">
       <DependentUpon>ViewWindow.cs</DependentUpon>
     </Compile>
+    <Compile Include="XPathUtility.cs" />
     <EmbeddedResource Include="AssetsView.resx">
       <DependentUpon>AssetsView.cs</DependentUpon>
     </EmbeddedResource>

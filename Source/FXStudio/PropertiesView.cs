@@ -25,17 +25,82 @@ namespace FXStudio
         private static string m_ScaleDescription = "The uniform scale of this node";
         private static string m_RotationDescription = "The rotation of this node";
 
+        private PropertyInstance m_PropertyInstance = null;
+
         private Dictionary<string, XmlNode> m_ComponentsByName;
+        XmlDocument m_SelectedComponents;
+        int m_SelectedActorId;
+        XmlNode m_ActorXml;
 
         public PropertiesView()
         {
             InitializeComponent();
             CreateDefaultCategorys();
+
+            m_PropertyInstance = new PropertyInstance();
         }
 
         public void UpdateProperties(XmlNode selectedNode)
         {
-//             propertyGridView.SelectedObject = new XmlNodeWrapper(selectedNode, m_ComponentsByName);
+            m_PropertyInstance.Properties.Clear();
+
+            m_ActorXml = selectedNode;
+            m_SelectedComponents = new XmlDocument();
+            XmlNode editorComponents = m_SelectedComponents.CreateElement("Actor");
+            m_SelectedComponents.AppendChild(editorComponents);
+
+            foreach (XmlNode component in m_ActorXml.ChildNodes)
+            {
+                XmlNode sourceEditorComponent;
+                if (m_ComponentsByName.TryGetValue(component.Name, out sourceEditorComponent))
+                {
+                    XmlDocument ownerDoc = editorComponents.OwnerDocument;
+                    XmlNode editorComponent = ownerDoc.ImportNode(sourceEditorComponent, true);
+                    editorComponents.AppendChild(editorComponent);
+                    AddCompoentProperties(component, editorComponent);
+                }
+            }
+
+            if (m_PropertyInstance.Properties.Count == 0)
+            {
+                m_PropertyInstance.Properties.Add(new PropertyElement(m_NameProperty, typeof(string),
+                    new CategoryAttribute("Properties"), new DescriptionAttribute(m_NameDescription)));
+                m_PropertyInstance.Properties.Add(new PropertyElement(m_HiddenProperty, typeof(bool),
+                    new CategoryAttribute("Properties"), new DescriptionAttribute(m_HiddenDescription)));
+            }
+            propertyGridView.SelectedObject = m_PropertyInstance;
+        }
+
+        private void AddCompoentProperties(XmlNode actorComponentValues, XmlNode editorComponentValues)
+        {
+            string componentName = actorComponentValues.Name.ToString();
+            string componentXpath = XPathUtility.GetXPathToNode(actorComponentValues);
+            try
+            {
+                int elementNum = 0;
+                foreach (XmlNode inputField in editorComponentValues)
+                {
+                    string xpath = XPathUtility.GetXPathToNode(inputField);
+                    string elementName = inputField.Attributes["name"].Value;
+                    string elementType = inputField.Attributes["type"].Value;
+
+                    XmlNode actorValues = actorComponentValues.ChildNodes[elementNum];
+
+                    Assembly[] AssembliesLoaded = AppDomain.CurrentDomain.GetAssemblies();
+                    Type target = AssembliesLoaded.Select(assembly => assembly.GetType(elementType))
+                        .Where(type => type != null)
+                        .FirstOrDefault();
+
+                    m_PropertyInstance.Properties.Add(new PropertyElement(elementName, target,
+                        new CategoryAttribute(componentName)));
+
+                    ++elementNum;
+                }
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("Error in ComponentName " + componentName + "\n" + e.ToString());
+            }
         }
 
         private void CreateDefaultCategorys()
@@ -88,131 +153,95 @@ namespace FXStudio
         }
     }
 
-    [TypeConverter(typeof(XmlNodeWrapperConverter))]
-    class XmlNodeWrapper
+    public class PropertyElement
     {
-        private readonly XmlNode m_XmlNode;
-        private readonly Dictionary<string, XmlNode> m_ComponentsByName;
-        public XmlNodeWrapper(XmlNode node, Dictionary<string, XmlNode> components)
-        {
-            this.m_XmlNode = node;
-            this.m_ComponentsByName = components;
-        }
+        public string PropertyName { get; private set; }
+        public Type PropertyType { get; private set; }
+        public object PropertyValue { get; set; }
+        public bool PropertyReadOnly { get; private set; }
+        public Attribute[] PropertyAttributes { get; private set; }
 
-        class XmlNodeWrapperConverter : ExpandableObjectConverter
+        public PropertyElement(string name, Type type, params Attribute[] attributes)
+        {
+            this.PropertyName = name;
+            this.PropertyType = type;
+            if (attributes != null)
+            {
+                this.PropertyAttributes = new Attribute[attributes.Length];
+                attributes.CopyTo(this.PropertyAttributes, 0);
+            }
+        }
+    }
+
+    [TypeConverter(typeof(PropertyConverter))]
+    class PropertyInstance
+    {
+        private readonly List<PropertyElement> properties = new List<PropertyElement>();
+        public List<PropertyElement> Properties { get { return properties; } }
+
+        class PropertyConverter : ExpandableObjectConverter
         {
             public override PropertyDescriptorCollection GetProperties(ITypeDescriptorContext context, object value, Attribute[] attributes)
             {
-                List<PropertyDescriptor> properties = new List<PropertyDescriptor>();
-                XmlNode rootNode = ((XmlNodeWrapper)value).m_XmlNode;
-                Dictionary<string, XmlNode> components = ((XmlNodeWrapper)value).m_ComponentsByName;
-                if (rootNode != null)
-                {
-                    foreach (XmlNode categoryNode in rootNode.ChildNodes)
-                    {
-                        XmlNode editorNode = components[categoryNode.Name];
-                        if (editorNode != null && editorNode.Attributes["name"] != null)
-                        {
-                            string categoryName = editorNode.Attributes["name"].Value;
-                            foreach (XmlNode property in editorNode.ChildNodes)
-                            {
-                                Attribute[] attr = { new CategoryAttribute(categoryName),
-                                    new DisplayNameAttribute(property.Attributes["name"].Value),
-                                    new DescriptionAttribute(property.Attributes["description"].Value) };
-
-                                if (categoryNode.SelectSingleNode(property.Attributes["name"].Value) != null)
-                                {
-                                    properties.Add(new XmlNodeWrapperPropertyDescriptor(
-                                        categoryNode.SelectSingleNode(property.Attributes["name"].Value), property, attr));
-                                }
-                            }
-                        }
-                    }
-                }
-
-                return new PropertyDescriptorCollection(properties.ToArray(), true);
-            }
-
-            public override object ConvertTo(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destinationType)
-            {
-                return destinationType == typeof(string)
-                    ? ((XmlNodeWrapper)value).m_XmlNode.InnerXml
-                    : base.ConvertTo(context, culture, value, destinationType);
+                PropertyDescriptor[] descriptors = (from element in ((PropertyInstance)value).Properties
+                                                    select new InstanceDescriptor(element)).ToArray();
+                return new PropertyDescriptorCollection(descriptors);
             }
         }
-        class XmlNodeWrapperPropertyDescriptor : PropertyDescriptor
+
+        #region Descriptor impl
+
+        class InstanceDescriptor : PropertyDescriptor
         {
-        private readonly XmlNode m_XmlProperty;
-            private readonly XmlNode m_XmlEditor;
-            public XmlNodeWrapperPropertyDescriptor(XmlNode property, XmlNode editor, Attribute[] attributes)
-                : base(property.Name, attributes)
+            private readonly PropertyElement m_Property;
+
+            public InstanceDescriptor(PropertyElement property)
+                : base(property.PropertyName, property.PropertyAttributes)
             {
-                this.m_XmlProperty = property;
-                this.m_XmlEditor = editor;
+                this.m_Property = property;
+            }
+
+            public override Type PropertyType
+            {
+                get { return m_Property.PropertyType; }
+            }
+
+            public override object GetValue(object component)
+            {
+                return m_Property.PropertyValue;
+            }
+
+            public override void SetValue(object component, object value)
+            {
+                m_Property.PropertyValue = value;
             }
 
             public override bool ShouldSerializeValue(object component)
             {
-                return false;
+                return GetValue(component) != null;
             }
-            public override void SetValue(object component, object value)
-            {
-                m_XmlProperty.Value = (string)value;
-            }
+
             public override bool CanResetValue(object component)
             {
-                return !IsReadOnly;
+                return true;
             }
+
             public override void ResetValue(object component)
             {
-                SetValue(component, "");
+                SetValue(component, null);
             }
-            public override Type PropertyType
-            {
-                get
-                {
-                    Assembly[] AssembliesLoaded = AppDomain.CurrentDomain.GetAssemblies();
-                    Type target = AssembliesLoaded.Select(assembly => assembly.GetType(m_XmlEditor.Attributes["type"].Value))
-                        .Where(type => type != null)
-                        .FirstOrDefault();
-                    return target;
-                }
-            }
+
             public override bool IsReadOnly
             {
-                get
-                {
-                    return false;
-                }
+                get { return m_Property.PropertyReadOnly; }
             }
-            public override object GetValue(object component)
-            {
-                string typeString = m_XmlEditor.Attributes["type"].Value;
-                if (typeString == "Vector3")
-                {
-                    return m_XmlProperty.Value;
-                }
-                else if (typeString == typeof(Color).ToString())
-                {
-                    float r = Convert.ToSingle(m_XmlProperty.Attributes["r"].Value);
-                    float g = Convert.ToSingle(m_XmlProperty.Attributes["g"].Value);
-                    float b = Convert.ToSingle(m_XmlProperty.Attributes["b"].Value);
-                    float a = Convert.ToSingle(m_XmlProperty.Attributes["a"].Value);
-                    return Color.FromArgb((int)(a * 255.0), (int)(r * 255.0), (int)(g * 255.0), (int)(b * 255.0));
-                }
-                else if (typeString == typeof(Image).ToString())
-                {
-                    return Image.FromFile(@"C:\Users\alan\Documents\FX Studio\Projects\Project1\Textures\DefaultTexture.dds");
-                }
-                else
-                {
-                    return m_XmlProperty.Value;
-                }
-            }
+
             public override Type ComponentType
             {
-                get { return typeof(XmlNodeWrapper); }
+                get { return typeof(PropertyInstance); }
             }
         }
+
+        #endregion
     }
 }

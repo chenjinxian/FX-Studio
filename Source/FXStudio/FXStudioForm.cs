@@ -45,8 +45,14 @@ namespace FXStudio
             toolStripEx.DefaultRenderer = renderEx;
             SetScheme();
 
-            m_renderView.Focus();
-            m_messageHandler = new MessageHandler(this, m_renderView.GetRenderPanel());
+            var panel = m_renderView.GetRenderPanel();
+            if (panel != null)
+            {
+                m_messageHandler = new MessageHandler(this, m_renderView.GetRenderPanel());
+
+                IntPtr hInstance = Marshal.GetHINSTANCE(this.GetType().Module);
+                RenderMethods.CreateInstance(hInstance, IntPtr.Zero, panel.Handle, 1, panel.Width, panel.Height);
+            }
         }
 
         public MessageHandler GetMessageHandler()

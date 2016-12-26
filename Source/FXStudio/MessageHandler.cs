@@ -43,6 +43,11 @@ namespace FXStudio
             m_mouseDownPosition = new System.Drawing.Point(0, 0);
         }
 
+        public void ResetRenderPanel(Panel renderPanel)
+        {
+            m_renderPanel = renderPanel;
+        }
+
         void CheckFakeFocus()
         {
             System.Drawing.Point position = Cursor.Position;

@@ -50,8 +50,8 @@ namespace FXStudio
             {
                 m_messageHandler = new MessageHandler(this, m_renderView.GetRenderPanel());
 
-                IntPtr hInstance = Marshal.GetHINSTANCE(this.GetType().Module);
-                RenderMethods.CreateInstance(hInstance, IntPtr.Zero, panel.Handle, 1, panel.Width, panel.Height);
+//                 IntPtr hInstance = Marshal.GetHINSTANCE(this.GetType().Module);
+//                 RenderMethods.CreateInstance(hInstance, IntPtr.Zero, panel.Handle, 1, panel.Width, panel.Height);
             }
         }
 
@@ -161,7 +161,7 @@ namespace FXStudio
             m_propertiesView.Show(panelAllView, DockState.DockRight);
             m_editorView.Show(panelAllView, DockState.Document);
             m_renderView.Show(panelAllView, DockState.Document);
-            m_taskView.Show(m_renderView.Pane, DockAlignment.Bottom, 0.25);
+            m_taskView.Show(m_renderView.Pane, DockAlignment.Bottom, 0.15);
             m_outputView.Show(m_taskView.Pane, null);
 
             panelAllView.ResumeLayout(true, true);
@@ -179,6 +179,14 @@ namespace FXStudio
             {
                 ResetLayout();
             }
+
+            panelAllView.DockLeftPortion = panelAllView.Width * 0.18d;
+            panelAllView.DockRightPortion = panelAllView.DockLeftPortion;
+
+            IntPtr hInstance = Marshal.GetHINSTANCE(this.GetType().Module);
+            var panel = m_renderView.GetRenderPanel();
+            m_messageHandler.ResetRenderPanel(panel);
+            RenderMethods.CreateInstance(hInstance, IntPtr.Zero, panel.Handle, 1, panel.Width, panel.Height);
         }
 
         private void FXStudioForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -231,6 +239,12 @@ namespace FXStudio
                     OpenProject(startForm.GetProjectPath());
                 }
             }
+        }
+
+        private void FXStudioForm_Resize(object sender, EventArgs e)
+        {
+            panelAllView.DockLeftPortion = panelAllView.Width * 0.18d;
+            panelAllView.DockRightPortion = panelAllView.DockLeftPortion;
         }
     }
 }

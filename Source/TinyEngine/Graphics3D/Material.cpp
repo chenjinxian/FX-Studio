@@ -170,6 +170,24 @@ void Pass::CreateVertexBuffer(const void* pVertexData, uint32_t size, ID3D11Buff
 	}
 }
 
+void Pass::CreateIndexBuffer(const void* pIndexData, uint32_t size, ID3D11Buffer** ppIndexBuffer) const
+{
+	D3D11_BUFFER_DESC indexBufferDesc;
+	ZeroMemory(&indexBufferDesc, sizeof(indexBufferDesc));
+	indexBufferDesc.ByteWidth = size;
+	indexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+
+	D3D11_SUBRESOURCE_DATA indexSubResourceData;
+	ZeroMemory(&indexSubResourceData, sizeof(indexSubResourceData));
+	indexSubResourceData.pSysMem = pIndexData;
+
+	if (FAILED(p_Device->CreateBuffer(&indexBufferDesc, &indexSubResourceData, ppIndexBuffer)))
+	{
+		DEBUG_ERROR("ID3D11Device::CreateBuffer() failed.");
+	}
+}
+
 void Pass::CreateVertexBuffer(const Mesh* mesh, ID3D11Buffer** ppVertexBuffer) const
 {
 	std::vector<Vector3> vertices = mesh->GetVertices();

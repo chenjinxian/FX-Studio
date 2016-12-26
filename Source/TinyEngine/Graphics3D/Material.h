@@ -56,6 +56,7 @@ public:
 	ID3DX11EffectPass* GetEffectPass() { return m_pD3DX11EffectPass; }
 
 	void CreateVertexBuffer(const void* pVertexData, uint32_t size, ID3D11Buffer** ppVertexBuffer) const;
+	void CreateIndexBuffer(const void* pIndexData, uint32_t size, ID3D11Buffer** ppIndexBuffer) const;
 	void CreateVertexBuffer(const Mesh* mesh, ID3D11Buffer** ppVertexBuffer) const;
 	void CreateIndexBuffer(const Mesh* mesh, ID3D11Buffer** ppIndexBuffer) const;
 
@@ -83,8 +84,6 @@ public:
 
 	void SetMatrix(XMMATRIX value);
 	void SetResource(ID3D11ShaderResourceView* value);
-	Variable& operator<<(CXMMATRIX value);
-	Variable& operator<<(ID3D11ShaderResourceView* value);
 	Variable& operator<<(ID3D11UnorderedAccessView* value);
 	Variable& operator<<(FXMVECTOR value);
 	Variable& operator<<(int value);

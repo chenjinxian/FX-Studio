@@ -48,8 +48,8 @@ bool FXStudioView::VLoadGameDelegate(tinyxml2::XMLElement* pCameraNode)
 		tinyxml2::XMLElement* pRotationElement = pCameraNode->FirstChildElement("Rotation");
 		if (pRotationElement)
 		{
-			yaw = pRotationElement->FloatAttribute("x");
-			pitch = pRotationElement->FloatAttribute("y");
+			yaw = pRotationElement->FloatAttribute("y");
+			pitch = pRotationElement->FloatAttribute("x");
 			roll = pRotationElement->FloatAttribute("z");
 		}
 	}

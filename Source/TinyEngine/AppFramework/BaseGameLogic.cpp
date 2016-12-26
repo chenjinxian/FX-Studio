@@ -380,7 +380,7 @@ bool BaseGameLogic::CreateDefaultProject(const std::string& project, const std::
 	tinyxml2::XMLElement* pTranslation = outDoc.NewElement("Translation");
 	pTranslation->SetAttribute("x", 0.0f);
 	pTranslation->SetAttribute("y", 0.0f);
-	pTranslation->SetAttribute("z", 50.0f);
+	pTranslation->SetAttribute("z", 10.0f);
 	tinyxml2::XMLElement* pRotation = outDoc.NewElement("Rotation");
 	pRotation->SetAttribute("x", 45.0f);
 	pRotation->SetAttribute("y", 45.0f);
@@ -414,10 +414,10 @@ bool BaseGameLogic::CreateDefaultProject(const std::string& project, const std::
 	tinyxml2::XMLElement* pGridTexture = outDoc.NewElement("Texture");
 	pGridTexture->SetText("Textures\\Grid.dds");
 	tinyxml2::XMLElement* pGridSize = outDoc.NewElement("GridSize");
-	pGridSize->SetAttribute("x", 20.0f);
-	pGridSize->SetAttribute("y", 30.0f);
+	pGridSize->SetAttribute("x", 10.0f);
+	pGridSize->SetAttribute("y", 10.0f);
 	tinyxml2::XMLElement* pTicksInterval = outDoc.NewElement("TicksInterval");
-	pTicksInterval->SetText("0.5");
+	pTicksInterval->SetText("1.0");
 	pGridRenderComponent->InsertFirstChild(pGridColor);
 	pGridRenderComponent->InsertEndChild(pGridTexture);
 	pGridRenderComponent->InsertEndChild(pGridSize);

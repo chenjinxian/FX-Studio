@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
 using System.Reflection;
+using System.Globalization;
 
 namespace FXStudio
 {
@@ -63,9 +64,9 @@ namespace FXStudio
 
             if (m_PropertyInstance.Properties.Count == 0)
             {
-                m_PropertyInstance.Properties.Add(new PropertyElement(m_NameProperty, typeof(string),
+                m_PropertyInstance.Properties.Add(new PropertyElement(m_NameProperty, typeof(string), selectedNode.Name, false,
                     new CategoryAttribute("Properties"), new DescriptionAttribute(m_NameDescription)));
-                m_PropertyInstance.Properties.Add(new PropertyElement(m_HiddenProperty, typeof(bool),
+                m_PropertyInstance.Properties.Add(new PropertyElement(m_HiddenProperty, typeof(bool), false, true,
                     new CategoryAttribute("Properties"), new DescriptionAttribute(m_HiddenDescription)));
             }
             propertyGridView.SelectedObject = m_PropertyInstance;
@@ -86,13 +87,67 @@ namespace FXStudio
 
                     XmlNode actorValues = actorComponentValues.ChildNodes[elementNum];
 
-                    Assembly[] AssembliesLoaded = AppDomain.CurrentDomain.GetAssemblies();
-                    Type target = AssembliesLoaded.Select(assembly => assembly.GetType(elementType))
-                        .Where(type => type != null)
-                        .FirstOrDefault();
+                    if (elementType == typeof(int).ToString())
+                    {
+                        int x = Convert.ToInt32(actorValues.FirstChild.Value);
 
-                    m_PropertyInstance.Properties.Add(new PropertyElement(elementName, target,
-                        new CategoryAttribute(componentName)));
+                        m_PropertyInstance.Properties.Add(
+                            new PropertyElement(elementName, typeof(int),
+                            x, false, new CategoryAttribute(componentName)));
+                    }
+                    else if (elementType == typeof(float).ToString())
+                    {
+                        float x = Convert.ToSingle(actorValues.FirstChild.Value);
+
+                        m_PropertyInstance.Properties.Add(
+                            new PropertyElement(elementName, typeof(float),
+                            x, false, new CategoryAttribute(componentName)));
+                    }
+                    else if (elementType == typeof(Size).ToString())
+                    {
+                        int x = Convert.ToInt32(actorValues.Attributes["x"].Value);
+                        int y = Convert.ToInt32(actorValues.Attributes["y"].Value);
+
+                        m_PropertyInstance.Properties.Add(
+                            new PropertyElement(elementName, typeof(Size),
+                            new Size(x, y), false, new CategoryAttribute(componentName)));
+                    }
+                    else if (elementType == typeof(Vector3).ToString())
+                    {
+                        float x = Convert.ToSingle(actorValues.Attributes["x"].Value);
+                        float y = Convert.ToSingle(actorValues.Attributes["y"].Value);
+                        float z = Convert.ToSingle(actorValues.Attributes["z"].Value);
+
+                        m_PropertyInstance.Properties.Add(
+                            new PropertyElement(elementName, typeof(Vector3),
+                            new Vector3(x, y, z), false, new CategoryAttribute(componentName)));
+                    }
+                    else if (elementType == typeof(Color).ToString())
+                    {
+                        float r = Convert.ToSingle(actorValues.Attributes["r"].Value);
+                        float g = Convert.ToSingle(actorValues.Attributes["g"].Value);
+                        float b = Convert.ToSingle(actorValues.Attributes["b"].Value);
+                        float a = Convert.ToSingle(actorValues.Attributes["a"].Value);
+
+                        m_PropertyInstance.Properties.Add(
+                            new PropertyElement(elementName, typeof(Color),
+                            Color.FromArgb((int)(a * 255.0), (int)(r * 255.0), (int)(g * 255.0), (int)(b * 255.0)),
+                            false, new CategoryAttribute(componentName)));
+                    }
+                    else if (elementType == typeof(Image).ToString())
+                    {
+
+                    }
+                    else if (elementType == typeof(bool).ToString())
+                    {
+
+                    }
+
+                    //                     Assembly[] AssembliesLoaded = AppDomain.CurrentDomain.GetAssemblies();
+                    //                     Type target = AssembliesLoaded.Select(assembly => assembly.GetType(elementType))
+                    //                         .Where(type => type != null)
+                    //                         .FirstOrDefault();
+
 
                     ++elementNum;
                 }
@@ -115,9 +170,9 @@ namespace FXStudio
 
             transfrom.Attributes.Append(CreateAttribute(xmlDoc, "name", "TransformComponent"));
             m_ComponentsByName["TransformComponent"] = transfrom;
-            transfrom.AppendChild(CreateProperty(xmlDoc, m_TranslationProperty, m_TranslationDescription, "Vector3"));
-            transfrom.AppendChild(CreateProperty(xmlDoc, m_ScaleProperty, m_ScaleDescription, "Vector3"));
-            transfrom.AppendChild(CreateProperty(xmlDoc, m_RotationProperty, m_RotationDescription, "Vector3"));
+            transfrom.AppendChild(CreateProperty(xmlDoc, m_TranslationProperty, m_TranslationDescription, typeof(Vector3).ToString()));
+            transfrom.AppendChild(CreateProperty(xmlDoc, m_ScaleProperty, m_ScaleDescription, typeof(Vector3).ToString()));
+            transfrom.AppendChild(CreateProperty(xmlDoc, m_RotationProperty, m_RotationDescription, typeof(Vector3).ToString()));
 
             camera.Attributes.Append(CreateAttribute(xmlDoc, "name", "Camera"));
             m_ComponentsByName["Camera"] = camera;
@@ -131,9 +186,10 @@ namespace FXStudio
 
             grid.Attributes.Append(CreateAttribute(xmlDoc, "name", "GridRenderComponent"));
             m_ComponentsByName["GridRenderComponent"] = grid;
-            grid.AppendChild(CreateProperty(xmlDoc, "Color", "The color of the skybox", typeof(Color).ToString()));
-            grid.AppendChild(CreateProperty(xmlDoc, "Texture", "The cube texture of the skybox", typeof(Image).ToString()));
-            grid.AppendChild(CreateProperty(xmlDoc, "Size", "The cube texture of the skybox", typeof(Size).ToString()));
+            grid.AppendChild(CreateProperty(xmlDoc, "Color", "The color of the grid", typeof(Color).ToString()));
+            grid.AppendChild(CreateProperty(xmlDoc, "Texture", "The diffuse texture of the grid", typeof(Image).ToString()));
+            grid.AppendChild(CreateProperty(xmlDoc, "GridSize", "The size of the grid", typeof(Size).ToString()));
+            grid.AppendChild(CreateProperty(xmlDoc, "TicksInterval", "The interval of the grid", typeof(float).ToString()));
         }
 
         private XmlNode CreateProperty(XmlDocument xmlDoc, string name, string description, string type)
@@ -161,10 +217,12 @@ namespace FXStudio
         public bool PropertyReadOnly { get; private set; }
         public Attribute[] PropertyAttributes { get; private set; }
 
-        public PropertyElement(string name, Type type, params Attribute[] attributes)
+        public PropertyElement(string name, Type type, object value, bool readOnly, params Attribute[] attributes)
         {
             this.PropertyName = name;
             this.PropertyType = type;
+            this.PropertyValue = value;
+            this.PropertyReadOnly = readOnly;
             if (attributes != null)
             {
                 this.PropertyAttributes = new Attribute[attributes.Length];
@@ -243,5 +301,96 @@ namespace FXStudio
         }
 
         #endregion
+    }
+
+    [TypeConverterAttribute(typeof(Vector3Converter))]
+    public class Vector3
+    {
+        private float x = 0.0f;
+        private float y = 0.0f;
+        private float z = 0.0f;
+
+        public Vector3(float x, float y, float z)
+        {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+        }
+
+        public float X
+        {
+            get { return x; }
+            set { x = value; }
+        }
+
+        public float Y
+        {
+            get { return y; }
+            set { y = value; }
+        }
+
+        public float Z
+        {
+            get { return z; }
+            set { z = value; }
+        }
+    }
+
+    public class Vector3Converter : ExpandableObjectConverter
+    {
+        public override bool CanConvertTo(ITypeDescriptorContext context,
+                                      System.Type destinationType)
+        {
+            if (destinationType == typeof(Vector3))
+                return true;
+
+            return base.CanConvertTo(context, destinationType);
+        }
+
+        public override object ConvertTo(ITypeDescriptorContext context,
+                                   CultureInfo culture,
+                                   object value,
+                                   System.Type destinationType)
+        {
+            if (destinationType == typeof(string) && value is Vector3)
+            {
+
+                Vector3 vec = (Vector3)value;
+
+                return vec.X + ", " + vec.Y + ", " + vec.Z;
+            }
+            return base.ConvertTo(context, culture, value, destinationType);
+        }
+
+        public override bool CanConvertFrom(ITypeDescriptorContext context,
+                                  System.Type sourceType)
+        {
+            if (sourceType == typeof(string))
+                return true;
+
+            return base.CanConvertFrom(context, sourceType);
+        }
+
+        public override object ConvertFrom(ITypeDescriptorContext context,
+                                  CultureInfo culture, object value)
+        {
+            if (value is string)
+            {
+                try
+                {
+                    string[] elements = ((string)value).Split(',');
+                    if (elements.Length == 3)
+                    {
+                        Vector3 vec = new Vector3(Convert.ToSingle(elements[0]), Convert.ToSingle(elements[1]), Convert.ToSingle(elements[2]));
+                        return vec;
+                    }
+                }
+                catch
+                {
+                    throw new ArgumentException("Can not convert '" + (string)value + "' to type Vector3");
+                }
+            }
+            return base.ConvertFrom(context, culture, value);
+        }
     }
 }

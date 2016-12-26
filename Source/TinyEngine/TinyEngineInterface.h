@@ -186,7 +186,7 @@ public:
 	virtual void VSetBackgroundColor(const Color& color) = 0;
 
 	virtual void VInputSetup(D3D_PRIMITIVE_TOPOLOGY topology, ID3D11InputLayout* pInputLayout) = 0;
-	virtual void VDrawMeshe(uint32_t vertexSize, ID3D11Buffer* pVertexBuffer, uint32_t vertexCont,
+	virtual void VDrawMesh(uint32_t vertexSize, ID3D11Buffer* pVertexBuffer, uint32_t vertexCont,
 		ID3D11Buffer* pIndexBuffer, uint32_t indexCount, ID3DX11EffectPass* pD3DX11EffectPass) = 0;
 
 	virtual bool VCompileShaderFromMemory(const void* pBuffer, uint32_t lenght, shared_ptr<IResourceExtraData> pExtraData) = 0;

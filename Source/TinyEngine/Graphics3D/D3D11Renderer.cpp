@@ -695,7 +695,7 @@ void D3D11Renderer::VInputSetup(D3D_PRIMITIVE_TOPOLOGY topology, ID3D11InputLayo
 	m_pDeviceContext->IASetInputLayout(pInputLayout);
 }
 
-void D3D11Renderer::VDrawMeshe(uint32_t vertexSize, ID3D11Buffer* pVertexBuffer, uint32_t vertexCont,
+void D3D11Renderer::VDrawMesh(uint32_t vertexSize, ID3D11Buffer* pVertexBuffer, uint32_t vertexCont,
 	ID3D11Buffer* pIndexBuffer, uint32_t indexCount, ID3DX11EffectPass* pD3DX11EffectPass)
 {
 	UINT stride = vertexSize;

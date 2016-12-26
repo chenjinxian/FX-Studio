@@ -218,7 +218,9 @@ GridNode::GridNode(ActorId actorId, WeakBaseRenderComponentPtr renderComponent)
 	m_pEffect(nullptr),
 	m_pCurrentPass(nullptr),
 	m_pVertexBuffer(nullptr),
-	m_VertexCount(0)
+	m_pIndexBuffer(nullptr),
+	m_VertexCount(0),
+	m_IndexCount(0)
 {
 	GridRenderComponent* pGridRender = static_cast<GridRenderComponent*>(m_pRenderComponent);
 	if (pGridRender != nullptr)
@@ -245,6 +247,7 @@ GridNode::GridNode(ActorId actorId, WeakBaseRenderComponentPtr renderComponent)
 GridNode::~GridNode()
 {
 	SAFE_RELEASE(m_pVertexBuffer);
+	SAFE_RELEASE(m_pIndexBuffer);
 }
 
 void GridNode::InitGridVertex()
@@ -260,45 +263,49 @@ void GridNode::InitGridVertex()
 		DEBUG_ERROR(std::string("technique is not exist: ") + "p0");
 	}
 
-	Vector2 ticksCount = m_GridSize / m_TicksInterval;
-	m_VertexCount = ticksCount.x * ticksCount.y;
-	m_IndexCount = (ticksCount.x - 1) * (ticksCount.y - 1) * 2;
+	Vector2 halfSize = m_GridSize * 0.5f;
 
-// 	float halfWidth = m_GridSize.x *
-// 	std::vector<VertexPositionTexture> vertices;
-// 	vertices.reserve(m_VertexCount);
-// 
-// 	// X-Axes line
-// 	vertices.push_back(VertexPositionTexture(Vector4(-m_GridSize, 0, 0, 1.0f), Color(1.0f, 0.0f, 0.0f)));
-// 	vertices.push_back(VertexPositionTexture(Vector4(m_GridSize, 0, 0, 1.0f), Color(1.0f, 0.0f, 0.0f)));
-// 	
-// 	// Z-Axes line
-// 	vertices.push_back(VertexPositionColor(Vector4(0, 0, -m_GridSize, 1.0f), Color(0.0f, 0.0f, 1.0f)));
-// 	vertices.push_back(VertexPositionColor(Vector4(0, 0, m_GridSize, 1.0f), Color(0.0f, 0.0f, 1.0f)));
-// 
-// 	for (uint32_t i = 1; i <= ticksCount; i++)
-// 	{
-// 		Color color = m_TicksColor;
-// 		if (0 == (i % 10))
-// 		{
-// 			color = m_MajorTicksColor;
-// 		}
-// 
-// 		// Vertical line
-// 		vertices.push_back(VertexPositionColor(Vector4(-m_TicksInterval * i, 0, -m_GridSize, 1.0f), color));
-// 		vertices.push_back(VertexPositionColor(Vector4(-m_TicksInterval * i, 0, m_GridSize, 1.0f), color));
-// 		vertices.push_back(VertexPositionColor(Vector4(m_TicksInterval * i, 0, -m_GridSize, 1.0f), color));
-// 		vertices.push_back(VertexPositionColor(Vector4(m_TicksInterval * i, 0, m_GridSize, 1.0f), color));
-// 
-// 		// Horizontal line
-// 		vertices.push_back(VertexPositionColor(Vector4(-m_GridSize, 0, m_TicksInterval * i, 1.0f), color));
-// 		vertices.push_back(VertexPositionColor(Vector4(m_GridSize, 0, m_TicksInterval * i, 1.0f), color));
-// 		vertices.push_back(VertexPositionColor(Vector4(-m_GridSize, 0, -m_TicksInterval * i, 1.0f), color));
-// 		vertices.push_back(VertexPositionColor(Vector4(m_GridSize, 0, -m_TicksInterval * i, 1.0f), color));
-// 	}
-// 
-// 	uint32_t size = vertices.size() * sizeof(VertexPositionColor);
-// 	m_pCurrentPass->CreateVertexBuffer(&vertices.front(), size, &m_pVertexBuffer);
+	uint32_t rows = static_cast<uint32_t>(m_GridSize.x / m_TicksInterval);
+	uint32_t columns = static_cast<uint32_t>(m_GridSize.y / m_TicksInterval);
+	m_VertexCount = (rows + 1) * (columns + 1);
+	m_IndexCount = rows * columns * 2 * 3;
+
+	std::vector<VertexPositionTexture> vertices;
+	vertices.resize(m_VertexCount);
+
+	for (int i = 0; i < (rows + 1); i++)
+	{
+		for (int j = 0; j < (columns + 1); j++)
+		{
+			float x = (float)i - halfSize.x;
+			float y = halfSize.y - (float)j;
+
+			vertices[i * (columns + 1) + j] = VertexPositionTexture(Vector4(x, 0.0f, y, 1.0f), Vector2(x, y));
+		}
+	}
+
+	std::vector<uint32_t> indices;
+	indices.resize(m_IndexCount);
+
+	uint32_t k = 0;
+	for (uint32_t i = 0; i < rows; i++)
+	{
+		for (uint32_t j = 0; j < columns; j++)
+		{
+			indices[k] = i * (columns + 1) + j;
+			indices[k + 1] = i * (columns + 1) + j + 1;
+			indices[k + 2] = (i + 1) * (columns + 1) + j;
+
+			indices[k + 3] = (i + 1) * (columns + 1) + j;
+			indices[k + 4] = i * (columns + 1) + j + 1;
+			indices[k + 5] = (i + 1) * (columns + 1) + j + 1;
+
+			k += 6;
+		}
+	}
+
+	m_pCurrentPass->CreateVertexBuffer(&vertices.front(), vertices.size() * sizeof(VertexPositionTexture), &m_pVertexBuffer);
+	m_pCurrentPass->CreateIndexBuffer(&indices.front(), indices.size() * sizeof(uint32_t), &m_pIndexBuffer);
 }
 
 HRESULT GridNode::VOnInitSceneNode(Scene* pScene)
@@ -324,11 +331,25 @@ HRESULT GridNode::VRender(Scene* pScene, const GameTime& gameTime)
 				variable->SetMatrix(wvp);
 			}
 		}
+		else if (variable->GetVariableType() == "Texture2D")
+		{
+			Resource resource(m_TextureName);
+			shared_ptr<ResHandle> pTextureRes = g_pApp->GetResCache()->GetHandle(&resource);
+			if (pTextureRes != nullptr)
+			{
+				shared_ptr<D3D11TextureResourceExtraData> extra =
+					static_pointer_cast<D3D11TextureResourceExtraData>(pTextureRes->GetExtraData());
+				if (extra != nullptr)
+				{
+					variable->SetResource(extra->GetTexture());
+				}
+			}
+		}
 	}
 
-	g_pApp->GetRendererAPI()->VInputSetup(D3D11_PRIMITIVE_TOPOLOGY_LINELIST, m_pCurrentPass->GetInputLayout());
-	g_pApp->GetRendererAPI()->VDrawMeshe(
-		m_pCurrentPass->GetVertexSize(), m_pVertexBuffer, m_VertexCount, nullptr, 0, m_pCurrentPass->GetEffectPass());
+	g_pApp->GetRendererAPI()->VInputSetup(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, m_pCurrentPass->GetInputLayout());
+	g_pApp->GetRendererAPI()->VDrawMesh(
+		m_pCurrentPass->GetVertexSize(), m_pVertexBuffer, m_VertexCount, m_pIndexBuffer, m_IndexCount, m_pCurrentPass->GetEffectPass());
 
 	return S_OK;
 }
@@ -476,7 +497,7 @@ HRESULT ModelNode::VRender(Scene* pScene, const GameTime& gameTime)
 			}
 		}
 
-		g_pApp->GetRendererAPI()->VDrawMeshe(
+		g_pApp->GetRendererAPI()->VDrawMesh(
 			m_pCurrentPass->GetVertexSize(), m_pVertexBuffers[i], 0, m_pIndexBuffers[i], m_IndexCounts[i], m_pCurrentPass->GetEffectPass());
 	}
 
@@ -589,7 +610,7 @@ HRESULT SkyboxNode::VRender(Scene* pScene, const GameTime& gameTime)
 	}
 
 	g_pApp->GetRendererAPI()->VInputSetup(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, m_pCurrentPass->GetInputLayout());
-	g_pApp->GetRendererAPI()->VDrawMeshe(
+	g_pApp->GetRendererAPI()->VDrawMesh(
 		m_pCurrentPass->GetVertexSize(), m_pVertexBuffer, 0, m_pIndexBuffer, m_IndexCount, m_pCurrentPass->GetEffectPass());
 
 	return S_OK;

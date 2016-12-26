@@ -110,7 +110,7 @@ bool GridRenderComponent::VDelegateInit(tinyxml2::XMLElement* pData)
 	tinyxml2::XMLElement* pTicksInterval = pData->FirstChildElement("TicksInterval");
 	if (pTicksInterval != nullptr)
 	{
-		m_TicksInterval = atof(pTexture->GetText());
+		m_TicksInterval = atof(pTicksInterval->GetText());
 	}
 
 	return true;

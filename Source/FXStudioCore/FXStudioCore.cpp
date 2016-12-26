@@ -123,3 +123,30 @@ FXSTUDIOCORE_API void CreateNewProject(BSTR lFileName)
 		pEditorLogic->VCreateNewProject(project);
 	}
 }
+
+FXSTUDIOCORE_API int AddGeometry(BSTR geometryResource)
+{
+	return 0;
+}
+
+FXSTUDIOCORE_API int AddActor(BSTR actorResource)
+{
+	std::string actorXml = Utility::WS2S(std::wstring(actorResource, SysStringLen(actorResource)));
+	StrongActorPtr pActor = g_pApp->GetGameLogic()->VCreateActor(actorXml);
+	if (!pActor)
+		return INVALID_ACTOR_ID;
+
+	return pActor->GetActorId();
+}
+
+FXSTUDIOCORE_API int ModifyActor(BSTR modificationXml)
+{
+	return 0;
+}
+
+FXSTUDIOCORE_API int RemoveActor(unsigned int actorId)
+{
+	g_pApp->GetGameLogic()->VDestroyActor(actorId);
+	return 0;
+}
+

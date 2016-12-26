@@ -28,7 +28,7 @@ namespace FXStudio
             return m_ProjectPath;
         }
 
-        private void CopyDefaultData(string sourceDir, string destDir)
+        public static void CopyDefaultData(string sourceDir, string destDir)
         {
             foreach (string dirPath in Directory.GetDirectories(sourceDir))
             {

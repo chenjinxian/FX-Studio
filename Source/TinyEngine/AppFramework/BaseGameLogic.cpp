@@ -154,6 +154,23 @@ void BaseGameLogic::VRemoveView(shared_ptr<IGameView> pView)
 	m_GameViews.remove(pView);
 }
 
+StrongActorPtr BaseGameLogic::VCreateActor(std::string actorXml, const Matrix& initialTransform /*= Matrix::Identity*/, ActorId serversActorId /*= INVALID_ACTOR_ID*/)
+{
+	unique_ptr<tinyxml2::XMLDocument> pDoc = unique_ptr<tinyxml2::XMLDocument>(DEBUG_NEW tinyxml2::XMLDocument());
+	if (pDoc == nullptr || (pDoc->Parse(actorXml.c_str(), actorXml.length()) != tinyxml2::XML_SUCCESS))
+	{
+		return false;
+	}
+
+	tinyxml2::XMLElement *pRoot = pDoc->RootElement();
+	if (pRoot == nullptr)
+	{
+		return false;
+	}
+
+	return VCreateActor(pRoot, initialTransform, serversActorId);
+}
+
 StrongActorPtr BaseGameLogic::VCreateActor(
 	tinyxml2::XMLElement *pActorRoot, const Matrix& initialTransform, ActorId serversActorId)
 {

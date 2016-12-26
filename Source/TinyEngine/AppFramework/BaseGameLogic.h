@@ -80,6 +80,8 @@ public:
 	virtual void VRemoveView(shared_ptr<IGameView> pView);
 
 	virtual StrongActorPtr VCreateActor(
+		std::string actorXml, const Matrix& initialTransform = Matrix::Identity, ActorId serversActorId = INVALID_ACTOR_ID) override;
+	virtual StrongActorPtr VCreateActor(
 		tinyxml2::XMLElement *pActorRoot, const Matrix& initialTransform = Matrix::Identity, ActorId serversActorId = INVALID_ACTOR_ID) override;
 	virtual void VDestroyActor(ActorId actorId) override;
 	virtual WeakActorPtr VGetActor(ActorId actorId) override;

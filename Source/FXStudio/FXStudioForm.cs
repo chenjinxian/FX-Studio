@@ -246,5 +246,47 @@ namespace FXStudio
             panelAllView.DockLeftPortion = panelAllView.Width * 0.18d;
             panelAllView.DockRightPortion = panelAllView.DockLeftPortion;
         }
+
+        private void toolStripButtonNew_Click(object sender, EventArgs e)
+        {
+            NewProjectDialog dialog = new NewProjectDialog(m_DefaultLocation);
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                string location = dialog.GetProjectLocation();
+                Directory.CreateDirectory(location);
+                string projectFile = location + @"\" + dialog.GetProjectName() + @".fxsproj";
+                RenderMethods.CreateNewProject(projectFile);
+
+                string sourcePath = Directory.GetCurrentDirectory() + @"\Data";
+                StartPageDialog.CopyDefaultData(sourcePath, location);
+
+                OpenProject(projectFile);
+            }
+        }
+
+        private void toolStripButtonTeapot_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void toolStripButtonCube_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void toolStripButtonSphere_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void toolStripButtonCylinder_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void toolStripButtonPlane_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

@@ -53,7 +53,6 @@
             this.toolStripButtonTeapot = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonCube = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonSphere = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButtonCapsule = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonPlane = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripButtonDirectional = new System.Windows.Forms.ToolStripButton();
@@ -70,6 +69,7 @@
             this.panelAllView = new WeifenLuo.WinFormsUI.Docking.DockPanel();
             this.blueTheme = new WeifenLuo.WinFormsUI.Docking.VS2013BlueTheme();
             this.toolStripEx = new FXStudio.ToolStripEx(this.components);
+            this.toolStripButtonCylinder = new System.Windows.Forms.ToolStripButton();
             this.menuStripMain.SuspendLayout();
             this.toolStripMain.SuspendLayout();
             this.SuspendLayout();
@@ -139,7 +139,7 @@
             this.toolStripButtonTeapot,
             this.toolStripButtonCube,
             this.toolStripButtonSphere,
-            this.toolStripButtonCapsule,
+            this.toolStripButtonCylinder,
             this.toolStripButtonPlane,
             this.toolStripSeparator5,
             this.toolStripButtonDirectional,
@@ -165,6 +165,7 @@
             this.toolStripButtonNew.Size = new System.Drawing.Size(44, 59);
             this.toolStripButtonNew.Text = "New";
             this.toolStripButtonNew.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.toolStripButtonNew.Click += new System.EventHandler(this.toolStripButtonNew_Click);
             // 
             // toolStripButtonOpen
             // 
@@ -267,6 +268,7 @@
             this.toolStripButtonTeapot.Size = new System.Drawing.Size(47, 59);
             this.toolStripButtonTeapot.Text = "Teapot";
             this.toolStripButtonTeapot.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.toolStripButtonTeapot.Click += new System.EventHandler(this.toolStripButtonTeapot_Click);
             // 
             // toolStripButtonCube
             // 
@@ -276,6 +278,7 @@
             this.toolStripButtonCube.Size = new System.Drawing.Size(44, 59);
             this.toolStripButtonCube.Text = "Cube";
             this.toolStripButtonCube.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.toolStripButtonCube.Click += new System.EventHandler(this.toolStripButtonCube_Click);
             // 
             // toolStripButtonSphere
             // 
@@ -285,15 +288,7 @@
             this.toolStripButtonSphere.Size = new System.Drawing.Size(47, 59);
             this.toolStripButtonSphere.Text = "Sphere";
             this.toolStripButtonSphere.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
-            // 
-            // toolStripButtonCapsule
-            // 
-            this.toolStripButtonCapsule.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonCapsule.Image")));
-            this.toolStripButtonCapsule.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButtonCapsule.Name = "toolStripButtonCapsule";
-            this.toolStripButtonCapsule.Size = new System.Drawing.Size(53, 59);
-            this.toolStripButtonCapsule.Text = "Capsule";
-            this.toolStripButtonCapsule.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.toolStripButtonSphere.Click += new System.EventHandler(this.toolStripButtonSphere_Click);
             // 
             // toolStripButtonPlane
             // 
@@ -303,6 +298,7 @@
             this.toolStripButtonPlane.Size = new System.Drawing.Size(44, 59);
             this.toolStripButtonPlane.Text = "Plane";
             this.toolStripButtonPlane.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.toolStripButtonPlane.Click += new System.EventHandler(this.toolStripButtonPlane_Click);
             // 
             // toolStripSeparator5
             // 
@@ -416,6 +412,16 @@
             // 
             this.toolStripEx.DefaultRenderer = null;
             // 
+            // toolStripButtonCylinder
+            // 
+            this.toolStripButtonCylinder.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonCylinder.Image")));
+            this.toolStripButtonCylinder.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonCylinder.Name = "toolStripButtonCylinder";
+            this.toolStripButtonCylinder.Size = new System.Drawing.Size(55, 59);
+            this.toolStripButtonCylinder.Text = "Cylinder";
+            this.toolStripButtonCylinder.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.toolStripButtonCylinder.Click += new System.EventHandler(this.toolStripButtonCylinder_Click);
+            // 
             // FXStudioForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -475,7 +481,6 @@
         private System.Windows.Forms.ToolStripButton toolStripButtonTeapot;
         private System.Windows.Forms.ToolStripButton toolStripButtonCube;
         private System.Windows.Forms.ToolStripButton toolStripButtonSphere;
-        private System.Windows.Forms.ToolStripButton toolStripButtonCapsule;
         private System.Windows.Forms.ToolStripButton toolStripButtonPlane;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
         private System.Windows.Forms.ToolStripButton toolStripButtonDirectional;
@@ -488,6 +493,7 @@
         private System.Windows.Forms.ToolStripButton toolStripButtonD3D;
         private WeifenLuo.WinFormsUI.Docking.VS2013BlueTheme blueTheme;
         private ToolStripEx toolStripEx;
+        private System.Windows.Forms.ToolStripButton toolStripButtonCylinder;
     }
 }
 

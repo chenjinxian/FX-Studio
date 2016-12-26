@@ -20,14 +20,8 @@ namespace FXStudio
 
         private static string m_NameProperty = "Name";
         private static string m_HiddenProperty = "Hidden";
-        private static string m_TranslationProperty = "Translation";
-        private static string m_ScaleProperty = "Scale";
-        private static string m_RotationProperty = "Rotation";
         private static string m_NameDescription = "The name of this graph item";
         private static string m_HiddenDescription = "The hidden state of this graph item";
-        private static string m_TranslationDescription = "The translation of this node";
-        private static string m_ScaleDescription = "The uniform scale of this node";
-        private static string m_RotationDescription = "The rotation of this node";
 
         public ProjectView()
         {
@@ -141,100 +135,6 @@ namespace FXStudio
             return projectElement;
         }
 
-        private XmlNode CreateCameraXmlNode(XmlNode node)
-        {
-            XmlDocument xmlDoc = new XmlDocument();
-
-            XmlElement projectElement = xmlDoc.CreateElement("Camera");
-            XmlNode categoryProperties = xmlDoc.CreateElement("Category");
-            projectElement.AppendChild(categoryProperties);
-
-            XmlAttribute nameProperties = xmlDoc.CreateAttribute("Name");
-            nameProperties.Value = "Properties";
-            categoryProperties.Attributes.Append(nameProperties);
-
-            CreateProperty(xmlDoc, m_NameProperty, m_NameDescription, node.Name, typeof(string), false, ref categoryProperties);
-            CreateProperty(xmlDoc, m_HiddenProperty, m_HiddenDescription, "False", typeof(bool), true, ref categoryProperties);
-            CreateProperty(xmlDoc, "Show Cameras", "Show the cameras in the scene view", "True", typeof(bool), false, ref categoryProperties);
-            CreateProperty(xmlDoc, m_TranslationProperty, m_TranslationDescription, "True", typeof(bool), false, ref categoryProperties);
-            CreateProperty(xmlDoc, m_RotationProperty, m_RotationDescription, "True", typeof(bool), false, ref categoryProperties);
-
-            return projectElement;
-        }
-
-        private XmlNode CreateSkyboxXmlNode(XmlNode node)
-        {
-            XmlDocument xmlDoc = new XmlDocument();
-
-            XmlElement projectElement = xmlDoc.CreateElement("Camera");
-            XmlNode categoryProperties = xmlDoc.CreateElement("Category");
-            projectElement.AppendChild(categoryProperties);
-
-            XmlAttribute nameProperties = xmlDoc.CreateAttribute("Name");
-            nameProperties.Value = "Properties";
-            categoryProperties.Attributes.Append(nameProperties);
-
-            CreateProperty(xmlDoc, m_NameProperty, m_NameDescription, node.Name, typeof(string), false, ref categoryProperties);
-            CreateProperty(xmlDoc, m_HiddenProperty, m_HiddenDescription, "False", typeof(bool), true, ref categoryProperties);
-            CreateProperty(xmlDoc, "Show Skybox", "Show the skybox in the scene view", "True", typeof(bool), false, ref categoryProperties);
-            CreateProperty(xmlDoc, m_TranslationProperty, m_TranslationDescription, "True", typeof(bool), false, ref categoryProperties);
-            CreateProperty(xmlDoc, m_RotationProperty, m_RotationDescription, "True", typeof(bool), false, ref categoryProperties);
-
-            return projectElement;
-        }
-
-        private XmlNode CreateGridXmlNode(XmlNode node)
-        {
-            XmlDocument xmlDoc = new XmlDocument();
-
-            XmlElement projectElement = xmlDoc.CreateElement("Camera");
-            XmlNode categoryProperties = xmlDoc.CreateElement("Category");
-            projectElement.AppendChild(categoryProperties);
-
-            XmlAttribute nameProperties = xmlDoc.CreateAttribute("Name");
-            nameProperties.Value = "Properties";
-            categoryProperties.Attributes.Append(nameProperties);
-
-            CreateProperty(xmlDoc, m_NameProperty, m_NameDescription, node.Name, typeof(string), false, ref categoryProperties);
-            CreateProperty(xmlDoc, m_HiddenProperty, m_HiddenDescription, "False", typeof(bool), true, ref categoryProperties);
-            CreateProperty(xmlDoc, "Show Grid", "Show the grid in the scene view", "True", typeof(bool), false, ref categoryProperties);
-            CreateProperty(xmlDoc, m_TranslationProperty, m_TranslationDescription, "True", typeof(bool), false, ref categoryProperties);
-            CreateProperty(xmlDoc, m_RotationProperty, m_RotationDescription, "True", typeof(bool), false, ref categoryProperties);
-
-            return projectElement;
-        }
-
-        private XmlNode CreateLightsXmlNode(XmlNode node)
-        {
-            XmlElement element = new XmlDocument().CreateElement("Project");
-//             CreateProperty(xmlDoc, "Show Lights", "Show the lights in the scene view", "True", typeof(bool), false, ref categoryProperties);
-            return element;
-        }
-
-        private XmlNode CreateGeometryXmlNode(XmlNode node)
-        {
-            XmlElement element = new XmlDocument().CreateElement("Project");
-//             CreateProperty(xmlDoc, "Show Geometry", "Show the geometry in the scene view", "True", typeof(bool), false, ref categoryProperties);
-            return element;
-        }
-
-        private XmlNode CreateEffectXmlNode(XmlNode node)
-        {
-            XmlElement element = new XmlDocument().CreateElement("Project");
-            return element;
-        }
-
-        private XmlNode CreateMaterialXmlNode(XmlNode node)
-        {
-            XmlElement element = new XmlDocument().CreateElement("Project");
-            return element;
-        }
-
-        private XmlNode CreateModelXmlNode(XmlNode node)
-        {
-            XmlElement element = new XmlDocument().CreateElement("Project");
-            return element;
-        }
 
         private void treeViewProject_AfterSelect(object sender, TreeViewEventArgs e)
         {

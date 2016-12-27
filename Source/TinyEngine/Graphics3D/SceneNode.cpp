@@ -11,6 +11,7 @@
 #include "../ResourceCache/ShaderResource.h"
 #include "../AppFramework/BaseGameApp.h"
 #include "../AppFramework/BaseGameLogic.h"
+#include "GeometricPrimitive.h"
 #include <DirectXColors.h>
 
 SceneNodeProperties::SceneNodeProperties()
@@ -321,7 +322,7 @@ HRESULT GridNode::VOnDeleteSceneNode(Scene *pScene)
 HRESULT GridNode::VRender(Scene* pScene, const GameTime& gameTime)
 {
 	const std::vector<Variable*>& variables = m_pEffect->GetVariables();
-	for (auto variable : m_pEffect->GetVariables())
+	for (auto variable : variables)
 	{
 		if (variable->GetVariableSemantic() == "worldviewprojection")
 		{
@@ -357,6 +358,159 @@ HRESULT GridNode::VRender(Scene* pScene, const GameTime& gameTime)
 HRESULT GridNode::VOnUpdate(Scene* pScene, const GameTime& gameTime)
 {
 	return S_OK;
+}
+
+const std::string GeometryNode::m_Sphere = "Sphere";
+const std::string GeometryNode::m_Cylinder = "Cylinder";
+const std::string GeometryNode::m_Teapot = "Teapot";
+
+GeometryNode::GeometryNode(ActorType actorType, ActorId actorId, WeakBaseRenderComponentPtr renderComponent, RenderPass renderPass, const Matrix& worldMatrix)
+	: SceneNode(actorId, renderComponent, renderPass),
+	m_pEffect(nullptr),
+	m_pCurrentPass(nullptr),
+	m_pVertexBuffer(nullptr),
+	m_pIndexBuffer(nullptr),
+	m_IndexCount(0)
+{
+	GeometryRenderComponent* pGeometryRender = static_cast<GeometryRenderComponent*>(m_pRenderComponent);
+	if (pGeometryRender != nullptr)
+	{
+		m_TextureName = pGeometryRender->GetTextureName();
+		m_EffectName = pGeometryRender->GetEffectName();
+		m_CurrentTechnique = pGeometryRender->GetCurrentTechniqueName();
+		m_CurrentPass = pGeometryRender->GetCurrentPassName();
+	}
+
+	Resource effectRes(m_EffectName);
+	shared_ptr<ResHandle> pEffectResHandle = g_pApp->GetResCache()->GetHandle(&effectRes);
+	if (pEffectResHandle != nullptr)
+	{
+		shared_ptr<HlslResourceExtraData> extra = static_pointer_cast<HlslResourceExtraData>(pEffectResHandle->GetExtraData());
+		if (extra != nullptr)
+		{
+			m_pEffect = extra->GetEffect();
+		}
+	}
+
+	if (m_pEffect == nullptr)
+	{
+		DEBUG_ERROR("effect is not exist or valid: " + m_EffectName);
+	}
+
+	Technique* pCurrentTechnique = m_pEffect->GetTechniquesByName().at(m_CurrentTechnique);
+	if (pCurrentTechnique == nullptr)
+	{
+		DEBUG_ERROR("technique is not exist: " + m_CurrentTechnique);
+	}
+	m_pCurrentPass = pCurrentTechnique->GetPassesByName().at(m_CurrentPass);
+	if (m_pCurrentPass == nullptr)
+	{
+		DEBUG_ERROR("technique is not exist: " + m_CurrentTechnique);
+	}
+
+	if (actorType == m_Sphere)
+	{
+		CreateSphere();
+	}
+	else if (actorType == m_Cylinder)
+	{
+		CreateCylinder();
+	}
+	else if (actorType == m_Teapot)
+	{
+		CreateTeapot();
+	}
+	else
+	{
+
+	}
+}
+
+GeometryNode::~GeometryNode()
+{
+	SAFE_RELEASE(m_pVertexBuffer);
+	SAFE_RELEASE(m_pIndexBuffer);
+}
+
+HRESULT GeometryNode::VOnInitSceneNode(Scene* pScene)
+{
+	return S_OK;
+}
+
+HRESULT GeometryNode::VOnDeleteSceneNode(Scene *pScene)
+{
+	return S_OK;
+}
+
+HRESULT GeometryNode::VOnUpdate(Scene* pScene, const GameTime& gameTime)
+{
+	return S_OK;
+}
+
+HRESULT GeometryNode::VRender(Scene* pScene, const GameTime& gameTime)
+{
+	const std::vector<Variable*>& variables = m_pEffect->GetVariables();
+	for (auto variable : variables)
+	{
+		if (variable->GetVariableSemantic() == "worldviewprojection")
+		{
+			if (variable->GetVariableType() == "float4x4")
+			{
+				const XMMATRIX& wvp = pScene->GetCamera()->GetWorldViewProjection(pScene);
+				variable->SetMatrix(wvp);
+			}
+		}
+		else if (variable->GetVariableType() == "Texture2D")
+		{
+			Resource resource(m_TextureName);
+			shared_ptr<ResHandle> pTextureRes = g_pApp->GetResCache()->GetHandle(&resource);
+			if (pTextureRes != nullptr)
+			{
+				shared_ptr<D3D11TextureResourceExtraData> extra =
+					static_pointer_cast<D3D11TextureResourceExtraData>(pTextureRes->GetExtraData());
+				if (extra != nullptr)
+				{
+					variable->SetResource(extra->GetTexture());
+				}
+			}
+		}
+	}
+
+	g_pApp->GetRendererAPI()->VInputSetup(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, m_pCurrentPass->GetInputLayout());
+	g_pApp->GetRendererAPI()->VDrawMesh(
+		m_pCurrentPass->GetVertexSize(), m_pVertexBuffer, 0, m_pIndexBuffer, m_IndexCount, m_pCurrentPass->GetEffectPass());
+
+	return S_OK;
+}
+
+void GeometryNode::CreateSphere()
+{
+	SphereRenderComponent* pMeshRender = static_cast<SphereRenderComponent*>(m_pRenderComponent);
+	if (pMeshRender != nullptr)
+	{
+		float diameter = pMeshRender->GetDiameter();
+		uint32_t tessellation = pMeshRender->GetTessellation();
+		bool useRHcoords = pMeshRender->UseRHcoords();
+
+		std::vector<VertexPositionNormalTexture> vertices;
+		std::vector<uint16_t> indices;
+		GeometricPrimitive::CreateSphere(vertices, indices, diameter, tessellation, useRHcoords);
+
+		std::unique_ptr<Mesh> mesh(new Mesh(vertices, indices));
+		m_pCurrentPass->CreateVertexBuffer(mesh.get(), &m_pVertexBuffer);
+		m_pCurrentPass->CreateIndexBuffer(mesh.get(), &m_pIndexBuffer);
+		m_IndexCount = indices.size();
+	}
+}
+
+void GeometryNode::CreateCylinder()
+{
+
+}
+
+void GeometryNode::CreateTeapot()
+{
+
 }
 
 ModelNode::ModelNode(
@@ -583,7 +737,7 @@ HRESULT SkyboxNode::VOnDeleteSceneNode(Scene *pScene)
 HRESULT SkyboxNode::VRender(Scene* pScene, const GameTime& gameTime)
 {
 	const std::vector<Variable*>& variables = m_pEffect->GetVariables();
-	for (auto variable : m_pEffect->GetVariables())
+	for (auto variable : variables)
 	{
 		if (variable->GetVariableSemantic() == "worldviewprojection")
 		{

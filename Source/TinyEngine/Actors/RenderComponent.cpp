@@ -10,6 +10,7 @@ const std::string SkyboxRenderComponent::m_Name = "SkyboxRenderComponent";
 const std::string DirectionalLightComponent::m_Name = "DirectionalLightComponent";
 const std::string PointLightComponent::m_Name = "PointLightComponent";
 const std::string SpotLightComponent::m_Name = "SpotLightComponent";
+const std::string SphereRenderComponent::m_Name = "SphereRenderComponent";
 
 BaseRenderComponent::BaseRenderComponent() : m_pSceneNode(nullptr)
 {
@@ -83,6 +84,7 @@ shared_ptr<SceneNode> BaseRenderComponent::VGetSceneNode()
 }
 
 GridRenderComponent::GridRenderComponent()
+	:BaseRenderComponent()
 {
 
 }
@@ -134,6 +136,103 @@ shared_ptr<SceneNode> GridRenderComponent::VCreateSceneNode()
 }
 
 void GridRenderComponent::VCreateInheritedXmlElement(tinyxml2::XMLElement* pBaseElement, tinyxml2::XMLDocument* pDocument)
+{
+
+}
+
+GeometryRenderComponent::GeometryRenderComponent()
+	: BaseRenderComponent(),
+	m_EffectName(),
+	m_CurrentTechnique(),
+	m_CurrentPass(),
+	m_TextureName()
+{
+
+}
+
+GeometryRenderComponent::~GeometryRenderComponent()
+{
+
+}
+
+bool GeometryRenderComponent::VDelegateInit(tinyxml2::XMLElement* pData)
+{
+	tinyxml2::XMLElement* pTextures = pData->FirstChildElement("Textures");
+	if (pTextures != nullptr)
+	{
+		m_TextureName = pTextures->GetText();
+	}
+
+	tinyxml2::XMLElement* pEffect = pData->FirstChildElement("Effect");
+	if (pEffect != nullptr)
+	{
+		m_EffectName = pEffect->GetText();
+		m_CurrentTechnique = pEffect->Attribute("technique");
+		m_CurrentPass = pEffect->Attribute("pass");
+	}
+
+	return true;
+}
+
+shared_ptr<SceneNode> GeometryRenderComponent::VCreateSceneNode()
+{
+	shared_ptr<TransformComponent> pTransformComponent =
+		MakeStrongPtr(m_pOwner->GetComponent<TransformComponent>(TransformComponent::m_Name));
+	if (pTransformComponent)
+	{
+		WeakBaseRenderComponentPtr weakThis(this);
+
+		switch (g_pApp->GetRendererType())
+		{
+		case BaseGameApp::Renderer_D3D11:
+		{
+			return shared_ptr<SceneNode>(DEBUG_NEW GeometryNode(
+				m_pOwner->GetActorType(), m_pOwner->GetActorId(), weakThis, RenderPass_Actor, pTransformComponent->GetTransform()));
+		}
+
+		default:
+			DEBUG_ERROR("Unknown Renderer Implementation in ModelRenderComponent");
+		}
+	}
+
+	return shared_ptr<SceneNode>();
+}
+
+void GeometryRenderComponent::VCreateInheritedXmlElement(tinyxml2::XMLElement* pBaseElement, tinyxml2::XMLDocument* pDocument)
+{
+
+}
+
+SphereRenderComponent::SphereRenderComponent()
+	:GeometryRenderComponent(),
+	m_Diameter(1.0f),
+	m_Tessellation(3),
+	m_RHcoords(true)
+{
+
+}
+
+SphereRenderComponent::~SphereRenderComponent()
+{
+
+}
+
+bool SphereRenderComponent::VDelegateInit(tinyxml2::XMLElement* pData)
+{
+	GeometryRenderComponent::VDelegateInit(pData);
+
+	tinyxml2::XMLElement* pSphere = pData->FirstChildElement("Sphere");
+	if (pSphere != nullptr)
+	{
+		m_Diameter = pSphere->FloatAttribute("diameter");
+		m_Tessellation = pSphere->UnsignedAttribute("tessellation");
+		m_RHcoords = pSphere->BoolAttribute("rhcoords");
+	}
+
+	return true;
+}
+
+void SphereRenderComponent::VCreateInheritedXmlElement(tinyxml2::XMLElement* pBaseElement, tinyxml2::XMLDocument* pDocument)
 {
 
 }

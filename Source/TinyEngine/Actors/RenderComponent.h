@@ -54,6 +54,50 @@ protected:
 	float m_TicksInterval;
 };
 
+class GeometryRenderComponent : public BaseRenderComponent
+{
+public:
+	GeometryRenderComponent();
+	virtual ~GeometryRenderComponent();
+
+	const std::string& GetTextureName() { return m_TextureName; }
+	const std::string& GetEffectName() { return m_EffectName; }
+	const std::string& GetCurrentTechniqueName() { return m_CurrentTechnique; }
+	const std::string& GetCurrentPassName() { return m_CurrentPass; }
+
+protected:
+	virtual bool VDelegateInit(tinyxml2::XMLElement* pData);
+	virtual shared_ptr<SceneNode> VCreateSceneNode();
+	virtual void VCreateInheritedXmlElement(tinyxml2::XMLElement* pBaseElement, tinyxml2::XMLDocument* pDocument);
+
+	std::string m_EffectName;
+	std::string m_CurrentTechnique;
+	std::string m_CurrentPass;
+	std::string m_TextureName;
+};
+
+class SphereRenderComponent : public GeometryRenderComponent
+{
+public:
+	SphereRenderComponent();
+	virtual ~SphereRenderComponent();
+
+	float GetDiameter() const { return m_Diameter; }
+	uint32_t GetTessellation() const { return m_Tessellation; }
+	bool UseRHcoords() const { return m_RHcoords; }
+
+	virtual const std::string& VGetComponentName() const override { return m_Name; }
+	static const std::string m_Name;
+
+protected:
+	virtual bool VDelegateInit(tinyxml2::XMLElement* pData);
+	virtual void VCreateInheritedXmlElement(tinyxml2::XMLElement* pBaseElement, tinyxml2::XMLDocument* pDocument);
+
+	float m_Diameter;
+	uint32_t m_Tessellation;
+	bool m_RHcoords;
+};
+
 class ModelRenderComponent : public BaseRenderComponent
 {
 public:

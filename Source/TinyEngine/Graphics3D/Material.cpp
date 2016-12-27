@@ -192,7 +192,7 @@ void Pass::CreateVertexBuffer(const Mesh* mesh, ID3D11Buffer** ppVertexBuffer) c
 {
 	std::vector<Vector3> vertices = mesh->GetVertices();
 	uint32_t vertexCount = vertices.size();
-	std::vector<Vector3> textureCoordinates;
+	std::vector<Vector2> textureCoordinates;
 	if (!mesh->GetTextureCoordinates().empty())
 	{
 		textureCoordinates = mesh->GetTextureCoordinates().at(0);

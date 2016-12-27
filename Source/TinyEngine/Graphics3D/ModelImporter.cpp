@@ -158,12 +158,13 @@ Mesh::Mesh(Model* pModel, aiMesh* mesh)
 	uint32_t uvChannelCount = mesh->GetNumUVChannels();
 	for (uint32_t i = 0; i < uvChannelCount; i++)
 	{
-		std::vector<Vector3> textureCoordinates(mesh->mNumVertices);
+		std::vector<Vector2> textureCoordinates(mesh->mNumVertices);
 
 		aiVector3D* aiTextureCoordinates = mesh->mTextureCoords[i];
 		for (uint32_t j = 0; j < mesh->mNumVertices; j++)
 		{
-			textureCoordinates[j] = Vector3(reinterpret_cast<const float*>(&aiTextureCoordinates[j]));
+			Vector3 temp = Vector3(reinterpret_cast<const float*>(&aiTextureCoordinates[j]));
+			textureCoordinates[j] = Vector2(temp.x, temp.y);
 		}
 
 		m_TextureCoordinates.push_back(textureCoordinates);
@@ -195,6 +196,29 @@ Mesh::Mesh(Model* pModel, aiMesh* mesh)
 				m_Indices.push_back(face->mIndices[j]);
 			}
 		}
+	}
+}
+
+Mesh::Mesh(std::vector<VertexPositionNormalTexture> vertices, std::vector<uint16_t> indices)
+{
+	m_Vertices.reserve(vertices.size());
+	m_Normals.reserve(vertices.size());
+	std::vector<Vector2> textureCoordinates(vertices.size());
+	std::vector<Vector4> vertexColors(vertices.size());
+	for (auto& vertex : vertices)
+	{
+		m_Vertices.push_back(vertex.position);
+		m_Normals.push_back(vertex.normal);
+		textureCoordinates.push_back(vertex.textureCoordinate);
+		vertexColors.push_back(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+	}
+	m_TextureCoordinates.push_back(textureCoordinates);
+	m_VertexColors.push_back(vertexColors);
+
+	m_Indices.reserve(indices.size());
+	for (auto index : indices)
+	{
+		m_Indices.push_back(index);
 	}
 }
 
@@ -238,7 +262,7 @@ const std::vector<Vector3>& Mesh::GetBiNormals() const
 	return m_BiNormals;
 }
 
-const std::vector<std::vector<Vector3> >& Mesh::GetTextureCoordinates() const
+const std::vector<std::vector<Vector2> >& Mesh::GetTextureCoordinates() const
 {
 	return m_TextureCoordinates;
 }

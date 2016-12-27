@@ -3,6 +3,7 @@
 class Actor;
 class ActorComponent;
 
+typedef std::string ActorType;
 typedef uint64_t ActorId;
 typedef uint64_t ComponentId;
 

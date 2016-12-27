@@ -2,7 +2,6 @@
 #include "../TinyEngineBase.h"
 #include "../TinyEngineInterface.h"
 
-typedef std::string ActorType;
 typedef std::map<ComponentId, StrongActorComponentPtr> ActorCompoentMap;
 
 class Actor

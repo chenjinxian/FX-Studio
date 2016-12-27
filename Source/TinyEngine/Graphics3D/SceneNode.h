@@ -129,11 +129,42 @@ private:
 	float m_TicksInterval;
 };
 
+class GeometryNode : public SceneNode
+{
+public:
+	GeometryNode(ActorType actorType, ActorId actorId, WeakBaseRenderComponentPtr renderComponent, RenderPass renderPass, const Matrix& worldMatrix);
+	~GeometryNode();
+
+	virtual HRESULT VOnInitSceneNode(Scene* pScene) override;
+	virtual HRESULT VOnDeleteSceneNode(Scene *pScene) override;
+	virtual HRESULT VOnUpdate(Scene* pScene, const GameTime& gameTime) override;
+	virtual HRESULT VRender(Scene* pScene, const GameTime& gameTime) override;
+
+private:
+	void CreateSphere();
+	void CreateCylinder();
+	void CreateTeapot();
+
+	Effect* m_pEffect;
+	Pass* m_pCurrentPass;
+	ID3D11Buffer* m_pVertexBuffer;
+	ID3D11Buffer* m_pIndexBuffer;
+	uint32_t m_IndexCount;
+
+	std::string m_TextureName;
+	std::string m_EffectName;
+	std::string m_CurrentTechnique;
+	std::string m_CurrentPass;
+
+	static const std::string m_Sphere;
+	static const std::string m_Cylinder;
+	static const std::string m_Teapot;
+};
+
 class ModelNode : public SceneNode
 {
 public:
 	ModelNode(ActorId actorId, WeakBaseRenderComponentPtr renderComponent, RenderPass renderPass, const Matrix& worldMatrix);
-
 	~ModelNode();
 
 	virtual HRESULT VOnInitSceneNode(Scene* pScene) override;

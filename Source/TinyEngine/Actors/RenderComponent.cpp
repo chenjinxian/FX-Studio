@@ -10,7 +10,10 @@ const std::string SkyboxRenderComponent::m_Name = "SkyboxRenderComponent";
 const std::string DirectionalLightComponent::m_Name = "DirectionalLightComponent";
 const std::string PointLightComponent::m_Name = "PointLightComponent";
 const std::string SpotLightComponent::m_Name = "SpotLightComponent";
+const std::string CubeRenderComponent::m_Name = "CubeRenderComponent";
 const std::string SphereRenderComponent::m_Name = "SphereRenderComponent";
+const std::string CylinderRenderComponent::m_Name = "CylinderRenderComponent";
+const std::string TeapotRenderComponent::m_Name = "TeapotRenderComponent";
 
 BaseRenderComponent::BaseRenderComponent() : m_pSceneNode(nullptr)
 {
@@ -203,6 +206,38 @@ void GeometryRenderComponent::VCreateInheritedXmlElement(tinyxml2::XMLElement* p
 
 }
 
+CubeRenderComponent::CubeRenderComponent()
+	:GeometryRenderComponent(),
+	m_Size(1.0f),
+	m_RHcoords(true)
+{
+
+}
+
+CubeRenderComponent::~CubeRenderComponent()
+{
+
+}
+
+bool CubeRenderComponent::VDelegateInit(tinyxml2::XMLElement* pData)
+{
+	GeometryRenderComponent::VDelegateInit(pData);
+
+	tinyxml2::XMLElement* pSphere = pData->FirstChildElement("Cube");
+	if (pSphere != nullptr)
+	{
+		m_Size = pSphere->FloatAttribute("size");
+		m_RHcoords = pSphere->BoolAttribute("rhcoords");
+	}
+
+	return true;
+}
+
+void CubeRenderComponent::VCreateInheritedXmlElement(tinyxml2::XMLElement* pBaseElement, tinyxml2::XMLDocument* pDocument)
+{
+
+}
+
 SphereRenderComponent::SphereRenderComponent()
 	:GeometryRenderComponent(),
 	m_Diameter(1.0f),
@@ -233,6 +268,76 @@ bool SphereRenderComponent::VDelegateInit(tinyxml2::XMLElement* pData)
 }
 
 void SphereRenderComponent::VCreateInheritedXmlElement(tinyxml2::XMLElement* pBaseElement, tinyxml2::XMLDocument* pDocument)
+{
+
+}
+
+CylinderRenderComponent::CylinderRenderComponent()
+	:GeometryRenderComponent(),
+	m_Height(1.0f),
+	m_Diameter(1.0f),
+	m_Tessellation(32),
+	m_RHcoords(true)
+{
+
+}
+
+CylinderRenderComponent::~CylinderRenderComponent()
+{
+
+}
+
+bool CylinderRenderComponent::VDelegateInit(tinyxml2::XMLElement* pData)
+{
+	GeometryRenderComponent::VDelegateInit(pData);
+
+	tinyxml2::XMLElement* pSphere = pData->FirstChildElement("Cylinder");
+	if (pSphere != nullptr)
+	{
+		m_Height = pSphere->FloatAttribute("height");
+		m_Diameter = pSphere->FloatAttribute("diameter");
+		m_Tessellation = pSphere->UnsignedAttribute("tessellation");
+		m_RHcoords = pSphere->BoolAttribute("rhcoords");
+	}
+
+	return true;
+}
+
+void CylinderRenderComponent::VCreateInheritedXmlElement(tinyxml2::XMLElement* pBaseElement, tinyxml2::XMLDocument* pDocument)
+{
+
+}
+
+TeapotRenderComponent::TeapotRenderComponent()
+	:GeometryRenderComponent(),
+	m_Size(1.0f),
+	m_Tessellation(3),
+	m_RHcoords(true)
+{
+
+}
+
+TeapotRenderComponent::~TeapotRenderComponent()
+{
+
+}
+
+bool TeapotRenderComponent::VDelegateInit(tinyxml2::XMLElement* pData)
+{
+	GeometryRenderComponent::VDelegateInit(pData);
+
+	tinyxml2::XMLElement* pSphere = pData->FirstChildElement("Teapot");
+	if (pSphere != nullptr)
+	{
+		m_Size = pSphere->FloatAttribute("size");
+		m_Tessellation = pSphere->UnsignedAttribute("tessellation");
+		m_RHcoords = pSphere->BoolAttribute("rhcoords");
+	}
+
+	return true;
+}
+
+void TeapotRenderComponent::VCreateInheritedXmlElement(tinyxml2::XMLElement* pBaseElement, tinyxml2::XMLDocument* pDocument)
 {
 
 }

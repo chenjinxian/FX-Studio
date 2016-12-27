@@ -141,9 +141,11 @@ public:
 	virtual HRESULT VRender(Scene* pScene, const GameTime& gameTime) override;
 
 private:
+	void CreateCube();
 	void CreateSphere();
 	void CreateCylinder();
 	void CreateTeapot();
+	void CreatePlane();
 
 	Effect* m_pEffect;
 	Pass* m_pCurrentPass;
@@ -156,9 +158,11 @@ private:
 	std::string m_CurrentTechnique;
 	std::string m_CurrentPass;
 
+	static const std::string m_Cube;
 	static const std::string m_Sphere;
 	static const std::string m_Cylinder;
 	static const std::string m_Teapot;
+	static const std::string m_Plane;
 };
 
 class ModelNode : public SceneNode

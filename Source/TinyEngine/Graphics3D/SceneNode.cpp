@@ -360,9 +360,11 @@ HRESULT GridNode::VOnUpdate(Scene* pScene, const GameTime& gameTime)
 	return S_OK;
 }
 
+const std::string GeometryNode::m_Cube = "Cube";
 const std::string GeometryNode::m_Sphere = "Sphere";
 const std::string GeometryNode::m_Cylinder = "Cylinder";
 const std::string GeometryNode::m_Teapot = "Teapot";
+const std::string GeometryNode::m_Plane = "Plane";
 
 GeometryNode::GeometryNode(ActorType actorType, ActorId actorId, WeakBaseRenderComponentPtr renderComponent, RenderPass renderPass, const Matrix& worldMatrix)
 	: SceneNode(actorId, renderComponent, renderPass),
@@ -408,6 +410,10 @@ GeometryNode::GeometryNode(ActorType actorType, ActorId actorId, WeakBaseRenderC
 		DEBUG_ERROR("technique is not exist: " + m_CurrentTechnique);
 	}
 
+	if (actorType == m_Cube)
+	{
+		CreateCube();
+	}
 	if (actorType == m_Sphere)
 	{
 		CreateSphere();
@@ -419,6 +425,10 @@ GeometryNode::GeometryNode(ActorType actorType, ActorId actorId, WeakBaseRenderC
 	else if (actorType == m_Teapot)
 	{
 		CreateTeapot();
+	}
+	else if (actorType == m_Plane)
+	{
+		CreatePlane();
 	}
 	else
 	{
@@ -483,6 +493,25 @@ HRESULT GeometryNode::VRender(Scene* pScene, const GameTime& gameTime)
 	return S_OK;
 }
 
+void GeometryNode::CreateCube()
+{
+	CubeRenderComponent* pMeshRender = static_cast<CubeRenderComponent*>(m_pRenderComponent);
+	if (pMeshRender != nullptr)
+	{
+		float size = pMeshRender->GetSize();
+		bool useRHcoords = pMeshRender->UseRHcoords();
+
+		std::vector<VertexPositionNormalTexture> vertices;
+		std::vector<uint16_t> indices;
+		GeometricPrimitive::CreateCube(vertices, indices, size, useRHcoords);
+
+		std::unique_ptr<Mesh> mesh(new Mesh(vertices, indices));
+		m_pCurrentPass->CreateVertexBuffer(mesh.get(), &m_pVertexBuffer);
+		m_pCurrentPass->CreateIndexBuffer(mesh.get(), &m_pIndexBuffer);
+		m_IndexCount = indices.size();
+	}
+}
+
 void GeometryNode::CreateSphere()
 {
 	SphereRenderComponent* pMeshRender = static_cast<SphereRenderComponent*>(m_pRenderComponent);
@@ -494,7 +523,7 @@ void GeometryNode::CreateSphere()
 
 		std::vector<VertexPositionNormalTexture> vertices;
 		std::vector<uint16_t> indices;
-		GeometricPrimitive::CreateTeapot(vertices, indices, diameter, 3, useRHcoords);
+		GeometricPrimitive::CreateGeoSphere(vertices, indices, diameter, tessellation, useRHcoords);
 
 		std::unique_ptr<Mesh> mesh(new Mesh(vertices, indices));
 		m_pCurrentPass->CreateVertexBuffer(mesh.get(), &m_pVertexBuffer);
@@ -505,10 +534,46 @@ void GeometryNode::CreateSphere()
 
 void GeometryNode::CreateCylinder()
 {
+	CylinderRenderComponent* pMeshRender = static_cast<CylinderRenderComponent*>(m_pRenderComponent);
+	if (pMeshRender != nullptr)
+	{
+		float height = pMeshRender->GetHeight();
+		float diameter = pMeshRender->GetDiameter();
+		uint32_t tessellation = pMeshRender->GetTessellation();
+		bool useRHcoords = pMeshRender->UseRHcoords();
 
+		std::vector<VertexPositionNormalTexture> vertices;
+		std::vector<uint16_t> indices;
+		GeometricPrimitive::CreateCylinder(vertices, indices, height, diameter, tessellation, useRHcoords);
+
+		std::unique_ptr<Mesh> mesh(new Mesh(vertices, indices));
+		m_pCurrentPass->CreateVertexBuffer(mesh.get(), &m_pVertexBuffer);
+		m_pCurrentPass->CreateIndexBuffer(mesh.get(), &m_pIndexBuffer);
+		m_IndexCount = indices.size();
+	}
 }
 
 void GeometryNode::CreateTeapot()
+{
+	TeapotRenderComponent* pMeshRender = static_cast<TeapotRenderComponent*>(m_pRenderComponent);
+	if (pMeshRender != nullptr)
+	{
+		float size = pMeshRender->GetSize();
+		uint32_t tessellation = pMeshRender->GetTessellation();
+		bool useRHcoords = pMeshRender->UseRHcoords();
+
+		std::vector<VertexPositionNormalTexture> vertices;
+		std::vector<uint16_t> indices;
+		GeometricPrimitive::CreateTeapot(vertices, indices, size, tessellation, useRHcoords);
+
+		std::unique_ptr<Mesh> mesh(new Mesh(vertices, indices));
+		m_pCurrentPass->CreateVertexBuffer(mesh.get(), &m_pVertexBuffer);
+		m_pCurrentPass->CreateIndexBuffer(mesh.get(), &m_pIndexBuffer);
+		m_IndexCount = indices.size();
+	}
+}
+
+void GeometryNode::CreatePlane()
 {
 
 }

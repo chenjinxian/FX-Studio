@@ -203,8 +203,10 @@ Mesh::Mesh(std::vector<VertexPositionNormalTexture> vertices, std::vector<uint16
 {
 	m_Vertices.reserve(vertices.size());
 	m_Normals.reserve(vertices.size());
-	std::vector<Vector2> textureCoordinates(vertices.size());
-	std::vector<Vector4> vertexColors(vertices.size());
+	std::vector<Vector2> textureCoordinates;
+	textureCoordinates.reserve(vertices.size());
+	std::vector<Vector4> vertexColors;
+	vertexColors.reserve(vertices.size());
 	for (auto& vertex : vertices)
 	{
 		m_Vertices.push_back(vertex.position);

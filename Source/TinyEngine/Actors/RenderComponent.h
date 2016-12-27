@@ -76,6 +76,26 @@ protected:
 	std::string m_TextureName;
 };
 
+class CubeRenderComponent : public GeometryRenderComponent
+{
+public:
+	CubeRenderComponent();
+	virtual ~CubeRenderComponent();
+
+	float GetSize() const { return m_Size; }
+	bool UseRHcoords() const { return m_RHcoords; }
+
+	virtual const std::string& VGetComponentName() const override { return m_Name; }
+	static const std::string m_Name;
+
+protected:
+	virtual bool VDelegateInit(tinyxml2::XMLElement* pData);
+	virtual void VCreateInheritedXmlElement(tinyxml2::XMLElement* pBaseElement, tinyxml2::XMLDocument* pDocument);
+
+	float m_Size;
+	bool m_RHcoords;
+};
+
 class SphereRenderComponent : public GeometryRenderComponent
 {
 public:
@@ -94,6 +114,52 @@ protected:
 	virtual void VCreateInheritedXmlElement(tinyxml2::XMLElement* pBaseElement, tinyxml2::XMLDocument* pDocument);
 
 	float m_Diameter;
+	uint32_t m_Tessellation;
+	bool m_RHcoords;
+};
+
+class CylinderRenderComponent : public GeometryRenderComponent
+{
+public:
+	CylinderRenderComponent();
+	virtual ~CylinderRenderComponent();
+
+	float GetHeight() const { return m_Height; }
+	float GetDiameter() const { return m_Diameter; }
+	uint32_t GetTessellation() const { return m_Tessellation; }
+	bool UseRHcoords() const { return m_RHcoords; }
+
+	virtual const std::string& VGetComponentName() const override { return m_Name; }
+	static const std::string m_Name;
+
+protected:
+	virtual bool VDelegateInit(tinyxml2::XMLElement* pData);
+	virtual void VCreateInheritedXmlElement(tinyxml2::XMLElement* pBaseElement, tinyxml2::XMLDocument* pDocument);
+
+	float m_Height;
+	float m_Diameter;
+	uint32_t m_Tessellation;
+	bool m_RHcoords;
+};
+
+class TeapotRenderComponent : public GeometryRenderComponent
+{
+public:
+	TeapotRenderComponent();
+	virtual ~TeapotRenderComponent();
+
+	float GetSize() const { return m_Size; }
+	uint32_t GetTessellation() const { return m_Tessellation; }
+	bool UseRHcoords() const { return m_RHcoords; }
+
+	virtual const std::string& VGetComponentName() const override { return m_Name; }
+	static const std::string m_Name;
+
+protected:
+	virtual bool VDelegateInit(tinyxml2::XMLElement* pData);
+	virtual void VCreateInheritedXmlElement(tinyxml2::XMLElement* pBaseElement, tinyxml2::XMLDocument* pDocument);
+
+	float m_Size;
 	uint32_t m_Tessellation;
 	bool m_RHcoords;
 };

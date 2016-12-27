@@ -273,12 +273,26 @@ namespace FXStudio
 
         private void toolStripButtonTeapot_Click(object sender, EventArgs e)
         {
+            XmlDocument xmlDoc = new XmlDocument();
+            XmlElement geometryElement = xmlDoc.CreateElement("Geometry");
 
+            geometryElement.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "type", "Teapot"));
+            geometryElement.AppendChild(XmlUtility.CreateTransformComponent(xmlDoc, "0", "0.5"));
+            geometryElement.AppendChild(XmlUtility.CreateTeapotRenderComponent(xmlDoc));
+
+            RenderMethods.AddActor(geometryElement.OuterXml);
         }
 
         private void toolStripButtonCube_Click(object sender, EventArgs e)
         {
+            XmlDocument xmlDoc = new XmlDocument();
+            XmlElement geometryElement = xmlDoc.CreateElement("Geometry");
 
+            geometryElement.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "type", "Cube"));
+            geometryElement.AppendChild(XmlUtility.CreateTransformComponent(xmlDoc, "-2", "0.5"));
+            geometryElement.AppendChild(XmlUtility.CreateCubeRenderComponent(xmlDoc));
+
+            RenderMethods.AddActor(geometryElement.OuterXml);
         }
 
         private void toolStripButtonSphere_Click(object sender, EventArgs e)
@@ -287,61 +301,22 @@ namespace FXStudio
             XmlElement geometryElement = xmlDoc.CreateElement("Geometry");
 
             geometryElement.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "type", "Sphere"));
-
-            XmlElement transformElement = xmlDoc.CreateElement("TransformComponent");
-            XmlElement sphereElement = xmlDoc.CreateElement("SphereRenderComponent");
-            geometryElement.AppendChild(transformElement);
-            geometryElement.AppendChild(sphereElement);
-
-            XmlElement translation = xmlDoc.CreateElement("Translation");
-            XmlElement scale = xmlDoc.CreateElement("Scale");
-            XmlElement rotation = xmlDoc.CreateElement("Rotation");
-            transformElement.AppendChild(translation);
-            transformElement.AppendChild(scale);
-            transformElement.AppendChild(rotation);
-
-            translation.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "x", "0"));
-            translation.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "y", "0"));
-            translation.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "y", "0"));
-
-            scale.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "x", "1"));
-            scale.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "y", "1"));
-            scale.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "y", "1"));
-
-            rotation.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "x", "0"));
-            rotation.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "y", "0"));
-            rotation.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "y", "0"));
-
-            XmlElement color = xmlDoc.CreateElement("Color");
-            XmlElement texture = xmlDoc.CreateElement("Texture");
-            XmlElement effect = xmlDoc.CreateElement("Effect");
-            XmlElement sphere = xmlDoc.CreateElement("Sphere");
-            sphereElement.AppendChild(color);
-            sphereElement.AppendChild(texture);
-            sphereElement.AppendChild(effect);
-            sphereElement.AppendChild(sphere);
-
-            color.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "r", "1"));
-            color.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "g", "1"));
-            color.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "b", "1"));
-            color.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "a", "1"));
-
-            texture.InnerText = @"Textures\DefaultTexture.dds";
-
-            effect.InnerText = @"Effects\DefaultEffect.fx";
-            effect.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "technique", "main11"));
-            effect.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "pass", "p0"));
-
-            sphere.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "diameter", "10.0"));
-            sphere.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "tessellation", "16"));
-            sphere.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "rhcoords", "1"));
+            geometryElement.AppendChild(XmlUtility.CreateTransformComponent(xmlDoc));
+            geometryElement.AppendChild(XmlUtility.CreateSphereRenderComponent(xmlDoc));
 
             RenderMethods.AddActor(geometryElement.OuterXml);
         }
 
         private void toolStripButtonCylinder_Click(object sender, EventArgs e)
         {
+            XmlDocument xmlDoc = new XmlDocument();
+            XmlElement geometryElement = xmlDoc.CreateElement("Geometry");
 
+            geometryElement.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "type", "Cylinder"));
+            geometryElement.AppendChild(XmlUtility.CreateTransformComponent(xmlDoc, "2", "0.5"));
+            geometryElement.AppendChild(XmlUtility.CreateCylinderRenderComponent(xmlDoc));
+
+            RenderMethods.AddActor(geometryElement.OuterXml);
         }
 
         private void toolStripButtonPlane_Click(object sender, EventArgs e)

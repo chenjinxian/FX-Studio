@@ -75,13 +75,13 @@ namespace FXStudio
         private void AddCompoentProperties(XmlNode actorComponentValues, XmlNode editorComponentValues)
         {
             string componentName = actorComponentValues.Name.ToString();
-            string componentXpath = XPathUtility.GetXPathToNode(actorComponentValues);
+            string componentXpath = XmlUtility.GetXPathToNode(actorComponentValues);
             try
             {
                 int elementNum = 0;
                 foreach (XmlNode inputField in editorComponentValues)
                 {
-                    string xpath = XPathUtility.GetXPathToNode(inputField);
+                    string xpath = XmlUtility.GetXPathToNode(inputField);
                     string elementName = inputField.Attributes["name"].Value;
                     string elementType = inputField.Attributes["type"].Value;
 
@@ -168,23 +168,23 @@ namespace FXStudio
 
             m_ComponentsByName = new Dictionary<string, XmlNode>();
 
-            transfrom.Attributes.Append(CreateAttribute(xmlDoc, "name", "TransformComponent"));
+            transfrom.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "name", "TransformComponent"));
             m_ComponentsByName["TransformComponent"] = transfrom;
             transfrom.AppendChild(CreateProperty(xmlDoc, m_TranslationProperty, m_TranslationDescription, typeof(Vector3).ToString()));
             transfrom.AppendChild(CreateProperty(xmlDoc, m_ScaleProperty, m_ScaleDescription, typeof(Vector3).ToString()));
             transfrom.AppendChild(CreateProperty(xmlDoc, m_RotationProperty, m_RotationDescription, typeof(Vector3).ToString()));
 
-            camera.Attributes.Append(CreateAttribute(xmlDoc, "name", "Camera"));
+            camera.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "name", "Camera"));
             m_ComponentsByName["Camera"] = camera;
             camera.AppendChild(CreateProperty(xmlDoc, m_TranslationProperty, m_TranslationDescription, "Vector3"));
             camera.AppendChild(CreateProperty(xmlDoc, m_RotationProperty, m_RotationDescription, "Vector3"));
 
-            skybox.Attributes.Append(CreateAttribute(xmlDoc, "name", "SkyboxRenderComponent"));
+            skybox.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "name", "SkyboxRenderComponent"));
             m_ComponentsByName["SkyboxRenderComponent"] = skybox;
             skybox.AppendChild(CreateProperty(xmlDoc, "Color", "The color of the skybox", typeof(Color).ToString()));
             skybox.AppendChild(CreateProperty(xmlDoc, "Texture", "The cube texture of the skybox", typeof(Image).ToString()));
 
-            grid.Attributes.Append(CreateAttribute(xmlDoc, "name", "GridRenderComponent"));
+            grid.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "name", "GridRenderComponent"));
             m_ComponentsByName["GridRenderComponent"] = grid;
             grid.AppendChild(CreateProperty(xmlDoc, "Color", "The color of the grid", typeof(Color).ToString()));
             grid.AppendChild(CreateProperty(xmlDoc, "Texture", "The diffuse texture of the grid", typeof(Image).ToString()));
@@ -195,17 +195,10 @@ namespace FXStudio
         private XmlNode CreateProperty(XmlDocument xmlDoc, string name, string description, string type)
         {
             XmlNode propertyNode = xmlDoc.CreateElement("Property");
-            propertyNode.Attributes.Append(CreateAttribute(xmlDoc, "name", name));
-            propertyNode.Attributes.Append(CreateAttribute(xmlDoc, "description", description));
-            propertyNode.Attributes.Append(CreateAttribute(xmlDoc, "type", type));
+            propertyNode.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "name", name));
+            propertyNode.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "description", description));
+            propertyNode.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "type", type));
             return propertyNode;
-        }
-
-        private XmlAttribute CreateAttribute(XmlDocument xmlDoc, string name, string value)
-        {
-            XmlAttribute attribute = xmlDoc.CreateAttribute(name);
-            attribute.Value = value;
-            return attribute;
         }
     }
 

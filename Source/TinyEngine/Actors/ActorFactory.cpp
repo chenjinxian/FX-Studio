@@ -14,6 +14,7 @@ ActorFactory::ActorFactory() : m_LastActorId(INVALID_ACTOR_ID)
 	m_ComponentFactory.Register<SpotLightComponent>(ActorComponent::GetIdFromName(SpotLightComponent::m_Name));
 	m_ComponentFactory.Register<GridRenderComponent>(ActorComponent::GetIdFromName(GridRenderComponent::m_Name));
 	m_ComponentFactory.Register<ModelRenderComponent>(ActorComponent::GetIdFromName(ModelRenderComponent::m_Name));
+	m_ComponentFactory.Register<SphereRenderComponent>(ActorComponent::GetIdFromName(SphereRenderComponent::m_Name));
 }
 
 

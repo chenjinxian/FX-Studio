@@ -494,7 +494,7 @@ void GeometryNode::CreateSphere()
 
 		std::vector<VertexPositionNormalTexture> vertices;
 		std::vector<uint16_t> indices;
-		GeometricPrimitive::CreateSphere(vertices, indices, diameter, tessellation, useRHcoords);
+		GeometricPrimitive::CreateTeapot(vertices, indices, diameter, 3, useRHcoords);
 
 		std::unique_ptr<Mesh> mesh(new Mesh(vertices, indices));
 		m_pCurrentPass->CreateVertexBuffer(mesh.get(), &m_pVertexBuffer);

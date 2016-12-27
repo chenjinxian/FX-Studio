@@ -38,10 +38,9 @@ extern "C" {
 
 	FXSTUDIOCORE_API void CreateNewProject(BSTR lFileName);
 
-	FXSTUDIOCORE_API int AddGeometry(BSTR geometryResource);
-	FXSTUDIOCORE_API int AddActor(BSTR actorResource);
-	FXSTUDIOCORE_API int ModifyActor(BSTR modificationXml);
-	FXSTUDIOCORE_API int RemoveActor(unsigned int actorId);
+	FXSTUDIOCORE_API unsigned int AddActor(BSTR actorResource);
+	FXSTUDIOCORE_API bool ModifyActor(BSTR modificationXml);
+	FXSTUDIOCORE_API bool RemoveActor(unsigned int actorId);
 
 
 #ifdef __cplusplus

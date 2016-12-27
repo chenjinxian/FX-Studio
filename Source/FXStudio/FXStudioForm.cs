@@ -4,9 +4,10 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.IO;
+using System.Xml;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.Configuration;
@@ -50,8 +51,8 @@ namespace FXStudio
             {
                 m_messageHandler = new MessageHandler(this, m_renderView.GetRenderPanel());
 
-//                 IntPtr hInstance = Marshal.GetHINSTANCE(this.GetType().Module);
-//                 RenderMethods.CreateInstance(hInstance, IntPtr.Zero, panel.Handle, 1, panel.Width, panel.Height);
+                //                 IntPtr hInstance = Marshal.GetHINSTANCE(this.GetType().Module);
+                //                 RenderMethods.CreateInstance(hInstance, IntPtr.Zero, panel.Handle, 1, panel.Width, panel.Height);
             }
         }
 
@@ -187,6 +188,9 @@ namespace FXStudio
             var panel = m_renderView.GetRenderPanel();
             m_messageHandler.ResetRenderPanel(panel);
             RenderMethods.CreateInstance(hInstance, IntPtr.Zero, panel.Handle, 1, panel.Width, panel.Height);
+
+            if (panel.Width != 0 && panel.Height != 0)
+                RenderMethods.ResizeWnd(panel.Width, panel.Height);
         }
 
         private void FXStudioForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -243,8 +247,11 @@ namespace FXStudio
 
         private void FXStudioForm_Resize(object sender, EventArgs e)
         {
-            panelAllView.DockLeftPortion = panelAllView.Width * 0.18d;
-            panelAllView.DockRightPortion = panelAllView.DockLeftPortion;
+            if (panelAllView.Width != 0 && panelAllView.Height != 0)
+            {
+                panelAllView.DockLeftPortion = panelAllView.Width * 0.18d;
+                panelAllView.DockRightPortion = panelAllView.DockLeftPortion;
+            }
         }
 
         private void toolStripButtonNew_Click(object sender, EventArgs e)
@@ -276,7 +283,60 @@ namespace FXStudio
 
         private void toolStripButtonSphere_Click(object sender, EventArgs e)
         {
+            XmlDocument xmlDoc = new XmlDocument();
+            XmlElement geometryElement = xmlDoc.CreateElement("Geometry");
 
+            geometryElement.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "type", "Sphere"));
+
+            XmlElement transformElement = xmlDoc.CreateElement("TransformComponent");
+            XmlElement sphereElement = xmlDoc.CreateElement("SphereRenderComponent");
+            geometryElement.AppendChild(transformElement);
+            geometryElement.AppendChild(sphereElement);
+
+            XmlElement translation = xmlDoc.CreateElement("Translation");
+            XmlElement scale = xmlDoc.CreateElement("Scale");
+            XmlElement rotation = xmlDoc.CreateElement("Rotation");
+            transformElement.AppendChild(translation);
+            transformElement.AppendChild(scale);
+            transformElement.AppendChild(rotation);
+
+            translation.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "x", "0"));
+            translation.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "y", "0"));
+            translation.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "y", "0"));
+
+            scale.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "x", "1"));
+            scale.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "y", "1"));
+            scale.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "y", "1"));
+
+            rotation.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "x", "0"));
+            rotation.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "y", "0"));
+            rotation.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "y", "0"));
+
+            XmlElement color = xmlDoc.CreateElement("Color");
+            XmlElement texture = xmlDoc.CreateElement("Texture");
+            XmlElement effect = xmlDoc.CreateElement("Effect");
+            XmlElement sphere = xmlDoc.CreateElement("Sphere");
+            sphereElement.AppendChild(color);
+            sphereElement.AppendChild(texture);
+            sphereElement.AppendChild(effect);
+            sphereElement.AppendChild(sphere);
+
+            color.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "r", "1"));
+            color.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "g", "1"));
+            color.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "b", "1"));
+            color.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "a", "1"));
+
+            texture.InnerText = @"Textures\DefaultTexture.dds";
+
+            effect.InnerText = @"Effects\DefaultEffect.fx";
+            effect.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "technique", "main11"));
+            effect.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "pass", "p0"));
+
+            sphere.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "diameter", "10.0"));
+            sphere.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "tessellation", "16"));
+            sphere.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "rhcoords", "1"));
+
+            RenderMethods.AddActor(geometryElement.OuterXml);
         }
 
         private void toolStripButtonCylinder_Click(object sender, EventArgs e)

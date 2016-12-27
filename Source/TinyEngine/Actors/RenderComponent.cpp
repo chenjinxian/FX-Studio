@@ -157,7 +157,7 @@ GeometryRenderComponent::~GeometryRenderComponent()
 
 bool GeometryRenderComponent::VDelegateInit(tinyxml2::XMLElement* pData)
 {
-	tinyxml2::XMLElement* pTextures = pData->FirstChildElement("Textures");
+	tinyxml2::XMLElement* pTextures = pData->FirstChildElement("Texture");
 	if (pTextures != nullptr)
 	{
 		m_TextureName = pTextures->GetText();

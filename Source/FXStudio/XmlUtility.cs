@@ -7,7 +7,7 @@ using System.Xml;
 
 namespace FXStudio
 {
-    class XPathUtility
+    class XmlUtility
     {
         static int GetNodePosition(XmlNode child)
         {
@@ -47,6 +47,13 @@ namespace FXStudio
                 "*",
                 GetNodePosition(node)
                 );
+        }
+
+        public static XmlAttribute CreateAttribute(XmlDocument xmlDoc, string name, string value)
+        {
+            XmlAttribute attribute = xmlDoc.CreateAttribute(name);
+            attribute.Value = value;
+            return attribute;
         }
     }
 }

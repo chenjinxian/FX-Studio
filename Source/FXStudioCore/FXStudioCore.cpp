@@ -124,6 +124,16 @@ FXSTUDIOCORE_API void CreateNewProject(BSTR lFileName)
 	}
 }
 
+FXSTUDIOCORE_API int PickActor(int* hWndPterAddress)
+{
+	HWND hWnd = (HWND)hWndPterAddress;
+	POINT cursor;
+	::GetCursorPos(&cursor);
+	::ScreenToClient(hWnd, &cursor);
+
+	return -1;
+}
+
 FXSTUDIOCORE_API unsigned int AddActor(BSTR actorResource)
 {
 	std::string actorXml = Utility::WS2S(std::wstring(actorResource, SysStringLen(actorResource)));

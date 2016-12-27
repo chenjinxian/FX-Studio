@@ -70,6 +70,7 @@ public:
 
 	virtual bool VAddChild(shared_ptr<ISceneNode> child) override;
 	virtual bool VRemoveChild(ActorId actorId) override;
+	virtual bool VPick(Scene* pScene, const Vector3& rayDirection) override;
 
 	void SetRadius(float radius) { }
 

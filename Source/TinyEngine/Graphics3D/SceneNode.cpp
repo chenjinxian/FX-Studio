@@ -144,6 +144,17 @@ bool SceneNode::VRemoveChild(ActorId actorId)
 	return false;
 }
 
+bool SceneNode::VPick(Scene* pScene, const Vector3& rayDirection)
+{
+	for (auto& child : m_Children)
+	{
+		if (!child->VPick(pScene, rayDirection))
+			return false;
+	}
+
+	return true;
+}
+
 RootNode::RootNode() : SceneNode(INVALID_ACTOR_ID, WeakBaseRenderComponentPtr(), RenderPass_0)
 {
 	m_Children.reserve(RenderPass_Last);

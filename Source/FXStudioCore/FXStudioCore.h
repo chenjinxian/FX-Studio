@@ -38,6 +38,8 @@ extern "C" {
 
 	FXSTUDIOCORE_API void CreateNewProject(BSTR lFileName);
 
+	FXSTUDIOCORE_API int PickActor(int* hWndPterAddress);
+
 	FXSTUDIOCORE_API unsigned int AddActor(BSTR actorResource);
 	FXSTUDIOCORE_API bool ModifyActor(BSTR modificationXml);
 	FXSTUDIOCORE_API bool RemoveActor(unsigned int actorId);

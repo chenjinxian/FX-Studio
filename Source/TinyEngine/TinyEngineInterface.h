@@ -220,6 +220,7 @@ public:
 
 	virtual bool VAddChild(shared_ptr<ISceneNode> child) = 0;
 	virtual bool VRemoveChild(ActorId actorId) = 0;
+	virtual bool VPick(Scene* pScene, const Vector3& rayDirection) = 0;
 };
 
 class IGamePhysics

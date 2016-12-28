@@ -124,12 +124,21 @@ FXSTUDIOCORE_API void CreateNewProject(BSTR lFileName)
 	}
 }
 
-FXSTUDIOCORE_API int PickActor(int* hWndPterAddress)
+FXSTUDIOCORE_API int PickActor(int cursorX, int cursorY)
 {
-	HWND hWnd = (HWND)hWndPterAddress;
-	POINT cursor;
-	::GetCursorPos(&cursor);
-	::ScreenToClient(hWnd, &cursor);
+	FXStudioLogic* pEditorLogic = dynamic_cast<FXStudioLogic*>(g_pApp->GetGameLogic());
+	if (pEditorLogic == nullptr)
+	{
+		return INVALID_ACTOR_ID;
+	}
+
+	shared_ptr<FXStudioView> pView = pEditorLogic->GetHumanView();
+	if (pView == nullptr)
+	{
+		return INVALID_ACTOR_ID;
+	}
+
+	pView->GetScene()->Pick(cursorX, cursorY);
 
 	return -1;
 }

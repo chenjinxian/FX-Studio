@@ -3,6 +3,7 @@
 #include "CameraNode.h"
 #include "../EventManager/EventManager.h"
 #include "../EventManager/Events.h"
+#include "../AppFramework/BaseGameApp.h"
 
 Scene::Scene(shared_ptr<IRenderer> pRenderer)
 	: m_pRenderer(pRenderer),
@@ -159,4 +160,9 @@ void Scene::MoveActorDelegate(IEventDataPtr pEventData)
 	{
 // 		pNode->VSetTransform(transform);
 	}
+}
+
+bool Scene::Pick(int cursorX, int cursorY)
+{
+	return m_pRootNode->VPick(this, cursorX, cursorY);
 }

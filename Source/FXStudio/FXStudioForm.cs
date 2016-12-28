@@ -66,6 +66,11 @@ namespace FXStudio
             return m_DefaultLocation;
         }
 
+        public void PickActor(Point cursor)
+        {
+            RenderMethods.PickActor(cursor.X, cursor.Y);
+        }
+
         private void OpenProject(string project)
         {
             RenderMethods.OpenProject(project);

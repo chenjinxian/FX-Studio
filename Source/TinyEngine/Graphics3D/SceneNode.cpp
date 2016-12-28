@@ -29,7 +29,8 @@ SceneNode::SceneNode(ActorId actorId, WeakBaseRenderComponentPtr renderComponent
 	m_Properties.m_ActorName = (renderComponent != nullptr) ? renderComponent->VGetComponentName() : "SceneNode";
 	m_Properties.m_RenderPass = renderPass;
 	VSetTransform(worldMatrix);
-	SetRadius(0);
+	m_Properties.m_AABox.Center = Vector3(0.0f, 0.0f, 0.0f);
+	m_Properties.m_AABox.Extents = Vector3(0.0f, 0.0f, 0.0f);
 }
 
 SceneNode::~SceneNode()
@@ -144,15 +145,51 @@ bool SceneNode::VRemoveChild(ActorId actorId)
 	return false;
 }
 
-bool SceneNode::VPick(Scene* pScene, const Vector3& rayDirection)
+bool SceneNode::VPick(Scene* pScene, int cursorX, int cursorY)
 {
-	for (auto& child : m_Children)
+	if (m_Children.empty())
 	{
-		if (!child->VPick(pScene, rayDirection))
-			return false;
+		pScene->PushAndSetMatrix(m_Properties.m_worldMatrix);
+
+		const Matrix& projectMat = pScene->GetCamera()->GetProjectMatrix();
+		float viewX = (2.0f * cursorX / g_pApp->GetGameConfig().m_ScreenWidth - 1.0f) / projectMat.m[0][0];
+		float viewY = (1.0f - 2.0f * cursorY / g_pApp->GetGameConfig().m_ScreenHeight) / projectMat.m[1][1];
+
+		Matrix world = pScene->GetTopMatrix().Invert();
+		Matrix view = pScene->GetCamera()->GetViewMatrix().Invert();
+		Matrix toLocal = view * world;
+		Vector3 rayPostition = toLocal.Translation() * Vector3::Forward;
+		Vector3 rayDir = Vector3::TransformNormal(Vector3(viewX, viewY, 1.0f), toLocal);
+		rayDir.Normalize();
+
+		Ray ray(rayPostition, rayDir);
+
+		float distance = 0.0f;
+		if (ray.Intersects(m_Properties.GetBoundingBox(), distance))
+		{
+			VDelegatePick(ray);
+		}
+
+		pScene->PopMatrix();
+	}
+	else
+	{
+		for (auto& child : m_Children)
+		{
+			const SceneNodeProperties* properties = child->VGet();
+			if (properties->GetRenderPass() == RenderPass_Actor)
+			{
+				child->VPick(pScene, cursorX, cursorY);
+			}
+		}
 	}
 
 	return true;
+}
+
+void SceneNode::SetBoundingBox(const std::vector<Vector3>& postions)
+{
+	BoundingBox::CreateFromPoints(m_Properties.m_AABox, postions.size(), &postions.front(), sizeof(Vector3));
 }
 
 RootNode::RootNode() : SceneNode(INVALID_ACTOR_ID, WeakBaseRenderComponentPtr(), RenderPass_0)
@@ -226,7 +263,7 @@ bool RootNode::VRemoveChild(ActorId actorId)
 }
 
 GridNode::GridNode(ActorId actorId, WeakBaseRenderComponentPtr renderComponent)
-	: SceneNode(actorId, renderComponent, RenderPass_0),
+	: SceneNode(actorId, renderComponent, RenderPass_Static),
 	m_pEffect(nullptr),
 	m_pCurrentPass(nullptr),
 	m_pVertexBuffer(nullptr),
@@ -383,7 +420,7 @@ GeometryNode::GeometryNode(ActorType actorType, ActorId actorId, WeakBaseRenderC
 	m_pCurrentPass(nullptr),
 	m_pVertexBuffer(nullptr),
 	m_pIndexBuffer(nullptr),
-	m_IndexCount(0)
+	m_Mesh(nullptr)
 {
 	GeometryRenderComponent* pGeometryRender = static_cast<GeometryRenderComponent*>(m_pRenderComponent);
 	if (pGeometryRender != nullptr)
@@ -445,6 +482,12 @@ GeometryNode::GeometryNode(ActorType actorType, ActorId actorId, WeakBaseRenderC
 	{
 
 	}
+
+
+	m_pCurrentPass->CreateVertexBuffer(m_Mesh.get(), &m_pVertexBuffer);
+	m_pCurrentPass->CreateIndexBuffer(m_Mesh.get(), &m_pIndexBuffer);
+
+	SetBoundingBox(m_Mesh->GetVertices());
 }
 
 GeometryNode::~GeometryNode()
@@ -515,11 +558,8 @@ void GeometryNode::CreateCube()
 		std::vector<VertexPositionNormalTexture> vertices;
 		std::vector<uint16_t> indices;
 		GeometricPrimitive::CreateCube(vertices, indices, size, useRHcoords);
-
-		std::unique_ptr<Mesh> mesh(new Mesh(vertices, indices));
-		m_pCurrentPass->CreateVertexBuffer(mesh.get(), &m_pVertexBuffer);
-		m_pCurrentPass->CreateIndexBuffer(mesh.get(), &m_pIndexBuffer);
 		m_IndexCount = indices.size();
+		m_Mesh = unique_ptr<Mesh>(new Mesh(vertices, indices));
 	}
 }
 
@@ -534,12 +574,9 @@ void GeometryNode::CreateSphere()
 
 		std::vector<VertexPositionNormalTexture> vertices;
 		std::vector<uint16_t> indices;
-		GeometricPrimitive::CreateGeoSphere(vertices, indices, diameter, tessellation, useRHcoords);
-
-		std::unique_ptr<Mesh> mesh(new Mesh(vertices, indices));
-		m_pCurrentPass->CreateVertexBuffer(mesh.get(), &m_pVertexBuffer);
-		m_pCurrentPass->CreateIndexBuffer(mesh.get(), &m_pIndexBuffer);
+		GeometricPrimitive::CreateGeoSphere(vertices, indices, diameter, tessellation, false);
 		m_IndexCount = indices.size();
+		m_Mesh = unique_ptr<Mesh>(new Mesh(vertices, indices));
 	}
 }
 
@@ -556,11 +593,8 @@ void GeometryNode::CreateCylinder()
 		std::vector<VertexPositionNormalTexture> vertices;
 		std::vector<uint16_t> indices;
 		GeometricPrimitive::CreateCylinder(vertices, indices, height, diameter, tessellation, useRHcoords);
-
-		std::unique_ptr<Mesh> mesh(new Mesh(vertices, indices));
-		m_pCurrentPass->CreateVertexBuffer(mesh.get(), &m_pVertexBuffer);
-		m_pCurrentPass->CreateIndexBuffer(mesh.get(), &m_pIndexBuffer);
 		m_IndexCount = indices.size();
+		m_Mesh = unique_ptr<Mesh>(new Mesh(vertices, indices));
 	}
 }
 
@@ -576,11 +610,8 @@ void GeometryNode::CreateTeapot()
 		std::vector<VertexPositionNormalTexture> vertices;
 		std::vector<uint16_t> indices;
 		GeometricPrimitive::CreateTeapot(vertices, indices, size, tessellation, useRHcoords);
-
-		std::unique_ptr<Mesh> mesh(new Mesh(vertices, indices));
-		m_pCurrentPass->CreateVertexBuffer(mesh.get(), &m_pVertexBuffer);
-		m_pCurrentPass->CreateIndexBuffer(mesh.get(), &m_pIndexBuffer);
 		m_IndexCount = indices.size();
+		m_Mesh = unique_ptr<Mesh>(new Mesh(vertices, indices));
 	}
 }
 

@@ -12,6 +12,7 @@ class ActorComponent;
 class BaseRenderComponent;
 class Effect;
 class Pass;
+class Mesh;
 
 typedef BaseRenderComponent* WeakBaseRenderComponentPtr;
 
@@ -35,12 +36,14 @@ public:
 	const std::string& GetActorName() const { return m_ActorName; }
 	Vector3 GetPosition() const { return m_worldMatrix.Translation(); }
 	const Matrix& GetWorldMatrix() const { return m_worldMatrix; }
+	const BoundingBox& GetBoundingBox() const { return m_AABox; }
 	RenderPass GetRenderPass() const { return m_RenderPass; }
 
 protected:
 	ActorId m_ActorId;
 	std::string m_ActorName;
 	Matrix m_worldMatrix;
+	BoundingBox m_AABox;
 	RenderPass m_RenderPass;
 };
 
@@ -70,9 +73,11 @@ public:
 
 	virtual bool VAddChild(shared_ptr<ISceneNode> child) override;
 	virtual bool VRemoveChild(ActorId actorId) override;
-	virtual bool VPick(Scene* pScene, const Vector3& rayDirection) override;
+	virtual bool VPick(Scene* pScene, int cursorX, int cursorY) override;
 
-	void SetRadius(float radius) { }
+	virtual bool VDelegatePick(const Ray& ray) { return false; }
+
+	void SetBoundingBox(const std::vector<Vector3>& postions);
 
 protected:
 	SceneNodeList m_Children;
@@ -153,6 +158,7 @@ private:
 	ID3D11Buffer* m_pVertexBuffer;
 	ID3D11Buffer* m_pIndexBuffer;
 	uint32_t m_IndexCount;
+	std::unique_ptr<Mesh> m_Mesh;
 
 	std::string m_TextureName;
 	std::string m_EffectName;

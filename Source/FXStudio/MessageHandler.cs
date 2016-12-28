@@ -64,8 +64,8 @@ namespace FXStudio
         {
             if (m_renderPanel != null && m_renderPanel.IsHandleCreated)
             {
-                //                 if (m.Msg == WM_LBUTTONDOWN || m.Msg == WM_RBUTTONDOWN || m.Msg == WM_MBUTTONDOWN)
-                //                     CheckFakeFocus();
+                if (m.Msg == WM_LBUTTONDOWN || m.Msg == WM_RBUTTONDOWN || m.Msg == WM_MBUTTONDOWN)
+                    CheckFakeFocus();
 
                 if (m.HWnd == m_renderPanel.Handle/* || (m_fakeFocus && (m.Msg == WM_KEYDOWN || m.Msg == WM_KEYUP))*/)
                 {
@@ -90,17 +90,19 @@ namespace FXStudio
                         case WM_CLOSE:
                             {
                                 RenderMethods.WndProc(m_renderPanel.Handle, m.Msg, m.WParam, m.LParam);
-                                //                                 // If the left mouse button is up, try doing a 
-                                //                                 // ray cast to see if it intersects with an actor
-                                //                                 if (m_fakeFocus && m.Msg == WM_LBUTTONUP)
-                                //                                 {
-                                //                                     System.Drawing.Point position = Cursor.Position;
-                                //                                     double distance = Math.Round(Math.Sqrt(Math.Pow((position.X - m_mouseDownPosition.X), 2) + Math.Pow((position.Y - m_mouseDownPosition.Y), 2)), 1);
-                                //                                     if (distance < 3)
-                                //                                     {
-                                //                                         //                                     m_formMain.PickActor();
-                                //                                     }
-                                //                                 }
+
+                                if (m_fakeFocus && m.Msg == WM_LBUTTONUP)
+                                {
+                                    System.Drawing.Point position = Cursor.Position;
+                                    double distance = Math.Round(Math.Sqrt(
+                                        Math.Pow((position.X - m_mouseDownPosition.X), 2) +
+                                        Math.Pow((position.Y - m_mouseDownPosition.Y), 2)), 1);
+                                    if (distance < 3)
+                                    {
+                                        System.Drawing.Point relativeToForm = m_renderPanel.PointToClient(position);
+                                        m_formMain.PickActor(relativeToForm);
+                                    }
+                                }
                                 return true;
                             }
                     }

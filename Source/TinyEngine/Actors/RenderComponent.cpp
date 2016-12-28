@@ -456,7 +456,7 @@ shared_ptr<SceneNode> SkyboxRenderComponent::VCreateSceneNode()
 	{
 	case BaseGameApp::Renderer_D3D11:
 	{
-		return shared_ptr<SkyboxNode>(DEBUG_NEW SkyboxNode(m_pOwner->GetActorId(), weakThis, RenderPass_Actor));
+		return shared_ptr<SkyboxNode>(DEBUG_NEW SkyboxNode(m_pOwner->GetActorId(), weakThis, RenderPass_Sky));
 	}
 
 	default:

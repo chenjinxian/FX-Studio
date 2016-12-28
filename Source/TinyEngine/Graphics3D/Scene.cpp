@@ -162,7 +162,7 @@ void Scene::MoveActorDelegate(IEventDataPtr pEventData)
 	}
 }
 
-bool Scene::Pick(int cursorX, int cursorY)
+ActorId Scene::Pick(int cursorX, int cursorY)
 {
 	return m_pRootNode->VPick(this, cursorX, cursorY);
 }

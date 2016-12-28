@@ -27,7 +27,7 @@ public:
 	void SetCamera(shared_ptr<CameraNode> pCamera) { m_pCamera = pCamera; }
 	const shared_ptr<CameraNode> GetCamera() const { return m_pCamera; }
 
-	bool Pick(int cursorX, int cursorY);
+	ActorId Pick(int cursorX, int cursorY);
 	shared_ptr<IRenderer> GetRenderder() { return m_pRenderer; }
 
 	void PushAndSetMatrix(const Matrix& worldMatrix)

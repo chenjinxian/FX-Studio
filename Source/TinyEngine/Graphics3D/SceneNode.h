@@ -73,9 +73,10 @@ public:
 
 	virtual bool VAddChild(shared_ptr<ISceneNode> child) override;
 	virtual bool VRemoveChild(ActorId actorId) override;
-	virtual bool VPick(Scene* pScene, int cursorX, int cursorY) override;
+	virtual ActorId VPick(Scene* pScene, int cursorX, int cursorY) override;
 
 	virtual bool VDelegatePick(const Ray& ray) { return false; }
+	virtual void DrawBoundingBox(Scene* pScene);
 
 	void SetBoundingBox(const std::vector<Vector3>& postions);
 
@@ -145,6 +146,7 @@ public:
 	virtual HRESULT VOnDeleteSceneNode(Scene *pScene) override;
 	virtual HRESULT VOnUpdate(Scene* pScene, const GameTime& gameTime) override;
 	virtual HRESULT VRender(Scene* pScene, const GameTime& gameTime) override;
+	virtual bool VDelegatePick(const Ray& ray) override;
 
 private:
 	void CreateCube();
@@ -182,6 +184,7 @@ public:
 	virtual HRESULT VOnDeleteSceneNode(Scene *pScene) override;
 	virtual HRESULT VOnUpdate(Scene* pScene, const GameTime& gameTime) override;
 	virtual HRESULT VRender(Scene* pScene, const GameTime& gameTime) override;
+	virtual bool VDelegatePick(const Ray& ray) override;
 
 private:
 	Effect* m_pEffect;

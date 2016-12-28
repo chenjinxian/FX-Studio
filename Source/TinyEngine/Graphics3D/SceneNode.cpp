@@ -145,7 +145,7 @@ bool SceneNode::VRemoveChild(ActorId actorId)
 	return false;
 }
 
-bool SceneNode::VPick(Scene* pScene, int cursorX, int cursorY)
+ActorId SceneNode::VPick(Scene* pScene, int cursorX, int cursorY)
 {
 	if (m_Children.empty())
 	{
@@ -165,9 +165,10 @@ bool SceneNode::VPick(Scene* pScene, int cursorX, int cursorY)
 		Ray ray(rayPostition, rayDir);
 
 		float distance = 0.0f;
-		if (ray.Intersects(m_Properties.GetBoundingBox(), distance))
+		if (ray.Intersects(m_Properties.GetBoundingBox(), distance) && VDelegatePick(ray))
 		{
-			VDelegatePick(ray);
+			DrawBoundingBox(pScene);
+			return m_Properties.GetActorId();
 		}
 
 		pScene->PopMatrix();
@@ -179,12 +180,80 @@ bool SceneNode::VPick(Scene* pScene, int cursorX, int cursorY)
 			const SceneNodeProperties* properties = child->VGet();
 			if (properties->GetRenderPass() == RenderPass_Actor)
 			{
-				child->VPick(pScene, cursorX, cursorY);
+				ActorId actorId = child->VPick(pScene, cursorX, cursorY);
+				if (actorId != INVALID_ACTOR_ID)
+					return actorId;
 			}
 		}
 	}
 
-	return true;
+	return INVALID_ACTOR_ID;
+}
+
+void SceneNode::DrawBoundingBox(Scene* pScene)
+{
+	Resource effectRes("Effects\\Grid.fx");
+	shared_ptr<ResHandle> pEffectResHandle = g_pApp->GetResCache()->GetHandle(&effectRes);
+	if (pEffectResHandle == nullptr)
+	{
+		return;
+	}
+	shared_ptr<HlslResourceExtraData> extra = static_pointer_cast<HlslResourceExtraData>(pEffectResHandle->GetExtraData());
+	if (extra == nullptr)
+	{
+		return;
+	}
+
+	Effect* pEffect = extra->GetEffect();
+
+	Technique* pCurrentTechnique = pEffect->GetTechniquesByName().at("main11");
+	if (pCurrentTechnique == nullptr)
+	{
+		DEBUG_ERROR(std::string("technique is not exist: ") + "main11");
+		return;
+	}
+	Pass* pCurrentPass = pCurrentTechnique->GetPassesByName().at("p0");
+	if (pCurrentPass == nullptr)
+	{
+		DEBUG_ERROR(std::string("technique is not exist: ") + "p0");
+		return;
+	}
+
+	std::vector<VertexPositionColor> vertices;
+	vertices.reserve(8);
+	vertices.push_back(VertexPositionColor(Vector4(-1, -1, -1, 0), Colors::White));
+	vertices.push_back(VertexPositionColor(Vector4(-1, -1, -1, 0), Colors::White));
+	vertices.push_back(VertexPositionColor(Vector4(-1, -1, -1, 0), Colors::White));
+	vertices.push_back(VertexPositionColor(Vector4(-1, -1, -1, 0), Colors::White));
+	vertices.push_back(VertexPositionColor(Vector4(-1, -1, -1, 0), Colors::White));
+	vertices.push_back(VertexPositionColor(Vector4(-1, -1, -1, 0), Colors::White));
+	vertices.push_back(VertexPositionColor(Vector4(-1, -1, -1, 0), Colors::White));
+	vertices.push_back(VertexPositionColor(Vector4(-1, -1, -1, 0), Colors::White));
+
+	uint32_t indices[] = { 0, 1, 1, 2, 2, 3, 3, 0, 4, 5, 5, 6, 6, 7, 7, 4, 0, 4, 1, 5, 2, 6, 3, 7 };
+
+	ID3D11Buffer* pVertexBuffer = nullptr;
+	pCurrentPass->CreateVertexBuffer(&vertices.front(), vertices.size() * sizeof(VertexPositionColor), &pVertexBuffer);
+	ID3D11Buffer* pIndexBuffer = nullptr;
+	pCurrentPass->CreateIndexBuffer(indices, ARRAYSIZE(indices), &pIndexBuffer);
+
+	const std::vector<Variable*>& variables = pEffect->GetVariables();
+	for (auto variable : variables)
+	{
+		if (variable->GetVariableSemantic() == "worldviewprojection")
+		{
+			if (variable->GetVariableType() == "float4x4")
+			{
+
+				const XMMATRIX& wvp = pScene->GetCamera()->GetWorldViewProjection(pScene);
+				variable->SetMatrix(wvp);
+			}
+		}
+	}
+
+	g_pApp->GetRendererAPI()->VInputSetup(D3D11_PRIMITIVE_TOPOLOGY_LINELIST, pCurrentPass->GetInputLayout());
+	g_pApp->GetRendererAPI()->VDrawMesh(
+		pCurrentPass->GetVertexSize(), pVertexBuffer, 8, pIndexBuffer, 24, pCurrentPass->GetEffectPass());
 }
 
 void SceneNode::SetBoundingBox(const std::vector<Vector3>& postions)
@@ -192,7 +261,8 @@ void SceneNode::SetBoundingBox(const std::vector<Vector3>& postions)
 	BoundingBox::CreateFromPoints(m_Properties.m_AABox, postions.size(), &postions.front(), sizeof(Vector3));
 }
 
-RootNode::RootNode() : SceneNode(INVALID_ACTOR_ID, WeakBaseRenderComponentPtr(), RenderPass_0)
+RootNode::RootNode()
+	: SceneNode(INVALID_ACTOR_ID, WeakBaseRenderComponentPtr(), RenderPass_0)
 {
 	m_Children.reserve(RenderPass_Last);
 
@@ -547,6 +617,24 @@ HRESULT GeometryNode::VRender(Scene* pScene, const GameTime& gameTime)
 	return S_OK;
 }
 
+bool GeometryNode::VDelegatePick(const Ray& ray)
+{
+	for (uint32_t i = 0; i < m_IndexCount; i += 3)
+	{
+		const std::vector<Vector3>& vertices = m_Mesh->GetVertices();
+		const std::vector<uint32_t>& indices = m_Mesh->GetIndices();
+		Vector3 tri0 = vertices.at(indices[i]);
+		Vector3 tri1 = vertices.at(indices[i + 1]);
+		Vector3 tri2 = vertices.at(indices[i + 2]);
+
+		float distance = 0.0f;
+		if (ray.Intersects(tri0, tri1, tri2, distance))
+			return true;
+	}
+
+	return false;
+}
+
 void GeometryNode::CreateCube()
 {
 	CubeRenderComponent* pMeshRender = static_cast<CubeRenderComponent*>(m_pRenderComponent);
@@ -763,6 +851,11 @@ HRESULT ModelNode::VRender(Scene* pScene, const GameTime& gameTime)
 	}
 
 	return S_OK;
+}
+
+bool ModelNode::VDelegatePick(const Ray& ray)
+{
+	return false;
 }
 
 SkyboxNode::SkyboxNode(ActorId actorId, WeakBaseRenderComponentPtr renderComponent, RenderPass renderPass)

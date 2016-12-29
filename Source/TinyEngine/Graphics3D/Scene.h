@@ -48,7 +48,7 @@ public:
 			m_MatrixStack.pop();
 	}
 
-	Matrix GetTopMatrix()
+	const Matrix& GetTopMatrix()
 	{
 		if (m_MatrixStack.empty())
 		{

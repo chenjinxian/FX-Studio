@@ -155,11 +155,10 @@ ActorId SceneNode::VPick(Scene* pScene, int cursorX, int cursorY)
 		float viewX = (2.0f * cursorX / g_pApp->GetGameConfig().m_ScreenWidth - 1.0f) / projectMat.m[0][0];
 		float viewY = (1.0f - 2.0f * cursorY / g_pApp->GetGameConfig().m_ScreenHeight) / projectMat.m[1][1];
 
-		Matrix world = pScene->GetTopMatrix().Invert();
-		Matrix view = pScene->GetCamera()->GetViewMatrix().Invert();
-		Matrix toLocal = view * world;
-		Vector3 rayPostition = toLocal.Translation() * Vector3::Forward;
-		Vector3 rayDir = Vector3::TransformNormal(Vector3(viewX, viewY, 1.0f), toLocal);
+		Matrix toLocal = (pScene->GetTopMatrix() * pScene->GetCamera()->GetViewMatrix()).Invert();
+		Vector3 rayPostition = toLocal.Translation();
+		//use right-hand coordinates, z should be -1
+		Vector3 rayDir = Vector3::TransformNormal(Vector3(viewX, viewY, -1.0f), toLocal);
 		rayDir.Normalize();
 
 		Ray ray(rayPostition, rayDir);

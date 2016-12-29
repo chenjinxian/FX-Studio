@@ -75,16 +75,27 @@ public:
 	virtual bool VRemoveChild(ActorId actorId) override;
 	virtual ActorId VPick(Scene* pScene, int cursorX, int cursorY) override;
 
+protected:
+	typedef struct _VertexPositionColor
+	{
+		Vector4 position;
+		Vector4 color;
+
+		_VertexPositionColor() { }
+
+		_VertexPositionColor(const Vector4& position, const Vector4& color)
+			: position(position), color(color) { }
+	} VertexPositionColor;
+
 	virtual bool VDelegatePick(const Ray& ray) { return false; }
 	virtual void DrawBoundingBox(Scene* pScene);
-
 	void SetBoundingBox(const std::vector<Vector3>& postions);
 
-protected:
 	SceneNodeList m_Children;
 	SceneNode* m_pParent;
 	WeakBaseRenderComponentPtr m_pRenderComponent;
 	SceneNodeProperties m_Properties;
+	bool m_IsPicked;
 };
 
 class RootNode : public SceneNode

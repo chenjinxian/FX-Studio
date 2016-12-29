@@ -397,7 +397,7 @@ bool BaseGameLogic::CreateDefaultProject(const std::string& project, const std::
 	tinyxml2::XMLElement* pTranslation = outDoc.NewElement("Translation");
 	pTranslation->SetAttribute("x", 0.0f);
 	pTranslation->SetAttribute("y", 0.0f);
-	pTranslation->SetAttribute("z", 10.0f);
+	pTranslation->SetAttribute("z", 5.0f);
 	tinyxml2::XMLElement* pRotation = outDoc.NewElement("Rotation");
 	pRotation->SetAttribute("x", 45.0f);
 	pRotation->SetAttribute("y", 45.0f);

@@ -23,7 +23,9 @@ SceneNodeProperties::SceneNodeProperties()
 }
 
 SceneNode::SceneNode(ActorId actorId, WeakBaseRenderComponentPtr renderComponent, RenderPass renderPass, const Matrix& worldMatrix)
-	: m_pParent(nullptr), m_pRenderComponent(renderComponent)
+	: m_pParent(nullptr),
+	m_pRenderComponent(renderComponent),
+	m_IsPicked(false)
 {
 	m_Properties.m_ActorId = actorId;
 	m_Properties.m_ActorName = (renderComponent != nullptr) ? renderComponent->VGetComponentName() : "SceneNode";
@@ -149,13 +151,11 @@ ActorId SceneNode::VPick(Scene* pScene, int cursorX, int cursorY)
 {
 	if (m_Children.empty())
 	{
-		pScene->PushAndSetMatrix(m_Properties.m_worldMatrix);
-
 		const Matrix& projectMat = pScene->GetCamera()->GetProjectMatrix();
 		float viewX = (2.0f * cursorX / g_pApp->GetGameConfig().m_ScreenWidth - 1.0f) / projectMat.m[0][0];
 		float viewY = (1.0f - 2.0f * cursorY / g_pApp->GetGameConfig().m_ScreenHeight) / projectMat.m[1][1];
 
-		Matrix toLocal = (pScene->GetTopMatrix() * pScene->GetCamera()->GetViewMatrix()).Invert();
+		Matrix toLocal = (m_Properties.GetWorldMatrix() * pScene->GetCamera()->GetViewMatrix()).Invert();
 		Vector3 rayPostition = toLocal.Translation();
 		//use right-hand coordinates, z should be -1
 		Vector3 rayDir = Vector3::TransformNormal(Vector3(viewX, viewY, -1.0f), toLocal);
@@ -164,13 +164,11 @@ ActorId SceneNode::VPick(Scene* pScene, int cursorX, int cursorY)
 		Ray ray(rayPostition, rayDir);
 
 		float distance = 0.0f;
-		if (ray.Intersects(m_Properties.GetBoundingBox(), distance) && VDelegatePick(ray))
+		m_IsPicked = ray.Intersects(m_Properties.GetBoundingBox(), distance) && VDelegatePick(ray);
+		if (m_IsPicked)
 		{
-			DrawBoundingBox(pScene);
 			return m_Properties.GetActorId();
 		}
-
-		pScene->PopMatrix();
 	}
 	else
 	{
@@ -181,7 +179,9 @@ ActorId SceneNode::VPick(Scene* pScene, int cursorX, int cursorY)
 			{
 				ActorId actorId = child->VPick(pScene, cursorX, cursorY);
 				if (actorId != INVALID_ACTOR_ID)
+				{
 					return actorId;
+				}
 			}
 		}
 	}
@@ -191,7 +191,7 @@ ActorId SceneNode::VPick(Scene* pScene, int cursorX, int cursorY)
 
 void SceneNode::DrawBoundingBox(Scene* pScene)
 {
-	Resource effectRes("Effects\\Grid.fx");
+	Resource effectRes("Effects\\VertexColor.fx");
 	shared_ptr<ResHandle> pEffectResHandle = g_pApp->GetResCache()->GetHandle(&effectRes);
 	if (pEffectResHandle == nullptr)
 	{
@@ -220,21 +220,21 @@ void SceneNode::DrawBoundingBox(Scene* pScene)
 
 	std::vector<VertexPositionColor> vertices;
 	vertices.reserve(8);
-	vertices.push_back(VertexPositionColor(Vector4(-1, -1, -1, 0), Colors::White));
-	vertices.push_back(VertexPositionColor(Vector4(-1, -1, -1, 0), Colors::White));
-	vertices.push_back(VertexPositionColor(Vector4(-1, -1, -1, 0), Colors::White));
-	vertices.push_back(VertexPositionColor(Vector4(-1, -1, -1, 0), Colors::White));
-	vertices.push_back(VertexPositionColor(Vector4(-1, -1, -1, 0), Colors::White));
-	vertices.push_back(VertexPositionColor(Vector4(-1, -1, -1, 0), Colors::White));
-	vertices.push_back(VertexPositionColor(Vector4(-1, -1, -1, 0), Colors::White));
-	vertices.push_back(VertexPositionColor(Vector4(-1, -1, -1, 0), Colors::White));
+	vertices.push_back(VertexPositionColor(Vector4(-0.5f, -0.5f, -0.5f, 1.0f), Color(Colors::LightSkyBlue.f)));
+	vertices.push_back(VertexPositionColor(Vector4(0.5f, -0.5f, -0.5f, 1.0f), Color(Colors::LightSkyBlue.f)));
+	vertices.push_back(VertexPositionColor(Vector4(0.5f, -0.5f, 0.5f, 1.0f), Color(Colors::LightSkyBlue.f)));
+	vertices.push_back(VertexPositionColor(Vector4(-0.5f, -0.5f, 0.5f, 1.0f), Color(Colors::LightSkyBlue.f)));
+	vertices.push_back(VertexPositionColor(Vector4(-0.5f, 0.5f, -0.5f, 1.0f), Color(Colors::LightSkyBlue.f)));
+	vertices.push_back(VertexPositionColor(Vector4(0.5f, 0.5f, -0.5f, 1.0f), Color(Colors::LightSkyBlue.f)));
+	vertices.push_back(VertexPositionColor(Vector4(0.5f, 0.5f, 0.5f, 1.0f), Color(Colors::LightSkyBlue.f)));
+	vertices.push_back(VertexPositionColor(Vector4(-0.5f, 0.5f, 0.5f, 1.0f), Color(Colors::LightSkyBlue.f)));
 
 	uint32_t indices[] = { 0, 1, 1, 2, 2, 3, 3, 0, 4, 5, 5, 6, 6, 7, 7, 4, 0, 4, 1, 5, 2, 6, 3, 7 };
 
 	ID3D11Buffer* pVertexBuffer = nullptr;
 	pCurrentPass->CreateVertexBuffer(&vertices.front(), vertices.size() * sizeof(VertexPositionColor), &pVertexBuffer);
 	ID3D11Buffer* pIndexBuffer = nullptr;
-	pCurrentPass->CreateIndexBuffer(indices, ARRAYSIZE(indices), &pIndexBuffer);
+	pCurrentPass->CreateIndexBuffer(&indices[0], sizeof(indices), &pIndexBuffer);
 
 	const std::vector<Variable*>& variables = pEffect->GetVariables();
 	for (auto variable : variables)
@@ -243,16 +243,21 @@ void SceneNode::DrawBoundingBox(Scene* pScene)
 		{
 			if (variable->GetVariableType() == "float4x4")
 			{
-
-				const XMMATRIX& wvp = pScene->GetCamera()->GetWorldViewProjection(pScene);
+				const BoundingBox& aaBox = m_Properties.GetBoundingBox();
+				Matrix world = pScene->GetTopMatrix();
+				Vector3 position = world.Translation();
+				world = world * Matrix::CreateScale(aaBox.Extents * 2.0f);
+				world.Translation(position);
+				world = world * Matrix::CreateTranslation(aaBox.Center);
+				const XMMATRIX& wvp = world * pScene->GetCamera()->GetViewMatrix() * pScene->GetCamera()->GetProjectMatrix();
 				variable->SetMatrix(wvp);
 			}
 		}
 	}
 
-	g_pApp->GetRendererAPI()->VInputSetup(D3D11_PRIMITIVE_TOPOLOGY_LINELIST, pCurrentPass->GetInputLayout());
-	g_pApp->GetRendererAPI()->VDrawMesh(
-		pCurrentPass->GetVertexSize(), pVertexBuffer, 8, pIndexBuffer, 24, pCurrentPass->GetEffectPass());
+	pScene->GetRenderder()->VInputSetup(D3D11_PRIMITIVE_TOPOLOGY_LINELIST, pCurrentPass->GetInputLayout());
+	pScene->GetRenderder()->VDrawMesh(
+		pCurrentPass->GetVertexSize(), pVertexBuffer, 0, pIndexBuffer, 24, pCurrentPass->GetEffectPass());
 }
 
 void SceneNode::SetBoundingBox(const std::vector<Vector3>& postions)
@@ -296,7 +301,6 @@ HRESULT RootNode::VRenderChildren(Scene* pScene, const GameTime& gameTime)
 
 		case RenderPass_Sky:
 		{
-// 			shared_ptr<IRenderState> skyPass = pScene->GetRenderder()->
 			m_Children[pass]->VRenderChildren(pScene, gameTime);
 			break;
 		}
@@ -465,8 +469,8 @@ HRESULT GridNode::VRender(Scene* pScene, const GameTime& gameTime)
 		}
 	}
 
-	g_pApp->GetRendererAPI()->VInputSetup(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, m_pCurrentPass->GetInputLayout());
-	g_pApp->GetRendererAPI()->VDrawMesh(
+	pScene->GetRenderder()->VInputSetup(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, m_pCurrentPass->GetInputLayout());
+	pScene->GetRenderder()->VDrawMesh(
 		m_pCurrentPass->GetVertexSize(), m_pVertexBuffer, m_VertexCount, m_pIndexBuffer, m_IndexCount, m_pCurrentPass->GetEffectPass());
 
 	return S_OK;
@@ -609,10 +613,14 @@ HRESULT GeometryNode::VRender(Scene* pScene, const GameTime& gameTime)
 		}
 	}
 
-	g_pApp->GetRendererAPI()->VInputSetup(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, m_pCurrentPass->GetInputLayout());
-	g_pApp->GetRendererAPI()->VDrawMesh(
+	pScene->GetRenderder()->VInputSetup(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, m_pCurrentPass->GetInputLayout());
+	pScene->GetRenderder()->VDrawMesh(
 		m_pCurrentPass->GetVertexSize(), m_pVertexBuffer, 0, m_pIndexBuffer, m_IndexCount, m_pCurrentPass->GetEffectPass());
 
+	if (m_IsPicked)
+	{
+		DrawBoundingBox(pScene);
+	}
 	return S_OK;
 }
 
@@ -628,7 +636,9 @@ bool GeometryNode::VDelegatePick(const Ray& ray)
 
 		float distance = 0.0f;
 		if (ray.Intersects(tri0, tri1, tri2, distance))
+		{
 			return true;
+		}
 	}
 
 	return false;
@@ -831,7 +841,7 @@ HRESULT ModelNode::VRender(Scene* pScene, const GameTime& gameTime)
 		}
 	}
 
-	g_pApp->GetRendererAPI()->VInputSetup(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, m_pCurrentPass->GetInputLayout());
+	pScene->GetRenderder()->VInputSetup(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, m_pCurrentPass->GetInputLayout());
 
 	for (uint32_t i = 0, count = m_IndexCounts.size(); i < count; i++)
 	{
@@ -845,7 +855,7 @@ HRESULT ModelNode::VRender(Scene* pScene, const GameTime& gameTime)
 			}
 		}
 
-		g_pApp->GetRendererAPI()->VDrawMesh(
+		pScene->GetRenderder()->VDrawMesh(
 			m_pCurrentPass->GetVertexSize(), m_pVertexBuffers[i], 0, m_pIndexBuffers[i], m_IndexCounts[i], m_pCurrentPass->GetEffectPass());
 	}
 
@@ -962,8 +972,8 @@ HRESULT SkyboxNode::VRender(Scene* pScene, const GameTime& gameTime)
 		}
 	}
 
-	g_pApp->GetRendererAPI()->VInputSetup(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, m_pCurrentPass->GetInputLayout());
-	g_pApp->GetRendererAPI()->VDrawMesh(
+	pScene->GetRenderder()->VInputSetup(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, m_pCurrentPass->GetInputLayout());
+	pScene->GetRenderder()->VDrawMesh(
 		m_pCurrentPass->GetVertexSize(), m_pVertexBuffer, 0, m_pIndexBuffer, m_IndexCount, m_pCurrentPass->GetEffectPass());
 
 	return S_OK;

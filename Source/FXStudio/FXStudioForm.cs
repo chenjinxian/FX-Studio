@@ -79,6 +79,29 @@ namespace FXStudio
             m_ProjectView.UpdateProject(project, ref assetFile, m_propertiesView.UpdateProperties);
             if (string.Empty != assetFile)
                 m_AssetsView.UpdateAssets(Path.GetDirectoryName(project) + @"\" + assetFile);
+
+            EnableControlView(true);
+        }
+
+        private void EnableControlView(bool enable)
+        {
+            toolStripButtonImport.Enabled = enable;
+            toolStripButtonSaveAll.Enabled = enable;
+            toolStripButtonUndo.Enabled = enable;
+            toolStripButtonRedo.Enabled = enable;
+            toolStripButtonEffect.Enabled = enable;
+            toolStripButtonReBuild.Enabled = enable;
+            toolStripButtonCompile.Enabled = enable;
+            toolStripButtonTeapot.Enabled = enable;
+            toolStripButtonCube.Enabled = enable;
+            toolStripButtonSphere.Enabled = enable;
+            toolStripButtonCylinder.Enabled = enable;
+            toolStripButtonPlane.Enabled = enable;
+            toolStripButtonDirectional.Enabled = enable;
+            toolStripButtonPoint.Enabled = enable;
+            toolStripButtonSpot.Enabled = enable;
+            toolStripButtonPlay.Enabled = enable;
+            toolStripButtonStop.Enabled = enable;
         }
 
         private void CreateStandardViews()

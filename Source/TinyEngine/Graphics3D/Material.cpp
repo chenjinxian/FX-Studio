@@ -197,6 +197,11 @@ void Pass::CreateVertexBuffer(const Mesh* mesh, ID3D11Buffer** ppVertexBuffer) c
 	{
 		textureCoordinates = mesh->GetTextureCoordinates().at(0);
 	}
+	std::vector<Vector4> vertexColors;
+	if (!mesh->GetVertexColors().empty())
+	{
+		vertexColors = mesh->GetVertexColors().at(0);
+	}
 
 	std::vector<float> vertexData;
 	vertexData.reserve(vertexCount * m_VertexSize);
@@ -211,6 +216,13 @@ void Pass::CreateVertexBuffer(const Mesh* mesh, ID3D11Buffer** ppVertexBuffer) c
 				vertexData.push_back(vertices.at(i).y);
 				vertexData.push_back(vertices.at(i).z);
 				vertexData.push_back(1.0f);
+			}
+			else if (vertexFormat == "COLOR")
+			{
+				vertexData.push_back(vertexColors.at(i).x);
+				vertexData.push_back(vertexColors.at(i).y);
+				vertexData.push_back(vertexColors.at(i).z);
+				vertexData.push_back(vertexColors.at(i).w);
 			}
 			else if (vertexFormat == "TEXCOORD")
 			{
@@ -231,7 +243,7 @@ void Pass::CreateVertexBuffer(const Mesh* mesh, ID3D11Buffer** ppVertexBuffer) c
 
 	D3D11_SUBRESOURCE_DATA vertexSubResourceData;
 	ZeroMemory(&vertexSubResourceData, sizeof(vertexSubResourceData));
-	vertexSubResourceData.pSysMem = &vertexData[0];
+	vertexSubResourceData.pSysMem = &vertexData.front();
 
 	if (FAILED(p_Device->CreateBuffer(&vertexBufferDesc, &vertexSubResourceData, ppVertexBuffer)))
 	{
@@ -249,7 +261,7 @@ void Pass::CreateIndexBuffer(const Mesh* mesh, ID3D11Buffer** ppIndexBuffer) con
 
 	D3D11_SUBRESOURCE_DATA indexSubResourceData;
 	ZeroMemory(&indexSubResourceData, sizeof(indexSubResourceData));
-	indexSubResourceData.pSysMem = &(mesh->GetIndices()[0]);
+	indexSubResourceData.pSysMem = &(mesh->GetIndices().front());
 
 	if (FAILED(p_Device->CreateBuffer(&indexBufferDesc, &indexSubResourceData, ppIndexBuffer)))
 	{

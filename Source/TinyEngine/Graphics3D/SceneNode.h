@@ -87,7 +87,6 @@ protected:
 			: position(position), color(color) { }
 	} VertexPositionColor;
 
-	virtual bool VDelegatePick(const Ray& ray) { return false; }
 	virtual void DrawBoundingBox(Scene* pScene);
 	void SetBoundingBox(const std::vector<Vector3>& postions);
 
@@ -157,7 +156,7 @@ public:
 	virtual HRESULT VOnDeleteSceneNode(Scene *pScene) override;
 	virtual HRESULT VOnUpdate(Scene* pScene, const GameTime& gameTime) override;
 	virtual HRESULT VRender(Scene* pScene, const GameTime& gameTime) override;
-	virtual bool VDelegatePick(const Ray& ray) override;
+	virtual ActorId VPick(Scene* pScene, int cursorX, int cursorY) override;
 
 private:
 	void CreateCube();
@@ -195,7 +194,7 @@ public:
 	virtual HRESULT VOnDeleteSceneNode(Scene *pScene) override;
 	virtual HRESULT VOnUpdate(Scene* pScene, const GameTime& gameTime) override;
 	virtual HRESULT VRender(Scene* pScene, const GameTime& gameTime) override;
-	virtual bool VDelegatePick(const Ray& ray) override;
+	virtual ActorId VPick(Scene* pScene, int cursorX, int cursorY) { return INVALID_ACTOR_ID; }
 
 private:
 	Effect* m_pEffect;
@@ -236,4 +235,48 @@ private:
 	Matrix m_ScaleMatrix;
 
 	std::string m_TextureName;
+};
+
+class AssistMarkNode : public SceneNode
+{
+public:
+	AssistMarkNode(ActorId actorId, WeakBaseRenderComponentPtr renderComponent);
+	~AssistMarkNode();
+
+	virtual HRESULT VOnInitSceneNode(Scene* pScene) override;
+	virtual HRESULT VOnDeleteSceneNode(Scene *pScene) override;
+	virtual HRESULT VOnUpdate(Scene* pScene, const GameTime& gameTime) override;
+	virtual HRESULT VRender(Scene* pScene, const GameTime& gameTime) override;
+	virtual ActorId VPick(Scene* pScene, int cursorX, int cursorY) override;
+
+private:
+	void CreateAABox(std::vector<VertexPositionColor>& vertices, std::vector<uint16_t>& indices);
+
+	Effect* m_pEffect;
+	Pass* m_pCurrentPass;
+	ID3D11Buffer* m_pVertexBuffer;
+	ID3D11Buffer* m_pIndexBuffer;
+	uint32_t m_IndexCount;
+	std::unique_ptr<Mesh> m_Mesh;
+
+	int32_t m_AABoxVertexOffset;
+	int32_t m_CylinderVertexOffset;
+	int32_t m_ConeVertexOffset;
+	int32_t m_TorusYawVertexOffset;
+	int32_t m_TorusPitchVertexOffset;
+	int32_t m_TorusRollOVertexffset;
+
+	uint32_t m_AABoxIndexOffset;
+	uint32_t m_CylinderIndexOffset;
+	uint32_t m_ConeIndexOffset;
+	uint32_t m_TorusYawIndexOffset;
+	uint32_t m_TorusPitchIndexOffset;
+	uint32_t m_TorusRollIndexOffset;
+
+	uint32_t m_AABoxIndexCount;
+	uint32_t m_CylinderIndexCount;
+	uint32_t m_ConeIndexCount;
+	uint32_t m_TorusYawIndexCount;
+	uint32_t m_TorusPitchIndexCount;
+	uint32_t m_TorusRollIndexCount;
 };

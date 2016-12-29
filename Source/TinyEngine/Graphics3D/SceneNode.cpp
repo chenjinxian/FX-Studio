@@ -149,40 +149,12 @@ bool SceneNode::VRemoveChild(ActorId actorId)
 
 ActorId SceneNode::VPick(Scene* pScene, int cursorX, int cursorY)
 {
-	if (m_Children.empty())
+	for (auto& child : m_Children)
 	{
-		const Matrix& projectMat = pScene->GetCamera()->GetProjectMatrix();
-		float viewX = (2.0f * cursorX / g_pApp->GetGameConfig().m_ScreenWidth - 1.0f) / projectMat.m[0][0];
-		float viewY = (1.0f - 2.0f * cursorY / g_pApp->GetGameConfig().m_ScreenHeight) / projectMat.m[1][1];
-
-		Matrix toLocal = (m_Properties.GetWorldMatrix() * pScene->GetCamera()->GetViewMatrix()).Invert();
-		Vector3 rayPostition = toLocal.Translation();
-		//use right-hand coordinates, z should be -1
-		Vector3 rayDir = Vector3::TransformNormal(Vector3(viewX, viewY, -1.0f), toLocal);
-		rayDir.Normalize();
-
-		Ray ray(rayPostition, rayDir);
-
-		float distance = 0.0f;
-		m_IsPicked = ray.Intersects(m_Properties.GetBoundingBox(), distance) && VDelegatePick(ray);
-		if (m_IsPicked)
+		ActorId actorId = child->VPick(pScene, cursorX, cursorY);
+		if (actorId != INVALID_ACTOR_ID)
 		{
-			return m_Properties.GetActorId();
-		}
-	}
-	else
-	{
-		for (auto& child : m_Children)
-		{
-			const SceneNodeProperties* properties = child->VGet();
-			if (properties->GetRenderPass() == RenderPass_Actor)
-			{
-				ActorId actorId = child->VPick(pScene, cursorX, cursorY);
-				if (actorId != INVALID_ACTOR_ID)
-				{
-					return actorId;
-				}
-			}
+			return actorId;
 		}
 	}
 
@@ -624,24 +596,43 @@ HRESULT GeometryNode::VRender(Scene* pScene, const GameTime& gameTime)
 	return S_OK;
 }
 
-bool GeometryNode::VDelegatePick(const Ray& ray)
+ActorId GeometryNode::VPick(Scene* pScene, int cursorX, int cursorY)
 {
-	for (uint32_t i = 0; i < m_IndexCount; i += 3)
-	{
-		const std::vector<Vector3>& vertices = m_Mesh->GetVertices();
-		const std::vector<uint32_t>& indices = m_Mesh->GetIndices();
-		Vector3 tri0 = vertices.at(indices[i]);
-		Vector3 tri1 = vertices.at(indices[i + 1]);
-		Vector3 tri2 = vertices.at(indices[i + 2]);
+	m_IsPicked = false;
 
-		float distance = 0.0f;
-		if (ray.Intersects(tri0, tri1, tri2, distance))
+	const Matrix& projectMat = pScene->GetCamera()->GetProjectMatrix();
+	float viewX = (2.0f * cursorX / g_pApp->GetGameConfig().m_ScreenWidth - 1.0f) / projectMat.m[0][0];
+	float viewY = (1.0f - 2.0f * cursorY / g_pApp->GetGameConfig().m_ScreenHeight) / projectMat.m[1][1];
+
+	Matrix toLocal = (m_Properties.GetWorldMatrix() * pScene->GetCamera()->GetViewMatrix()).Invert();
+	Vector3 rayPostition = toLocal.Translation();
+	//use right-hand coordinates, z should be -1
+	Vector3 rayDir = Vector3::TransformNormal(Vector3(viewX, viewY, -1.0f), toLocal);
+	rayDir.Normalize();
+
+	Ray ray(rayPostition, rayDir);
+
+	float distance = 0.0f;
+	if (ray.Intersects(m_Properties.GetBoundingBox(), distance))
+	{
+		for (uint32_t i = 0; i < m_IndexCount; i += 3)
 		{
-			return true;
+			const std::vector<Vector3>& vertices = m_Mesh->GetVertices();
+			const std::vector<uint32_t>& indices = m_Mesh->GetIndices();
+			Vector3 tri0 = vertices.at(indices[i]);
+			Vector3 tri1 = vertices.at(indices[i + 1]);
+			Vector3 tri2 = vertices.at(indices[i + 2]);
+
+			float distance = 0.0f;
+			if (ray.Intersects(tri0, tri1, tri2, distance))
+			{
+				m_IsPicked = true;
+				return m_Properties.GetActorId();
+			}
 		}
 	}
-
-	return false;
+	
+	return INVALID_ACTOR_ID;
 }
 
 void GeometryNode::CreateCube()
@@ -862,11 +853,6 @@ HRESULT ModelNode::VRender(Scene* pScene, const GameTime& gameTime)
 	return S_OK;
 }
 
-bool ModelNode::VDelegatePick(const Ray& ray)
-{
-	return false;
-}
-
 SkyboxNode::SkyboxNode(ActorId actorId, WeakBaseRenderComponentPtr renderComponent, RenderPass renderPass)
 	: SceneNode(actorId, renderComponent, renderPass),
 	m_pEffect(nullptr),
@@ -983,4 +969,94 @@ HRESULT SkyboxNode::VRender(Scene* pScene, const GameTime& gameTime)
 HRESULT SkyboxNode::VOnUpdate(Scene* pScene, const GameTime& gameTime)
 {
 	return S_OK;
+}
+
+AssistMarkNode::AssistMarkNode(ActorId actorId, WeakBaseRenderComponentPtr renderComponent)
+	: SceneNode(actorId, renderComponent, RenderPass_Static),
+	m_pEffect(nullptr),
+	m_pCurrentPass(nullptr),
+	m_pVertexBuffer(nullptr),
+	m_pIndexBuffer(nullptr),
+	m_IndexCount(0)
+{
+	std::vector<VertexPositionColor> boxVertices;
+	std::vector<uint16_t> boxIndices;
+	CreateAABox(boxVertices, boxIndices);
+
+	std::vector<VertexPositionNormalTexture> cylinderVertices;
+	std::vector<uint16_t> cylinderIndices;
+	GeometricPrimitive::CreateCylinder(cylinderVertices, cylinderIndices);
+
+	std::vector<VertexPositionNormalTexture> coneVertices;
+	std::vector<uint16_t> coneIndices;
+	GeometricPrimitive::CreateCylinder(coneVertices, coneIndices);
+
+	std::vector<VertexPositionNormalTexture> torusVertices;
+	std::vector<uint16_t> torusIndices;
+	GeometricPrimitive::CreateCylinder(torusVertices, torusIndices);
+
+	m_AABoxVertexOffset = 0;
+	m_CylinderVertexOffset = boxVertices.size();
+
+	m_CylinderIndexCount = cylinderIndices.size();
+	m_ConeIndexCount = coneIndices.size();
+	m_TorusYawIndexCount = m_TorusPitchIndexCount = m_TorusRollIndexCount = torusIndices.size();
+
+	m_AABoxIndexOffset = 0;
+	m_CylinderIndexOffset = m_AABoxIndexCount;
+	m_ConeIndexOffset = m_CylinderIndexOffset + m_CylinderIndexCount;
+	m_TorusYawIndexOffset = m_ConeIndexOffset + m_ConeIndexCount;
+	m_TorusPitchIndexOffset = m_TorusYawIndexOffset + m_TorusYawIndexCount;
+	m_TorusRollIndexOffset = m_TorusPitchIndexOffset + m_TorusPitchIndexCount;
+}
+
+AssistMarkNode::~AssistMarkNode()
+{
+
+}
+
+HRESULT AssistMarkNode::VOnInitSceneNode(Scene* pScene)
+{
+	return S_OK;
+}
+
+HRESULT AssistMarkNode::VOnDeleteSceneNode(Scene *pScene)
+{
+	return S_OK;
+}
+
+HRESULT AssistMarkNode::VOnUpdate(Scene* pScene, const GameTime& gameTime)
+{
+	return S_OK;
+}
+
+HRESULT AssistMarkNode::VRender(Scene* pScene, const GameTime& gameTime)
+{
+	return S_OK;
+}
+
+ActorId AssistMarkNode::VPick(Scene* pScene, int cursorX, int cursorY)
+{
+	return INVALID_ACTOR_ID;
+}
+
+void AssistMarkNode::CreateAABox(std::vector<VertexPositionColor>& vertices, std::vector<uint16_t>& indices)
+{
+	vertices.clear();
+	vertices.reserve(8);
+	Color color(Colors::LightSkyBlue.f);
+
+	vertices.push_back(VertexPositionColor(Vector4(-0.5f, -0.5f, -0.5f, 1.0f), color));
+	vertices.push_back(VertexPositionColor(Vector4(0.5f, -0.5f, -0.5f, 1.0f), color));
+	vertices.push_back(VertexPositionColor(Vector4(0.5f, -0.5f, 0.5f, 1.0f), color));
+	vertices.push_back(VertexPositionColor(Vector4(-0.5f, -0.5f, 0.5f, 1.0f), color));
+	vertices.push_back(VertexPositionColor(Vector4(-0.5f, 0.5f, -0.5f, 1.0f), color));
+	vertices.push_back(VertexPositionColor(Vector4(0.5f, 0.5f, -0.5f, 1.0f), color));
+	vertices.push_back(VertexPositionColor(Vector4(0.5f, 0.5f, 0.5f, 1.0f), color));
+	vertices.push_back(VertexPositionColor(Vector4(-0.5f, 0.5f, 0.5f, 1.0f), color));
+
+	uint16_t arrayIndices[] = { 0, 1, 1, 2, 2, 3, 3, 0, 4, 5, 5, 6, 6, 7, 7, 4, 0, 4, 1, 5, 2, 6, 3, 7 };
+	indices.clear();
+	indices.resize(ARRAYSIZE(arrayIndices));
+	memcpy_s(&indices.front(), sizeof(arrayIndices), arrayIndices, sizeof(arrayIndices));
 }

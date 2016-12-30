@@ -181,6 +181,13 @@ public:
 	IRenderer() {}
 	~IRenderer() {}
 
+	enum IndexFormat
+	{
+		Format_unknow = 0,
+		Format_uint32 = 42,
+		Format_uint16 = 57
+	};
+
 	virtual bool VInitRenderer(HWND hWnd) = 0;
 	virtual void VDeleteRenderer() = 0;
 	virtual void VResizeSwapChain() = 0;
@@ -189,8 +196,9 @@ public:
 	virtual void VSetBackgroundColor(const Color& color) = 0;
 
 	virtual void VInputSetup(D3D_PRIMITIVE_TOPOLOGY topology, ID3D11InputLayout* pInputLayout) = 0;
-	virtual void VDrawMesh(uint32_t vertexSize, ID3D11Buffer* pVertexBuffer, uint32_t vertexCont,
-		ID3D11Buffer* pIndexBuffer, uint32_t indexCount, ID3DX11EffectPass* pD3DX11EffectPass) = 0;
+	virtual void VSetVertexBuffers(ID3D11Buffer* pVertexBuffer, uint32_t* stride, uint32_t* offset) = 0;
+	virtual void VSetIndexBuffer(ID3D11Buffer* pIndexBuffer, IndexFormat format, uint32_t offset) = 0;
+	virtual void VDrawMesh(uint32_t indexCount, uint32_t startIndex, int32_t baseVertex, ID3DX11EffectPass* pD3DX11EffectPass) = 0;
 
 	virtual bool VCompileShaderFromMemory(const void* pBuffer, uint32_t lenght, shared_ptr<IResourceExtraData> pExtraData) = 0;
 	virtual bool VCreateShaderFromMemory(const void* pBuffer, uint32_t lenght, shared_ptr<IResourceExtraData> pExtraData) = 0;

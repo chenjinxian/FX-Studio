@@ -695,30 +695,28 @@ void D3D11Renderer::VInputSetup(D3D_PRIMITIVE_TOPOLOGY topology, ID3D11InputLayo
 	m_pDeviceContext->IASetInputLayout(pInputLayout);
 }
 
-void D3D11Renderer::VDrawMesh(uint32_t vertexSize, ID3D11Buffer* pVertexBuffer, uint32_t vertexCont,
-	ID3D11Buffer* pIndexBuffer, uint32_t indexCount, ID3DX11EffectPass* pD3DX11EffectPass)
+void D3D11Renderer::VSetVertexBuffers(ID3D11Buffer* pVertexBuffer, uint32_t* stride, uint32_t* offset)
 {
-	UINT stride = vertexSize;
-	UINT offset = 0;
-
 	if (pVertexBuffer != nullptr)
 	{
-		m_pDeviceContext->IASetVertexBuffers(0, 1, &pVertexBuffer, &stride, &offset);
+		m_pDeviceContext->IASetVertexBuffers(0, 1, &pVertexBuffer, stride, offset);
 	}
+}
 
+void D3D11Renderer::VSetIndexBuffer(ID3D11Buffer* pIndexBuffer, IRenderer::IndexFormat format, uint32_t offset)
+{
 	if (pIndexBuffer != nullptr)
 	{
-		m_pDeviceContext->IASetIndexBuffer(pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+		m_pDeviceContext->IASetIndexBuffer(pIndexBuffer, (DXGI_FORMAT)format, 0);
 	}
+}
 
+void D3D11Renderer::VDrawMesh(uint32_t indexCount, uint32_t startIndex, int32_t baseVertex, ID3DX11EffectPass* pD3DX11EffectPass)
+{
 	pD3DX11EffectPass->Apply(0, m_pDeviceContext);
-	if (indexCount)
+	if (indexCount > 0)
 	{
-		m_pDeviceContext->DrawIndexed(indexCount, 0, 0);
-	}
-	else
-	{
-		m_pDeviceContext->Draw(vertexCont, 0);
+		m_pDeviceContext->DrawIndexed(indexCount, startIndex, baseVertex);
 	}
 }
 

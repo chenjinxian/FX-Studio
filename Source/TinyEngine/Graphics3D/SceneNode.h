@@ -2,6 +2,7 @@
 #include "../TinyEngineBase.h"
 #include "../TinyEngineInterface.h"
 #include "d3dx11effect.h"
+#include "GeometricPrimitive.h"
 
 class SceneNode;
 class Scene;
@@ -240,43 +241,58 @@ private:
 class AssistMarkNode : public SceneNode
 {
 public:
-	AssistMarkNode(ActorId actorId, WeakBaseRenderComponentPtr renderComponent);
+	AssistMarkNode();
 	~AssistMarkNode();
 
 	virtual HRESULT VOnInitSceneNode(Scene* pScene) override;
 	virtual HRESULT VOnDeleteSceneNode(Scene *pScene) override;
 	virtual HRESULT VOnUpdate(Scene* pScene, const GameTime& gameTime) override;
 	virtual HRESULT VRender(Scene* pScene, const GameTime& gameTime) override;
-	virtual ActorId VPick(Scene* pScene, int cursorX, int cursorY) override;
 
 private:
+	typedef struct _VertexPositionColor
+	{
+		Vector4 position;
+		Vector4 color;
+
+		_VertexPositionColor() { }
+
+		_VertexPositionColor(const Vector4& position, const Vector4& color)
+			: position(position), color(color) { }
+	} VertexPositionColor;
+
+	HRESULT RenderBoundingBox(Scene* pScene);
+	HRESULT RenderAxes(Scene* pScene);
+	HRESULT RenderRotateRings(Scene* pScene);
+
 	void CreateAABox(std::vector<VertexPositionColor>& vertices, std::vector<uint16_t>& indices);
+	void AddVertexColor(std::vector<VertexPositionColor>& vertices,
+		const std::vector<struct VertexPositionNormalTexture>& inputVertices, std::vector<Color> colors);
+	void CreateGeometryBuffers();
 
 	Effect* m_pEffect;
 	Pass* m_pCurrentPass;
 	ID3D11Buffer* m_pVertexBuffer;
 	ID3D11Buffer* m_pIndexBuffer;
-	uint32_t m_IndexCount;
 	std::unique_ptr<Mesh> m_Mesh;
 
 	int32_t m_AABoxVertexOffset;
 	int32_t m_CylinderVertexOffset;
 	int32_t m_ConeVertexOffset;
-	int32_t m_TorusYawVertexOffset;
-	int32_t m_TorusPitchVertexOffset;
-	int32_t m_TorusRollOVertexffset;
+	int32_t m_TorusVertexOffset;
+
+	uint32_t m_AABoxVertexCount;
+	uint32_t m_CylinderVertexCount;
+	uint32_t m_ConeVertexCount;
+	uint32_t m_TorusVertexCount;
 
 	uint32_t m_AABoxIndexOffset;
 	uint32_t m_CylinderIndexOffset;
 	uint32_t m_ConeIndexOffset;
-	uint32_t m_TorusYawIndexOffset;
-	uint32_t m_TorusPitchIndexOffset;
-	uint32_t m_TorusRollIndexOffset;
+	uint32_t m_TorusIndexOffset;
 
 	uint32_t m_AABoxIndexCount;
 	uint32_t m_CylinderIndexCount;
 	uint32_t m_ConeIndexCount;
-	uint32_t m_TorusYawIndexCount;
-	uint32_t m_TorusPitchIndexCount;
-	uint32_t m_TorusRollIndexCount;
+	uint32_t m_TorusIndexCount;
 };

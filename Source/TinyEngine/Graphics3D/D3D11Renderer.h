@@ -16,8 +16,9 @@ public:
 	virtual void VSetBackgroundColor(const Color& color) override;
 
 	virtual void VInputSetup(D3D_PRIMITIVE_TOPOLOGY topology, ID3D11InputLayout* pInputLayout) override;
-	virtual void VDrawMesh(uint32_t vertexSize, ID3D11Buffer* pVertexBuffer, uint32_t vertexCont,
-		ID3D11Buffer* pIndexBuffer, uint32_t indexCount, ID3DX11EffectPass* pD3DX11EffectPass) override;
+	virtual void VSetVertexBuffers(ID3D11Buffer* pVertexBuffer, uint32_t* stride, uint32_t* offset) override;
+	virtual void VSetIndexBuffer(ID3D11Buffer* pIndexBuffer, IRenderer::IndexFormat format, uint32_t offset) override;
+	virtual void VDrawMesh(uint32_t indexCount, uint32_t startIndex, int32_t baseVertex, ID3DX11EffectPass* pD3DX11EffectPass) override;
 
 	virtual bool VCompileShaderFromMemory(const void* pBuffer, uint32_t lenght, shared_ptr<IResourceExtraData> pExtraData) override;
 	virtual bool VCreateShaderFromMemory(const void* pBuffer, uint32_t lenght, shared_ptr<IResourceExtraData> pExtraData) override;

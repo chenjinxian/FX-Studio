@@ -3,6 +3,7 @@
 
 class SceneNode;
 class CameraNode;
+class DebugAssistNode;
 typedef std::map<ActorId, shared_ptr<ISceneNode> > SceneActorMap;
 
 class Scene
@@ -28,6 +29,10 @@ public:
 	const shared_ptr<CameraNode> GetCamera() const { return m_pCamera; }
 
 	ActorId Pick(int cursorX, int cursorY);
+	ActorId GetPickedActor() { return m_PickedActor; }
+	void SetPickedActor(ActorId actorId) { m_PickedActor = actorId; }
+	float GetPickDistance() { return m_PickDistance; }
+	void SetPickDistance(float distance) { m_PickDistance = distance; }
 	shared_ptr<IRenderer> GetRenderder() { return m_pRenderer; }
 
 	void PushAndSetMatrix(const Matrix& worldMatrix)
@@ -63,8 +68,12 @@ private:
 	shared_ptr<IRenderer> m_pRenderer;
 	shared_ptr<SceneNode> m_pRootNode;
 	shared_ptr<CameraNode> m_pCamera;
+	shared_ptr<DebugAssistNode> m_pDebugNode;
 
 	std::stack<Matrix> m_MatrixStack;
 	SceneActorMap m_ActorMap;
+
+	ActorId m_PickedActor;
+	float m_PickDistance;
 };
 

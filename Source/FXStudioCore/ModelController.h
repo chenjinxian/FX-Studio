@@ -11,8 +11,10 @@ public:
 	void SetObject(shared_ptr<SceneNode> newObject) { m_pObject = newObject; }
 	void OnUpdate(const GameTime& gameTime);
 
-	virtual bool VOnPointerButtonDown(const Vector2 &pos, int radius, const std::string &buttonName) override;
-	virtual bool VOnPointerButtonUp(const Vector2 &pos, int radius, const std::string &buttonName) override;
+	virtual bool VOnPointerLeftButtonDown(const Vector2 &pos, int radius) override;
+	virtual bool VOnPointerLeftButtonUp(const Vector2 &pos, int radius) override;
+	virtual bool VOnPointerRightButtonDown(const Vector2 &pos, int radius) override;
+	virtual bool VOnPointerRightButtonUp(const Vector2 &pos, int radius) override;
 	virtual bool VOnPointerMove(const Vector2 &pos, int radius) override;
 	virtual bool VOnPointerWheel(int16_t delta) override;
 

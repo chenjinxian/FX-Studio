@@ -70,7 +70,7 @@ private:
 	std::string m_PassName;
 	ID3D11InputLayout* m_pInputLayouts;
 	uint32_t m_VertexSize;
-	std::vector<std::string> m_VertexFormat;
+	std::vector<std::pair<std::string, int> > m_VertexFormat;
 };
 
 class Variable : public boost::noncopyable
@@ -84,8 +84,8 @@ public:
 
 	void SetMatrix(XMMATRIX value);
 	void SetResource(ID3D11ShaderResourceView* value);
+	void SetVector(FXMVECTOR value);
 	Variable& operator<<(ID3D11UnorderedAccessView* value);
-	Variable& operator<<(FXMVECTOR value);
 	Variable& operator<<(int value);
 	Variable& operator<<(float value);
 	Variable& operator<<(const std::vector<float>& values);

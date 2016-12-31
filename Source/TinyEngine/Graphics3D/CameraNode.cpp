@@ -76,7 +76,7 @@ void Frustum::Render()
 }
 
 CameraNode::CameraNode(const Frustum& frustum)
-	: SceneNode(INVALID_ACTOR_ID, WeakBaseRenderComponentPtr(), RenderPass_0),
+	: SceneNode(INVALID_ACTOR_ID, WeakBaseRenderComponentPtr(), RenderPass_Static),
 	m_Frustum(frustum),
 	m_IsDebugCamera(false),
 	m_pTarget(nullptr),

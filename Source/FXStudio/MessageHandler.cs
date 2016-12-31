@@ -53,7 +53,8 @@ namespace FXStudio
             System.Drawing.Point position = Cursor.Position;
             System.Drawing.Point relativeToForm = m_renderPanel.PointToClient(position);
             m_fakeFocus = (relativeToForm.X >= 0 && relativeToForm.Y >= 0 &&
-                relativeToForm.X < m_renderPanel.Width && relativeToForm.Y < m_renderPanel.Width);
+                relativeToForm.X < m_renderPanel.Width && relativeToForm.Y < m_renderPanel.Width &&
+                m_renderPanel.Parent.Focused);
             if (m_fakeFocus)
             {
                 m_mouseDownPosition = position;
@@ -67,7 +68,7 @@ namespace FXStudio
                 if (m.Msg == WM_LBUTTONDOWN || m.Msg == WM_RBUTTONDOWN || m.Msg == WM_MBUTTONDOWN)
                     CheckFakeFocus();
 
-                if (m.HWnd == m_renderPanel.Handle/* || (m_fakeFocus && (m.Msg == WM_KEYDOWN || m.Msg == WM_KEYUP))*/)
+                if (m.HWnd == m_renderPanel.Handle || (m_fakeFocus && (m.Msg == WM_KEYDOWN || m.Msg == WM_KEYUP)))
                 {
                     switch (m.Msg)
                     {
@@ -127,10 +128,7 @@ namespace FXStudio
                     MessageBox.Show(ex.Message);
                 }
 
-                if (m_renderPanel != null)
-                    CheckFakeFocus();
-                if (m_fakeFocus)
-                    m_formMain.Invalidate();
+                m_formMain.Invalidate();
             }
         }
     }

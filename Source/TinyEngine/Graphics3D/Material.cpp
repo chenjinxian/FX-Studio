@@ -144,7 +144,7 @@ Pass::Pass(ID3D11Device1* pDevice, ID3DX11EffectPass* pD3DX11EffectPass)
 			inputElementDescs[i].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
 			inputElementDescs[i].InstanceDataStepRate = 0;
 
-			m_VertexFormat.push_back(inputElementDescs[i].SemanticName);
+			m_VertexFormat.push_back(std::pair<std::string, int>(inputElementDescs[i].SemanticName, (parameterDesc.Mask + 1) / 4));
 		}
 	
 		pDevice->CreateInputLayout(
@@ -210,26 +210,34 @@ void Pass::CreateVertexBuffer(const Mesh* mesh, ID3D11Buffer** ppVertexBuffer) c
 	{
 		for (auto& vertexFormat : m_VertexFormat)
 		{
-			if (vertexFormat == "POSITION")
+			if (vertexFormat.first == "POSITION")
 			{
 				vertexData.push_back(vertices.at(i).x);
 				vertexData.push_back(vertices.at(i).y);
 				vertexData.push_back(vertices.at(i).z);
-				vertexData.push_back(1.0f);
+				if (vertexFormat.second > 3)
+				{
+					vertexData.push_back(1.0f);
+				}
 			}
-			else if (vertexFormat == "COLOR")
+			else if (vertexFormat.first == "COLOR")
 			{
 				vertexData.push_back(vertexColors.at(i).x);
 				vertexData.push_back(vertexColors.at(i).y);
 				vertexData.push_back(vertexColors.at(i).z);
 				vertexData.push_back(vertexColors.at(i).w);
 			}
-			else if (vertexFormat == "TEXCOORD")
+			else if (vertexFormat.first == "TEXCOORD")
 			{
 				if (textureCoordinates.size() > i)
 				{
 					vertexData.push_back(textureCoordinates.at(i).x);
 					vertexData.push_back(textureCoordinates.at(i).y);
+					if (vertexFormat.second > 3)
+					{
+						vertexData.push_back(0.0f);
+						vertexData.push_back(0.0f);
+					}
 				}
 			}
 		}
@@ -350,6 +358,17 @@ void Variable::SetResource(ID3D11ShaderResourceView* value)
 	variable->SetResource(value);
 }
 
+void Variable::SetVector(FXMVECTOR value)
+{
+	ID3DX11EffectVectorVariable* variable = m_pD3DX11EffectVariable->AsVector();
+	if (!variable->IsValid())
+	{
+		DEBUG_ERROR("Invalid effect variable cast.");
+	}
+
+	variable->SetFloatVector(reinterpret_cast<const float*>(&value));
+}
+
 Variable& Variable::operator<<(ID3D11UnorderedAccessView* value)
 {
 	ID3DX11EffectUnorderedAccessViewVariable* variable = m_pD3DX11EffectVariable->AsUnorderedAccessView();
@@ -359,19 +378,6 @@ Variable& Variable::operator<<(ID3D11UnorderedAccessView* value)
 	}
 
 	variable->SetUnorderedAccessView(value);
-
-	return *this;
-}
-
-Variable& Variable::operator<<(FXMVECTOR value)
-{
-	ID3DX11EffectVectorVariable* variable = m_pD3DX11EffectVariable->AsVector();
-	if (!variable->IsValid())
-	{
-		DEBUG_ERROR("Invalid effect variable cast.");
-	}
-
-	variable->SetFloatVector(reinterpret_cast<const float*>(&value));
 
 	return *this;
 }

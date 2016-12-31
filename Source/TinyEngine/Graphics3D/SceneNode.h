@@ -74,28 +74,16 @@ public:
 
 	virtual bool VAddChild(shared_ptr<ISceneNode> child) override;
 	virtual bool VRemoveChild(ActorId actorId) override;
-	virtual ActorId VPick(Scene* pScene, int cursorX, int cursorY) override;
+
+	virtual void VPick(Scene* pScene, int cursorX, int cursorY) override;
 
 protected:
-	typedef struct _VertexPositionColor
-	{
-		Vector4 position;
-		Vector4 color;
-
-		_VertexPositionColor() { }
-
-		_VertexPositionColor(const Vector4& position, const Vector4& color)
-			: position(position), color(color) { }
-	} VertexPositionColor;
-
-	virtual void DrawBoundingBox(Scene* pScene);
 	void SetBoundingBox(const std::vector<Vector3>& postions);
 
 	SceneNodeList m_Children;
 	SceneNode* m_pParent;
 	WeakBaseRenderComponentPtr m_pRenderComponent;
 	SceneNodeProperties m_Properties;
-	bool m_IsPicked;
 };
 
 class RootNode : public SceneNode
@@ -108,6 +96,7 @@ public:
 	virtual bool VAddChild(shared_ptr<ISceneNode> child);
 	virtual bool VRemoveChild(ActorId actorId);
 	virtual bool VIsVisible(Scene* pScene) const { return true; }
+	virtual void VPick(Scene* pScene, int cursorX, int cursorY) override;
 };
 
 class GridNode : public SceneNode
@@ -157,7 +146,7 @@ public:
 	virtual HRESULT VOnDeleteSceneNode(Scene *pScene) override;
 	virtual HRESULT VOnUpdate(Scene* pScene, const GameTime& gameTime) override;
 	virtual HRESULT VRender(Scene* pScene, const GameTime& gameTime) override;
-	virtual ActorId VPick(Scene* pScene, int cursorX, int cursorY) override;
+	virtual void VPick(Scene* pScene, int cursorX, int cursorY) override;
 
 private:
 	void CreateCube();
@@ -195,7 +184,7 @@ public:
 	virtual HRESULT VOnDeleteSceneNode(Scene *pScene) override;
 	virtual HRESULT VOnUpdate(Scene* pScene, const GameTime& gameTime) override;
 	virtual HRESULT VRender(Scene* pScene, const GameTime& gameTime) override;
-	virtual ActorId VPick(Scene* pScene, int cursorX, int cursorY) { return INVALID_ACTOR_ID; }
+	virtual void VPick(Scene* pScene, int cursorX, int cursorY) {}
 
 private:
 	Effect* m_pEffect;
@@ -238,36 +227,27 @@ private:
 	std::string m_TextureName;
 };
 
-class AssistMarkNode : public SceneNode
+class DebugAssistNode : public SceneNode
 {
 public:
-	AssistMarkNode();
-	~AssistMarkNode();
+	DebugAssistNode();
+	~DebugAssistNode();
 
 	virtual HRESULT VOnInitSceneNode(Scene* pScene) override;
 	virtual HRESULT VOnDeleteSceneNode(Scene *pScene) override;
 	virtual HRESULT VOnUpdate(Scene* pScene, const GameTime& gameTime) override;
 	virtual HRESULT VRender(Scene* pScene, const GameTime& gameTime) override;
+	virtual bool VIsVisible(Scene* pScene) const override;
+
+	void SetVisible(bool visible) { m_IsVisible = visible; }
 
 private:
-	typedef struct _VertexPositionColor
-	{
-		Vector4 position;
-		Vector4 color;
+	HRESULT RenderBoundingBox(Scene* pScene, const BoundingBox& aaBox, const Matrix& world);
+	HRESULT RenderTranslateAxes(Scene* pScene, const BoundingBox& aaBox, const Matrix& world);
+	HRESULT RenderRotateRings(Scene* pScene, const BoundingBox& aaBox, const Matrix& world);
 
-		_VertexPositionColor() { }
-
-		_VertexPositionColor(const Vector4& position, const Vector4& color)
-			: position(position), color(color) { }
-	} VertexPositionColor;
-
-	HRESULT RenderBoundingBox(Scene* pScene);
-	HRESULT RenderAxes(Scene* pScene);
-	HRESULT RenderRotateRings(Scene* pScene);
-
-	void CreateAABox(std::vector<VertexPositionColor>& vertices, std::vector<uint16_t>& indices);
-	void AddVertexColor(std::vector<VertexPositionColor>& vertices,
-		const std::vector<struct VertexPositionNormalTexture>& inputVertices, std::vector<Color> colors);
+	void CreateAABox(std::vector<Vector3>& vertices, std::vector<uint16_t>& indices);
+	void AddVertexColor(std::vector<Vector3>& vertices, const std::vector<struct VertexPositionNormalTexture>& inputVertices);
 	void CreateGeometryBuffers();
 
 	Effect* m_pEffect;
@@ -281,11 +261,6 @@ private:
 	int32_t m_ConeVertexOffset;
 	int32_t m_TorusVertexOffset;
 
-	uint32_t m_AABoxVertexCount;
-	uint32_t m_CylinderVertexCount;
-	uint32_t m_ConeVertexCount;
-	uint32_t m_TorusVertexCount;
-
 	uint32_t m_AABoxIndexOffset;
 	uint32_t m_CylinderIndexOffset;
 	uint32_t m_ConeIndexOffset;
@@ -295,4 +270,6 @@ private:
 	uint32_t m_CylinderIndexCount;
 	uint32_t m_ConeIndexCount;
 	uint32_t m_TorusIndexCount;
+
+	bool m_IsVisible;
 };

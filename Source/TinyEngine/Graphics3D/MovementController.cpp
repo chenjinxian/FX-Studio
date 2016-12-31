@@ -86,25 +86,27 @@ void MovementController::OnUpdate(const GameTime& gameTime)
 	}
 }
 
-bool MovementController::VOnPointerButtonDown(const Vector2 &pos, int radius, const std::string &buttonName)
+bool MovementController::VOnPointerLeftButtonDown(const Vector2 &pos, int radius)
 {
-	if (buttonName == "PointerLeft")
-	{
-		m_IsLButtonDown = true;
-		m_LastMousePos = pos;
-		return true;
-	}
-	return false;
+	m_IsLButtonDown = true;
+	m_LastMousePos = pos;
+	return true;
 }
 
-bool MovementController::VOnPointerButtonUp(const Vector2 &pos, int radius, const std::string &buttonName)
+bool MovementController::VOnPointerLeftButtonUp(const Vector2 &pos, int radius)
 {
-	if (buttonName == "PointerLeft")
-	{
-		m_IsLButtonDown = false;
-		return true;
-	}
-	return false;
+	m_IsLButtonDown = false;
+	return true;
+}
+
+bool MovementController::VOnPointerRightButtonDown(const Vector2 &pos, int radius)
+{
+	return true;
+}
+
+bool MovementController::VOnPointerRightButtonUp(const Vector2 &pos, int radius)
+{
+	return true;
 }
 
 bool MovementController::VOnPointerMove(const Vector2 &pos, int radius)

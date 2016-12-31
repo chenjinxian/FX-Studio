@@ -7,9 +7,17 @@
 
 Scene::Scene(shared_ptr<IRenderer> pRenderer)
 	: m_pRenderer(pRenderer),
-	m_pCamera(nullptr)
+	m_pRootNode(nullptr),
+	m_pCamera(nullptr),
+	m_pDebugNode(nullptr),
+	m_MatrixStack(),
+	m_ActorMap(),
+	m_PickedActor(INVALID_ACTOR_ID),
+	m_PickDistance(FLT_MAX)
 {
 	m_pRootNode.reset(DEBUG_NEW RootNode());
+	m_pDebugNode.reset(DEBUG_NEW DebugAssistNode());
+	AddChild(INVALID_ACTOR_ID, m_pDebugNode);
 
 	IEventManager* pEventMgr = IEventManager::Get();
 	pEventMgr->VAddListener(
@@ -164,5 +172,9 @@ void Scene::MoveActorDelegate(IEventDataPtr pEventData)
 
 ActorId Scene::Pick(int cursorX, int cursorY)
 {
-	return m_pRootNode->VPick(this, cursorX, cursorY);
+	m_PickedActor = INVALID_ACTOR_ID;
+	m_PickDistance = FLT_MAX;
+	m_pRootNode->VPick(this, cursorX, cursorY);
+	m_pDebugNode->SetVisible(m_PickedActor != INVALID_ACTOR_ID);
+	return m_PickedActor;
 }

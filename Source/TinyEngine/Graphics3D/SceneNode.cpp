@@ -23,8 +23,7 @@ SceneNodeProperties::SceneNodeProperties()
 
 SceneNode::SceneNode(ActorId actorId, WeakBaseRenderComponentPtr renderComponent, RenderPass renderPass, const Matrix& worldMatrix)
 	: m_pParent(nullptr),
-	m_pRenderComponent(renderComponent),
-	m_IsPicked(false)
+	m_pRenderComponent(renderComponent)
 {
 	m_Properties.m_ActorId = actorId;
 	m_Properties.m_ActorName = (renderComponent != nullptr) ? renderComponent->VGetComponentName() : "SceneNode";
@@ -146,92 +145,12 @@ bool SceneNode::VRemoveChild(ActorId actorId)
 	return false;
 }
 
-ActorId SceneNode::VPick(Scene* pScene, int cursorX, int cursorY)
+void SceneNode::VPick(Scene* pScene, int cursorX, int cursorY)
 {
 	for (auto& child : m_Children)
 	{
-		ActorId actorId = child->VPick(pScene, cursorX, cursorY);
-		if (actorId != INVALID_ACTOR_ID)
-		{
-			return actorId;
-		}
+		child->VPick(pScene, cursorX, cursorY);
 	}
-
-	return INVALID_ACTOR_ID;
-}
-
-void SceneNode::DrawBoundingBox(Scene* pScene)
-{
-	Resource effectRes("Effects\\VertexColor.fx");
-	shared_ptr<ResHandle> pEffectResHandle = g_pApp->GetResCache()->GetHandle(&effectRes);
-	if (pEffectResHandle == nullptr)
-	{
-		return;
-	}
-	shared_ptr<HlslResourceExtraData> extra = static_pointer_cast<HlslResourceExtraData>(pEffectResHandle->GetExtraData());
-	if (extra == nullptr)
-	{
-		return;
-	}
-
-	Effect* pEffect = extra->GetEffect();
-
-	Technique* pCurrentTechnique = pEffect->GetTechniquesByName().at("main11");
-	if (pCurrentTechnique == nullptr)
-	{
-		DEBUG_ERROR(std::string("technique is not exist: ") + "main11");
-		return;
-	}
-	Pass* pCurrentPass = pCurrentTechnique->GetPassesByName().at("p0");
-	if (pCurrentPass == nullptr)
-	{
-		DEBUG_ERROR(std::string("technique is not exist: ") + "p0");
-		return;
-	}
-
-	std::vector<VertexPositionColor> vertices;
-	vertices.reserve(8);
-	vertices.push_back(VertexPositionColor(Vector4(-0.5f, -0.5f, -0.5f, 1.0f), Color(Colors::LightSkyBlue.f)));
-	vertices.push_back(VertexPositionColor(Vector4(0.5f, -0.5f, -0.5f, 1.0f), Color(Colors::LightSkyBlue.f)));
-	vertices.push_back(VertexPositionColor(Vector4(0.5f, -0.5f, 0.5f, 1.0f), Color(Colors::LightSkyBlue.f)));
-	vertices.push_back(VertexPositionColor(Vector4(-0.5f, -0.5f, 0.5f, 1.0f), Color(Colors::LightSkyBlue.f)));
-	vertices.push_back(VertexPositionColor(Vector4(-0.5f, 0.5f, -0.5f, 1.0f), Color(Colors::LightSkyBlue.f)));
-	vertices.push_back(VertexPositionColor(Vector4(0.5f, 0.5f, -0.5f, 1.0f), Color(Colors::LightSkyBlue.f)));
-	vertices.push_back(VertexPositionColor(Vector4(0.5f, 0.5f, 0.5f, 1.0f), Color(Colors::LightSkyBlue.f)));
-	vertices.push_back(VertexPositionColor(Vector4(-0.5f, 0.5f, 0.5f, 1.0f), Color(Colors::LightSkyBlue.f)));
-
-	uint32_t indices[] = { 0, 1, 1, 2, 2, 3, 3, 0, 4, 5, 5, 6, 6, 7, 7, 4, 0, 4, 1, 5, 2, 6, 3, 7 };
-
-	ID3D11Buffer* pVertexBuffer = nullptr;
-	pCurrentPass->CreateVertexBuffer(&vertices.front(), vertices.size() * sizeof(VertexPositionColor), &pVertexBuffer);
-	ID3D11Buffer* pIndexBuffer = nullptr;
-	pCurrentPass->CreateIndexBuffer(&indices[0], sizeof(indices), &pIndexBuffer);
-
-	const std::vector<Variable*>& variables = pEffect->GetVariables();
-	for (auto variable : variables)
-	{
-		if (variable->GetVariableSemantic() == "worldviewprojection")
-		{
-			if (variable->GetVariableType() == "float4x4")
-			{
-				const BoundingBox& aaBox = m_Properties.GetBoundingBox();
-				Matrix world = pScene->GetTopMatrix();
-				Vector3 position = world.Translation();
-				world = world * Matrix::CreateScale(aaBox.Extents * 2.0f);
-				world.Translation(position);
-				world = world * Matrix::CreateTranslation(aaBox.Center);
-				const XMMATRIX& wvp = world * pScene->GetCamera()->GetViewMatrix() * pScene->GetCamera()->GetProjectMatrix();
-				variable->SetMatrix(wvp);
-			}
-		}
-	}
-
-	pScene->GetRenderder()->VInputSetup(D3D11_PRIMITIVE_TOPOLOGY_LINELIST, pCurrentPass->GetInputLayout());
-	uint32_t stride = pCurrentPass->GetVertexSize();
-	uint32_t offset = 0;
-	pScene->GetRenderder()->VSetVertexBuffers(pVertexBuffer, &stride, &offset);
-	pScene->GetRenderder()->VSetIndexBuffer(pIndexBuffer, IRenderer::Format_uint32, 0);
-	pScene->GetRenderder()->VDrawMesh(24, 0, 0, pCurrentPass->GetEffectPass());
 }
 
 void SceneNode::SetBoundingBox(const std::vector<Vector3>& postions)
@@ -255,9 +174,6 @@ RootNode::RootNode()
 
 	shared_ptr<SceneNode> invisibleGroup(DEBUG_NEW SceneNode(INVALID_ACTOR_ID, WeakBaseRenderComponentPtr(), RenderPass_NotRendered));
 	m_Children.push_back(invisibleGroup);
-
-	shared_ptr<SceneNode> assistNode(DEBUG_NEW AssistMarkNode());
-	staticGroup->VAddChild(assistNode);
 }
 
 RootNode::~RootNode()
@@ -310,6 +226,14 @@ bool RootNode::VRemoveChild(ActorId actorId)
 		}
 	}
 	return anythingRemoved;
+}
+
+void RootNode::VPick(Scene* pScene, int cursorX, int cursorY)
+{
+	if (m_Children.size() > RenderPass_Actor)
+	{
+		m_Children[RenderPass_Actor]->VPick(pScene, cursorX, cursorY);
+	}
 }
 
 GridNode::GridNode(ActorId actorId, WeakBaseRenderComponentPtr renderComponent)
@@ -600,17 +524,11 @@ HRESULT GeometryNode::VRender(Scene* pScene, const GameTime& gameTime)
 	pScene->GetRenderder()->VSetIndexBuffer(m_pIndexBuffer, IRenderer::Format_uint32, 0);
 	pScene->GetRenderder()->VDrawMesh(m_IndexCount, 0, 0, m_pCurrentPass->GetEffectPass());
 
-	if (m_IsPicked)
-	{
-		DrawBoundingBox(pScene);
-	}
 	return S_OK;
 }
 
-ActorId GeometryNode::VPick(Scene* pScene, int cursorX, int cursorY)
+void GeometryNode::VPick(Scene* pScene, int cursorX, int cursorY)
 {
-	m_IsPicked = false;
-
 	const Matrix& projectMat = pScene->GetCamera()->GetProjectMatrix();
 	float viewX = (2.0f * cursorX / g_pApp->GetGameConfig().m_ScreenWidth - 1.0f) / projectMat.m[0][0];
 	float viewY = (1.0f - 2.0f * cursorY / g_pApp->GetGameConfig().m_ScreenHeight) / projectMat.m[1][1];
@@ -626,24 +544,25 @@ ActorId GeometryNode::VPick(Scene* pScene, int cursorX, int cursorY)
 	float distance = 0.0f;
 	if (ray.Intersects(m_Properties.GetBoundingBox(), distance))
 	{
-		for (uint32_t i = 0; i < m_IndexCount; i += 3)
+		if (distance < pScene->GetPickDistance())
 		{
-			const std::vector<Vector3>& vertices = m_Mesh->GetVertices();
-			const std::vector<uint32_t>& indices = m_Mesh->GetIndices();
-			Vector3 tri0 = vertices.at(indices[i]);
-			Vector3 tri1 = vertices.at(indices[i + 1]);
-			Vector3 tri2 = vertices.at(indices[i + 2]);
-
-			float distance = 0.0f;
-			if (ray.Intersects(tri0, tri1, tri2, distance))
+			pScene->SetPickDistance(distance);
+			for (uint32_t i = 0; i < m_IndexCount; i += 3)
 			{
-				m_IsPicked = true;
-				return m_Properties.GetActorId();
+				const std::vector<Vector3>& vertices = m_Mesh->GetVertices();
+				const std::vector<uint32_t>& indices = m_Mesh->GetIndices();
+				Vector3 tri0 = vertices.at(indices[i]);
+				Vector3 tri1 = vertices.at(indices[i + 1]);
+				Vector3 tri2 = vertices.at(indices[i + 2]);
+
+				float distance = 0.0f;
+				if (ray.Intersects(tri0, tri1, tri2, distance))
+				{
+					pScene->SetPickedActor(m_Properties.GetActorId());
+				}
 			}
 		}
 	}
-	
-	return INVALID_ACTOR_ID;
 }
 
 void GeometryNode::CreateCube()
@@ -988,7 +907,7 @@ HRESULT SkyboxNode::VOnUpdate(Scene* pScene, const GameTime& gameTime)
 	return S_OK;
 }
 
-AssistMarkNode::AssistMarkNode()
+DebugAssistNode::DebugAssistNode()
 	: SceneNode(INVALID_ACTOR_ID, nullptr, RenderPass_Static, Matrix::CreateTranslation(0.0f, 0.5f, 0.0f)),
 	m_pEffect(nullptr),
 	m_pCurrentPass(nullptr),
@@ -998,18 +917,18 @@ AssistMarkNode::AssistMarkNode()
 
 }
 
-AssistMarkNode::~AssistMarkNode()
+DebugAssistNode::~DebugAssistNode()
 {
 	SAFE_RELEASE(m_pVertexBuffer);
 	SAFE_RELEASE(m_pIndexBuffer);
 }
 
-HRESULT AssistMarkNode::VOnInitSceneNode(Scene* pScene)
+HRESULT DebugAssistNode::VOnInitSceneNode(Scene* pScene)
 {
 	SAFE_RELEASE(m_pVertexBuffer);
 	SAFE_RELEASE(m_pIndexBuffer);
 
-	Resource effectRes("Effects\\VertexColor.fx");
+	Resource effectRes("Effects\\DebugAssist.fx");
 	shared_ptr<ResHandle> pEffectResHandle = g_pApp->GetResCache()->GetHandle(&effectRes);
 	if (pEffectResHandle == nullptr)
 	{
@@ -1041,87 +960,101 @@ HRESULT AssistMarkNode::VOnInitSceneNode(Scene* pScene)
 	return S_OK;
 }
 
-HRESULT AssistMarkNode::VOnDeleteSceneNode(Scene *pScene)
+HRESULT DebugAssistNode::VOnDeleteSceneNode(Scene *pScene)
 {
 	return S_OK;
 }
 
-HRESULT AssistMarkNode::VOnUpdate(Scene* pScene, const GameTime& gameTime)
+HRESULT DebugAssistNode::VOnUpdate(Scene* pScene, const GameTime& gameTime)
 {
 	return S_OK;
 }
 
-HRESULT AssistMarkNode::VRender(Scene* pScene, const GameTime& gameTime)
+HRESULT DebugAssistNode::VRender(Scene* pScene, const GameTime& gameTime)
 {
-	pScene->GetRenderder()->VInputSetup(D3D11_PRIMITIVE_TOPOLOGY_LINELIST, m_pCurrentPass->GetInputLayout());
+	shared_ptr<ISceneNode> pPickedNode = pScene->FindActor(pScene->GetPickedActor());
+	if (pPickedNode == nullptr)
+	{
+		return S_OK;
+	}
+
 	uint32_t stride = m_pCurrentPass->GetVertexSize();
 	uint32_t offset = 0;
 	pScene->GetRenderder()->VSetVertexBuffers(m_pVertexBuffer, &stride, &offset);
 	pScene->GetRenderder()->VSetIndexBuffer(m_pIndexBuffer, IRenderer::Format_uint16, 0);
 
-	RenderBoundingBox(pScene);
+	pScene->GetRenderder()->VInputSetup(D3D11_PRIMITIVE_TOPOLOGY_LINELIST, m_pCurrentPass->GetInputLayout());
+	RenderBoundingBox(pScene, pPickedNode->VGet()->GetBoundingBox(), pPickedNode->VGet()->GetWorldMatrix());
 
 	pScene->GetRenderder()->VInputSetup(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, m_pCurrentPass->GetInputLayout());
-	RenderAxes(pScene);
-	RenderRotateRings(pScene);
+	RenderTranslateAxes(pScene, pPickedNode->VGet()->GetBoundingBox(), pPickedNode->VGet()->GetWorldMatrix());
+	RenderRotateRings(pScene, pPickedNode->VGet()->GetBoundingBox(), pPickedNode->VGet()->GetWorldMatrix());
 
 	return S_OK;
 }
 
-HRESULT AssistMarkNode::RenderBoundingBox(Scene* pScene)
+bool DebugAssistNode::VIsVisible(Scene* pScene) const
+{
+	return pScene->GetPickedActor() != INVALID_ACTOR_ID;
+}
+
+HRESULT DebugAssistNode::RenderBoundingBox(Scene* pScene, const BoundingBox& aaBox, const Matrix& world)
 {
 	Variable* variable = m_pEffect->GetVariablesByName().at("WorldViewProjection");
-	const BoundingBox& aaBox = m_Properties.GetBoundingBox();
-	Matrix world = m_Properties.GetWorldMatrix();
-// 	Vector3 position = world.Translation();
-// 	world = world * Matrix::CreateScale(aaBox.Extents * 2.0f);
-// 	world.Translation(position);
-// 	world = world * Matrix::CreateTranslation(aaBox.Center);
-	const XMMATRIX& wvp = world * pScene->GetCamera()->GetViewMatrix() * pScene->GetCamera()->GetProjectMatrix();
+	Matrix boxWorld = world * Matrix::CreateScale(aaBox.Extents * 2.0f);
+	boxWorld.Translation(world.Translation());
+	boxWorld = boxWorld * Matrix::CreateTranslation(aaBox.Center);
+	const XMMATRIX& wvp = boxWorld * pScene->GetCamera()->GetViewMatrix() * pScene->GetCamera()->GetProjectMatrix();
 	variable->SetMatrix(wvp);
+
+	Variable* ambientColor = m_pEffect->GetVariablesByName().at("AmbientColor");
+	ambientColor->SetVector(Color(Colors::LightSkyBlue.f));
 
 	pScene->GetRenderder()->VDrawMesh(m_AABoxIndexCount, m_AABoxIndexOffset, m_AABoxVertexOffset, m_pCurrentPass->GetEffectPass());
 
 	return S_OK;
 }
 
-HRESULT AssistMarkNode::RenderAxes(Scene* pScene)
+HRESULT DebugAssistNode::RenderTranslateAxes(Scene* pScene, const BoundingBox& aaBox, const Matrix& world)
 {
 	Variable* variable = m_pEffect->GetVariablesByName().at("WorldViewProjection");
-	Matrix world = m_Properties.GetWorldMatrix();
+	Matrix aixsWorld = m_Properties.GetWorldMatrix();
 	Matrix view = pScene->GetCamera()->GetViewMatrix();
 	Vector3 position = view.Translation();
 	position.z = -5.0f;
 	view.Translation(position);
 	const XMMATRIX& wvp = world * view * pScene->GetCamera()->GetProjectMatrix();
 
+	Variable* ambientColor = m_pEffect->GetVariablesByName().at("AmbientColor");
+	ambientColor->SetVector(Color(1.0f, 0.0f, 0.0f));
 	variable->SetMatrix(Matrix::CreateRotationZ(XMConvertToRadians(-90)) * Matrix::CreateTranslation(Vector3(0.3f, 0.0f, 0.0f)) * wvp);
 	pScene->GetRenderder()->VDrawMesh(m_CylinderIndexCount, m_CylinderIndexOffset, m_CylinderVertexOffset, m_pCurrentPass->GetEffectPass());
 	variable->SetMatrix(Matrix::CreateRotationZ(XMConvertToRadians(-90)) * Matrix::CreateTranslation(Vector3(0.6f, 0.0f, 0.0f)) * wvp);
 	pScene->GetRenderder()->VDrawMesh(
 		m_ConeIndexCount, m_ConeIndexOffset, m_ConeVertexOffset, m_pCurrentPass->GetEffectPass());
 
-
+	ambientColor->SetVector(Color(0.0f, 1.0f, 0.0f));
 	variable->SetMatrix(Matrix::CreateTranslation(Vector3(0.0f, 0.3f, 0.0f)) * wvp);
 	pScene->GetRenderder()->VDrawMesh(
-		m_CylinderIndexCount, m_CylinderIndexOffset, m_CylinderVertexOffset + m_CylinderVertexCount, m_pCurrentPass->GetEffectPass());
+		m_CylinderIndexCount, m_CylinderIndexOffset, m_CylinderVertexOffset, m_pCurrentPass->GetEffectPass());
 	variable->SetMatrix(Matrix::CreateTranslation(Vector3(0.0f, 0.6f, 0.0f)) * wvp);
 	pScene->GetRenderder()->VDrawMesh(
-		m_ConeIndexCount, m_ConeIndexOffset, m_ConeVertexOffset + m_ConeVertexCount, m_pCurrentPass->GetEffectPass());
+		m_ConeIndexCount, m_ConeIndexOffset, m_ConeVertexOffset, m_pCurrentPass->GetEffectPass());
 
+	ambientColor->SetVector(Color(0.0f, 0.0f, 1.0f));
 	variable->SetMatrix(Matrix::CreateRotationX(XMConvertToRadians(90)) * Matrix::CreateTranslation(Vector3(0.0f, 0.0f, 0.3f)) * wvp);
 	pScene->GetRenderder()->VDrawMesh(
-		m_CylinderIndexCount, m_CylinderIndexOffset, m_CylinderVertexOffset + m_CylinderVertexCount * 2, m_pCurrentPass->GetEffectPass());
+		m_CylinderIndexCount, m_CylinderIndexOffset, m_CylinderVertexOffset, m_pCurrentPass->GetEffectPass());
 	variable->SetMatrix(Matrix::CreateRotationX(XMConvertToRadians(90)) * Matrix::CreateTranslation(Vector3(0.0f, 0.0f, 0.6f)) * wvp);
 	pScene->GetRenderder()->VDrawMesh(
-		m_ConeIndexCount, m_ConeIndexOffset, m_ConeVertexOffset + m_ConeVertexCount * 2, m_pCurrentPass->GetEffectPass());
+		m_ConeIndexCount, m_ConeIndexOffset, m_ConeVertexOffset, m_pCurrentPass->GetEffectPass());
 	return S_OK;
 }
 
-HRESULT AssistMarkNode::RenderRotateRings(Scene* pScene)
+HRESULT DebugAssistNode::RenderRotateRings(Scene* pScene, const BoundingBox& aaBox, const Matrix& world)
 {
 	Variable* variable = m_pEffect->GetVariablesByName().at("WorldViewProjection");
-	Matrix world = m_Properties.GetWorldMatrix();
+	Matrix ringWorld = m_Properties.GetWorldMatrix();
 	Matrix view = pScene->GetCamera()->GetViewMatrix();
 	Vector3 position = view.Translation();
 	position.z = -5.0f;
@@ -1129,36 +1062,40 @@ HRESULT AssistMarkNode::RenderRotateRings(Scene* pScene)
 	const XMMATRIX& wvp = world * view * pScene->GetCamera()->GetProjectMatrix();
 	variable->SetMatrix(wvp);
 
+	Variable* ambientColor = m_pEffect->GetVariablesByName().at("AmbientColor");
+	ambientColor->SetVector(Color(1.0f, 0.0f, 0.0f));
 	pScene->GetRenderder()->VDrawMesh(
 		m_TorusIndexCount, m_TorusIndexOffset, m_TorusVertexOffset, m_pCurrentPass->GetEffectPass());
 
 	variable->SetMatrix(Matrix::CreateRotationX(XMConvertToRadians(90)) * wvp);
+	ambientColor->SetVector(Color(0.0f, 1.0f, 0.0f));
 
 	pScene->GetRenderder()->VDrawMesh(
-		m_TorusIndexCount, m_TorusIndexOffset, m_TorusVertexOffset + m_TorusVertexCount, m_pCurrentPass->GetEffectPass());
+		m_TorusIndexCount, m_TorusIndexOffset, m_TorusVertexOffset, m_pCurrentPass->GetEffectPass());
 
 	variable->SetMatrix(Matrix::CreateRotationZ(XMConvertToRadians(90)) * wvp);
+	ambientColor->SetVector(Color(0.0f, 0.0f, 1.0f));
 
 	pScene->GetRenderder()->VDrawMesh(
-		m_TorusIndexCount, m_TorusIndexOffset, m_TorusVertexOffset + m_TorusVertexCount * 2, m_pCurrentPass->GetEffectPass());
+		m_TorusIndexCount, m_TorusIndexOffset, m_TorusVertexOffset, m_pCurrentPass->GetEffectPass());
 
 	return S_OK;
 }
 
-void AssistMarkNode::CreateAABox(std::vector<VertexPositionColor>& vertices, std::vector<uint16_t>& indices)
+void DebugAssistNode::CreateAABox(std::vector<Vector3>& vertices, std::vector<uint16_t>& indices)
 {
 	vertices.clear();
 	vertices.reserve(8);
 	Color color(Colors::LightSkyBlue.f);
 
-	vertices.push_back(VertexPositionColor(Vector4(-0.5f, -0.5f, -0.5f, 1.0f), color));
-	vertices.push_back(VertexPositionColor(Vector4(0.5f, -0.5f, -0.5f, 1.0f), color));
-	vertices.push_back(VertexPositionColor(Vector4(0.5f, -0.5f, 0.5f, 1.0f), color));
-	vertices.push_back(VertexPositionColor(Vector4(-0.5f, -0.5f, 0.5f, 1.0f), color));
-	vertices.push_back(VertexPositionColor(Vector4(-0.5f, 0.5f, -0.5f, 1.0f), color));
-	vertices.push_back(VertexPositionColor(Vector4(0.5f, 0.5f, -0.5f, 1.0f), color));
-	vertices.push_back(VertexPositionColor(Vector4(0.5f, 0.5f, 0.5f, 1.0f), color));
-	vertices.push_back(VertexPositionColor(Vector4(-0.5f, 0.5f, 0.5f, 1.0f), color));
+	vertices.push_back(Vector3(-0.5f, -0.5f, -0.5f));
+	vertices.push_back(Vector3(0.5f, -0.5f, -0.5f));
+	vertices.push_back(Vector3(0.5f, -0.5f, 0.5f));
+	vertices.push_back(Vector3(-0.5f, -0.5f, 0.5f));
+	vertices.push_back(Vector3(-0.5f, 0.5f, -0.5f));
+	vertices.push_back(Vector3(0.5f, 0.5f, -0.5f));
+	vertices.push_back(Vector3(0.5f, 0.5f, 0.5f));
+	vertices.push_back(Vector3(-0.5f, 0.5f, 0.5f));
 
 	uint16_t arrayIndices[] = { 0, 1, 1, 2, 2, 3, 3, 0, 4, 5, 5, 6, 6, 7, 7, 4, 0, 4, 1, 5, 2, 6, 3, 7 };
 	indices.clear();
@@ -1166,45 +1103,36 @@ void AssistMarkNode::CreateAABox(std::vector<VertexPositionColor>& vertices, std
 	memcpy_s(&indices.front(), sizeof(arrayIndices), arrayIndices, sizeof(arrayIndices));
 }
 
-void AssistMarkNode::AddVertexColor(std::vector<VertexPositionColor>& vertices,
-	const std::vector<VertexPositionNormalTexture>& inputVertices, std::vector<Color> colors)
+void DebugAssistNode::AddVertexColor(std::vector<Vector3>& vertices, const std::vector<struct VertexPositionNormalTexture>& inputVertices)
 {
-	for (auto& color : colors)
+	for (auto& vertex : inputVertices)
 	{
-		for (auto& vertex : inputVertices)
-		{
-			vertices.push_back(VertexPositionColor(Vector4(vertex.position.x, vertex.position.y, vertex.position.z, 1.0f), color));
-		}
+		vertices.push_back(vertex.position);
 	}
 }
 
-void AssistMarkNode::CreateGeometryBuffers()
+void DebugAssistNode::CreateGeometryBuffers()
 {
-	std::vector<VertexPositionColor> boxVertices;
+	std::vector<Vector3> boxVertices;
 	std::vector<uint16_t> boxIndices;
 	CreateAABox(boxVertices, boxIndices);
 
 	std::vector<VertexPositionNormalTexture> cylinderVertices;
 	std::vector<uint16_t> cylinderIndices;
-	GeometricPrimitive::CreateCylinder(cylinderVertices, cylinderIndices, 0.6f, 0.02f);
+	GeometricPrimitive::CreateCylinder(cylinderVertices, cylinderIndices, 0.6f, 0.01f);
 
 	std::vector<VertexPositionNormalTexture> coneVertices;
 	std::vector<uint16_t> coneIndices;
-	GeometricPrimitive::CreateCone(coneVertices, coneIndices, 0.1f, 0.1f);
+	GeometricPrimitive::CreateCone(coneVertices, coneIndices, 0.04f, 0.05f);
 
 	std::vector<VertexPositionNormalTexture> torusVertices;
 	std::vector<uint16_t> torusIndices;
-	GeometricPrimitive::CreateTorus(torusVertices, torusIndices, 1.0f, 0.02f);
-
-	m_AABoxVertexCount = boxVertices.size();
-	m_CylinderVertexCount = cylinderVertices.size();
-	m_ConeVertexCount = coneVertices.size();
-	m_TorusVertexCount = torusVertices.size();
+	GeometricPrimitive::CreateTorus(torusVertices, torusIndices, 1.0f, 0.01f);
 
 	m_AABoxVertexOffset = 0;
-	m_CylinderVertexOffset = m_AABoxVertexCount;
-	m_ConeVertexOffset = m_CylinderVertexOffset + m_CylinderVertexCount * 3;
-	m_TorusVertexOffset = m_ConeVertexOffset + m_ConeVertexCount * 3;
+	m_CylinderVertexOffset = boxVertices.size();
+	m_ConeVertexOffset = m_CylinderVertexOffset + cylinderVertices.size();
+	m_TorusVertexOffset = m_ConeVertexOffset + coneVertices.size();
 
 	m_AABoxIndexCount = boxIndices.size();
 	m_CylinderIndexCount = cylinderIndices.size();
@@ -1216,19 +1144,15 @@ void AssistMarkNode::CreateGeometryBuffers()
 	m_ConeIndexOffset = m_CylinderIndexOffset + m_CylinderIndexCount;
 	m_TorusIndexOffset = m_ConeIndexOffset + m_ConeIndexCount;
 
-	uint32_t vertexCount = m_AABoxVertexCount + m_CylinderVertexCount * 3 + m_ConeVertexCount * 3 + m_TorusVertexCount * 3;
-	std::vector<VertexPositionColor> vertices;
+	uint32_t vertexCount = boxVertices.size() + cylinderVertices.size() + coneVertices.size() + torusVertices.size();
+	std::vector<Vector3> vertices;
 	vertices.reserve(vertexCount);
 
 	vertices.insert(vertices.end(), boxVertices.begin(), boxVertices.end());
 
-	std::vector<Color> colors(3);
-	colors[0] = Color(1.0f, 0.0f, 0.0f);
-	colors[1] = Color(0.0f, 1.0f, 0.0f);
-	colors[2] = Color(0.0f, 0.0f, 1.0f);
-	AddVertexColor(vertices, cylinderVertices, colors);
-	AddVertexColor(vertices, coneVertices, colors);
-	AddVertexColor(vertices, torusVertices, colors);
+	AddVertexColor(vertices, cylinderVertices);
+	AddVertexColor(vertices, coneVertices);
+	AddVertexColor(vertices, torusVertices);
 
 	std::vector<uint16_t> indices;
 	indices.insert(indices.end(), boxIndices.begin(), boxIndices.end());
@@ -1236,6 +1160,6 @@ void AssistMarkNode::CreateGeometryBuffers()
 	indices.insert(indices.end(), coneIndices.begin(), coneIndices.end());
 	indices.insert(indices.end(), torusIndices.begin(), torusIndices.end());
 
-	m_pCurrentPass->CreateVertexBuffer(&vertices.front(), vertices.size() * sizeof(VertexPositionColor), &m_pVertexBuffer);
+	m_pCurrentPass->CreateVertexBuffer(&vertices.front(), vertices.size() * sizeof(Vector3), &m_pVertexBuffer);
 	m_pCurrentPass->CreateIndexBuffer(&indices.front(), indices.size() * sizeof(uint16_t), &m_pIndexBuffer);
 }

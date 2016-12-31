@@ -1,22 +1,25 @@
 /************* Resources *************/
 
+cbuffer CBufferPerFrame
+{
+	float4 AmbientColor : AMBIENT;
+}
+
 cbuffer CBufferPerObject
 {
-	float4x4 WorldViewProjection : WORLDVIEWPROJECTION; 
+	float4x4 WorldViewProjection : WORLDVIEWPROJECTION;
 }
 
 /************* Data Structures *************/
 
 struct VS_INPUT
 {
-	float4 ObjectPosition: POSITION;
-	float4 Color : COLOR;
+	float3 ObjectPosition: POSITION;
 };
 
-struct VS_OUTPUT 
+struct VS_OUTPUT
 {
 	float4 Position: SV_Position;
-	float4 Color : COLOR;
 };
 
 RasterizerState DisableCulling
@@ -29,10 +32,9 @@ RasterizerState DisableCulling
 VS_OUTPUT vertex_shader(VS_INPUT IN)
 {
 	VS_OUTPUT OUT = (VS_OUTPUT)0;
-	
-	OUT.Position = mul(IN.ObjectPosition, WorldViewProjection);
-	OUT.Color = IN.Color;
-	
+
+	OUT.Position = mul(float4(IN.ObjectPosition, 1.0f), WorldViewProjection);
+
 	return OUT;
 }
 
@@ -40,7 +42,7 @@ VS_OUTPUT vertex_shader(VS_INPUT IN)
 
 float4 pixel_shader(VS_OUTPUT IN) : SV_Target
 {
-	return IN.Color;
+	return AmbientColor;
 }
 
 /************* Techniques *************/

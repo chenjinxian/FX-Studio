@@ -121,8 +121,10 @@ class IPointerHandler
 public:
 	virtual bool VOnPointerMove(const Vector2 &pos, int radius) = 0;
 	virtual bool VOnPointerWheel(int16_t delta) = 0;
-	virtual bool VOnPointerButtonDown(const Vector2 &pos, int radius, const std::string &buttonName) = 0;
-	virtual bool VOnPointerButtonUp(const Vector2 &pos, int radius, const std::string &buttonName) = 0;
+	virtual bool VOnPointerLeftButtonDown(const Vector2 &pos, int radius) = 0;
+	virtual bool VOnPointerLeftButtonUp(const Vector2 &pos, int radius) = 0;
+	virtual bool VOnPointerRightButtonDown(const Vector2 &pos, int radius) = 0;
+	virtual bool VOnPointerRightButtonUp(const Vector2 &pos, int radius) = 0;
 };
 
 class Resource;
@@ -228,7 +230,7 @@ public:
 
 	virtual bool VAddChild(shared_ptr<ISceneNode> child) = 0;
 	virtual bool VRemoveChild(ActorId actorId) = 0;
-	virtual ActorId VPick(Scene* pScene, int cursorX, int cursorY) = 0;
+	virtual void VPick(Scene* pScene, int cursorX, int cursorY) = 0;
 };
 
 class IGamePhysics

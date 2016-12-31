@@ -6,6 +6,7 @@
 #include "../Graphics3D/Scene.h"
 #include "../Graphics3D/CameraNode.h"
 #include "../Graphics3D/MovementController.h"
+#include <windowsx.h>
 
 HumanView::HumanView(shared_ptr<IRenderer> renderer)
 {
@@ -136,7 +137,7 @@ LRESULT CALLBACK HumanView::VOnMsgProc(AppMsg msg)
 
 	case WM_MOUSEMOVE:
 		if (m_pPointerHandler)
-			result = m_pPointerHandler->VOnPointerMove(Vector2(LOWORD(msg.m_lParam), HIWORD(msg.m_lParam)), 1);
+			result = m_pPointerHandler->VOnPointerMove(Vector2(GET_X_LPARAM(msg.m_lParam), GET_Y_LPARAM(msg.m_lParam)), 1);
 		break;
 
 	case WM_MOUSEWHEEL:
@@ -150,7 +151,7 @@ LRESULT CALLBACK HumanView::VOnMsgProc(AppMsg msg)
 		if (m_pPointerHandler)
 		{
 			SetCapture(msg.m_hWnd);
-			result = m_pPointerHandler->VOnPointerButtonDown(Vector2(LOWORD(msg.m_lParam), HIWORD(msg.m_lParam)), 1, "PointerLeft");
+			result = m_pPointerHandler->VOnPointerLeftButtonDown(Vector2(GET_X_LPARAM(msg.m_lParam), GET_Y_LPARAM(msg.m_lParam)), 1);
 		}
 		break;
 
@@ -158,7 +159,7 @@ LRESULT CALLBACK HumanView::VOnMsgProc(AppMsg msg)
 		if (m_pPointerHandler)
 		{
 			SetCapture(NULL);
-			result = m_pPointerHandler->VOnPointerButtonUp(Vector2(LOWORD(msg.m_lParam), HIWORD(msg.m_lParam)), 1, "PointerLeft");
+			result = m_pPointerHandler->VOnPointerLeftButtonUp(Vector2(GET_X_LPARAM(msg.m_lParam), GET_Y_LPARAM(msg.m_lParam)), 1);
 		}
 		break;
 
@@ -166,7 +167,7 @@ LRESULT CALLBACK HumanView::VOnMsgProc(AppMsg msg)
 		if (m_pPointerHandler)
 		{
 			SetCapture(msg.m_hWnd);
-			result = m_pPointerHandler->VOnPointerButtonDown(Vector2(LOWORD(msg.m_lParam), HIWORD(msg.m_lParam)), 1, "PointerRight");
+			result = m_pPointerHandler->VOnPointerRightButtonDown(Vector2(GET_X_LPARAM(msg.m_lParam), GET_Y_LPARAM(msg.m_lParam)), 1);
 		}
 		break;
 
@@ -174,7 +175,7 @@ LRESULT CALLBACK HumanView::VOnMsgProc(AppMsg msg)
 		if (m_pPointerHandler)
 		{
 			SetCapture(NULL);
-			result = m_pPointerHandler->VOnPointerButtonUp(Vector2(LOWORD(msg.m_lParam), HIWORD(msg.m_lParam)), 1, "PointerRight");
+			result = m_pPointerHandler->VOnPointerRightButtonUp(Vector2(GET_X_LPARAM(msg.m_lParam), GET_Y_LPARAM(msg.m_lParam)), 1);
 		}
 		break;
 

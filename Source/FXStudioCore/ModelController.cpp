@@ -39,33 +39,40 @@ void ModelController::OnUpdate(const GameTime& gameTime)
 	}
 }
 
-bool ModelController::VOnPointerButtonDown(const Vector2 &pos, int radius, const std::string &buttonName)
+bool ModelController::VOnPointerLeftButtonDown(const Vector2 &pos, int radius)
 {
-	if (buttonName == "PointerLeft")
-	{
-		m_IsLButtonDown = true;
-		m_LastMousePos = pos;
-		return true;
-	}
-	return false;
+	m_IsLButtonDown = true;
+	m_LastMousePos = pos;
+	return true;
 }
 
-bool ModelController::VOnPointerButtonUp(const Vector2 &pos, int radius, const std::string &buttonName)
+bool ModelController::VOnPointerLeftButtonUp(const Vector2 &pos, int radius)
 {
-	if (buttonName == "PointerLeft")
-	{
-		m_IsLButtonDown = false;
-		return true;
-	}
-	return false;
+	m_IsLButtonDown = false;
+	return true;
+}
+
+bool ModelController::VOnPointerRightButtonDown(const Vector2 &pos, int radius)
+{
+	return true;
+}
+
+bool ModelController::VOnPointerRightButtonUp(const Vector2 &pos, int radius)
+{
+	return true;
 }
 
 bool ModelController::VOnPointerMove(const Vector2 &pos, int radius)
 {
-	if (m_IsLButtonDown && m_LastMousePos != pos)
+	if (GetKeyState(VK_MENU) < 0 && m_IsLButtonDown && m_LastMousePos != pos)
 	{
 		m_TargetYaw += (m_LastMousePos.x - pos.x);
 		m_TargetPitch += (pos.y - m_LastMousePos.y);
+		m_LastMousePos = pos;
+	}
+	else if (m_Keys[VK_SHIFT] && m_IsLButtonDown && m_LastMousePos != pos)
+	{
+		m_Delta = (m_LastMousePos.y - pos.y);
 		m_LastMousePos = pos;
 	}
 

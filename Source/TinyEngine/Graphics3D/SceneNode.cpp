@@ -1018,12 +1018,11 @@ HRESULT DebugAssistNode::RenderBoundingBox(Scene* pScene, const BoundingBox& aaB
 HRESULT DebugAssistNode::RenderTranslateAxes(Scene* pScene, const BoundingBox& aaBox, const Matrix& world)
 {
 	Variable* variable = m_pEffect->GetVariablesByName().at("WorldViewProjection");
-	Matrix aixsWorld = m_Properties.GetWorldMatrix();
-	Matrix view = pScene->GetCamera()->GetViewMatrix();
-	Vector3 position = view.Translation();
-	position.z = -5.0f;
-	view.Translation(position);
-	const XMMATRIX& wvp = world * view * pScene->GetCamera()->GetProjectMatrix();
+	Vector3 cameraPos = pScene->GetCamera()->GetPosition();
+	Matrix aixsWorld = world * Matrix::CreateScale(Vector3::Distance(cameraPos, world.Translation()) * 0.2);
+	aixsWorld.Translation(world.Translation());
+	aixsWorld = aixsWorld * Matrix::CreateTranslation(aaBox.Center);
+	const XMMATRIX& wvp = aixsWorld * pScene->GetCamera()->GetViewMatrix() * pScene->GetCamera()->GetProjectMatrix();
 
 	Variable* ambientColor = m_pEffect->GetVariablesByName().at("AmbientColor");
 	ambientColor->SetVector(Color(1.0f, 0.0f, 0.0f));
@@ -1054,12 +1053,11 @@ HRESULT DebugAssistNode::RenderTranslateAxes(Scene* pScene, const BoundingBox& a
 HRESULT DebugAssistNode::RenderRotateRings(Scene* pScene, const BoundingBox& aaBox, const Matrix& world)
 {
 	Variable* variable = m_pEffect->GetVariablesByName().at("WorldViewProjection");
-	Matrix ringWorld = m_Properties.GetWorldMatrix();
-	Matrix view = pScene->GetCamera()->GetViewMatrix();
-	Vector3 position = view.Translation();
-	position.z = -5.0f;
-	view.Translation(position);
-	const XMMATRIX& wvp = world * view * pScene->GetCamera()->GetProjectMatrix();
+	Vector3 cameraPos = pScene->GetCamera()->GetPosition();
+	Matrix ringWorld = world * world * Matrix::CreateScale(Vector3::Distance(cameraPos, world.Translation()) * 0.2);
+	ringWorld.Translation(world.Translation());
+	ringWorld = ringWorld * Matrix::CreateTranslation(aaBox.Center);
+	const XMMATRIX& wvp = ringWorld * pScene->GetCamera()->GetViewMatrix() * pScene->GetCamera()->GetProjectMatrix();
 	variable->SetMatrix(wvp);
 
 	Variable* ambientColor = m_pEffect->GetVariablesByName().at("AmbientColor");
@@ -1119,15 +1117,15 @@ void DebugAssistNode::CreateGeometryBuffers()
 
 	std::vector<VertexPositionNormalTexture> cylinderVertices;
 	std::vector<uint16_t> cylinderIndices;
-	GeometricPrimitive::CreateCylinder(cylinderVertices, cylinderIndices, 0.6f, 0.01f);
+	GeometricPrimitive::CreateCylinder(cylinderVertices, cylinderIndices, 0.6f, 0.005f);
 
 	std::vector<VertexPositionNormalTexture> coneVertices;
 	std::vector<uint16_t> coneIndices;
-	GeometricPrimitive::CreateCone(coneVertices, coneIndices, 0.04f, 0.05f);
+	GeometricPrimitive::CreateCone(coneVertices, coneIndices, 0.05f, 0.1f);
 
 	std::vector<VertexPositionNormalTexture> torusVertices;
 	std::vector<uint16_t> torusIndices;
-	GeometricPrimitive::CreateTorus(torusVertices, torusIndices, 1.0f, 0.01f);
+	GeometricPrimitive::CreateTorus(torusVertices, torusIndices, 1.0f, 0.005f);
 
 	m_AABoxVertexOffset = 0;
 	m_CylinderVertexOffset = boxVertices.size();

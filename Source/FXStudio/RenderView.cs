@@ -36,9 +36,18 @@ namespace FXStudio
         private void toolStripButtonTransform_Click(object sender, EventArgs e)
         {
             ToolStripButton select = sender as ToolStripButton;
+            int i = 0;
             foreach (ToolStripButton button in m_TransformButtons)
             {
-                button.Checked = (button == select);
+                if (button == select)
+                {
+                    button.Checked = true;
+                    RenderMethods.SetTransformType(i);
+                }
+                else
+                    button.Checked = false;
+
+                i++;
             }
         }
 

@@ -170,6 +170,14 @@ void Scene::MoveActorDelegate(IEventDataPtr pEventData)
 	}
 }
 
+void Scene::SetTransformType(int type)
+{
+	if (m_pDebugNode != nullptr)
+	{
+		m_pDebugNode->SetTransformType((DebugAssistNode::TransformType)type);
+	}
+}
+
 ActorId Scene::Pick(int cursorX, int cursorY)
 {
 	m_PickedActor = INVALID_ACTOR_ID;

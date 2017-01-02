@@ -923,7 +923,9 @@ DebugAssistNode::DebugAssistNode()
 	m_pEffect(nullptr),
 	m_pCurrentPass(nullptr),
 	m_pVertexBuffer(nullptr),
-	m_pIndexBuffer(nullptr)
+	m_pIndexBuffer(nullptr),
+	m_Transform(TT_None),
+	m_IsVisible(false)
 {
 
 }
@@ -1000,8 +1002,22 @@ HRESULT DebugAssistNode::VRender(Scene* pScene, const GameTime& gameTime)
 	shared_ptr<IRenderState> debugPass = pScene->GetRenderder()->VPrepareDebugPass();
 
 	pScene->GetRenderder()->VInputSetup(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, m_pCurrentPass->GetInputLayout());
-	RenderTranslateAxes(pScene, pPickedNode->VGet()->GetBoundingBox(), pPickedNode->VGet()->GetWorldMatrix());
-	RenderRotateRings(pScene, pPickedNode->VGet()->GetBoundingBox(), pPickedNode->VGet()->GetWorldMatrix());
+	switch (m_Transform)
+	{
+	case DebugAssistNode::TT_None:
+		break;
+	case DebugAssistNode::TT_Translation:
+		RenderTranslateAxes(pScene, pPickedNode->VGet()->GetBoundingBox(), pPickedNode->VGet()->GetWorldMatrix());
+		break;
+	case DebugAssistNode::TT_Rotation:
+		RenderRotateRings(pScene, pPickedNode->VGet()->GetBoundingBox(), pPickedNode->VGet()->GetWorldMatrix());
+		break;
+	case DebugAssistNode::TT_Scale:
+		RenderScaleAxes(pScene, pPickedNode->VGet()->GetBoundingBox(), pPickedNode->VGet()->GetWorldMatrix());
+		break;
+	default:
+		break;
+	}
 
 	return S_OK;
 }
@@ -1071,25 +1087,60 @@ HRESULT DebugAssistNode::RenderRotateRings(Scene* pScene, const BoundingBox& aaB
 	ringWorld.Translation(world.Translation());
 	ringWorld = ringWorld * Matrix::CreateTranslation(aaBox.Center);
 	const XMMATRIX& wvp = ringWorld * pScene->GetCamera()->GetViewMatrix() * pScene->GetCamera()->GetProjectMatrix();
-	variable->SetMatrix(wvp);
 
+	variable->SetMatrix(Matrix::CreateRotationZ(XMConvertToRadians(-90)) * wvp);
 	Variable* ambientColor = m_pEffect->GetVariablesByName().at("AmbientColor");
 	ambientColor->SetVector(Color(1.0f, 0.0f, 0.0f));
 	pScene->GetRenderder()->VDrawMesh(
 		m_TorusIndexCount, m_TorusIndexOffset, m_TorusVertexOffset, m_pCurrentPass->GetEffectPass());
 
-	variable->SetMatrix(Matrix::CreateRotationX(XMConvertToRadians(90)) * wvp);
+	variable->SetMatrix(wvp);
 	ambientColor->SetVector(Color(0.0f, 1.0f, 0.0f));
 
 	pScene->GetRenderder()->VDrawMesh(
 		m_TorusIndexCount, m_TorusIndexOffset, m_TorusVertexOffset, m_pCurrentPass->GetEffectPass());
 
-	variable->SetMatrix(Matrix::CreateRotationZ(XMConvertToRadians(90)) * wvp);
+	variable->SetMatrix(Matrix::CreateRotationX(XMConvertToRadians(90)) * wvp);
 	ambientColor->SetVector(Color(0.0f, 0.0f, 1.0f));
 
 	pScene->GetRenderder()->VDrawMesh(
 		m_TorusIndexCount, m_TorusIndexOffset, m_TorusVertexOffset, m_pCurrentPass->GetEffectPass());
 
+	return S_OK;
+}
+
+HRESULT DebugAssistNode::RenderScaleAxes(Scene* pScene, const BoundingBox& aaBox, const Matrix& world)
+{
+	Variable* variable = m_pEffect->GetVariablesByName().at("WorldViewProjection");
+	Vector3 cameraPos = pScene->GetCamera()->GetPosition();
+	Matrix aixsWorld = world * Matrix::CreateScale(Vector3::Distance(cameraPos, world.Translation()) * 0.2f);
+	aixsWorld.Translation(world.Translation());
+	aixsWorld = aixsWorld * Matrix::CreateTranslation(aaBox.Center);
+	const XMMATRIX& wvp = aixsWorld * pScene->GetCamera()->GetViewMatrix() * pScene->GetCamera()->GetProjectMatrix();
+
+	Variable* ambientColor = m_pEffect->GetVariablesByName().at("AmbientColor");
+	ambientColor->SetVector(Color(1.0f, 0.0f, 0.0f));
+	variable->SetMatrix(Matrix::CreateRotationZ(XMConvertToRadians(-90)) * Matrix::CreateTranslation(Vector3(0.3f, 0.0f, 0.0f)) * wvp);
+	pScene->GetRenderder()->VDrawMesh(m_CylinderIndexCount, m_CylinderIndexOffset, m_CylinderVertexOffset, m_pCurrentPass->GetEffectPass());
+	variable->SetMatrix(Matrix::CreateRotationZ(XMConvertToRadians(-90)) * Matrix::CreateTranslation(Vector3(0.6f, 0.0f, 0.0f)) * wvp);
+	pScene->GetRenderder()->VDrawMesh(
+		m_CubeIndexCount, m_CubeIndexOffset, m_CubeVertexOffset, m_pCurrentPass->GetEffectPass());
+
+	ambientColor->SetVector(Color(0.0f, 1.0f, 0.0f));
+	variable->SetMatrix(Matrix::CreateTranslation(Vector3(0.0f, 0.3f, 0.0f)) * wvp);
+	pScene->GetRenderder()->VDrawMesh(
+		m_CylinderIndexCount, m_CylinderIndexOffset, m_CylinderVertexOffset, m_pCurrentPass->GetEffectPass());
+	variable->SetMatrix(Matrix::CreateTranslation(Vector3(0.0f, 0.6f, 0.0f)) * wvp);
+	pScene->GetRenderder()->VDrawMesh(
+		m_CubeIndexCount, m_CubeIndexOffset, m_CubeVertexOffset, m_pCurrentPass->GetEffectPass());
+
+	ambientColor->SetVector(Color(0.0f, 0.0f, 1.0f));
+	variable->SetMatrix(Matrix::CreateRotationX(XMConvertToRadians(90)) * Matrix::CreateTranslation(Vector3(0.0f, 0.0f, 0.3f)) * wvp);
+	pScene->GetRenderder()->VDrawMesh(
+		m_CylinderIndexCount, m_CylinderIndexOffset, m_CylinderVertexOffset, m_pCurrentPass->GetEffectPass());
+	variable->SetMatrix(Matrix::CreateRotationX(XMConvertToRadians(90)) * Matrix::CreateTranslation(Vector3(0.0f, 0.0f, 0.6f)) * wvp);
+	pScene->GetRenderder()->VDrawMesh(
+		m_CubeIndexCount, m_CubeIndexOffset, m_CubeVertexOffset, m_pCurrentPass->GetEffectPass());
 	return S_OK;
 }
 
@@ -1114,7 +1165,7 @@ void DebugAssistNode::CreateAABox(std::vector<Vector3>& vertices, std::vector<ui
 	memcpy_s(&indices.front(), sizeof(arrayIndices), arrayIndices, sizeof(arrayIndices));
 }
 
-void DebugAssistNode::AddVertexColor(std::vector<Vector3>& vertices, const std::vector<struct VertexPositionNormalTexture>& inputVertices)
+void DebugAssistNode::AddVertex(std::vector<Vector3>& vertices, const std::vector<struct VertexPositionNormalTexture>& inputVertices)
 {
 	for (auto& vertex : inputVertices)
 	{
@@ -1130,46 +1181,56 @@ void DebugAssistNode::CreateGeometryBuffers()
 
 	std::vector<VertexPositionNormalTexture> cylinderVertices;
 	std::vector<uint16_t> cylinderIndices;
-	GeometricPrimitive::CreateCylinder(cylinderVertices, cylinderIndices, 0.6f, 0.005f);
+	GeometricPrimitive::CreateCylinder(cylinderVertices, cylinderIndices, 0.6f, 0.008f);
 
 	std::vector<VertexPositionNormalTexture> coneVertices;
 	std::vector<uint16_t> coneIndices;
-	GeometricPrimitive::CreateCone(coneVertices, coneIndices, 0.05f, 0.1f);
+	GeometricPrimitive::CreateCone(coneVertices, coneIndices, 0.06f, 0.1f);
 
 	std::vector<VertexPositionNormalTexture> torusVertices;
 	std::vector<uint16_t> torusIndices;
-	GeometricPrimitive::CreateTorus(torusVertices, torusIndices, 1.0f, 0.005f);
+	GeometricPrimitive::CreateTorus(torusVertices, torusIndices, 1.0f, 0.008f);
+
+	std::vector<VertexPositionNormalTexture> cubeVertices;
+	std::vector<uint16_t> cubeIndices;
+	GeometricPrimitive::CreateCube(cubeVertices, cubeIndices, 0.06f);
 
 	m_AABoxVertexOffset = 0;
 	m_CylinderVertexOffset = boxVertices.size();
 	m_ConeVertexOffset = m_CylinderVertexOffset + cylinderVertices.size();
 	m_TorusVertexOffset = m_ConeVertexOffset + coneVertices.size();
+	m_CubeVertexOffset = m_TorusVertexOffset + torusVertices.size();
 
 	m_AABoxIndexCount = boxIndices.size();
 	m_CylinderIndexCount = cylinderIndices.size();
 	m_ConeIndexCount = coneIndices.size();
 	m_TorusIndexCount = torusIndices.size();
+	m_CubeIndexCount = cubeIndices.size();
 
 	m_AABoxIndexOffset = 0;
 	m_CylinderIndexOffset = m_AABoxIndexCount;
 	m_ConeIndexOffset = m_CylinderIndexOffset + m_CylinderIndexCount;
 	m_TorusIndexOffset = m_ConeIndexOffset + m_ConeIndexCount;
+	m_CubeIndexOffset = m_TorusIndexOffset + m_TorusIndexCount;
 
-	uint32_t vertexCount = boxVertices.size() + cylinderVertices.size() + coneVertices.size() + torusVertices.size();
+	uint32_t vertexCount = 
+		boxVertices.size() + cylinderVertices.size() + coneVertices.size() + torusVertices.size() + cubeVertices.size();
 	std::vector<Vector3> vertices;
 	vertices.reserve(vertexCount);
 
 	vertices.insert(vertices.end(), boxVertices.begin(), boxVertices.end());
 
-	AddVertexColor(vertices, cylinderVertices);
-	AddVertexColor(vertices, coneVertices);
-	AddVertexColor(vertices, torusVertices);
+	AddVertex(vertices, cylinderVertices);
+	AddVertex(vertices, coneVertices);
+	AddVertex(vertices, torusVertices);
+	AddVertex(vertices, cubeVertices);
 
 	std::vector<uint16_t> indices;
 	indices.insert(indices.end(), boxIndices.begin(), boxIndices.end());
 	indices.insert(indices.end(), cylinderIndices.begin(), cylinderIndices.end());
 	indices.insert(indices.end(), coneIndices.begin(), coneIndices.end());
 	indices.insert(indices.end(), torusIndices.begin(), torusIndices.end());
+	indices.insert(indices.end(), cubeIndices.begin(), cubeIndices.end());
 
 	m_pCurrentPass->CreateVertexBuffer(&vertices.front(), vertices.size() * sizeof(Vector3), &m_pVertexBuffer);
 	m_pCurrentPass->CreateIndexBuffer(&indices.front(), indices.size() * sizeof(uint16_t), &m_pIndexBuffer);

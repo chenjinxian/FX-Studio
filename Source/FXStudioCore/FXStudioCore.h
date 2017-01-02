@@ -38,6 +38,7 @@ extern "C" {
 
 	FXSTUDIOCORE_API void CreateNewProject(BSTR lFileName);
 
+	FXSTUDIOCORE_API void SetTransformType(int type);
 	FXSTUDIOCORE_API int PickActor(int cursorX, int cursorY);
 
 	FXSTUDIOCORE_API unsigned int AddActor(BSTR actorResource);

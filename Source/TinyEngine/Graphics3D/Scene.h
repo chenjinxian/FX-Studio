@@ -28,6 +28,7 @@ public:
 	void SetCamera(shared_ptr<CameraNode> pCamera) { m_pCamera = pCamera; }
 	const shared_ptr<CameraNode> GetCamera() const { return m_pCamera; }
 
+	void SetTransformType(int type);
 	ActorId Pick(int cursorX, int cursorY);
 	ActorId GetPickedActor() { return m_PickedActor; }
 	void SetPickedActor(ActorId actorId) { m_PickedActor = actorId; }

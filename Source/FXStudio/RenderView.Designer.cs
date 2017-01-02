@@ -42,7 +42,6 @@
             this.toolStripButtonRotate = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonScale = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripButtonBackground = new System.Windows.Forms.ToolStripButton();
             this.panelRender = new System.Windows.Forms.Panel();
             this.toolStripRender.SuspendLayout();
             this.SuspendLayout();
@@ -62,8 +61,7 @@
             this.toolStripButtonTranslate,
             this.toolStripButtonRotate,
             this.toolStripButtonScale,
-            this.toolStripSeparator3,
-            this.toolStripButtonBackground});
+            this.toolStripSeparator3});
             this.toolStripRender.Location = new System.Drawing.Point(0, 0);
             this.toolStripRender.Name = "toolStripRender";
             this.toolStripRender.Size = new System.Drawing.Size(756, 25);
@@ -127,21 +125,27 @@
             // 
             // toolStripButtonSelect
             // 
+            this.toolStripButtonSelect.Checked = true;
+            this.toolStripButtonSelect.CheckState = System.Windows.Forms.CheckState.Checked;
             this.toolStripButtonSelect.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.toolStripButtonSelect.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonSelect.Image")));
+            this.toolStripButtonSelect.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.toolStripButtonSelect.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButtonSelect.Name = "toolStripButtonSelect";
             this.toolStripButtonSelect.Size = new System.Drawing.Size(23, 22);
             this.toolStripButtonSelect.Text = "Select Object";
+            this.toolStripButtonSelect.Click += new System.EventHandler(this.toolStripButtonTransform_Click);
             // 
             // toolStripButtonTranslate
             // 
             this.toolStripButtonTranslate.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.toolStripButtonTranslate.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonTranslate.Image")));
+            this.toolStripButtonTranslate.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.toolStripButtonTranslate.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButtonTranslate.Name = "toolStripButtonTranslate";
             this.toolStripButtonTranslate.Size = new System.Drawing.Size(23, 22);
             this.toolStripButtonTranslate.Text = "Translate Object";
+            this.toolStripButtonTranslate.Click += new System.EventHandler(this.toolStripButtonTransform_Click);
             // 
             // toolStripButtonRotate
             // 
@@ -151,6 +155,7 @@
             this.toolStripButtonRotate.Name = "toolStripButtonRotate";
             this.toolStripButtonRotate.Size = new System.Drawing.Size(23, 22);
             this.toolStripButtonRotate.Text = "Rotate Object";
+            this.toolStripButtonRotate.Click += new System.EventHandler(this.toolStripButtonTransform_Click);
             // 
             // toolStripButtonScale
             // 
@@ -160,40 +165,32 @@
             this.toolStripButtonScale.Name = "toolStripButtonScale";
             this.toolStripButtonScale.Size = new System.Drawing.Size(23, 22);
             this.toolStripButtonScale.Text = "Scale Object";
+            this.toolStripButtonScale.Click += new System.EventHandler(this.toolStripButtonTransform_Click);
             // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
             this.toolStripSeparator3.Size = new System.Drawing.Size(6, 25);
             // 
-            // toolStripButtonBackground
-            // 
-            this.toolStripButtonBackground.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButtonBackground.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonBackground.Image")));
-            this.toolStripButtonBackground.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButtonBackground.Name = "toolStripButtonBackground";
-            this.toolStripButtonBackground.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButtonBackground.Text = "Set the background color";
-            this.toolStripButtonBackground.ToolTipText = "Set the background color (for scenes without a full screen effect)";
-            // 
             // panelRender
             // 
             this.panelRender.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelRender.Location = new System.Drawing.Point(0, 25);
             this.panelRender.Name = "panelRender";
-            this.panelRender.Size = new System.Drawing.Size(756, 523);
+            this.panelRender.Size = new System.Drawing.Size(756, 569);
             this.panelRender.TabIndex = 1;
             // 
             // RenderView
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(756, 548);
+            this.ClientSize = new System.Drawing.Size(756, 594);
             this.Controls.Add(this.panelRender);
             this.Controls.Add(this.toolStripRender);
             this.Name = "RenderView";
             this.TabText = "Render";
             this.Text = "RenderView";
+            this.Load += new System.EventHandler(this.RenderView_Load);
             this.Resize += new System.EventHandler(this.RenderView_Resize);
             this.toolStripRender.ResumeLayout(false);
             this.toolStripRender.PerformLayout();
@@ -218,6 +215,5 @@
         private System.Windows.Forms.ToolStripButton toolStripButtonRotate;
         private System.Windows.Forms.ToolStripButton toolStripButtonScale;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
-        private System.Windows.Forms.ToolStripButton toolStripButtonBackground;
     }
 }

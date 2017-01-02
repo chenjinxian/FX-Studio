@@ -14,6 +14,8 @@ namespace FXStudio
 {
     public partial class RenderView : ViewWindow
     {
+        private ToolStripButton[] m_TransformButtons;
+
         public RenderView()
         {
             InitializeComponent();
@@ -29,6 +31,26 @@ namespace FXStudio
             Control control = (Control)sender;
             if (control.Width != 0 && control.Height != 0)
                 RenderMethods.ResizeWnd(control.Width, control.Height);
+        }
+
+        private void toolStripButtonTransform_Click(object sender, EventArgs e)
+        {
+            ToolStripButton select = sender as ToolStripButton;
+            foreach (ToolStripButton button in m_TransformButtons)
+            {
+                button.Checked = (button == select);
+            }
+        }
+
+        private void RenderView_Load(object sender, EventArgs e)
+        {
+            m_TransformButtons = new ToolStripButton[]
+            {
+                toolStripButtonSelect,
+                toolStripButtonTranslate,
+                toolStripButtonRotate,
+                toolStripButtonScale
+            };
         }
     }
 }

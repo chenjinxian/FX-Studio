@@ -159,6 +159,7 @@ enum RenderPass
 	RenderPass_Static = RenderPass_0,
 	RenderPass_Actor,
 	RenderPass_Sky,
+	RenderPass_Debug,
 	RenderPass_NotRendered,
 	RenderPass_Last
 };
@@ -170,10 +171,19 @@ class LightNode;
 
 typedef std::list<shared_ptr<LightNode> > Lights;
 
-class IRenderState
+class IRenderState : public boost::noncopyable
 {
 public:
+	IRenderState(ID3D11Device1* pDevice, ID3D11DeviceContext1* pContext)
+		: m_pDevice(pDevice), m_pDeviceContext(pContext)
+	{
+
+	}
 	virtual std::string VToString() = 0;
+
+protected:
+	ID3D11Device1* m_pDevice;
+	ID3D11DeviceContext1* m_pDeviceContext;
 };
 
 class IResourceExtraData;
@@ -196,6 +206,10 @@ public:
 	virtual bool VPreRender(const GameTime& gameTime) = 0;
 	virtual bool VPostRender() = 0;
 	virtual void VSetBackgroundColor(const Color& color) = 0;
+
+	virtual shared_ptr<IRenderState> VPrepareAlphaPass() = 0;
+	virtual shared_ptr<IRenderState> VPrepareSkyBoxPass() = 0;
+	virtual shared_ptr<IRenderState> VPrepareDebugPass() = 0;
 
 	virtual void VInputSetup(D3D_PRIMITIVE_TOPOLOGY topology, ID3D11InputLayout* pInputLayout) = 0;
 	virtual void VSetVertexBuffers(ID3D11Buffer* pVertexBuffer, uint32_t* stride, uint32_t* offset) = 0;

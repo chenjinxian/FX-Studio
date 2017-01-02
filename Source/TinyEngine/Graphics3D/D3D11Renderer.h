@@ -15,6 +15,10 @@ public:
 	virtual bool VPostRender() override;
 	virtual void VSetBackgroundColor(const Color& color) override;
 
+	virtual shared_ptr<IRenderState> VPrepareAlphaPass() override;
+	virtual shared_ptr<IRenderState> VPrepareSkyBoxPass() override;
+	virtual shared_ptr<IRenderState> VPrepareDebugPass() override;
+
 	virtual void VInputSetup(D3D_PRIMITIVE_TOPOLOGY topology, ID3D11InputLayout* pInputLayout) override;
 	virtual void VSetVertexBuffers(ID3D11Buffer* pVertexBuffer, uint32_t* stride, uint32_t* offset) override;
 	virtual void VSetIndexBuffer(ID3D11Buffer* pIndexBuffer, IRenderer::IndexFormat format, uint32_t offset) override;

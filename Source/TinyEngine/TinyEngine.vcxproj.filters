@@ -145,6 +145,9 @@
     <ClInclude Include="Graphics3D\Material.h">
       <Filter>Graphics3D</Filter>
     </ClInclude>
+    <ClInclude Include="Graphics3D\RenderState.h">
+      <Filter>Graphics3D</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Debugging\Logger.cpp">

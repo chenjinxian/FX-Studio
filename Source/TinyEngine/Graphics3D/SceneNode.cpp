@@ -172,6 +172,9 @@ RootNode::RootNode()
 	shared_ptr<SceneNode> skyGroup(DEBUG_NEW SceneNode(INVALID_ACTOR_ID, WeakBaseRenderComponentPtr(), RenderPass_Sky));
 	m_Children.push_back(skyGroup);
 
+	shared_ptr<SceneNode> debugGroup(DEBUG_NEW SceneNode(INVALID_ACTOR_ID, WeakBaseRenderComponentPtr(), RenderPass_Debug));
+	m_Children.push_back(debugGroup);
+
 	shared_ptr<SceneNode> invisibleGroup(DEBUG_NEW SceneNode(INVALID_ACTOR_ID, WeakBaseRenderComponentPtr(), RenderPass_NotRendered));
 	m_Children.push_back(invisibleGroup);
 }
@@ -189,10 +192,18 @@ HRESULT RootNode::VRenderChildren(Scene* pScene, const GameTime& gameTime)
 		{
 		case RenderPass_Static:
 		case RenderPass_Actor:
+		{
 			m_Children[pass]->VRenderChildren(pScene, gameTime);
 			break;
+		}
 
 		case RenderPass_Sky:
+		{
+			shared_ptr<IRenderState> skyPass = pScene->GetRenderder()->VPrepareSkyBoxPass();
+			m_Children[pass]->VRenderChildren(pScene, gameTime);
+			break;
+		}
+		case  RenderPass_Debug:
 		{
 			m_Children[pass]->VRenderChildren(pScene, gameTime);
 			break;
@@ -908,7 +919,7 @@ HRESULT SkyboxNode::VOnUpdate(Scene* pScene, const GameTime& gameTime)
 }
 
 DebugAssistNode::DebugAssistNode()
-	: SceneNode(INVALID_ACTOR_ID, nullptr, RenderPass_Static, Matrix::CreateTranslation(0.0f, 0.5f, 0.0f)),
+	: SceneNode(INVALID_ACTOR_ID, nullptr, RenderPass_Debug, Matrix::CreateTranslation(0.0f, 0.5f, 0.0f)),
 	m_pEffect(nullptr),
 	m_pCurrentPass(nullptr),
 	m_pVertexBuffer(nullptr),
@@ -986,6 +997,8 @@ HRESULT DebugAssistNode::VRender(Scene* pScene, const GameTime& gameTime)
 	pScene->GetRenderder()->VInputSetup(D3D11_PRIMITIVE_TOPOLOGY_LINELIST, m_pCurrentPass->GetInputLayout());
 	RenderBoundingBox(pScene, pPickedNode->VGet()->GetBoundingBox(), pPickedNode->VGet()->GetWorldMatrix());
 
+	shared_ptr<IRenderState> debugPass = pScene->GetRenderder()->VPrepareDebugPass();
+
 	pScene->GetRenderder()->VInputSetup(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, m_pCurrentPass->GetInputLayout());
 	RenderTranslateAxes(pScene, pPickedNode->VGet()->GetBoundingBox(), pPickedNode->VGet()->GetWorldMatrix());
 	RenderRotateRings(pScene, pPickedNode->VGet()->GetBoundingBox(), pPickedNode->VGet()->GetWorldMatrix());
@@ -1019,7 +1032,7 @@ HRESULT DebugAssistNode::RenderTranslateAxes(Scene* pScene, const BoundingBox& a
 {
 	Variable* variable = m_pEffect->GetVariablesByName().at("WorldViewProjection");
 	Vector3 cameraPos = pScene->GetCamera()->GetPosition();
-	Matrix aixsWorld = world * Matrix::CreateScale(Vector3::Distance(cameraPos, world.Translation()) * 0.2);
+	Matrix aixsWorld = world * Matrix::CreateScale(Vector3::Distance(cameraPos, world.Translation()) * 0.2f);
 	aixsWorld.Translation(world.Translation());
 	aixsWorld = aixsWorld * Matrix::CreateTranslation(aaBox.Center);
 	const XMMATRIX& wvp = aixsWorld * pScene->GetCamera()->GetViewMatrix() * pScene->GetCamera()->GetProjectMatrix();
@@ -1054,7 +1067,7 @@ HRESULT DebugAssistNode::RenderRotateRings(Scene* pScene, const BoundingBox& aaB
 {
 	Variable* variable = m_pEffect->GetVariablesByName().at("WorldViewProjection");
 	Vector3 cameraPos = pScene->GetCamera()->GetPosition();
-	Matrix ringWorld = world * world * Matrix::CreateScale(Vector3::Distance(cameraPos, world.Translation()) * 0.2);
+	Matrix ringWorld = world * world * Matrix::CreateScale(Vector3::Distance(cameraPos, world.Translation()) * 0.2f);
 	ringWorld.Translation(world.Translation());
 	ringWorld = ringWorld * Matrix::CreateTranslation(aaBox.Center);
 	const XMMATRIX& wvp = ringWorld * pScene->GetCamera()->GetViewMatrix() * pScene->GetCamera()->GetProjectMatrix();

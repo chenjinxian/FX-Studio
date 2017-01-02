@@ -1,5 +1,6 @@
 #include "D3D11Renderer.h"
 #include "Material.h"
+#include "RenderState.h"
 #include "../AppFramework/BaseGameApp.h"
 #include "../ResourceCache/TextureResource.h"
 #include "../ResourceCache/ShaderResource.h"
@@ -687,6 +688,21 @@ bool D3D11Renderer::InitImGui(HWND hWnd)
 void D3D11Renderer::VSetBackgroundColor(const Color& color)
 {
 	m_BackgroundColor = color;
+}
+
+shared_ptr<IRenderState> D3D11Renderer::VPrepareAlphaPass()
+{
+	return shared_ptr<IRenderState>(DEBUG_NEW D3D11RendererAlphaPass(m_pDevice, m_pDeviceContext));
+}
+
+shared_ptr<IRenderState> D3D11Renderer::VPrepareSkyBoxPass()
+{
+	return shared_ptr<IRenderState>(DEBUG_NEW D3D11RendererSkyBoxPass(m_pDevice, m_pDeviceContext));
+}
+
+shared_ptr<IRenderState> D3D11Renderer::VPrepareDebugPass()
+{
+	return shared_ptr<IRenderState>(DEBUG_NEW D3D11RendererDebugPass(m_pDevice, m_pDeviceContext));
 }
 
 void D3D11Renderer::VInputSetup(D3D_PRIMITIVE_TOPOLOGY topology, ID3D11InputLayout* pInputLayout)

@@ -29,11 +29,14 @@ public:
 	const shared_ptr<CameraNode> GetCamera() const { return m_pCamera; }
 
 	void SetTransformType(int type);
-	ActorId Pick(int cursorX, int cursorY);
+	ActorId PickActor(int cursorX, int cursorY);
+	void PointMove(const Vector2 &pos);
+
 	ActorId GetPickedActor() { return m_PickedActor; }
 	void SetPickedActor(ActorId actorId) { m_PickedActor = actorId; }
 	float GetPickDistance() { return m_PickDistance; }
 	void SetPickDistance(float distance) { m_PickDistance = distance; }
+
 	shared_ptr<IRenderer> GetRenderder() { return m_pRenderer; }
 
 	void PushAndSetMatrix(const Matrix& worldMatrix)

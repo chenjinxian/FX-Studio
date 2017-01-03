@@ -155,7 +155,7 @@ FXSTUDIOCORE_API int PickActor(int cursorX, int cursorY)
 		return INVALID_ACTOR_ID;
 	}
 
-	pView->GetScene()->Pick(cursorX, cursorY);
+	pView->GetScene()->PickActor(cursorX, cursorY);
 
 	return -1;
 }

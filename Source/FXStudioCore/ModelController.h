@@ -6,9 +6,8 @@ class SceneNode;
 class ModelController : public IPointerHandler, public IKeyboardHandler
 {
 public:
-	ModelController(shared_ptr<SceneNode> pOjbect, const Vector3& initialPostition, float initialYaw, float initialPitch);
+	ModelController(shared_ptr<ScreenElementScene> pScene, const Vector3& initialPostition, float initialYaw, float initialPitch);
 
-	void SetObject(shared_ptr<SceneNode> newObject) { m_pObject = newObject; }
 	void OnUpdate(const GameTime& gameTime);
 
 	virtual bool VOnPointerLeftButtonDown(const Vector2 &pos, int radius) override;
@@ -22,7 +21,7 @@ public:
 	virtual bool VOnKeyUp(uint8_t c) override { m_Keys[c] = false; return true; }
 
 protected:
-	shared_ptr<SceneNode> m_pObject;
+	shared_ptr<ScreenElementScene> m_pScene;
 
 	Vector3 m_Position;
 	float m_Yaw;

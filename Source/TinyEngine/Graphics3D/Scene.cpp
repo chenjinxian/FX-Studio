@@ -178,11 +178,19 @@ void Scene::SetTransformType(int type)
 	}
 }
 
-ActorId Scene::Pick(int cursorX, int cursorY)
+ActorId Scene::PickActor(int cursorX, int cursorY)
 {
 	m_PickedActor = INVALID_ACTOR_ID;
 	m_PickDistance = FLT_MAX;
 	m_pRootNode->VPick(this, cursorX, cursorY);
 	m_pDebugNode->SetVisible(m_PickedActor != INVALID_ACTOR_ID);
 	return m_PickedActor;
+}
+
+void Scene::PointMove(const Vector2 &pos)
+{
+	if (m_pDebugNode != nullptr)
+	{
+		m_pDebugNode->UpdatePointer(pos);
+	}
 }

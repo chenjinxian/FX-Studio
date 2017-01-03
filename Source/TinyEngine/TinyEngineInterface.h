@@ -4,8 +4,8 @@ class Actor;
 class ActorComponent;
 
 typedef std::string ActorType;
-typedef uint64_t ActorId;
-typedef uint64_t ComponentId;
+typedef uint32_t ActorId;
+typedef uint32_t ComponentId;
 
 const ActorId INVALID_ACTOR_ID = 0;
 const ComponentId INVALID_COMPONENT_ID = 0;
@@ -87,8 +87,8 @@ enum GameViewType
 	GameView_Other
 };
 
-typedef uint64_t GameViewId;
-const GameViewId INVALID_GAME_VIEW_ID = (uint64_t)-1;
+typedef uint32_t GameViewId;
+const GameViewId INVALID_GAME_VIEW_ID = (uint32_t)-1;
 
 class IGameView
 {

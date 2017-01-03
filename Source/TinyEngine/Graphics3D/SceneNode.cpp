@@ -925,6 +925,7 @@ DebugAssistNode::DebugAssistNode()
 	m_pVertexBuffer(nullptr),
 	m_pIndexBuffer(nullptr),
 	m_Transform(TT_None),
+	m_MousePos(),
 	m_IsVisible(false)
 {
 
@@ -1027,6 +1028,24 @@ bool DebugAssistNode::VIsVisible(Scene* pScene) const
 	return pScene->GetPickedActor() != INVALID_ACTOR_ID;
 }
 
+bool DebugAssistNode::IsXAxisPicked(Scene* pScene, const Matrix& world)
+{
+	const Matrix& projectMat = pScene->GetCamera()->GetProjectMatrix();
+	float viewX = (2.0f * m_MousePos.x / g_pApp->GetGameConfig().m_ScreenWidth - 1.0f) / projectMat.m[0][0];
+	float viewY = (1.0f - 2.0f * m_MousePos.y / g_pApp->GetGameConfig().m_ScreenHeight) / projectMat.m[1][1];
+
+	Matrix toLocal = (world * pScene->GetCamera()->GetViewMatrix()).Invert();
+	Vector3 rayPostition = toLocal.Translation();
+	//use right-hand coordinates, z should be -1
+	Vector3 rayDir = Vector3::TransformNormal(Vector3(viewX, viewY, -1.0f), toLocal);
+	rayDir.Normalize();
+
+	Ray ray(rayPostition, rayDir);
+
+	float distance = 0.0f;
+	return ray.Intersects(m_Properties.GetBoundingBox(), distance);
+}
+
 HRESULT DebugAssistNode::RenderBoundingBox(Scene* pScene, const BoundingBox& aaBox, const Matrix& world)
 {
 	Variable* variable = m_pEffect->GetVariablesByName().at("WorldViewProjection");
@@ -1046,61 +1065,88 @@ HRESULT DebugAssistNode::RenderBoundingBox(Scene* pScene, const BoundingBox& aaB
 
 HRESULT DebugAssistNode::RenderTranslateAxes(Scene* pScene, const BoundingBox& aaBox, const Matrix& world)
 {
-	Variable* variable = m_pEffect->GetVariablesByName().at("WorldViewProjection");
+	Variable* objectWvp = m_pEffect->GetVariablesByName().at("WorldViewProjection");
+	Variable* ambientColor = m_pEffect->GetVariablesByName().at("AmbientColor");
+
 	Vector3 cameraPos = pScene->GetCamera()->GetPosition();
 	Matrix aixsWorld = world * Matrix::CreateScale(Vector3::Distance(cameraPos, world.Translation()) * 0.2f);
 	aixsWorld.Translation(world.Translation());
 	aixsWorld = aixsWorld * Matrix::CreateTranslation(aaBox.Center);
 	const XMMATRIX& wvp = aixsWorld * pScene->GetCamera()->GetViewMatrix() * pScene->GetCamera()->GetProjectMatrix();
 
-	Variable* ambientColor = m_pEffect->GetVariablesByName().at("AmbientColor");
-	ambientColor->SetVector(Color(1.0f, 0.0f, 0.0f));
-	variable->SetMatrix(Matrix::CreateRotationZ(XMConvertToRadians(-90)) * Matrix::CreateTranslation(Vector3(0.3f, 0.0f, 0.0f)) * wvp);
+	bool isPicked = false;
+	if (IsXAxisPicked(pScene,
+		Matrix::CreateRotationZ(XMConvertToRadians(-90)) * Matrix::CreateTranslation(Vector3(0.3f, 0.0f, 0.0f)) * aixsWorld))
+	{
+		ambientColor->SetVector(Color(1.0f, 1.0f, 1.0f));
+		isPicked = true;
+	}
+	else
+		ambientColor->SetVector(Color(1.0f, 0.0f, 0.0f));
+
+	objectWvp->SetMatrix(Matrix::CreateRotationZ(XMConvertToRadians(-90)) * Matrix::CreateTranslation(Vector3(0.3f, 0.0f, 0.0f)) * wvp);
 	pScene->GetRenderder()->VDrawMesh(m_CylinderIndexCount, m_CylinderIndexOffset, m_CylinderVertexOffset, m_pCurrentPass->GetEffectPass());
-	variable->SetMatrix(Matrix::CreateRotationZ(XMConvertToRadians(-90)) * Matrix::CreateTranslation(Vector3(0.6f, 0.0f, 0.0f)) * wvp);
+	objectWvp->SetMatrix(Matrix::CreateRotationZ(XMConvertToRadians(-90)) * Matrix::CreateTranslation(Vector3(0.6f, 0.0f, 0.0f)) * wvp);
 	pScene->GetRenderder()->VDrawMesh(
 		m_ConeIndexCount, m_ConeIndexOffset, m_ConeVertexOffset, m_pCurrentPass->GetEffectPass());
 
-	ambientColor->SetVector(Color(0.0f, 1.0f, 0.0f));
-	variable->SetMatrix(Matrix::CreateTranslation(Vector3(0.0f, 0.3f, 0.0f)) * wvp);
+	if (!isPicked && IsXAxisPicked(pScene,
+		Matrix::CreateTranslation(Vector3(0.0f, 0.3f, 0.0f)) * aixsWorld))
+	{
+		ambientColor->SetVector(Color(1.0f, 1.0f, 1.0f));
+		isPicked = true;
+	}
+	else
+		ambientColor->SetVector(Color(0.0f, 1.0f, 0.0f));
+
+	objectWvp->SetMatrix(Matrix::CreateTranslation(Vector3(0.0f, 0.3f, 0.0f)) * wvp);
 	pScene->GetRenderder()->VDrawMesh(
 		m_CylinderIndexCount, m_CylinderIndexOffset, m_CylinderVertexOffset, m_pCurrentPass->GetEffectPass());
-	variable->SetMatrix(Matrix::CreateTranslation(Vector3(0.0f, 0.6f, 0.0f)) * wvp);
+	objectWvp->SetMatrix(Matrix::CreateTranslation(Vector3(0.0f, 0.6f, 0.0f)) * wvp);
 	pScene->GetRenderder()->VDrawMesh(
 		m_ConeIndexCount, m_ConeIndexOffset, m_ConeVertexOffset, m_pCurrentPass->GetEffectPass());
 
-	ambientColor->SetVector(Color(0.0f, 0.0f, 1.0f));
-	variable->SetMatrix(Matrix::CreateRotationX(XMConvertToRadians(90)) * Matrix::CreateTranslation(Vector3(0.0f, 0.0f, 0.3f)) * wvp);
+	if (!isPicked && IsXAxisPicked(pScene,
+		Matrix::CreateRotationX(XMConvertToRadians(90)) * Matrix::CreateTranslation(Vector3(0.0f, 0.0f, 0.3f)) * aixsWorld))
+	{
+		ambientColor->SetVector(Color(1.0f, 1.0f, 1.0f));
+		isPicked = true;
+	}
+	else
+		ambientColor->SetVector(Color(0.0f, 0.0f, 1.0f));
+
+	objectWvp->SetMatrix(Matrix::CreateRotationX(XMConvertToRadians(90)) * Matrix::CreateTranslation(Vector3(0.0f, 0.0f, 0.3f)) * wvp);
 	pScene->GetRenderder()->VDrawMesh(
 		m_CylinderIndexCount, m_CylinderIndexOffset, m_CylinderVertexOffset, m_pCurrentPass->GetEffectPass());
-	variable->SetMatrix(Matrix::CreateRotationX(XMConvertToRadians(90)) * Matrix::CreateTranslation(Vector3(0.0f, 0.0f, 0.6f)) * wvp);
+	objectWvp->SetMatrix(Matrix::CreateRotationX(XMConvertToRadians(90)) * Matrix::CreateTranslation(Vector3(0.0f, 0.0f, 0.6f)) * wvp);
 	pScene->GetRenderder()->VDrawMesh(
 		m_ConeIndexCount, m_ConeIndexOffset, m_ConeVertexOffset, m_pCurrentPass->GetEffectPass());
+
 	return S_OK;
 }
 
 HRESULT DebugAssistNode::RenderRotateRings(Scene* pScene, const BoundingBox& aaBox, const Matrix& world)
 {
-	Variable* variable = m_pEffect->GetVariablesByName().at("WorldViewProjection");
+	Variable* objectWvp = m_pEffect->GetVariablesByName().at("WorldViewProjection");
 	Vector3 cameraPos = pScene->GetCamera()->GetPosition();
 	Matrix ringWorld = world * world * Matrix::CreateScale(Vector3::Distance(cameraPos, world.Translation()) * 0.2f);
 	ringWorld.Translation(world.Translation());
 	ringWorld = ringWorld * Matrix::CreateTranslation(aaBox.Center);
 	const XMMATRIX& wvp = ringWorld * pScene->GetCamera()->GetViewMatrix() * pScene->GetCamera()->GetProjectMatrix();
 
-	variable->SetMatrix(Matrix::CreateRotationZ(XMConvertToRadians(-90)) * wvp);
+	objectWvp->SetMatrix(Matrix::CreateRotationZ(XMConvertToRadians(-90)) * wvp);
 	Variable* ambientColor = m_pEffect->GetVariablesByName().at("AmbientColor");
 	ambientColor->SetVector(Color(1.0f, 0.0f, 0.0f));
 	pScene->GetRenderder()->VDrawMesh(
 		m_TorusIndexCount, m_TorusIndexOffset, m_TorusVertexOffset, m_pCurrentPass->GetEffectPass());
 
-	variable->SetMatrix(wvp);
+	objectWvp->SetMatrix(wvp);
 	ambientColor->SetVector(Color(0.0f, 1.0f, 0.0f));
 
 	pScene->GetRenderder()->VDrawMesh(
 		m_TorusIndexCount, m_TorusIndexOffset, m_TorusVertexOffset, m_pCurrentPass->GetEffectPass());
 
-	variable->SetMatrix(Matrix::CreateRotationX(XMConvertToRadians(90)) * wvp);
+	objectWvp->SetMatrix(Matrix::CreateRotationX(XMConvertToRadians(90)) * wvp);
 	ambientColor->SetVector(Color(0.0f, 0.0f, 1.0f));
 
 	pScene->GetRenderder()->VDrawMesh(
@@ -1111,7 +1157,7 @@ HRESULT DebugAssistNode::RenderRotateRings(Scene* pScene, const BoundingBox& aaB
 
 HRESULT DebugAssistNode::RenderScaleAxes(Scene* pScene, const BoundingBox& aaBox, const Matrix& world)
 {
-	Variable* variable = m_pEffect->GetVariablesByName().at("WorldViewProjection");
+	Variable* objectWvp = m_pEffect->GetVariablesByName().at("WorldViewProjection");
 	Vector3 cameraPos = pScene->GetCamera()->GetPosition();
 	Matrix aixsWorld = world * Matrix::CreateScale(Vector3::Distance(cameraPos, world.Translation()) * 0.2f);
 	aixsWorld.Translation(world.Translation());
@@ -1120,25 +1166,25 @@ HRESULT DebugAssistNode::RenderScaleAxes(Scene* pScene, const BoundingBox& aaBox
 
 	Variable* ambientColor = m_pEffect->GetVariablesByName().at("AmbientColor");
 	ambientColor->SetVector(Color(1.0f, 0.0f, 0.0f));
-	variable->SetMatrix(Matrix::CreateRotationZ(XMConvertToRadians(-90)) * Matrix::CreateTranslation(Vector3(0.3f, 0.0f, 0.0f)) * wvp);
+	objectWvp->SetMatrix(Matrix::CreateRotationZ(XMConvertToRadians(-90)) * Matrix::CreateTranslation(Vector3(0.3f, 0.0f, 0.0f)) * wvp);
 	pScene->GetRenderder()->VDrawMesh(m_CylinderIndexCount, m_CylinderIndexOffset, m_CylinderVertexOffset, m_pCurrentPass->GetEffectPass());
-	variable->SetMatrix(Matrix::CreateRotationZ(XMConvertToRadians(-90)) * Matrix::CreateTranslation(Vector3(0.6f, 0.0f, 0.0f)) * wvp);
+	objectWvp->SetMatrix(Matrix::CreateRotationZ(XMConvertToRadians(-90)) * Matrix::CreateTranslation(Vector3(0.6f, 0.0f, 0.0f)) * wvp);
 	pScene->GetRenderder()->VDrawMesh(
 		m_CubeIndexCount, m_CubeIndexOffset, m_CubeVertexOffset, m_pCurrentPass->GetEffectPass());
 
 	ambientColor->SetVector(Color(0.0f, 1.0f, 0.0f));
-	variable->SetMatrix(Matrix::CreateTranslation(Vector3(0.0f, 0.3f, 0.0f)) * wvp);
+	objectWvp->SetMatrix(Matrix::CreateTranslation(Vector3(0.0f, 0.3f, 0.0f)) * wvp);
 	pScene->GetRenderder()->VDrawMesh(
 		m_CylinderIndexCount, m_CylinderIndexOffset, m_CylinderVertexOffset, m_pCurrentPass->GetEffectPass());
-	variable->SetMatrix(Matrix::CreateTranslation(Vector3(0.0f, 0.6f, 0.0f)) * wvp);
+	objectWvp->SetMatrix(Matrix::CreateTranslation(Vector3(0.0f, 0.6f, 0.0f)) * wvp);
 	pScene->GetRenderder()->VDrawMesh(
 		m_CubeIndexCount, m_CubeIndexOffset, m_CubeVertexOffset, m_pCurrentPass->GetEffectPass());
 
 	ambientColor->SetVector(Color(0.0f, 0.0f, 1.0f));
-	variable->SetMatrix(Matrix::CreateRotationX(XMConvertToRadians(90)) * Matrix::CreateTranslation(Vector3(0.0f, 0.0f, 0.3f)) * wvp);
+	objectWvp->SetMatrix(Matrix::CreateRotationX(XMConvertToRadians(90)) * Matrix::CreateTranslation(Vector3(0.0f, 0.0f, 0.3f)) * wvp);
 	pScene->GetRenderder()->VDrawMesh(
 		m_CylinderIndexCount, m_CylinderIndexOffset, m_CylinderVertexOffset, m_pCurrentPass->GetEffectPass());
-	variable->SetMatrix(Matrix::CreateRotationX(XMConvertToRadians(90)) * Matrix::CreateTranslation(Vector3(0.0f, 0.0f, 0.6f)) * wvp);
+	objectWvp->SetMatrix(Matrix::CreateRotationX(XMConvertToRadians(90)) * Matrix::CreateTranslation(Vector3(0.0f, 0.0f, 0.6f)) * wvp);
 	pScene->GetRenderder()->VDrawMesh(
 		m_CubeIndexCount, m_CubeIndexOffset, m_CubeVertexOffset, m_pCurrentPass->GetEffectPass());
 	return S_OK;
@@ -1234,4 +1280,9 @@ void DebugAssistNode::CreateGeometryBuffers()
 
 	m_pCurrentPass->CreateVertexBuffer(&vertices.front(), vertices.size() * sizeof(Vector3), &m_pVertexBuffer);
 	m_pCurrentPass->CreateIndexBuffer(&indices.front(), indices.size() * sizeof(uint16_t), &m_pIndexBuffer);
+
+	vertices.clear();
+	AddVertex(vertices, cylinderVertices);
+	AddVertex(vertices, coneVertices);
+	SetBoundingBox(vertices);
 }

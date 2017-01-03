@@ -248,6 +248,7 @@ public:
 	};
 	void SetTransformType(TransformType transform) { m_Transform = transform; }
 	void SetVisible(bool visible) { m_IsVisible = visible; }
+	void UpdatePointer(const Vector2 &pos) { m_MousePos = pos; }
 
 private:
 	HRESULT RenderBoundingBox(Scene* pScene, const BoundingBox& aaBox, const Matrix& world);
@@ -258,6 +259,8 @@ private:
 	void CreateAABox(std::vector<Vector3>& vertices, std::vector<uint16_t>& indices);
 	void AddVertex(std::vector<Vector3>& vertices, const std::vector<struct VertexPositionNormalTexture>& inputVertices);
 	void CreateGeometryBuffers();
+
+	bool IsXAxisPicked(Scene* pScene, const Matrix& world);
 
 	Effect* m_pEffect;
 	Pass* m_pCurrentPass;
@@ -283,5 +286,6 @@ private:
 	uint32_t m_CubeIndexCount;
 
 	TransformType m_Transform;
+	Vector2 m_MousePos;
 	bool m_IsVisible;
 };

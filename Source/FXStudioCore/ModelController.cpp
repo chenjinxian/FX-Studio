@@ -1,8 +1,8 @@
 #include "stdafx.h"
 #include "ModelController.h"
 
-ModelController::ModelController(shared_ptr<SceneNode> pOjbect, const Vector3& initialPostition, float initialYaw, float initialPitch)
-	: m_pObject(pOjbect),
+ModelController::ModelController(shared_ptr<ScreenElementScene> pScene, const Vector3& initialPostition, float initialYaw, float initialPitch)
+	: m_pScene(pScene),
 	m_Position(initialPostition),
 	m_Yaw(-initialYaw),
 	m_Pitch(initialPitch),
@@ -33,9 +33,9 @@ void ModelController::OnUpdate(const GameTime& gameTime)
 	m_Position += Vector3::Forward * speed;
 	m_Delta = 0;
 
-	if (m_pObject != nullptr)
+	if (m_pScene != nullptr)
 	{
-		m_pObject->VSetTransform(rotation);
+		m_pScene->GetCamera()->VSetTransform(rotation);
 	}
 }
 
@@ -64,15 +64,28 @@ bool ModelController::VOnPointerRightButtonUp(const Vector2 &pos, int radius)
 
 bool ModelController::VOnPointerMove(const Vector2 &pos, int radius)
 {
-	if (GetKeyState(VK_MENU) < 0 && m_IsLButtonDown && m_LastMousePos != pos)
+	if (m_LastMousePos != pos)
 	{
-		m_TargetYaw += (m_LastMousePos.x - pos.x);
-		m_TargetPitch += (pos.y - m_LastMousePos.y);
-		m_LastMousePos = pos;
-	}
-	else if (m_Keys[VK_SHIFT] && m_IsLButtonDown && m_LastMousePos != pos)
-	{
-		m_Delta = (m_LastMousePos.y - pos.y);
+		if (m_IsLButtonDown)
+		{
+			if (GetKeyState(VK_MENU) < 0)
+			{
+				m_TargetYaw += (m_LastMousePos.x - pos.x);
+				m_TargetPitch += (pos.y - m_LastMousePos.y);
+			}
+			else if (m_Keys[VK_SHIFT])
+			{
+				m_Delta = (m_LastMousePos.y - pos.y);
+			}
+		}
+		else
+		{
+			if (m_pScene != nullptr)
+			{
+				m_pScene->PointMove(pos);
+			}
+		}
+
 		m_LastMousePos = pos;
 	}
 

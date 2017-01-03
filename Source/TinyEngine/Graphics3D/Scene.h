@@ -3,7 +3,7 @@
 
 class SceneNode;
 class CameraNode;
-class DebugAssistNode;
+class DebugGizmosNode;
 typedef std::map<ActorId, shared_ptr<ISceneNode> > SceneActorMap;
 
 class Scene
@@ -73,7 +73,7 @@ private:
 	shared_ptr<IRenderer> m_pRenderer;
 	shared_ptr<SceneNode> m_pRootNode;
 	shared_ptr<CameraNode> m_pCamera;
-	shared_ptr<DebugAssistNode> m_pDebugNode;
+	shared_ptr<DebugGizmosNode> m_pDebugNode;
 
 	std::stack<Matrix> m_MatrixStack;
 	SceneActorMap m_ActorMap;

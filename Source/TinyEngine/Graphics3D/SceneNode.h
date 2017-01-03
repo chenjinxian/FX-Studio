@@ -246,9 +246,25 @@ public:
 		TT_Rotation,
 		TT_Scale
 	};
+
+	enum PickedTransform
+	{
+		PT_None = 0,
+		PT_TranslateX,
+		PT_TranslateY,
+		PT_TranslateZ,
+		PT_RotateX,
+		PT_RotateY,
+		PT_RotateZ,
+		PT_ScaleX,
+		PT_ScaleY,
+		PT_ScaleZ
+	};
+
 	void SetTransformType(TransformType transform) { m_Transform = transform; }
 	void SetVisible(bool visible) { m_IsVisible = visible; }
-	void UpdatePointer(const Vector2 &pos) { m_MousePos = pos; }
+	void UpdatePointer(const Vector2 &pos) { m_MousePos = pos; m_PickedTransform = PT_None; }
+	PickedTransform GetPickedTransform() { return m_PickedTransform; }
 
 private:
 	HRESULT RenderBoundingBox(Scene* pScene, const BoundingBox& aaBox, const Matrix& world);
@@ -287,5 +303,6 @@ private:
 
 	TransformType m_Transform;
 	Vector2 m_MousePos;
+	PickedTransform m_PickedTransform;
 	bool m_IsVisible;
 };

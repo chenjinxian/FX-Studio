@@ -40,6 +40,20 @@ SceneNode::~SceneNode()
 void SceneNode::VSetTransform(const Matrix& worldMatrix)
 {
 	m_Properties.m_worldMatrix = worldMatrix;
+
+	BaseGameLogic* pGameLogic = g_pApp->GetGameLogic();
+	if (pGameLogic == nullptr)
+		return;
+
+	StrongActorPtr pActor = MakeStrongPtr(pGameLogic->VGetActor(m_Properties.GetActorId()));
+	if (pActor != nullptr)
+	{
+		shared_ptr<TransformComponent> pTransform = MakeStrongPtr(pActor->GetComponent<TransformComponent>(TransformComponent::m_Name));
+		if (pTransform != nullptr)
+		{
+			pTransform->SetTransform(worldMatrix);
+		}
+	}
 }
 
 HRESULT SceneNode::VOnInitSceneNode(Scene* pScene)
@@ -77,7 +91,7 @@ HRESULT SceneNode::VPreRender(Scene* pScene)
 	if (pActor != nullptr)
 	{
 		shared_ptr<TransformComponent> pTransform = MakeStrongPtr(pActor->GetComponent<TransformComponent>(TransformComponent::m_Name));
-		if (pTransform)
+		if (pTransform != nullptr)
 		{
 			m_Properties.m_worldMatrix = pTransform->GetTransform();
 		}
@@ -926,6 +940,7 @@ DebugAssistNode::DebugAssistNode()
 	m_pIndexBuffer(nullptr),
 	m_Transform(TT_None),
 	m_MousePos(),
+	m_PickedTransform(PT_None),
 	m_IsVisible(false)
 {
 
@@ -1080,6 +1095,7 @@ HRESULT DebugAssistNode::RenderTranslateAxes(Scene* pScene, const BoundingBox& a
 	{
 		ambientColor->SetVector(Color(1.0f, 1.0f, 1.0f));
 		isPicked = true;
+		m_PickedTransform = PT_TranslateX;
 	}
 	else
 		ambientColor->SetVector(Color(1.0f, 0.0f, 0.0f));
@@ -1095,6 +1111,7 @@ HRESULT DebugAssistNode::RenderTranslateAxes(Scene* pScene, const BoundingBox& a
 	{
 		ambientColor->SetVector(Color(1.0f, 1.0f, 1.0f));
 		isPicked = true;
+		m_PickedTransform = PT_TranslateY;
 	}
 	else
 		ambientColor->SetVector(Color(0.0f, 1.0f, 0.0f));
@@ -1111,6 +1128,7 @@ HRESULT DebugAssistNode::RenderTranslateAxes(Scene* pScene, const BoundingBox& a
 	{
 		ambientColor->SetVector(Color(1.0f, 1.0f, 1.0f));
 		isPicked = true;
+		m_PickedTransform = PT_TranslateZ;
 	}
 	else
 		ambientColor->SetVector(Color(0.0f, 0.0f, 1.0f));
@@ -1129,7 +1147,7 @@ HRESULT DebugAssistNode::RenderRotateRings(Scene* pScene, const BoundingBox& aaB
 {
 	Variable* objectWvp = m_pEffect->GetVariablesByName().at("WorldViewProjection");
 	Vector3 cameraPos = pScene->GetCamera()->GetPosition();
-	Matrix ringWorld = world * world * Matrix::CreateScale(Vector3::Distance(cameraPos, world.Translation()) * 0.2f);
+	Matrix ringWorld = world * Matrix::CreateScale(Vector3::Distance(cameraPos, world.Translation()) * 0.2f);
 	ringWorld.Translation(world.Translation());
 	ringWorld = ringWorld * Matrix::CreateTranslation(aaBox.Center);
 	const XMMATRIX& wvp = ringWorld * pScene->GetCamera()->GetViewMatrix() * pScene->GetCamera()->GetProjectMatrix();

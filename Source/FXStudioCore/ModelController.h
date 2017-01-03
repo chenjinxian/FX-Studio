@@ -29,6 +29,8 @@ protected:
 	float m_TargetYaw;
 	float m_TargetPitch;
 	float m_Delta;
+	float m_MoveX;
+	float m_MoveY;
 
 	bool m_IsLButtonDown;
 	Vector2 m_LastMousePos;

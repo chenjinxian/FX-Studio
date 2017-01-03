@@ -194,3 +194,42 @@ void Scene::PointMove(const Vector2 &pos)
 		m_pDebugNode->UpdatePointer(pos);
 	}
 }
+
+void Scene::TransformPickedActor(float moveX, float moveY)
+{
+	shared_ptr<ISceneNode> pPickedNode = FindActor(m_PickedActor);
+
+	if (pPickedNode != nullptr && m_pDebugNode != nullptr)
+	{
+		const Matrix& world = pPickedNode->VGet()->GetWorldMatrix();
+		DebugAssistNode::PickedTransform transform = m_pDebugNode->GetPickedTransform();
+		switch (transform)
+		{
+		case DebugAssistNode::PT_None:
+			break;
+		case DebugAssistNode::PT_TranslateX:
+			pPickedNode->VSetTransform(world * Matrix::CreateTranslation(Vector3(moveX, 0.0f, 0.0f)));
+			break;
+		case DebugAssistNode::PT_TranslateY:
+			pPickedNode->VSetTransform(world * Matrix::CreateTranslation(Vector3(0.0f, moveY, 0.0f)));
+			break;
+		case DebugAssistNode::PT_TranslateZ:
+			pPickedNode->VSetTransform(world * Matrix::CreateTranslation(Vector3(0.0f, 0.0f, moveY)));
+			break;
+		case DebugAssistNode::PT_RotateX:
+			break;
+		case DebugAssistNode::PT_RotateY:
+			break;
+		case DebugAssistNode::PT_RotateZ:
+			break;
+		case DebugAssistNode::PT_ScaleX:
+			break;
+		case DebugAssistNode::PT_ScaleY:
+			break;
+		case DebugAssistNode::PT_ScaleZ:
+			break;
+		default:
+			break;
+		}
+	}
+}

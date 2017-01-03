@@ -31,6 +31,7 @@ public:
 	void SetTransformType(int type);
 	ActorId PickActor(int cursorX, int cursorY);
 	void PointMove(const Vector2 &pos);
+	void TransformPickedActor(float moveX, float moveY);
 
 	ActorId GetPickedActor() { return m_PickedActor; }
 	void SetPickedActor(ActorId actorId) { m_PickedActor = actorId; }

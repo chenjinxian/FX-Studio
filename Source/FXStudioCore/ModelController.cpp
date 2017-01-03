@@ -9,6 +9,8 @@ ModelController::ModelController(shared_ptr<ScreenElementScene> pScene, const Ve
 	m_TargetYaw(m_Yaw),
 	m_TargetPitch(m_Pitch),
 	m_Delta(0.0f),
+	m_MoveX(0.0f),
+	m_MoveY(0.0f),
 	m_IsLButtonDown(false)
 {
 	POINT ptCursor;
@@ -31,11 +33,16 @@ void ModelController::OnUpdate(const GameTime& gameTime)
 
 	float speed = m_Delta * 0.01f;
 	m_Position += Vector3::Forward * speed;
-	m_Delta = 0;
+	m_Delta = 0.0f;
 
 	if (m_pScene != nullptr)
 	{
 		m_pScene->GetCamera()->VSetTransform(rotation);
+		if (fabsf(m_MoveX - 0.0f) > FLT_EPSILON || fabsf(m_MoveY - 0.0f) > FLT_EPSILON)
+		{
+			m_pScene->TransformPickedActor(m_MoveX * 0.01f, m_MoveY * 0.01f);
+			m_MoveX = m_MoveY = 0.0f;
+		}
 	}
 }
 
@@ -76,6 +83,11 @@ bool ModelController::VOnPointerMove(const Vector2 &pos, int radius)
 			else if (m_Keys[VK_SHIFT])
 			{
 				m_Delta = (m_LastMousePos.y - pos.y);
+			}
+			else
+			{
+				m_MoveX = pos.x - m_LastMousePos.x;
+				m_MoveY = pos.y - m_LastMousePos.y;
 			}
 		}
 		else

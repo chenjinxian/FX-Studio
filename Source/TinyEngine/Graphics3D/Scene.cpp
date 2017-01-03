@@ -1,6 +1,7 @@
 #include "Scene.h"
 #include "SceneNode.h"
 #include "CameraNode.h"
+#include "DebugGizmosNode.h"
 #include "../EventManager/EventManager.h"
 #include "../EventManager/Events.h"
 #include "../AppFramework/BaseGameApp.h"
@@ -16,7 +17,7 @@ Scene::Scene(shared_ptr<IRenderer> pRenderer)
 	m_PickDistance(FLT_MAX)
 {
 	m_pRootNode.reset(DEBUG_NEW RootNode());
-	m_pDebugNode.reset(DEBUG_NEW DebugAssistNode());
+	m_pDebugNode.reset(DEBUG_NEW DebugGizmosNode());
 	AddChild(INVALID_ACTOR_ID, m_pDebugNode);
 
 	IEventManager* pEventMgr = IEventManager::Get();
@@ -174,7 +175,7 @@ void Scene::SetTransformType(int type)
 {
 	if (m_pDebugNode != nullptr)
 	{
-		m_pDebugNode->SetTransformType((DebugAssistNode::TransformType)type);
+		m_pDebugNode->SetTransformType((DebugGizmosNode::TransformType)type);
 	}
 }
 
@@ -202,31 +203,31 @@ void Scene::TransformPickedActor(float moveX, float moveY)
 	if (pPickedNode != nullptr && m_pDebugNode != nullptr)
 	{
 		const Matrix& world = pPickedNode->VGet()->GetWorldMatrix();
-		DebugAssistNode::PickedTransform transform = m_pDebugNode->GetPickedTransform();
+		DebugGizmosNode::PickedTransform transform = m_pDebugNode->GetPickedTransform();
 		switch (transform)
 		{
-		case DebugAssistNode::PT_None:
+		case DebugGizmosNode::PT_None:
 			break;
-		case DebugAssistNode::PT_TranslateX:
+		case DebugGizmosNode::PT_TranslateX:
 			pPickedNode->VSetTransform(world * Matrix::CreateTranslation(Vector3(moveX, 0.0f, 0.0f)));
 			break;
-		case DebugAssistNode::PT_TranslateY:
+		case DebugGizmosNode::PT_TranslateY:
 			pPickedNode->VSetTransform(world * Matrix::CreateTranslation(Vector3(0.0f, moveY, 0.0f)));
 			break;
-		case DebugAssistNode::PT_TranslateZ:
+		case DebugGizmosNode::PT_TranslateZ:
 			pPickedNode->VSetTransform(world * Matrix::CreateTranslation(Vector3(0.0f, 0.0f, moveY)));
 			break;
-		case DebugAssistNode::PT_RotateX:
+		case DebugGizmosNode::PT_RotateX:
 			break;
-		case DebugAssistNode::PT_RotateY:
+		case DebugGizmosNode::PT_RotateY:
 			break;
-		case DebugAssistNode::PT_RotateZ:
+		case DebugGizmosNode::PT_RotateZ:
 			break;
-		case DebugAssistNode::PT_ScaleX:
+		case DebugGizmosNode::PT_ScaleX:
 			break;
-		case DebugAssistNode::PT_ScaleY:
+		case DebugGizmosNode::PT_ScaleY:
 			break;
-		case DebugAssistNode::PT_ScaleZ:
+		case DebugGizmosNode::PT_ScaleZ:
 			break;
 		default:
 			break;

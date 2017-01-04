@@ -193,6 +193,18 @@ void Scene::PointMove(const Vector2 &pos)
 	if (m_pDebugNode != nullptr)
 	{
 		m_pDebugNode->UpdatePointer(pos);
+
+		shared_ptr<ISceneNode> pPickedNode = FindActor(m_PickedActor);
+		if (pPickedNode != nullptr)
+		{
+			Matrix world = pPickedNode->VGet()->GetWorldMatrix();
+			const Matrix& projectMat = m_pCamera->GetProjectMatrix();
+			float viewX = (2.0f * pos.x / g_pApp->GetGameConfig().m_ScreenWidth - 1.0f) / projectMat.m[0][0];
+			float viewY = (1.0f - 2.0f * pos.y / g_pApp->GetGameConfig().m_ScreenHeight) / projectMat.m[1][1];
+
+			Matrix toWorld = m_pCamera->GetViewMatrix().Invert();
+			Vector3 rayDir = Vector3::TransformNormal(Vector3(viewX, viewY, -1.0f), toWorld);
+		}
 	}
 }
 
@@ -202,20 +214,34 @@ void Scene::TransformPickedActor(float moveX, float moveY)
 
 	if (pPickedNode != nullptr && m_pDebugNode != nullptr)
 	{
-		const Matrix& world = pPickedNode->VGet()->GetWorldMatrix();
+		Matrix world = pPickedNode->VGet()->GetWorldMatrix();
+		const Matrix& projectMat = m_pCamera->GetProjectMatrix();
+		float viewX = (2.0f * moveX / g_pApp->GetGameConfig().m_ScreenWidth - 1.0f) / projectMat.m[0][0];
+		float viewY = (1.0f - 2.0f * moveY / g_pApp->GetGameConfig().m_ScreenHeight) / projectMat.m[1][1];
+
+		Matrix toWorld = m_pCamera->GetViewMatrix().Invert();
+		Vector3 rayDir = Vector3::TransformNormal(Vector3(viewX, viewY, -1.0f), toWorld);
+
 		DebugGizmosNode::PickedTransform transform = m_pDebugNode->GetPickedTransform();
 		switch (transform)
 		{
 		case DebugGizmosNode::PT_None:
 			break;
 		case DebugGizmosNode::PT_TranslateX:
-			pPickedNode->VSetTransform(world * Matrix::CreateTranslation(Vector3(moveX, 0.0f, 0.0f)));
+// 		{
+// 			Vector3 position = world.Translation();
+// 			position.x = rayDir.x;
+// 			world.Translation(position);
+// 			pPickedNode->VSetTransform(world);
+// 		}
+
+			pPickedNode->VSetTransform(world * Matrix::CreateTranslation(Vector3(rayDir.x, 0.0f, 0.0f)));
 			break;
 		case DebugGizmosNode::PT_TranslateY:
-			pPickedNode->VSetTransform(world * Matrix::CreateTranslation(Vector3(0.0f, moveY, 0.0f)));
+// 			pPickedNode->VSetTransform(world * Matrix::CreateTranslation(Vector3(0.0f, moveY, 0.0f)));
 			break;
 		case DebugGizmosNode::PT_TranslateZ:
-			pPickedNode->VSetTransform(world * Matrix::CreateTranslation(Vector3(0.0f, 0.0f, moveY)));
+// 			pPickedNode->VSetTransform(world * Matrix::CreateTranslation(Vector3(0.0f, 0.0f, moveY)));
 			break;
 		case DebugGizmosNode::PT_RotateX:
 			break;

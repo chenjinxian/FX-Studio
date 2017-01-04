@@ -38,11 +38,6 @@ void ModelController::OnUpdate(const GameTime& gameTime)
 	if (m_pScene != nullptr)
 	{
 		m_pScene->GetCamera()->VSetTransform(rotation);
-		if (fabsf(m_MoveX - 0.0f) > FLT_EPSILON || fabsf(m_MoveY - 0.0f) > FLT_EPSILON)
-		{
-			m_pScene->TransformPickedActor(m_MoveX, m_MoveY);
-			m_MoveX = m_MoveY = 0.0f;
-		}
 	}
 }
 
@@ -53,7 +48,7 @@ bool ModelController::VOnPointerLeftButtonDown(const Vector2 &pos, int radius)
 
 	if (m_pScene != nullptr)
 	{
-		m_pScene->PointMove(pos);
+		m_pScene->PointLeftDown(pos);
 	}
 
 	return true;
@@ -92,8 +87,10 @@ bool ModelController::VOnPointerMove(const Vector2 &pos, int radius)
 			}
 			else
 			{
-				m_MoveX = pos.x - m_LastMousePos.x;
-				m_MoveY = pos.y - m_LastMousePos.y;
+				if (m_pScene != nullptr)
+				{
+					m_pScene->TransformPickedActor(pos.x, pos.y);
+				}
 			}
 		}
 		else

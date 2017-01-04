@@ -30,6 +30,7 @@ public:
 
 	void SetTransformType(int type);
 	ActorId PickActor(int cursorX, int cursorY);
+	void PointLeftDown(const Vector2& pos);
 	void PointMove(const Vector2 &pos);
 	void TransformPickedActor(float moveX, float moveY);
 
@@ -80,5 +81,7 @@ private:
 
 	ActorId m_PickedActor;
 	float m_PickDistance;
+
+	Vector3 m_Translate;
 };
 

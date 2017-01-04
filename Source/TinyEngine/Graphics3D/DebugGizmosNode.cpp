@@ -129,12 +129,12 @@ bool DebugGizmosNode::IsXAxisPicked(Scene* pScene, const Matrix& world)
 	float viewY = (1.0f - 2.0f * m_MousePos.y / g_pApp->GetGameConfig().m_ScreenHeight) / projectMat.m[1][1];
 
 	Matrix toLocal = (world * pScene->GetCamera()->GetViewMatrix()).Invert();
-	Vector3 rayPostition = toLocal.Translation();
+	Vector3 rayPos = toLocal.Translation();
 	//use right-hand coordinates, z should be -1
 	Vector3 rayDir = Vector3::TransformNormal(Vector3(viewX, viewY, -1.0f), toLocal);
 	rayDir.Normalize();
 
-	Ray ray(rayPostition, rayDir);
+	Ray ray(rayPos, rayDir);
 
 	float distance = 0.0f;
 	return ray.Intersects(m_Properties.GetBoundingBox(), distance);

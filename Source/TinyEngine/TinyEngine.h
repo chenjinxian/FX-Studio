@@ -7,4 +7,5 @@
 #include "EventManager/Events.h"
 #include "Graphics3D/SceneNode.h"
 #include "Graphics3D/CameraNode.h"
+#include "Graphics3D/DebugGizmosNode.h"
 #include "Actors/Actor.h"

@@ -35,10 +35,9 @@ public:
 		PT_ScaleZ
 	};
 
-	void SetTransformType(TransformType transform) { m_Transform = transform; }
-	void SetVisible(bool visible) { m_IsVisible = visible; }
-	void UpdatePointer(const Vector2 &pos) { m_MousePos = pos; m_PickedTransform = PT_None; }
-	PickedTransform GetPickedTransform() { return m_PickedTransform; }
+	void SetTransformType(int type) { m_Transform = (DebugGizmosNode::TransformType)type; }
+	void PointLeftClick(const Vector2& pos);
+	void PointMove(const Vector2 &pos, bool leftButtonDown);
 
 private:
 	HRESULT RenderBoundingBox(Scene* pScene, const BoundingBox& aaBox, const Matrix& world);
@@ -78,5 +77,7 @@ private:
 	TransformType m_Transform;
 	Vector2 m_MousePos;
 	PickedTransform m_PickedTransform;
-	bool m_IsVisible;
+	Vector3 m_Translate;
+	bool m_IsLButtonClick;
+	bool m_IsLButtonDown;
 };

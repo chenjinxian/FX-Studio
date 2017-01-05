@@ -28,11 +28,7 @@ public:
 	void SetCamera(shared_ptr<CameraNode> pCamera) { m_pCamera = pCamera; }
 	const shared_ptr<CameraNode> GetCamera() const { return m_pCamera; }
 
-	void SetTransformType(int type);
 	ActorId PickActor(int cursorX, int cursorY);
-	void PointLeftDown(const Vector2& pos);
-	void PointMove(const Vector2 &pos);
-	void TransformPickedActor(float moveX, float moveY);
 
 	ActorId GetPickedActor() { return m_PickedActor; }
 	void SetPickedActor(ActorId actorId) { m_PickedActor = actorId; }
@@ -74,14 +70,11 @@ private:
 	shared_ptr<IRenderer> m_pRenderer;
 	shared_ptr<SceneNode> m_pRootNode;
 	shared_ptr<CameraNode> m_pCamera;
-	shared_ptr<DebugGizmosNode> m_pDebugNode;
 
 	std::stack<Matrix> m_MatrixStack;
 	SceneActorMap m_ActorMap;
 
 	ActorId m_PickedActor;
 	float m_PickDistance;
-
-	Vector3 m_Translate;
 };
 

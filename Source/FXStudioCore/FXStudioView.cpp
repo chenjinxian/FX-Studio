@@ -8,6 +8,17 @@ FXStudioView::FXStudioView(shared_ptr<IRenderer> pRenderer)
 	: HumanView(pRenderer),
 	m_pModelController(nullptr)
 {
+	Frustum frustum;
+	frustum.Init(XM_PIDIV4, 1.0f, 0.1f, 5000.0f);
+	m_pEditorCamera.reset(DEBUG_NEW CameraNode(frustum));
+	DEBUG_ASSERT(m_pEditorCamera && _T("Out of memory"));
+
+	m_pScene->VAddChild(INVALID_ACTOR_ID, m_pEditorCamera);
+	m_pScene->SetCamera(m_pEditorCamera);
+
+	m_pGizmosNode.reset(DEBUG_NEW DebugGizmosNode());
+	DEBUG_ASSERT(m_pGizmosNode && _T("Out of memory"));
+	m_pScene->VAddChild(INVALID_ACTOR_ID, m_pGizmosNode);
 }
 
 
@@ -54,7 +65,7 @@ bool FXStudioView::VLoadGameDelegate(tinyxml2::XMLElement* pCameraNode)
 		}
 	}
 
-	m_pModelController.reset(DEBUG_NEW ModelController(m_pScene, position, yaw, pitch));
+	m_pModelController.reset(DEBUG_NEW ModelController(m_pEditorCamera, m_pGizmosNode, position, yaw, pitch));
 	m_pCamera->ClearTarget();
 
 	m_pPointerHandler = m_pModelController;

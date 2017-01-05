@@ -127,18 +127,14 @@ FXSTUDIOCORE_API void CreateNewProject(BSTR lFileName)
 FXSTUDIOCORE_API void SetTransformType(int type)
 {
 	FXStudioLogic* pEditorLogic = dynamic_cast<FXStudioLogic*>(g_pApp->GetGameLogic());
-	if (pEditorLogic == nullptr)
+	if (pEditorLogic != nullptr)
 	{
-		return;
+		shared_ptr<FXStudioView> pView = pEditorLogic->GetHumanView();
+		if (pView != nullptr)
+		{
+			pView->GetGizmosNode()->SetTransformType(type);
+		}
 	}
-
-	shared_ptr<FXStudioView> pView = pEditorLogic->GetHumanView();
-	if (pView == nullptr)
-	{
-		return;
-	}
-
-	pView->GetScene()->SetTransformType(type);
 }
 
 FXSTUDIOCORE_API int PickActor(int cursorX, int cursorY)

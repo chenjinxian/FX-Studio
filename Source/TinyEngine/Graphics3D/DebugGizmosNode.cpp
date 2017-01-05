@@ -20,7 +20,8 @@ DebugGizmosNode::DebugGizmosNode()
 	m_Transform(TT_None),
 	m_MousePos(),
 	m_PickedTransform(PT_None),
-	m_IsVisible(false)
+	m_IsLButtonClick(false),
+	m_IsLButtonDown(false)
 {
 
 }
@@ -75,6 +76,75 @@ HRESULT DebugGizmosNode::VOnDeleteSceneNode(Scene *pScene)
 
 HRESULT DebugGizmosNode::VOnUpdate(Scene* pScene, const GameTime& gameTime)
 {
+	shared_ptr<ISceneNode> pPickedNode = pScene->FindActor(pScene->GetPickedActor());
+	if (pPickedNode != nullptr && m_IsLButtonClick)
+	{
+		Matrix world = pPickedNode->VGet()->GetWorldMatrix();
+		const Matrix& projectMat = pScene->GetCamera()->GetProjectMatrix();
+		float viewX = (2.0f * m_MousePos.x / g_pApp->GetGameConfig().m_ScreenWidth - 1.0f) / projectMat.m[0][0];
+		float viewY = (1.0f - 2.0f * m_MousePos.y / g_pApp->GetGameConfig().m_ScreenHeight) / projectMat.m[1][1];
+
+		Matrix toWorld = pScene->GetCamera()->GetViewMatrix().Invert();
+		Vector3 rayPos = toWorld.Translation();
+		Vector3 rayDir = Vector3::TransformNormal(Vector3(viewX, viewY, -1.0f), toWorld);
+		rayDir.Normalize();
+
+		Vector3 axis = world.Right();
+		Vector3 nodePos = world.Translation();
+		Vector3 normal = rayDir.Cross(axis).Cross(rayDir);
+		float delta = (rayPos - nodePos).Dot(normal) / axis.Dot(normal);
+		m_Translate = nodePos + axis * delta;
+	}
+
+	if (pPickedNode != nullptr && m_IsLButtonDown)
+	{
+		Matrix world = pPickedNode->VGet()->GetWorldMatrix();
+		const Matrix& projectMat = pScene->GetCamera()->GetProjectMatrix();
+		float viewX = (2.0f * m_MousePos.x / g_pApp->GetGameConfig().m_ScreenWidth - 1.0f) / projectMat.m[0][0];
+		float viewY = (1.0f - 2.0f * m_MousePos.y / g_pApp->GetGameConfig().m_ScreenHeight) / projectMat.m[1][1];
+
+		Matrix toWorld = pScene->GetCamera()->GetViewMatrix().Invert();
+		Vector3 rayPos = toWorld.Translation();
+		Vector3 rayDir = Vector3::TransformNormal(Vector3(viewX, viewY, -1.0f), toWorld);
+		rayDir.Normalize();
+
+		Vector3 axis = world.Right();
+		Vector3 nodePos = world.Translation();
+		Vector3 normal = rayDir.Cross(axis).Cross(rayDir);
+		float delta = (rayPos - nodePos).Dot(normal) / axis.Dot(normal);
+		Vector3 position = nodePos + axis * delta;
+
+		switch (m_PickedTransform)
+		{
+		case DebugGizmosNode::PT_None:
+			break;
+		case DebugGizmosNode::PT_TranslateX:
+			pPickedNode->VSetTransform(world * Matrix::CreateTranslation(position - m_Translate));
+			m_Translate = position;
+			break;
+		case DebugGizmosNode::PT_TranslateY:
+			break;
+		case DebugGizmosNode::PT_TranslateZ:
+			break;
+		case DebugGizmosNode::PT_RotateX:
+			break;
+		case DebugGizmosNode::PT_RotateY:
+			break;
+		case DebugGizmosNode::PT_RotateZ:
+			break;
+		case DebugGizmosNode::PT_ScaleX:
+			break;
+		case DebugGizmosNode::PT_ScaleY:
+			break;
+		case DebugGizmosNode::PT_ScaleZ:
+			break;
+		default:
+			break;
+		}
+	}
+
+	m_IsLButtonClick = false;
+
 	return S_OK;
 }
 
@@ -382,4 +452,21 @@ void DebugGizmosNode::CreateGeometryBuffers()
 	AddVertex(vertices, cylinderVertices);
 	AddVertex(vertices, coneVertices);
 	SetBoundingBox(vertices);
+}
+
+void DebugGizmosNode::PointLeftClick(const Vector2& pos)
+{
+	m_IsLButtonClick = true;
+	m_MousePos = pos;
+}
+
+void DebugGizmosNode::PointMove(const Vector2 &pos, bool leftButtonDown)
+{
+	if (!leftButtonDown)
+	{
+		m_PickedTransform = PT_None;
+	}
+
+	m_IsLButtonDown = leftButtonDown;
+	m_MousePos = pos;
 }

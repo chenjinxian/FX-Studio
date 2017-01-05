@@ -6,7 +6,8 @@ class SceneNode;
 class ModelController : public IPointerHandler, public IKeyboardHandler
 {
 public:
-	ModelController(shared_ptr<ScreenElementScene> pScene, const Vector3& initialPostition, float initialYaw, float initialPitch);
+	ModelController(shared_ptr<CameraNode> pEditorCamera, shared_ptr<DebugGizmosNode> pGizmosNode,
+		const Vector3& cameraPos, float cameraYaw, float cameraPitch);
 
 	void OnUpdate(const GameTime& gameTime);
 
@@ -21,7 +22,8 @@ public:
 	virtual bool VOnKeyUp(uint8_t c) override { m_Keys[c] = false; return true; }
 
 protected:
-	shared_ptr<ScreenElementScene> m_pScene;
+	shared_ptr<CameraNode> m_pEditorCamera;
+	shared_ptr<DebugGizmosNode> m_pGizmosNode;
 
 	Vector3 m_Position;
 	float m_Yaw;

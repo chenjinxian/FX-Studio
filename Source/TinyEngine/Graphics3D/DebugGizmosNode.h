@@ -36,8 +36,8 @@ public:
 	};
 
 	void SetTransformType(int type) { m_Transform = (DebugGizmosNode::TransformType)type; }
-	void PointLeftClick(const Vector2& pos);
-	void PointMove(const Vector2 &pos, bool leftButtonDown);
+	void PointerLeftClick(const Vector2& pos);
+	void PointerMove(const Vector2 &pos, bool leftButtonDown);
 
 private:
 	HRESULT RenderBoundingBox(Scene* pScene, const BoundingBox& aaBox, const Matrix& world);
@@ -50,6 +50,7 @@ private:
 	void CreateGeometryBuffers();
 
 	bool IsXAxisPicked(Scene* pScene, const Matrix& world);
+	Vector3 IntersectRayPlane(Scene* pScene, const Matrix& world);
 
 	Effect* m_pEffect;
 	Pass* m_pCurrentPass;

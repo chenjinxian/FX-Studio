@@ -50,7 +50,7 @@ bool ModelController::VOnPointerLeftButtonDown(const Vector2 &pos, int radius)
 
 	if (m_pGizmosNode != nullptr)
 	{
-		m_pGizmosNode->PointLeftClick(pos);
+		m_pGizmosNode->PointerLeftClick(pos);
 	}
 
 	return true;
@@ -91,7 +91,7 @@ bool ModelController::VOnPointerMove(const Vector2 &pos, int radius)
 			{
 				if (m_pGizmosNode != nullptr)
 				{
-					m_pGizmosNode->PointMove(pos, m_IsLButtonDown);
+					m_pGizmosNode->PointerMove(pos, m_IsLButtonDown);
 				}
 			}
 		}
@@ -99,7 +99,7 @@ bool ModelController::VOnPointerMove(const Vector2 &pos, int radius)
 		{
 			if (m_pGizmosNode != nullptr)
 			{
-				m_pGizmosNode->PointMove(pos, m_IsLButtonDown);
+				m_pGizmosNode->PointerMove(pos, m_IsLButtonDown);
 			}
 		}
 

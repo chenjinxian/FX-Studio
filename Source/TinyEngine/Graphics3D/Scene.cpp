@@ -1,7 +1,6 @@
 #include "Scene.h"
 #include "SceneNode.h"
 #include "CameraNode.h"
-#include "DebugGizmosNode.h"
 #include "../EventManager/EventManager.h"
 #include "../EventManager/Events.h"
 #include "../AppFramework/BaseGameApp.h"

@@ -59,6 +59,11 @@ bool ModelController::VOnPointerLeftButtonDown(const Vector2 &pos, int radius)
 bool ModelController::VOnPointerLeftButtonUp(const Vector2 &pos, int radius)
 {
 	m_IsLButtonDown = false;
+
+	if (m_pGizmosNode != nullptr)
+	{
+		m_pGizmosNode->PointerMove(pos, m_IsLButtonDown);
+	}
 	return true;
 }
 

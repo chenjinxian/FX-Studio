@@ -21,21 +21,15 @@ public:
 		TT_Scale
 	};
 
-	enum PickedTransform
+	enum TransformAxis
 	{
-		PT_None = 0,
-		PT_TranslateX,
-		PT_TranslateY,
-		PT_TranslateZ,
-		PT_RotateX,
-		PT_RotateY,
-		PT_RotateZ,
-		PT_ScaleX,
-		PT_ScaleY,
-		PT_ScaleZ
+		TA_None = 0,
+		TA_AxisX,
+		TA_AxisY,
+		TA_AxisZ
 	};
 
-	void SetTransformType(int type) { m_Transform = (DebugGizmosNode::TransformType)type; }
+	void SetTransformType(int type) { m_Type = (DebugGizmosNode::TransformType)type; }
 	void PointerLeftClick(const Vector2& pos);
 	void PointerMove(const Vector2 &pos, bool leftButtonDown);
 
@@ -75,10 +69,12 @@ private:
 	uint32_t m_TorusIndexCount;
 	uint32_t m_CubeIndexCount;
 
-	TransformType m_Transform;
+	TransformType m_Type;
+	TransformAxis m_Axis;
 	Vector2 m_MousePos;
-	PickedTransform m_PickedTransform;
-	Vector3 m_Translate;
+	Vector3 m_LastOffset;
+	Vector3 m_LastTranslation;
+	Vector3 m_Offset;
 	bool m_IsLButtonClick;
 	bool m_IsLButtonDown;
 };

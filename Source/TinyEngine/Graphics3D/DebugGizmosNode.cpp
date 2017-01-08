@@ -82,6 +82,7 @@ HRESULT DebugGizmosNode::VOnUpdate(Scene* pScene, const GameTime& gameTime)
 		const Matrix& world = pPickedNode->VGet()->GetWorldMatrix();
 		m_LastOffset = IntersectRayPlane(pScene, world);
 		m_LastTranslation = world.Translation();
+		m_LastScale = Vector3(world._11, world._22, world._33);
 	}
 
 	if (pPickedNode != nullptr && m_IsLButtonDown)
@@ -101,15 +102,15 @@ HRESULT DebugGizmosNode::VOnUpdate(Scene* pScene, const GameTime& gameTime)
 			break;
 		case DebugGizmosNode::TT_Scale:
 		{
-			m_Offset = (newOffset - m_LastOffset);
-
-// 			if (Vector3::Min(newOffset, m_LastOffset) == newOffset)
-// 			{
-// 				offset = m_LastOffset - newOffset;
-// 			}
-			pPickedNode->VSetTransform(world * Matrix::CreateScale(Vector3(1.0f, 1.0f, 1.0f) + m_Offset));
-		}
+			m_Offset = (newOffset - m_LastOffset) * 8.33f / Vector3::Distance(pScene->GetCamera()->GetPosition(), world.Translation());
+			Matrix newWorld = world + Matrix::CreateScale(m_LastScale * m_Offset);
+			if (newWorld._11 > 0.01f && newWorld._22 > 0.01f && newWorld._33 > 0.01f)
+			{
+				newWorld._44 = world._44;
+				pPickedNode->VSetTransform(newWorld);
+			}
 			break;
+		}
 		default:
 			break;
 		}

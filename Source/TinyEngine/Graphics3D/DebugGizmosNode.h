@@ -74,6 +74,7 @@ private:
 	Vector2 m_MousePos;
 	Vector3 m_LastOffset;
 	Vector3 m_LastTranslation;
+	Vector3 m_LastScale;
 	Vector3 m_Offset;
 	bool m_IsLButtonClick;
 	bool m_IsLButtonDown;

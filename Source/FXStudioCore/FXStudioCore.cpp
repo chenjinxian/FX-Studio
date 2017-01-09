@@ -137,7 +137,7 @@ FXSTUDIOCORE_API void SetTransformType(int type)
 	}
 }
 
-FXSTUDIOCORE_API int PickActor(int cursorX, int cursorY)
+FXSTUDIOCORE_API unsigned int PickActor(int cursorX, int cursorY)
 {
 	FXStudioLogic* pEditorLogic = dynamic_cast<FXStudioLogic*>(g_pApp->GetGameLogic());
 	if (pEditorLogic == nullptr)
@@ -151,9 +151,12 @@ FXSTUDIOCORE_API int PickActor(int cursorX, int cursorY)
 		return INVALID_ACTOR_ID;
 	}
 
-	pView->GetScene()->PickActor(cursorX, cursorY);
-
-	return -1;
+	if (pView->GetGizmosNode()->IsPicked() || GetKeyState(VK_MENU) < 0)
+	{
+		return pView->GetScene()->GetPickedActor();
+	}
+	else
+		pView->GetScene()->PickActor(cursorX, cursorY);
 }
 
 FXSTUDIOCORE_API unsigned int AddActor(BSTR actorResource)

@@ -167,9 +167,14 @@ void SceneNode::VPick(Scene* pScene, int cursorX, int cursorY)
 	}
 }
 
-void SceneNode::SetBoundingBox(const std::vector<Vector3>& postions)
+void SceneNode::SetBoundingBox(const std::vector<Vector3>& positions)
 {
-	BoundingBox::CreateFromPoints(m_Properties.m_AABox, postions.size(), &postions.front(), sizeof(Vector3));
+	BoundingBox::CreateFromPoints(m_Properties.m_AABox, positions.size(), &positions.front(), sizeof(Vector3));
+}
+
+void SceneNode::SetBoundingSphere(const std::vector<Vector3>& positions)
+{
+	BoundingSphere::CreateFromPoints(m_Properties.m_Sphere, positions.size(), &positions.front(), sizeof(Vector3));
 }
 
 RootNode::RootNode()

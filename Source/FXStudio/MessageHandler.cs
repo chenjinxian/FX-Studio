@@ -92,7 +92,7 @@ namespace FXStudio
                             {
                                 RenderMethods.WndProc(m_renderPanel.Handle, m.Msg, m.WParam, m.LParam);
 
-                                if (m_fakeFocus && m.Msg == WM_LBUTTONUP)
+                                if (m_fakeFocus && m.Msg == WM_LBUTTONDOWN)
                                 {
                                     System.Drawing.Point position = Cursor.Position;
                                     double distance = Math.Round(Math.Sqrt(

@@ -37,6 +37,7 @@ HRESULT DebugGizmosNode::VOnInitSceneNode(Scene* pScene)
 	SAFE_RELEASE(m_pVertexBuffer);
 	SAFE_RELEASE(m_pIndexBuffer);
 
+
 	Resource effectRes("Effects\\DebugAssist.fx");
 	shared_ptr<ResHandle> pEffectResHandle = g_pApp->GetResCache()->GetHandle(&effectRes);
 	if (pEffectResHandle == nullptr)
@@ -76,46 +77,88 @@ HRESULT DebugGizmosNode::VOnDeleteSceneNode(Scene *pScene)
 
 HRESULT DebugGizmosNode::VOnUpdate(Scene* pScene, const GameTime& gameTime)
 {
+	if (m_Axis == TA_None)
+	{
+		return S_OK;
+	}
+
 	shared_ptr<ISceneNode> pPickedNode = pScene->FindActor(pScene->GetPickedActor());
 	if (pPickedNode != nullptr && m_IsLButtonClick)
 	{
 		const Matrix& world = pPickedNode->VGet()->GetWorldMatrix();
-		m_LastOffset = IntersectRayPlane(pScene, world);
-		m_LastTranslation = world.Translation();
-		m_LastScale = Vector3(world._11, world._22, world._33);
-	}
-
-	if (pPickedNode != nullptr && m_IsLButtonDown)
-	{
-		const Matrix& world = pPickedNode->VGet()->GetWorldMatrix();
-		Vector3 newOffset = IntersectRayPlane(pScene, world);
 
 		switch (m_Type)
 		{
 		case DebugGizmosNode::TT_None:
 			break;
 		case DebugGizmosNode::TT_Translation:
-			pPickedNode->VSetTransform(world * Matrix::CreateTranslation(newOffset - m_LastOffset));
+			m_LastOffset = IntersectRayPlane(pScene, world);
+			m_LastTranslation = world.Translation();
 			break;
 		case DebugGizmosNode::TT_Rotation:
-// 			pPickedNode->VSetTransform(world * Matrix::CreateTranslation(newOffset - m_LastOffset));
+			m_LastMousePos = m_MousePos;
 			break;
 		case DebugGizmosNode::TT_Scale:
+			m_LastOffset = IntersectRayPlane(pScene, world);
+			m_LastScale = Vector3(world._11, world._22, world._33);
+			break;
+		default:
+			break;
+		}
+	}
+
+	if (pPickedNode != nullptr && m_IsLButtonDown)
+	{
+		const Matrix& world = pPickedNode->VGet()->GetWorldMatrix();
+
+		switch (m_Type)
 		{
-			m_Offset = (newOffset - m_LastOffset) * 8.33f / Vector3::Distance(pScene->GetCamera()->GetPosition(), world.Translation());
-			Matrix newWorld = world + Matrix::CreateScale(m_LastScale * m_Offset);
+		case DebugGizmosNode::TT_None:
+			break;
+		case DebugGizmosNode::TT_Translation:
+		{
+			Vector3 newOffset = IntersectRayPlane(pScene, world);
+			pPickedNode->VSetTransform(world * Matrix::CreateTranslation(newOffset - m_LastOffset));
+			m_LastOffset = newOffset;
+			break;
+		}
+		case DebugGizmosNode::TT_Rotation:
+		{
+			Vector3 axis;
+			switch (m_Axis)
+			{
+			case DebugGizmosNode::TA_AxisX: axis = world.Right(); break;
+			case DebugGizmosNode::TA_AxisY: axis = world.Up(); break;
+			case DebugGizmosNode::TA_AxisZ: axis = world.Forward(); break;
+			default:
+				break;
+			}
+
+			Vector2 offset = m_MousePos - m_LastMousePos;
+			Quaternion newRot = Quaternion::CreateFromAxisAngle(axis, (offset.x + offset.y) / 100.0f);
+			newRot.Normalize();
+			pPickedNode->VSetTransform(Matrix::Transform(Matrix::Identity, newRot) * world);
+			m_LastMousePos = m_MousePos;
+			break;
+		}
+		case DebugGizmosNode::TT_Scale:
+		{
+			Vector3 newOffset = IntersectRayPlane(pScene, world);
+			Vector3 offset = (newOffset - m_LastOffset) * 8.33f / Vector3::Distance(pScene->GetCamera()->GetPosition(), world.Translation());
+
+			Matrix newWorld = world + Matrix::CreateScale(m_LastScale * offset);
 			if (newWorld._11 > 0.01f && newWorld._22 > 0.01f && newWorld._33 > 0.01f)
 			{
 				newWorld._44 = world._44;
 				pPickedNode->VSetTransform(newWorld);
 			}
+
+			m_LastOffset = newOffset;
 			break;
 		}
 		default:
 			break;
 		}
-
-		m_LastOffset = newOffset;
 	}
 
 	m_IsLButtonClick = false;
@@ -220,8 +263,8 @@ HRESULT DebugGizmosNode::RenderTranslateAxes(Scene* pScene, const BoundingBox& a
 			aixsWorld.Translation(m_LastTranslation);
 			ambientColor->SetVector(Color(1.0f, 0.27f, 0.0f));
 		}
-		else if (!m_IsLButtonDown && IsXAxisPicked(pScene,
-			Matrix::CreateRotationZ(XMConvertToRadians(-90)) * Matrix::CreateTranslation(Vector3(0.3f, 0.0f, 0.0f)) * aixsWorld))
+		else if (!m_IsLButtonDown && IsAxisPicked(
+			CreateRay(pScene, Matrix::CreateRotationZ(XMConvertToRadians(-90)) * Matrix::CreateTranslation(Vector3(0.3f, 0.0f, 0.0f)) * aixsWorld)))
 		{
 			ambientColor->SetVector(Color(1.0f, 1.0f, 1.0f));
 			isPicked = true;
@@ -262,8 +305,8 @@ HRESULT DebugGizmosNode::RenderTranslateAxes(Scene* pScene, const BoundingBox& a
 			aixsWorld.Translation(m_LastTranslation);
 			ambientColor->SetVector(Color(1.0f, 0.27f, 0.0f));
 		}
-		else if (!m_IsLButtonDown && !isPicked && IsXAxisPicked(pScene,
-			Matrix::CreateTranslation(Vector3(0.0f, 0.3f, 0.0f)) * aixsWorld))
+		else if (!m_IsLButtonDown && !isPicked && IsAxisPicked(
+			CreateRay(pScene, Matrix::CreateTranslation(Vector3(0.0f, 0.3f, 0.0f)) * aixsWorld)))
 		{
 			ambientColor->SetVector(Color(1.0f, 1.0f, 1.0f));
 			isPicked = true;
@@ -304,8 +347,8 @@ HRESULT DebugGizmosNode::RenderTranslateAxes(Scene* pScene, const BoundingBox& a
 			aixsWorld.Translation(m_LastTranslation);
 			ambientColor->SetVector(Color(1.0f, 0.27f, 0.0f));
 		}
-		else if (!m_IsLButtonDown && !isPicked && IsXAxisPicked(pScene,
-			Matrix::CreateRotationX(XMConvertToRadians(90)) * Matrix::CreateTranslation(Vector3(0.0f, 0.0f, 0.3f)) * aixsWorld))
+		else if (!m_IsLButtonDown && !isPicked && IsAxisPicked(
+			CreateRay(pScene, Matrix::CreateRotationX(XMConvertToRadians(90)) * Matrix::CreateTranslation(Vector3(0.0f, 0.0f, 0.3f)) * aixsWorld)))
 		{
 			ambientColor->SetVector(Color(1.0f, 1.0f, 1.0f));
 			isPicked = true;
@@ -342,29 +385,89 @@ HRESULT DebugGizmosNode::RenderTranslateAxes(Scene* pScene, const BoundingBox& a
 HRESULT DebugGizmosNode::RenderRotateRings(Scene* pScene, const BoundingBox& aaBox, const Matrix& world)
 {
 	Variable* objectWvp = m_pEffect->GetVariablesByName().at("WorldViewProjection");
+	Variable* ambientColor = m_pEffect->GetVariablesByName().at("AmbientColor");
+
 	Vector3 cameraPos = pScene->GetCamera()->GetPosition();
 	Matrix ringWorld = Matrix::CreateScale(Vector3::Distance(cameraPos, world.Translation()) * 0.2f);
 	ringWorld.Translation(world.Translation());
 	ringWorld = ringWorld * Matrix::CreateTranslation(aaBox.Center);
 	const XMMATRIX& wvp = ringWorld * pScene->GetCamera()->GetViewMatrix() * pScene->GetCamera()->GetProjectMatrix();
 
-	objectWvp->SetMatrix(Matrix::CreateRotationZ(XMConvertToRadians(-90)) * wvp);
-	Variable* ambientColor = m_pEffect->GetVariablesByName().at("AmbientColor");
-	ambientColor->SetVector(Color(1.0f, 0.0f, 0.0f));
-	pScene->GetRenderder()->VDrawMesh(
-		m_TorusIndexCount, m_TorusIndexOffset, m_TorusVertexOffset, m_pCurrentPass->GetEffectPass());
+	bool isPicked = false;
+	// x axis
+	{
+		if (m_IsLButtonDown)
+		{
+			ambientColor->SetVector(Color(1.0f, 0.27f, 0.0f));
+		}
+		else if (!m_IsLButtonDown && IsTorusPicked(CreateRay(pScene, Matrix::CreateRotationZ(XMConvertToRadians(-90)) * ringWorld)))
+		{
+			ambientColor->SetVector(Color(1.0f, 1.0f, 1.0f));
+			isPicked = true;
+			m_Axis = TA_AxisX;
+		}
+		else
+			ambientColor->SetVector(Color(1.0f, 0.0f, 0.0f));
 
-	objectWvp->SetMatrix(wvp);
-	ambientColor->SetVector(Color(0.0f, 1.0f, 0.0f));
+		objectWvp->SetMatrix(Matrix::CreateRotationZ(XMConvertToRadians(-90)) * wvp);
+		pScene->GetRenderder()->VDrawMesh(m_TorusIndexCount, m_TorusIndexOffset, m_TorusVertexOffset, m_pCurrentPass->GetEffectPass());
+	}
 
-	pScene->GetRenderder()->VDrawMesh(
-		m_TorusIndexCount, m_TorusIndexOffset, m_TorusVertexOffset, m_pCurrentPass->GetEffectPass());
+	if (m_IsLButtonDown && m_Axis == TA_AxisX)
+	{
+		ambientColor->SetVector(Color(1.0f, 1.0f, 0.0f));
+		isPicked = true;
+	}
 
-	objectWvp->SetMatrix(Matrix::CreateRotationX(XMConvertToRadians(90)) * wvp);
-	ambientColor->SetVector(Color(0.0f, 0.0f, 1.0f));
+	// y axis
+	{
+		if (m_IsLButtonDown)
+		{
+			ambientColor->SetVector(Color(1.0f, 0.27f, 0.0f));
+		}
+		else if (!m_IsLButtonDown && !isPicked && IsTorusPicked(CreateRay(pScene, ringWorld)))
+		{
+			ambientColor->SetVector(Color(1.0f, 1.0f, 1.0f));
+			isPicked = true;
+			m_Axis = TA_AxisY;
+		}
+		else
+			ambientColor->SetVector(Color(0.0f, 1.0f, 0.0f));
 
-	pScene->GetRenderder()->VDrawMesh(
-		m_TorusIndexCount, m_TorusIndexOffset, m_TorusVertexOffset, m_pCurrentPass->GetEffectPass());
+		objectWvp->SetMatrix(wvp);
+		pScene->GetRenderder()->VDrawMesh(m_TorusIndexCount, m_TorusIndexOffset, m_TorusVertexOffset, m_pCurrentPass->GetEffectPass());
+	}
+
+	if (m_IsLButtonDown && m_Axis == TA_AxisY)
+	{
+		ambientColor->SetVector(Color(1.0f, 1.0f, 0.0f));
+		isPicked = true;
+	}
+
+	// z axis
+	{
+		if (m_IsLButtonDown)
+		{
+			ambientColor->SetVector(Color(1.0f, 0.27f, 0.0f));
+		}
+		else if (!m_IsLButtonDown && !isPicked && IsTorusPicked(CreateRay(pScene, Matrix::CreateRotationX(XMConvertToRadians(90)) * ringWorld)))
+		{
+			ambientColor->SetVector(Color(1.0f, 1.0f, 1.0f));
+			isPicked = true;
+			m_Axis = TA_AxisZ;
+		}
+		else
+			ambientColor->SetVector(Color(0.0f, 0.0f, 1.0f));
+
+		objectWvp->SetMatrix(Matrix::CreateRotationX(XMConvertToRadians(90)) * wvp);
+		pScene->GetRenderder()->VDrawMesh(m_TorusIndexCount, m_TorusIndexOffset, m_TorusVertexOffset, m_pCurrentPass->GetEffectPass());
+	}
+
+	if (m_IsLButtonDown && m_Axis == TA_AxisZ)
+	{
+		ambientColor->SetVector(Color(1.0f, 1.0f, 0.0f));
+		isPicked = true;
+	}
 
 	return S_OK;
 }
@@ -387,8 +490,8 @@ HRESULT DebugGizmosNode::RenderScaleAxes(Scene* pScene, const BoundingBox& aaBox
 		{
 			ambientColor->SetVector(Color(1.0f, 0.27f, 0.0f));
 		}
-		else if (!m_IsLButtonDown && IsXAxisPicked(pScene,
-			Matrix::CreateRotationZ(XMConvertToRadians(-90)) * Matrix::CreateTranslation(Vector3(0.3f, 0.0f, 0.0f)) * aixsWorld))
+		else if (!m_IsLButtonDown && IsAxisPicked(
+			CreateRay(pScene, Matrix::CreateRotationZ(XMConvertToRadians(-90)) * Matrix::CreateTranslation(Vector3(0.3f, 0.0f, 0.0f)) * aixsWorld)))
 		{
 			ambientColor->SetVector(Color(1.0f, 1.0f, 1.0f));
 			isPicked = true;
@@ -420,8 +523,8 @@ HRESULT DebugGizmosNode::RenderScaleAxes(Scene* pScene, const BoundingBox& aaBox
 		{
 			ambientColor->SetVector(Color(1.0f, 0.27f, 0.0f));
 		}
-		else if (!m_IsLButtonDown && !isPicked && IsXAxisPicked(pScene,
-			Matrix::CreateTranslation(Vector3(0.0f, 0.3f, 0.0f)) * aixsWorld))
+		else if (!m_IsLButtonDown && !isPicked && IsAxisPicked(
+			CreateRay(pScene, Matrix::CreateTranslation(Vector3(0.0f, 0.3f, 0.0f)) * aixsWorld)))
 		{
 			ambientColor->SetVector(Color(1.0f, 1.0f, 1.0f));
 			isPicked = true;
@@ -453,8 +556,8 @@ HRESULT DebugGizmosNode::RenderScaleAxes(Scene* pScene, const BoundingBox& aaBox
 		{
 			ambientColor->SetVector(Color(1.0f, 0.27f, 0.0f));
 		}
-		else if (!m_IsLButtonDown && !isPicked && IsXAxisPicked(pScene,
-			Matrix::CreateRotationX(XMConvertToRadians(90)) * Matrix::CreateTranslation(Vector3(0.0f, 0.0f, 0.3f)) * aixsWorld))
+		else if (!m_IsLButtonDown && !isPicked && IsAxisPicked(
+			CreateRay(pScene, Matrix::CreateRotationX(XMConvertToRadians(90)) * Matrix::CreateTranslation(Vector3(0.0f, 0.0f, 0.3f)) * aixsWorld)))
 		{
 			ambientColor->SetVector(Color(1.0f, 1.0f, 1.0f));
 			isPicked = true;
@@ -528,7 +631,7 @@ void DebugGizmosNode::CreateGeometryBuffers()
 
 	std::vector<VertexPositionNormalTexture> torusVertices;
 	std::vector<uint16_t> torusIndices;
-	GeometricPrimitive::CreateTorus(torusVertices, torusIndices, 1.0f, 0.01f);
+	GeometricPrimitive::CreateTorus(torusVertices, torusIndices, 1.5f, 0.01f);
 
 	std::vector<VertexPositionNormalTexture> cubeVertices;
 	std::vector<uint16_t> cubeIndices;
@@ -576,11 +679,16 @@ void DebugGizmosNode::CreateGeometryBuffers()
 
 	vertices.clear();
 	AddVertex(vertices, cylinderVertices);
-	AddVertex(vertices, coneVertices);
+	AddVertex(vertices, cubeVertices);
 	SetBoundingBox(vertices);
+
+	m_TorusVertices.clear();
+	GeometricPrimitive::CreateTorus(torusVertices, m_TorusIndices, 1.5f, 0.06f);
+	AddVertex(m_TorusVertices, torusVertices);
+	SetBoundingSphere(m_TorusVertices);
 }
 
-bool DebugGizmosNode::IsXAxisPicked(Scene* pScene, const Matrix& world)
+Ray DebugGizmosNode::CreateRay(Scene* pScene, const Matrix& world)
 {
 	const Matrix& projectMat = pScene->GetCamera()->GetProjectMatrix();
 	float viewX = (2.0f * m_MousePos.x / g_pApp->GetGameConfig().m_ScreenWidth - 1.0f) / projectMat.m[0][0];
@@ -593,9 +701,35 @@ bool DebugGizmosNode::IsXAxisPicked(Scene* pScene, const Matrix& world)
 	rayDir.Normalize();
 
 	Ray ray(rayPos, rayDir);
+	return ray;
+}
 
+bool DebugGizmosNode::IsAxisPicked(const Ray& ray)
+{
 	float distance = 0.0f;
 	return ray.Intersects(m_Properties.GetBoundingBox(), distance);
+}
+
+bool DebugGizmosNode::IsTorusPicked(const Ray& ray)
+{
+	float distance = 0.0f;
+	if (ray.Intersects(m_Properties.GetBoundingSphere(), distance))
+	{
+		for (uint32_t i = 0, len = m_TorusIndices.size(); i < len; i += 3)
+		{
+			Vector3 tri0 = m_TorusVertices.at(m_TorusIndices[i]);
+			Vector3 tri1 = m_TorusVertices.at(m_TorusIndices[i + 1]);
+			Vector3 tri2 = m_TorusVertices.at(m_TorusIndices[i + 2]);
+
+			float distance = 0.0f;
+			if (ray.Intersects(tri0, tri1, tri2, distance))
+			{
+				return true;
+			}
+		}
+	}
+
+	return false;
 }
 
 DirectX::SimpleMath::Vector3 DebugGizmosNode::IntersectRayPlane(Scene* pScene, const Matrix& world)

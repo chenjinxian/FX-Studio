@@ -45,7 +45,7 @@ namespace FXStudio
         public unsafe static extern void SetTransformType(int type);
 
         [DllImport(editorDllName, CallingConvention = CallingConvention.Cdecl)]
-        public unsafe static extern int PickActor(int cusorX, int cusorY);
+        public unsafe static extern uint PickActor(int cusorX, int cusorY);
 
         [DllImport(editorDllName, CallingConvention = CallingConvention.Cdecl)]
         public static extern uint AddActor([MarshalAs(UnmanagedType.BStr)] string actorXml);

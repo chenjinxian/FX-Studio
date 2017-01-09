@@ -29,6 +29,8 @@ public:
 		TA_AxisZ
 	};
 
+	bool IsPicked() { return (m_Axis != TA_None); }
+
 	void SetTransformType(int type) { m_Type = (DebugGizmosNode::TransformType)type; }
 	void PointerLeftClick(const Vector2& pos);
 	void PointerMove(const Vector2 &pos, bool leftButtonDown);
@@ -43,7 +45,9 @@ private:
 	void AddVertex(std::vector<Vector3>& vertices, const std::vector<struct VertexPositionNormalTexture>& inputVertices);
 	void CreateGeometryBuffers();
 
-	bool IsXAxisPicked(Scene* pScene, const Matrix& world);
+	Ray CreateRay(Scene* pScene, const Matrix& world);
+	bool IsAxisPicked(const Ray& ray);
+	bool IsTorusPicked(const Ray& ray);
 	Vector3 IntersectRayPlane(Scene* pScene, const Matrix& world);
 
 	Effect* m_pEffect;
@@ -69,13 +73,16 @@ private:
 	uint32_t m_TorusIndexCount;
 	uint32_t m_CubeIndexCount;
 
+	std::vector<Vector3> m_TorusVertices;
+	std::vector<uint16_t> m_TorusIndices;
+
 	TransformType m_Type;
 	TransformAxis m_Axis;
 	Vector2 m_MousePos;
+	Vector2 m_LastMousePos;
 	Vector3 m_LastOffset;
 	Vector3 m_LastTranslation;
 	Vector3 m_LastScale;
-	Vector3 m_Offset;
 	bool m_IsLButtonClick;
 	bool m_IsLButtonDown;
 };

@@ -38,6 +38,7 @@ public:
 	Vector3 GetPosition() const { return m_worldMatrix.Translation(); }
 	const Matrix& GetWorldMatrix() const { return m_worldMatrix; }
 	const BoundingBox& GetBoundingBox() const { return m_AABox; }
+	const BoundingSphere& GetBoundingSphere() const { return m_Sphere; }
 	RenderPass GetRenderPass() const { return m_RenderPass; }
 
 protected:
@@ -45,6 +46,7 @@ protected:
 	std::string m_ActorName;
 	Matrix m_worldMatrix;
 	BoundingBox m_AABox;
+	BoundingSphere m_Sphere;
 	RenderPass m_RenderPass;
 };
 
@@ -78,7 +80,8 @@ public:
 	virtual void VPick(Scene* pScene, int cursorX, int cursorY) override;
 
 protected:
-	void SetBoundingBox(const std::vector<Vector3>& postions);
+	void SetBoundingBox(const std::vector<Vector3>& positions);
+	void SetBoundingSphere(const std::vector<Vector3>& positions);
 
 	SceneNodeList m_Children;
 	SceneNode* m_pParent;

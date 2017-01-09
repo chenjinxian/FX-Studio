@@ -109,7 +109,7 @@ HRESULT DebugGizmosNode::VOnUpdate(Scene* pScene, const GameTime& gameTime)
 
 	if (pPickedNode != nullptr && m_IsLButtonDown)
 	{
-		const Matrix& world = pPickedNode->VGet()->GetWorldMatrix();
+		Matrix world = pPickedNode->VGet()->GetWorldMatrix();
 
 		switch (m_Type)
 		{
@@ -134,10 +134,17 @@ HRESULT DebugGizmosNode::VOnUpdate(Scene* pScene, const GameTime& gameTime)
 				break;
 			}
 
+			Vector3 scale;
+			Quaternion rotation;
+			Vector3 translation;
+			world.Decompose(scale, rotation, translation);
+
 			Vector2 offset = m_MousePos - m_LastMousePos;
 			Quaternion newRot = Quaternion::CreateFromAxisAngle(axis, (offset.x + offset.y) / 100.0f);
 			newRot.Normalize();
-			pPickedNode->VSetTransform(Matrix::Transform(Matrix::Identity, newRot) * world);
+			pPickedNode->VSetTransform(
+				Matrix::Transform(Matrix::Identity, rotation * newRot) * Matrix::CreateScale(scale) * Matrix::CreateTranslation(translation));
+
 			m_LastMousePos = m_MousePos;
 			break;
 		}

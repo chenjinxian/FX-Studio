@@ -49,6 +49,7 @@ private:
 	bool IsAxisPicked(const Ray& ray);
 	bool IsTorusPicked(const Ray& ray);
 	Vector3 IntersectRayPlane(Scene* pScene, const Matrix& world);
+	Vector3 IntersectRaySphere(Scene* pScene, const Matrix& world);
 
 	Effect* m_pEffect;
 	Pass* m_pCurrentPass;

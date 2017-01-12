@@ -10,7 +10,6 @@
 #include "../ResourceCache/ShaderResource.h"
 #include "../AppFramework/BaseGameApp.h"
 #include "../AppFramework/BaseGameLogic.h"
-#include "boost/algorithm/clamp.hpp"
 
 DebugGizmosNode::DebugGizmosNode()
 	: SceneNode(INVALID_ACTOR_ID, nullptr, RenderPass_Debug, Matrix::CreateTranslation(0.0f, 0.5f, 0.0f)),
@@ -142,33 +141,13 @@ HRESULT DebugGizmosNode::VOnUpdate(Scene* pScene, const GameTime& gameTime)
 			Vector3 translation;
 			world.Decompose(scale, rotation, translation);
 
-			const Matrix& projectMat = pScene->GetCamera()->GetProjectMatrix();
-			Matrix toWorld = pScene->GetCamera()->GetViewMatrix().Invert();
-
-			float viewX = (2.0f * m_LastMousePos.x / g_pApp->GetGameConfig().m_ScreenWidth - 1.0f) / projectMat.m[0][0];
-			float viewY = (1.0f - 2.0f * m_LastMousePos.y / g_pApp->GetGameConfig().m_ScreenHeight) / projectMat.m[1][1];
-			Vector3 endPos = Vector3::TransformNormal(Vector3(viewX, viewY, -1.0f), toWorld);
-			Vector3 dir1 = endPos - translation;
-			dir1.Normalize();
-
-			viewX = (2.0f * m_MousePos.x / g_pApp->GetGameConfig().m_ScreenWidth - 1.0f) / projectMat.m[0][0];
-			viewY = (1.0f - 2.0f * m_MousePos.y / g_pApp->GetGameConfig().m_ScreenHeight) / projectMat.m[1][1];
-			endPos = Vector3::TransformNormal(Vector3(viewX, viewY, -1.0f), toWorld);
-			Vector3 dir2 = endPos - translation;
-			dir2.Normalize();
-
-			float angle = acosf(boost::algorithm::clamp(dir1.Dot(dir2), -1.0f, 1.0f));
-			if (dir1.Cross(dir2).Dot(axis) < 0.0f)
-				angle = -angle;
-// 			DEBUG_INFO("dir1: " + std::to_string(dir1.x) + " " + std::to_string(dir1.y) + " " + std::to_string(dir1.z) + " ");
-// 			DEBUG_INFO("dir2: " + std::to_string(dir2.x) + " " + std::to_string(dir2.y) + " " + std::to_string(dir2.z) + " ");
-// 			DEBUG_INFO("angle between dir: " + std::to_string(angle));
-
-			Quaternion newRot = Quaternion::CreateFromAxisAngle(axis, angle);
+			Vector2 offset = m_MousePos - m_LastMousePos;
+			Quaternion newRot = Quaternion::CreateFromAxisAngle(axis, (offset.x + offset.y) / 100.0f);
 			newRot.Normalize();
 			pPickedNode->VSetTransform(
 				Matrix::Transform(Matrix::Identity, rotation * newRot) * Matrix::CreateScale(scale) * Matrix::CreateTranslation(translation));
 
+			m_LastMousePos = m_MousePos;
 			break;
 		}
 		case DebugGizmosNode::TT_Scale:

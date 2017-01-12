@@ -87,92 +87,75 @@ HRESULT DebugGizmosNode::VOnUpdate(Scene* pScene, const GameTime& gameTime)
 	if (pPickedNode != nullptr && m_IsLButtonClick)
 	{
 		const Matrix& world = pPickedNode->VGet()->GetWorldMatrix();
+// 		Plane plane()
+// 		CreateRay(pScene, world, false);
+		m_LastOffset = ComputeMouseOffset(pScene, world);
 
-		Vector3 axis;
-		Vector3 normal;
-		switch (m_Axis)
+		switch (m_Type)
 		{
-		case DebugGizmosNode::TA_AxisX: axis = world.Right(); normal = world.Up(); break;
-		case DebugGizmosNode::TA_AxisY: axis = world.Up(); normal = world.Backward(); break;
-		case DebugGizmosNode::TA_AxisZ: axis = world.Backward(); normal = world.Right(); break;
-		default: return S_OK;
-		}
-
-		Ray ray = CreateRay(pScene, world, false);
-
-		if (m_Type == TT_Translation || m_Type == TT_Scale)
-		{
-			Plane plane(world.Translation(), normal);
-
-			m_LastOffset = (ray.position + ray.direction * axis * IntersectRayPlane(plane, ray));
-			m_LastTranslation = world.Translation();
-			m_LastScale = Vector3(world._11, world._22, world._33);
-		}
-		else if (m_Type == TT_Rotation)
-		{
-			Plane plane(world.Translation(), axis);
-
-			m_LastOffset = (ray.position + ray.direction * IntersectRayPlane(plane, ray));
+		case DebugGizmosNode::TT_None: break;
+		case DebugGizmosNode::TT_Translation: m_LastTranslation = world.Translation(); break;
+		case DebugGizmosNode::TT_Rotation: break;
+		case DebugGizmosNode::TT_Scale: m_LastScale = Vector3(world._11, world._22, world._33); break;
+		default: break;
 		}
 	}
 
 	if (pPickedNode != nullptr && m_IsLButtonDown)
 	{
-		const Matrix& world = pPickedNode->VGet()->GetWorldMatrix();
-		Vector3 newOffset;
+		Matrix world = pPickedNode->VGet()->GetWorldMatrix();
+		Vector3 newOffset = ComputeMouseOffset(pScene, world);
 
-		Vector3 axis;
-		Vector3 normal;
-		switch (m_Axis)
+		switch (m_Type)
 		{
-		case DebugGizmosNode::TA_AxisX: axis = world.Right(); normal = world.Up(); break;
-		case DebugGizmosNode::TA_AxisY: axis = world.Up(); normal = world.Backward(); break;
-		case DebugGizmosNode::TA_AxisZ: axis = world.Backward(); normal = world.Right(); break;
-		default: return S_OK;
+		case DebugGizmosNode::TT_None:
+			break;
+		case DebugGizmosNode::TT_Translation:
+		{
+			pPickedNode->VSetTransform(world * Matrix::CreateTranslation(newOffset - m_LastOffset));
+			break;
 		}
-
-		Ray ray = CreateRay(pScene, world, false);
-
-		if (m_Type == TT_Translation || m_Type == TT_Scale)
+		case DebugGizmosNode::TT_Rotation:
 		{
-			Plane plane(world.Translation(), normal);
-
-			newOffset = (ray.position + ray.direction * axis * IntersectRayPlane(plane, ray));
-
-			if (m_Type == TT_Translation)
+			Vector3 axis;
+			switch (m_Axis)
 			{
-				pPickedNode->VSetTransform(world * Matrix::CreateTranslation(newOffset - m_LastOffset));
+			case DebugGizmosNode::TA_AxisX: axis = world.Right(); break;
+			case DebugGizmosNode::TA_AxisY: axis = world.Up(); break;
+			case DebugGizmosNode::TA_AxisZ: axis = world.Forward(); break;
+			default:
+				break;
 			}
-			else
-			{
-				Vector3 offset = (newOffset - m_LastOffset);
 
-				Matrix newWorld = world + Matrix::CreateScale(m_LastScale * offset);
-				if (newWorld._11 > 0.01f && newWorld._22 > 0.01f && newWorld._33 > 0.01f)
-				{
-					newWorld._44 = world._44;
-					pPickedNode->VSetTransform(newWorld);
-				}
-			}
-		}
-		else if (m_Type == TT_Rotation)
-		{
-			Plane plane(world.Translation(), axis);
+			if (axis == Vector3::Zero) break;
 
-			newOffset = (ray.position + ray.direction * IntersectRayPlane(plane, ray));
-
-			Matrix object = world;
 			Vector3 scale;
 			Quaternion rotation;
 			Vector3 translation;
-			object.Decompose(scale, rotation, translation);
+			world.Decompose(scale, rotation, translation);
 
-			Quaternion newRot = Quaternion::CreateFromAxisAngle(axis, ComputeAngleOnPlane(m_LastOffset - translation, newOffset - translation, plane));
+			Quaternion newRot = Quaternion::CreateFromAxisAngle(axis, ComputeAngleOnPlane(newOffset, translation));
 			newRot.Normalize();
 			pPickedNode->VSetTransform(
 				Matrix::Transform(Matrix::Identity, rotation * newRot) * Matrix::CreateScale(scale) * Matrix::CreateTranslation(translation));
-		}
 
+			break;
+		}
+		case DebugGizmosNode::TT_Scale:
+		{
+			Vector3 offset = (newOffset - m_LastOffset) * 8.33f / Vector3::Distance(pScene->GetCamera()->GetPosition(), world.Translation());
+
+			Matrix newWorld = world + Matrix::CreateScale(m_LastScale * offset);
+			if (newWorld._11 > 0.01f && newWorld._22 > 0.01f && newWorld._33 > 0.01f)
+			{
+				newWorld._44 = world._44;
+				pPickedNode->VSetTransform(newWorld);
+			}
+			break;
+		}
+		default:
+			break;
+		}
 		m_LastOffset = newOffset;
 	}
 
@@ -777,18 +760,82 @@ float DebugGizmosNode::IntersectRayPlane(const Plane& plane, const Ray& ray)
 	return distance;
 }
 
-float DebugGizmosNode::ComputeAngleOnPlane(const Vector3& oldVector, const Vector3& newVector, const Plane& plane)
+DirectX::SimpleMath::Vector3 DebugGizmosNode::ComputeMouseOffset(Scene* pScene, const Matrix& world)
 {
-	Vector3 dir1 = oldVector;
+	const Matrix& projectMat = pScene->GetCamera()->GetProjectMatrix();
+	float viewX = (2.0f * m_MousePos.x / g_pApp->GetGameConfig().m_ScreenWidth - 1.0f) / projectMat.m[0][0];
+	float viewY = (1.0f - 2.0f * m_MousePos.y / g_pApp->GetGameConfig().m_ScreenHeight) / projectMat.m[1][1];
+
+	Matrix toWorld = pScene->GetCamera()->GetViewMatrix().Invert();
+	Vector3 rayPos = toWorld.Translation();
+	Vector3 rayDir = Vector3::TransformNormal(Vector3(viewX, viewY, -1.0f), toWorld);
+	rayDir.Normalize();
+
+	Vector3 axis;
+	Vector3 normal;
+	switch (m_Axis)
+	{
+	case DebugGizmosNode::TA_AxisX: axis = world.Right(); normal = world.Up(); break;
+	case DebugGizmosNode::TA_AxisY: axis = world.Up(); normal = world.Forward(); break;
+	case DebugGizmosNode::TA_AxisZ: axis = world.Forward(); normal = world.Right(); break;
+	default:
+		return rayPos;
+	}
+
+	switch (m_Axis)
+	{
+	case DebugGizmosNode::TA_AxisX: normal = world.Right(); break;
+	case DebugGizmosNode::TA_AxisY: normal = world.Up(); break;
+	case DebugGizmosNode::TA_AxisZ: normal = world.Forward(); break;
+	default:
+		return rayPos;
+	}
+
+	Plane plane(world.Translation(), normal);
+	Ray ray(rayPos, rayDir);
+
+	switch (m_Type)
+	{
+	case DebugGizmosNode::TT_None:
+		break;
+	case DebugGizmosNode::TT_Translation:
+	case DebugGizmosNode::TT_Scale:
+		return (rayPos + rayDir * axis * IntersectRayPlane(plane, ray));
+	case DebugGizmosNode::TT_Rotation:
+		return (rayPos + rayDir * IntersectRayPlane(plane, ray));
+	default:
+		break;
+	}
+
+	return rayPos;
+}
+
+// DirectX::SimpleMath::Vector3 DebugGizmosNode::ComputeMouseOffset(Scene* pScene, const Plane& plane, const Ray& ray)
+// {
+// 	switch (m_Type)
+// 	{
+// 	case DebugGizmosNode::TT_None:
+// 		break;
+// 	case DebugGizmosNode::TT_Translation:
+// 	case DebugGizmosNode::TT_Scale:
+// 		return (rayPos + rayDir * axis * IntersectRayPlane(plane, ray));
+// 	case DebugGizmosNode::TT_Rotation:
+// 		return (rayPos + rayDir * IntersectRayPlane(plane, ray));
+// 	default:
+// 		break;
+// 	}
+// 
+// 	return rayPos;
+// }
+
+float DebugGizmosNode::ComputeAngleOnPlane(const Vector3& newOffset, const Vector3& translation)
+{
+	Vector3 dir1 = m_LastOffset - translation;
 	dir1.Normalize();
 
-	Vector3 dir2 = newVector;
+	Vector3 dir2 = newOffset - translation;
 	dir2.Normalize();
 
 	float angle = acosf(boost::algorithm::clamp(dir1.Dot(dir2), -1.0f, 1.0f));
-	if (dir1.Cross(dir2).Dot(plane.Normal()) < 0.0f)
-	{
-		angle = -angle;
-	}
 	return angle;
 }

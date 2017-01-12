@@ -49,7 +49,9 @@ private:
 	bool IsAxisPicked(const Ray& ray);
 	bool IsTorusPicked(const Ray& ray);
 	float IntersectRayPlane(const Plane& plane, const Ray& ray);
-	float ComputeAngleOnPlane(const Vector3& oldVector, const Vector3& newVector, const Plane& plane);
+	Vector3 ComputeMouseOffset(Scene* pScene, const Matrix& world);
+// 	Vector3 ComputeMouseOffset(Scene* pScene, const Plane& plane, const Ray& ray);
+	float ComputeAngleOnPlane(const Vector3& newOffset, const Vector3& translation);
 
 	Effect* m_pEffect;
 	Pass* m_pCurrentPass;

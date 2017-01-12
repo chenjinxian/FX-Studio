@@ -87,8 +87,6 @@ HRESULT DebugGizmosNode::VOnUpdate(Scene* pScene, const GameTime& gameTime)
 	if (pPickedNode != nullptr && m_IsLButtonClick)
 	{
 		const Matrix& world = pPickedNode->VGet()->GetWorldMatrix();
-// 		Plane plane()
-// 		CreateRay(pScene, world, false);
 		m_LastOffset = ComputeMouseOffset(pScene, world);
 
 		switch (m_Type)
@@ -693,25 +691,16 @@ void DebugGizmosNode::CreateGeometryBuffers()
 	SetBoundingSphere(m_TorusVertices);
 }
 
-Ray DebugGizmosNode::CreateRay(Scene* pScene, const Matrix& world, bool inLocal)
+Ray DebugGizmosNode::CreateRay(Scene* pScene, const Matrix& world)
 {
 	const Matrix& projectMat = pScene->GetCamera()->GetProjectMatrix();
 	float viewX = (2.0f * m_MousePos.x / g_pApp->GetGameConfig().m_ScreenWidth - 1.0f) / projectMat.m[0][0];
 	float viewY = (1.0f - 2.0f * m_MousePos.y / g_pApp->GetGameConfig().m_ScreenHeight) / projectMat.m[1][1];
 
-	Matrix toSpace;
-	if (inLocal)
-	{
-		toSpace = (world * pScene->GetCamera()->GetViewMatrix()).Invert();
-	}
-	else
-	{
-		toSpace = (pScene->GetCamera()->GetViewMatrix()).Invert();
-	}
-
-	Vector3 rayPos = toSpace.Translation();
+	Matrix toLocal = (world * pScene->GetCamera()->GetViewMatrix()).Invert();
+	Vector3 rayPos = toLocal.Translation();
 	//use right-hand coordinates, z should be -1
-	Vector3 rayDir = Vector3::TransformNormal(Vector3(viewX, viewY, -1.0f), toSpace);
+	Vector3 rayDir = Vector3::TransformNormal(Vector3(viewX, viewY, -1.0f), toLocal);
 	rayDir.Normalize();
 
 	Ray ray(rayPos, rayDir);
@@ -782,15 +771,6 @@ DirectX::SimpleMath::Vector3 DebugGizmosNode::ComputeMouseOffset(Scene* pScene, 
 		return rayPos;
 	}
 
-	switch (m_Axis)
-	{
-	case DebugGizmosNode::TA_AxisX: normal = world.Right(); break;
-	case DebugGizmosNode::TA_AxisY: normal = world.Up(); break;
-	case DebugGizmosNode::TA_AxisZ: normal = world.Forward(); break;
-	default:
-		return rayPos;
-	}
-
 	Plane plane(world.Translation(), normal);
 	Ray ray(rayPos, rayDir);
 
@@ -809,24 +789,6 @@ DirectX::SimpleMath::Vector3 DebugGizmosNode::ComputeMouseOffset(Scene* pScene, 
 
 	return rayPos;
 }
-
-// DirectX::SimpleMath::Vector3 DebugGizmosNode::ComputeMouseOffset(Scene* pScene, const Plane& plane, const Ray& ray)
-// {
-// 	switch (m_Type)
-// 	{
-// 	case DebugGizmosNode::TT_None:
-// 		break;
-// 	case DebugGizmosNode::TT_Translation:
-// 	case DebugGizmosNode::TT_Scale:
-// 		return (rayPos + rayDir * axis * IntersectRayPlane(plane, ray));
-// 	case DebugGizmosNode::TT_Rotation:
-// 		return (rayPos + rayDir * IntersectRayPlane(plane, ray));
-// 	default:
-// 		break;
-// 	}
-// 
-// 	return rayPos;
-// }
 
 float DebugGizmosNode::ComputeAngleOnPlane(const Vector3& newOffset, const Vector3& translation)
 {

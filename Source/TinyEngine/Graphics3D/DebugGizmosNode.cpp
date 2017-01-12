@@ -78,93 +78,24 @@ HRESULT DebugGizmosNode::VOnDeleteSceneNode(Scene *pScene)
 
 HRESULT DebugGizmosNode::VOnUpdate(Scene* pScene, const GameTime& gameTime)
 {
-	shared_ptr<ISceneNode> pPickedNode = pScene->FindActor(pScene->GetPickedActor());
-	if (pPickedNode != nullptr && m_IsLButtonClick)
+	switch (m_Type)
 	{
-		const Matrix& world = pPickedNode->VGet()->GetWorldMatrix();
-
-		Vector3 axis;
-		Vector3 normal;
-		switch (m_Axis)
-		{
-		case DebugGizmosNode::TA_AxisX: axis = world.Right(); normal = world.Up(); break;
-		case DebugGizmosNode::TA_AxisY: axis = world.Up(); normal = world.Backward(); break;
-		case DebugGizmosNode::TA_AxisZ: axis = world.Backward(); normal = world.Right(); break;
-		default: return S_OK;
-		}
-
-		Matrix cameraWorld = pScene->GetCamera()->VGet()->GetWorldMatrix();
-		Ray ray = CreateRay(pScene, world, false);
-		Plane plane(world.Translation(), cameraWorld.Forward());
-
-		m_LastOffset = (ray.position + ray.direction * IntersectRayPlane(plane, ray));
-		m_LastTranslation = world.Translation();
-		m_LastScale = Vector3(world._11, world._22, world._33);
-	}
-
-	if (pPickedNode != nullptr && m_IsLButtonDown)
-	{
-		const Matrix& world = pPickedNode->VGet()->GetWorldMatrix();
-		Vector3 newOffset;
-
-		Vector3 axis;
-		Vector3 normal;
-		switch (m_Axis)
-		{
-		case DebugGizmosNode::TA_AxisX: axis = world.Right(); normal = world.Up(); break;
-		case DebugGizmosNode::TA_AxisY: axis = world.Up(); normal = world.Backward(); break;
-		case DebugGizmosNode::TA_AxisZ: axis = world.Backward(); normal = world.Right(); break;
-		default: return S_OK;
-		}
-
-		Matrix cameraWorld = pScene->GetCamera()->VGet()->GetWorldMatrix();
-		Ray ray = CreateRay(pScene, world, false);
-		Plane plane(world.Translation(), cameraWorld.Forward());
-
-		if (m_Type == TT_Translation || m_Type == TT_Scale)
-		{
-			newOffset = (ray.position + ray.direction * IntersectRayPlane(plane, ray));
-			Vector3 offset = axis * Vector3::Distance((newOffset - m_LastOffset) * axis, Vector3::Zero);
-			if ((m_LastOffset - ray.position).Cross(newOffset - ray.position).Dot(Vector3::Backward) < 0.0f)
-			{
-				offset = -offset;
-			}
-
-			if (m_Type == TT_Translation)
-			{
-				pPickedNode->VSetTransform(world * Matrix::CreateTranslation(offset));
-			}
-			else
-			{
-				Matrix newWorld = world + Matrix::CreateScale(m_LastScale * offset);
-				if (newWorld._11 > 0.01f && newWorld._22 > 0.01f && newWorld._33 > 0.01f)
-				{
-					newWorld._44 = world._44;
-					pPickedNode->VSetTransform(newWorld);
-				}
-			}
-		}
-		else if (m_Type == TT_Rotation)
-		{
-			newOffset = (ray.position + ray.direction * IntersectRayPlane(plane, ray));
-
-			Matrix object = world;
-			Vector3 scale;
-			Quaternion rotation;
-			Vector3 translation;
-			object.Decompose(scale, rotation, translation);
-
-			Quaternion newRot = Quaternion::CreateFromAxisAngle(axis, ComputeAngleOnPlane(m_LastOffset - translation, newOffset - translation, axis));
-			newRot.Normalize();
-			pPickedNode->VSetTransform(
-				Matrix::Transform(Matrix::Identity, rotation * newRot) * Matrix::CreateScale(scale) * Matrix::CreateTranslation(translation));
-		}
-
-		m_LastOffset = newOffset;
+	case DebugGizmosNode::TT_None:
+		break;
+	case DebugGizmosNode::TT_Translation:
+		TranslatePicked(pScene);
+		break;
+	case DebugGizmosNode::TT_Rotation:
+		RotatePicked(pScene);
+		break;
+	case DebugGizmosNode::TT_Scale:
+// 		ScalePicked(pScene);
+		break;
+	default:
+		break;
 	}
 
 	m_IsLButtonClick = false;
-
 	return S_OK;
 }
 
@@ -778,4 +709,175 @@ float DebugGizmosNode::ComputeAngleOnPlane(const Vector3& oldVector, const Vecto
 		angle = -angle;
 	}
 	return angle;
+}
+
+void DebugGizmosNode::TranslatePicked(Scene* pScene)
+{
+	shared_ptr<ISceneNode> pPickedNode = pScene->FindActor(pScene->GetPickedActor());
+	if (pPickedNode != nullptr && m_IsLButtonClick)
+	{
+		const Matrix& world = pPickedNode->VGet()->GetWorldMatrix();
+
+		Vector3 axis;
+		switch (m_Axis)
+		{
+		case DebugGizmosNode::TA_AxisX: axis = world.Right(); break;
+		case DebugGizmosNode::TA_AxisY: axis = world.Up(); break;
+		case DebugGizmosNode::TA_AxisZ: axis = world.Forward(); break;
+		default: return;
+		}
+
+		Ray ray = CreateRay(pScene, world, false);
+		Vector3 nodePos = world.Translation();
+		Vector3 normal = ray.direction.Cross(axis).Cross(ray.direction);
+
+		float numer = (ray.position - nodePos).Dot(normal);
+		float denom = axis.Dot(normal);
+		float distance = 0.0f;
+		if (fabsf(denom) > FLT_EPSILON)
+			distance = numer / denom;
+
+		m_LastOffset = nodePos + axis * distance;
+		m_LastTranslation = world.Translation();
+	}
+
+	if (pPickedNode != nullptr && m_IsLButtonDown)
+	{
+		const Matrix& world = pPickedNode->VGet()->GetWorldMatrix();
+
+		Vector3 axis;
+		switch (m_Axis)
+		{
+		case DebugGizmosNode::TA_AxisX: axis = world.Right(); break;
+		case DebugGizmosNode::TA_AxisY: axis = world.Up(); break;
+		case DebugGizmosNode::TA_AxisZ: axis = world.Forward(); break;
+		default: return;
+		}
+
+		Ray ray = CreateRay(pScene, world, false);
+		Vector3 nodePos = world.Translation();
+		Vector3 normal = ray.direction.Cross(axis).Cross(ray.direction);
+
+		float numer = (ray.position - nodePos).Dot(normal);
+		float denom = axis.Dot(normal);
+		float distance = 0.0f;
+		if (fabsf(denom) > FLT_EPSILON)
+			distance = numer / denom;
+
+		Vector3 newOffset = nodePos + axis * distance;
+		pPickedNode->VSetTransform(world * Matrix::CreateTranslation(newOffset - m_LastOffset));
+		m_LastOffset = newOffset;
+	}
+}
+
+void DebugGizmosNode::ScalePicked(Scene* pScene)
+{
+	shared_ptr<ISceneNode> pPickedNode = pScene->FindActor(pScene->GetPickedActor());
+	if (pPickedNode != nullptr && m_IsLButtonClick)
+	{
+		const Matrix& world = pPickedNode->VGet()->GetWorldMatrix();
+
+		Vector3 axis;
+		switch (m_Axis)
+		{
+		case DebugGizmosNode::TA_AxisX: axis = world.Right(); break;
+		case DebugGizmosNode::TA_AxisY: axis = world.Up(); break;
+		case DebugGizmosNode::TA_AxisZ: axis = world.Backward(); break;
+		default: return;
+		}
+
+		Ray ray = CreateRay(pScene, world, false);
+		Vector3 nodePos = world.Translation();
+		Vector3 normal = ray.direction.Cross(axis).Cross(ray.direction);
+
+		float numer = (ray.position - nodePos).Dot(normal);
+		float denom = axis.Dot(normal);
+		float distance = 0.0f;
+		if (fabsf(denom) > FLT_EPSILON)
+			distance = numer / denom;
+
+		m_LastOffset = nodePos + axis * distance;
+		m_LastScale = Vector3(world._11, world._22, world._33);
+	}
+
+	if (pPickedNode != nullptr && m_IsLButtonDown)
+	{
+		const Matrix& world = pPickedNode->VGet()->GetWorldMatrix();
+
+		Vector3 axis;
+		switch (m_Axis)
+		{
+		case DebugGizmosNode::TA_AxisX: axis = world.Right(); break;
+		case DebugGizmosNode::TA_AxisY: axis = world.Up(); break;
+		case DebugGizmosNode::TA_AxisZ: axis = world.Backward(); break;
+		default: return;
+		}
+
+		Matrix cameraWorld = pScene->GetCamera()->VGet()->GetWorldMatrix();
+		Ray ray = CreateRay(pScene, world, false);
+		Plane plane(world.Translation(), axis);
+		Vector3 newOffset = ray.position + ray.direction * IntersectRayPlane(plane, ray);
+
+		Vector3 offset = axis * Vector3::Distance((newOffset - m_LastOffset) * axis, Vector3::Zero);
+		if ((m_LastOffset - ray.position).Cross(newOffset - ray.position).Dot(Vector3::Backward) < 0.0f)
+		{
+			offset = -offset;
+		}
+
+		Matrix newWorld = world + Matrix::CreateScale(m_LastScale * offset);
+		if (newWorld._11 > 0.01f && newWorld._22 > 0.01f && newWorld._33 > 0.01f)
+		{
+			newWorld._44 = world._44;
+			pPickedNode->VSetTransform(newWorld);
+		}
+
+		m_LastOffset = newOffset;
+	}
+}
+
+void DebugGizmosNode::RotatePicked(Scene* pScene)
+{
+	shared_ptr<ISceneNode> pPickedNode = pScene->FindActor(pScene->GetPickedActor());
+	if (pPickedNode != nullptr && m_IsLButtonClick)
+	{
+		const Matrix& world = pPickedNode->VGet()->GetWorldMatrix();
+		Matrix cameraWorld = pScene->GetCamera()->VGet()->GetWorldMatrix();
+		Ray ray = CreateRay(pScene, world, false);
+		Plane plane(world.Translation(), cameraWorld.Forward());
+
+		m_LastOffset = ray.position + ray.direction * IntersectRayPlane(plane, ray);
+	}
+
+	if (pPickedNode != nullptr && m_IsLButtonDown)
+	{
+		const Matrix& world = pPickedNode->VGet()->GetWorldMatrix();
+
+		Vector3 axis;
+		switch (m_Axis)
+		{
+		case DebugGizmosNode::TA_AxisX: axis = world.Right(); break;
+		case DebugGizmosNode::TA_AxisY: axis = world.Up(); break;
+		case DebugGizmosNode::TA_AxisZ: axis = world.Backward(); break;
+		default: return;
+		}
+
+		Matrix cameraWorld = pScene->GetCamera()->VGet()->GetWorldMatrix();
+		Ray ray = CreateRay(pScene, world, false);
+		Plane plane(world.Translation(), cameraWorld.Forward());
+		Vector3 newOffset = ray.position + ray.direction * IntersectRayPlane(plane, ray);
+
+		Matrix object = world;
+		Vector3 scale;
+		Quaternion rotation;
+		Vector3 translation;
+		object.Decompose(scale, rotation, translation);
+
+		Quaternion newRot = Quaternion::CreateFromAxisAngle(
+			axis, ComputeAngleOnPlane(m_LastOffset - translation, newOffset - translation, axis));
+		newRot.Normalize();
+		pPickedNode->VSetTransform(
+			Matrix::Transform(Matrix::Identity, rotation * newRot) * Matrix::CreateScale(scale) * Matrix::CreateTranslation(translation));
+
+		m_LastOffset = newOffset;
+	}
 }

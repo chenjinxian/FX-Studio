@@ -50,6 +50,9 @@ private:
 	bool IsTorusPicked(const Ray& ray);
 	float IntersectRayPlane(const Plane& plane, const Ray& ray);
 	float ComputeAngleOnPlane(const Vector3& oldVector, const Vector3& newVector, const Vector3& normal);
+	void TranslatePicked(Scene* pScene);
+	void ScalePicked(Scene* pScene);
+	void RotatePicked(Scene* pScene);
 
 	Effect* m_pEffect;
 	Pass* m_pCurrentPass;

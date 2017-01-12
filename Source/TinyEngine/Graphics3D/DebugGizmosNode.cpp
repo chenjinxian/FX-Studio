@@ -78,11 +78,6 @@ HRESULT DebugGizmosNode::VOnDeleteSceneNode(Scene *pScene)
 
 HRESULT DebugGizmosNode::VOnUpdate(Scene* pScene, const GameTime& gameTime)
 {
-	if (m_Axis == TA_None)
-	{
-		return S_OK;
-	}
-
 	shared_ptr<ISceneNode> pPickedNode = pScene->FindActor(pScene->GetPickedActor());
 	if (pPickedNode != nullptr && m_IsLButtonClick)
 	{
@@ -98,22 +93,13 @@ HRESULT DebugGizmosNode::VOnUpdate(Scene* pScene, const GameTime& gameTime)
 		default: return S_OK;
 		}
 
+		Matrix cameraWorld = pScene->GetCamera()->VGet()->GetWorldMatrix();
 		Ray ray = CreateRay(pScene, world, false);
+		Plane plane(world.Translation(), cameraWorld.Forward());
 
-		if (m_Type == TT_Translation || m_Type == TT_Scale)
-		{
-			Plane plane(world.Translation(), normal);
-
-			m_LastOffset = (ray.position + ray.direction * axis * IntersectRayPlane(plane, ray));
-			m_LastTranslation = world.Translation();
-			m_LastScale = Vector3(world._11, world._22, world._33);
-		}
-		else if (m_Type == TT_Rotation)
-		{
-			Plane plane(world.Translation(), axis);
-
-			m_LastOffset = (ray.position + ray.direction * IntersectRayPlane(plane, ray));
-		}
+		m_LastOffset = (ray.position + ray.direction * IntersectRayPlane(plane, ray));
+		m_LastTranslation = world.Translation();
+		m_LastScale = Vector3(world._11, world._22, world._33);
 	}
 
 	if (pPickedNode != nullptr && m_IsLButtonDown)
@@ -131,22 +117,25 @@ HRESULT DebugGizmosNode::VOnUpdate(Scene* pScene, const GameTime& gameTime)
 		default: return S_OK;
 		}
 
+		Matrix cameraWorld = pScene->GetCamera()->VGet()->GetWorldMatrix();
 		Ray ray = CreateRay(pScene, world, false);
+		Plane plane(world.Translation(), cameraWorld.Forward());
 
 		if (m_Type == TT_Translation || m_Type == TT_Scale)
 		{
-			Plane plane(world.Translation(), normal);
-
-			newOffset = (ray.position + ray.direction * axis * IntersectRayPlane(plane, ray));
+			newOffset = (ray.position + ray.direction * IntersectRayPlane(plane, ray));
+			Vector3 offset = axis * Vector3::Distance((newOffset - m_LastOffset) * axis, Vector3::Zero);
+			if ((m_LastOffset - ray.position).Cross(newOffset - ray.position).Dot(Vector3::Backward) < 0.0f)
+			{
+				offset = -offset;
+			}
 
 			if (m_Type == TT_Translation)
 			{
-				pPickedNode->VSetTransform(world * Matrix::CreateTranslation(newOffset - m_LastOffset));
+				pPickedNode->VSetTransform(world * Matrix::CreateTranslation(offset));
 			}
 			else
 			{
-				Vector3 offset = (newOffset - m_LastOffset);
-
 				Matrix newWorld = world + Matrix::CreateScale(m_LastScale * offset);
 				if (newWorld._11 > 0.01f && newWorld._22 > 0.01f && newWorld._33 > 0.01f)
 				{
@@ -157,8 +146,6 @@ HRESULT DebugGizmosNode::VOnUpdate(Scene* pScene, const GameTime& gameTime)
 		}
 		else if (m_Type == TT_Rotation)
 		{
-			Plane plane(world.Translation(), axis);
-
 			newOffset = (ray.position + ray.direction * IntersectRayPlane(plane, ray));
 
 			Matrix object = world;
@@ -167,7 +154,7 @@ HRESULT DebugGizmosNode::VOnUpdate(Scene* pScene, const GameTime& gameTime)
 			Vector3 translation;
 			object.Decompose(scale, rotation, translation);
 
-			Quaternion newRot = Quaternion::CreateFromAxisAngle(axis, ComputeAngleOnPlane(m_LastOffset - translation, newOffset - translation, plane));
+			Quaternion newRot = Quaternion::CreateFromAxisAngle(axis, ComputeAngleOnPlane(m_LastOffset - translation, newOffset - translation, axis));
 			newRot.Normalize();
 			pPickedNode->VSetTransform(
 				Matrix::Transform(Matrix::Identity, rotation * newRot) * Matrix::CreateScale(scale) * Matrix::CreateTranslation(translation));
@@ -777,7 +764,7 @@ float DebugGizmosNode::IntersectRayPlane(const Plane& plane, const Ray& ray)
 	return distance;
 }
 
-float DebugGizmosNode::ComputeAngleOnPlane(const Vector3& oldVector, const Vector3& newVector, const Plane& plane)
+float DebugGizmosNode::ComputeAngleOnPlane(const Vector3& oldVector, const Vector3& newVector, const Vector3& normal)
 {
 	Vector3 dir1 = oldVector;
 	dir1.Normalize();
@@ -786,7 +773,7 @@ float DebugGizmosNode::ComputeAngleOnPlane(const Vector3& oldVector, const Vecto
 	dir2.Normalize();
 
 	float angle = acosf(boost::algorithm::clamp(dir1.Dot(dir2), -1.0f, 1.0f));
-	if (dir1.Cross(dir2).Dot(plane.Normal()) < 0.0f)
+	if (dir1.Cross(dir2).Dot(normal) < 0.0f)
 	{
 		angle = -angle;
 	}

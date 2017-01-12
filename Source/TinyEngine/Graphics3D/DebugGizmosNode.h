@@ -49,7 +49,7 @@ private:
 	bool IsAxisPicked(const Ray& ray);
 	bool IsTorusPicked(const Ray& ray);
 	float IntersectRayPlane(const Plane& plane, const Ray& ray);
-	float ComputeAngleOnPlane(const Vector3& oldVector, const Vector3& newVector, const Plane& plane);
+	float ComputeAngleOnPlane(const Vector3& oldVector, const Vector3& newVector, const Vector3& normal);
 
 	Effect* m_pEffect;
 	Pass* m_pCurrentPass;

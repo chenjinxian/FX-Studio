@@ -87,30 +87,22 @@ HRESULT DebugGizmosNode::VOnUpdate(Scene* pScene, const GameTime& gameTime)
 	if (pPickedNode != nullptr && m_IsLButtonClick)
 	{
 		const Matrix& world = pPickedNode->VGet()->GetWorldMatrix();
+		m_LastOffset = ComputeMouseOffset(pScene, world);
 
 		switch (m_Type)
 		{
-		case DebugGizmosNode::TT_None:
-			break;
-		case DebugGizmosNode::TT_Translation:
-			m_LastOffset = IntersectRayPlane(pScene, world);
-			m_LastTranslation = world.Translation();
-			break;
-		case DebugGizmosNode::TT_Rotation:
-			m_LastMousePos = m_MousePos;
-			break;
-		case DebugGizmosNode::TT_Scale:
-			m_LastOffset = IntersectRayPlane(pScene, world);
-			m_LastScale = Vector3(world._11, world._22, world._33);
-			break;
-		default:
-			break;
+		case DebugGizmosNode::TT_None: break;
+		case DebugGizmosNode::TT_Translation: m_LastTranslation = world.Translation(); break;
+		case DebugGizmosNode::TT_Rotation: break;
+		case DebugGizmosNode::TT_Scale: m_LastScale = Vector3(world._11, world._22, world._33); break;
+		default: break;
 		}
 	}
 
 	if (pPickedNode != nullptr && m_IsLButtonDown)
 	{
 		Matrix world = pPickedNode->VGet()->GetWorldMatrix();
+		Vector3 newOffset = ComputeMouseOffset(pScene, world);
 
 		switch (m_Type)
 		{
@@ -118,9 +110,7 @@ HRESULT DebugGizmosNode::VOnUpdate(Scene* pScene, const GameTime& gameTime)
 			break;
 		case DebugGizmosNode::TT_Translation:
 		{
-			Vector3 newOffset = IntersectRayPlane(pScene, world);
 			pPickedNode->VSetTransform(world * Matrix::CreateTranslation(newOffset - m_LastOffset));
-			m_LastOffset = newOffset;
 			break;
 		}
 		case DebugGizmosNode::TT_Rotation:
@@ -142,29 +132,7 @@ HRESULT DebugGizmosNode::VOnUpdate(Scene* pScene, const GameTime& gameTime)
 			Vector3 translation;
 			world.Decompose(scale, rotation, translation);
 
-			const Matrix& projectMat = pScene->GetCamera()->GetProjectMatrix();
-			Matrix toWorld = pScene->GetCamera()->GetViewMatrix().Invert();
-
-			float viewX = (2.0f * m_LastMousePos.x / g_pApp->GetGameConfig().m_ScreenWidth - 1.0f) / projectMat.m[0][0];
-			float viewY = (1.0f - 2.0f * m_LastMousePos.y / g_pApp->GetGameConfig().m_ScreenHeight) / projectMat.m[1][1];
-			Vector3 endPos = Vector3::TransformNormal(Vector3(viewX, viewY, -1.0f), toWorld);
-			Vector3 dir1 = endPos - translation;
-			dir1.Normalize();
-
-			viewX = (2.0f * m_MousePos.x / g_pApp->GetGameConfig().m_ScreenWidth - 1.0f) / projectMat.m[0][0];
-			viewY = (1.0f - 2.0f * m_MousePos.y / g_pApp->GetGameConfig().m_ScreenHeight) / projectMat.m[1][1];
-			endPos = Vector3::TransformNormal(Vector3(viewX, viewY, -1.0f), toWorld);
-			Vector3 dir2 = endPos - translation;
-			dir2.Normalize();
-
-			float angle = acosf(boost::algorithm::clamp(dir1.Dot(dir2), -1.0f, 1.0f));
-			if (dir1.Cross(dir2).Dot(axis) < 0.0f)
-				angle = -angle;
-// 			DEBUG_INFO("dir1: " + std::to_string(dir1.x) + " " + std::to_string(dir1.y) + " " + std::to_string(dir1.z) + " ");
-// 			DEBUG_INFO("dir2: " + std::to_string(dir2.x) + " " + std::to_string(dir2.y) + " " + std::to_string(dir2.z) + " ");
-// 			DEBUG_INFO("angle between dir: " + std::to_string(angle));
-
-			Quaternion newRot = Quaternion::CreateFromAxisAngle(axis, angle);
+			Quaternion newRot = Quaternion::CreateFromAxisAngle(axis, ComputeAngleOnPlane(newOffset, translation));
 			newRot.Normalize();
 			pPickedNode->VSetTransform(
 				Matrix::Transform(Matrix::Identity, rotation * newRot) * Matrix::CreateScale(scale) * Matrix::CreateTranslation(translation));
@@ -173,7 +141,6 @@ HRESULT DebugGizmosNode::VOnUpdate(Scene* pScene, const GameTime& gameTime)
 		}
 		case DebugGizmosNode::TT_Scale:
 		{
-			Vector3 newOffset = IntersectRayPlane(pScene, world);
 			Vector3 offset = (newOffset - m_LastOffset) * 8.33f / Vector3::Distance(pScene->GetCamera()->GetPosition(), world.Translation());
 
 			Matrix newWorld = world + Matrix::CreateScale(m_LastScale * offset);
@@ -182,13 +149,12 @@ HRESULT DebugGizmosNode::VOnUpdate(Scene* pScene, const GameTime& gameTime)
 				newWorld._44 = world._44;
 				pPickedNode->VSetTransform(newWorld);
 			}
-
-			m_LastOffset = newOffset;
 			break;
 		}
 		default:
 			break;
 		}
+		m_LastOffset = newOffset;
 	}
 
 	m_IsLButtonClick = false;
@@ -769,7 +735,21 @@ bool DebugGizmosNode::IsTorusPicked(const Ray& ray)
 	return false;
 }
 
-DirectX::SimpleMath::Vector3 DebugGizmosNode::IntersectRayPlane(Scene* pScene, const Matrix& world)
+float DebugGizmosNode::IntersectRayPlane(const Plane& plane, const Ray& ray)
+{
+	float distance = 0.0f;
+	if (ray.Intersects(plane, distance))
+	{
+		if (distance <= 0.0f)
+		{
+			// ray direction vector and plan is coplanarity
+			distance = Vector3::Distance(ray.direction, ray.position);
+		}
+	}
+	return distance;
+}
+
+DirectX::SimpleMath::Vector3 DebugGizmosNode::ComputeMouseOffset(Scene* pScene, const Matrix& world)
 {
 	const Matrix& projectMat = pScene->GetCamera()->GetProjectMatrix();
 	float viewX = (2.0f * m_MousePos.x / g_pApp->GetGameConfig().m_ScreenWidth - 1.0f) / projectMat.m[0][0];
@@ -781,26 +761,43 @@ DirectX::SimpleMath::Vector3 DebugGizmosNode::IntersectRayPlane(Scene* pScene, c
 	rayDir.Normalize();
 
 	Vector3 axis;
+	Vector3 normal;
 	switch (m_Axis)
 	{
-	case DebugGizmosNode::TA_AxisX: axis = world.Right(); break;
-	case DebugGizmosNode::TA_AxisY: axis = world.Up(); break;
-	case DebugGizmosNode::TA_AxisZ: axis = world.Forward(); break;
+	case DebugGizmosNode::TA_AxisX: axis = world.Right(); normal = world.Up(); break;
+	case DebugGizmosNode::TA_AxisY: axis = world.Up(); normal = world.Forward(); break;
+	case DebugGizmosNode::TA_AxisZ: axis = world.Forward(); normal = world.Right(); break;
+	default:
+		return rayPos;
+	}
+
+	Plane plane(world.Translation(), normal);
+	Ray ray(rayPos, rayDir);
+
+	switch (m_Type)
+	{
+	case DebugGizmosNode::TT_None:
+		break;
+	case DebugGizmosNode::TT_Translation:
+	case DebugGizmosNode::TT_Scale:
+		return (rayPos + rayDir * axis * IntersectRayPlane(plane, ray));
+	case DebugGizmosNode::TT_Rotation:
+		return (rayPos + rayDir * IntersectRayPlane(plane, ray));
 	default:
 		break;
 	}
 
-	Vector3 nodePos = world.Translation();
-	Vector3 normal = rayDir.Cross(axis).Cross(rayDir);
+	return rayPos;
+}
 
-	float numer = (rayPos - nodePos).Dot(normal);
-	float denom = axis.Dot(normal);
-	float distance = 0.0f;
-	if (fabsf(denom) > FLT_EPSILON)
-	{
-		distance = numer / denom;
-	}
+float DebugGizmosNode::ComputeAngleOnPlane(const Vector3& newOffset, const Vector3& translation)
+{
+	Vector3 dir1 = m_LastOffset - translation;
+	dir1.Normalize();
 
-	Vector3 translate = nodePos + axis * distance;
-	return translate;
+	Vector3 dir2 = newOffset - translation;
+	dir2.Normalize();
+
+	float angle = acosf(boost::algorithm::clamp(dir1.Dot(dir2), -1.0f, 1.0f));
+	return angle;
 }

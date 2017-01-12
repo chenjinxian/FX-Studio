@@ -48,8 +48,9 @@ private:
 	Ray CreateRay(Scene* pScene, const Matrix& world);
 	bool IsAxisPicked(const Ray& ray);
 	bool IsTorusPicked(const Ray& ray);
-	Vector3 IntersectRayPlane(Scene* pScene, const Matrix& world);
-	Vector3 IntersectRaySphere(Scene* pScene, const Matrix& world);
+	float IntersectRayPlane(const Plane& plane, const Ray& ray);
+	Vector3 ComputeMouseOffset(Scene* pScene, const Matrix& world);
+	float ComputeAngleOnPlane(const Vector3& newOffset, const Vector3& translation);
 
 	Effect* m_pEffect;
 	Pass* m_pCurrentPass;
@@ -80,7 +81,6 @@ private:
 	TransformType m_Type;
 	TransformAxis m_Axis;
 	Vector2 m_MousePos;
-	Vector2 m_LastMousePos;
 	Vector3 m_LastOffset;
 	Vector3 m_LastTranslation;
 	Vector3 m_LastScale;

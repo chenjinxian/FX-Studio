@@ -89,7 +89,7 @@ HRESULT DebugGizmosNode::VOnUpdate(Scene* pScene, const GameTime& gameTime)
 		RotatePicked(pScene);
 		break;
 	case DebugGizmosNode::TT_Scale:
-// 		ScalePicked(pScene);
+		ScalePicked(pScene);
 		break;
 	default:
 		break;
@@ -419,7 +419,7 @@ HRESULT DebugGizmosNode::RenderScaleAxes(Scene* pScene, const BoundingBox& aaBox
 	Variable* ambientColor = m_pEffect->GetVariablesByName().at("AmbientColor");
 
 	Vector3 cameraPos = pScene->GetCamera()->GetPosition();
-	Matrix aixsWorld = Matrix::CreateScale(Vector3::Distance(cameraPos, world.Translation()) * 0.2f) * world;
+	Matrix aixsWorld = Matrix::CreateScale(Vector3::Distance(cameraPos, world.Translation()) * 0.2f);
 	aixsWorld = aixsWorld * Matrix::CreateTranslation(aaBox.Center);
 	const XMMATRIX& wvp = aixsWorld * pScene->GetCamera()->GetViewMatrix() * pScene->GetCamera()->GetProjectMatrix();
 
@@ -451,9 +451,9 @@ HRESULT DebugGizmosNode::RenderScaleAxes(Scene* pScene, const BoundingBox& aaBox
 		ambientColor->SetVector(Color(1.0f, 1.0f, 0.0f));
 		isPicked = true;
 
-		objectWvp->SetMatrix(Matrix::CreateRotationZ(XMConvertToRadians(-90)) * Matrix::CreateTranslation(Vector3(0.3f, 0.0f, 0.0f)) * wvp);
+		objectWvp->SetMatrix(Matrix::CreateRotationZ(XMConvertToRadians(-90)) * Matrix::CreateTranslation(Vector3(0.3f, 0.0f, 0.0f)) * world * wvp);
 		pScene->GetRenderder()->VDrawMesh(m_CylinderIndexCount, m_CylinderIndexOffset, m_CylinderVertexOffset, m_pCurrentPass->GetEffectPass());
-		objectWvp->SetMatrix(Matrix::CreateRotationZ(XMConvertToRadians(-90)) * Matrix::CreateTranslation(Vector3(0.6f, 0.0f, 0.0f)) * wvp);
+		objectWvp->SetMatrix(Matrix::CreateRotationZ(XMConvertToRadians(-90)) * Matrix::CreateTranslation(Vector3(0.6f, 0.0f, 0.0f)) * world * wvp);
 		pScene->GetRenderder()->VDrawMesh(m_CubeIndexCount, m_CubeIndexOffset, m_CubeVertexOffset, m_pCurrentPass->GetEffectPass());
 	}
 
@@ -484,9 +484,9 @@ HRESULT DebugGizmosNode::RenderScaleAxes(Scene* pScene, const BoundingBox& aaBox
 		ambientColor->SetVector(Color(1.0f, 1.0f, 0.0f));
 		isPicked = true;
 
-		objectWvp->SetMatrix(Matrix::CreateTranslation(Vector3(0.0f, 0.3f, 0.0f)) * wvp);
+		objectWvp->SetMatrix(Matrix::CreateTranslation(Vector3(0.0f, 0.3f, 0.0f)) * world * wvp);
 		pScene->GetRenderder()->VDrawMesh(m_CylinderIndexCount, m_CylinderIndexOffset, m_CylinderVertexOffset, m_pCurrentPass->GetEffectPass());
-		objectWvp->SetMatrix(Matrix::CreateTranslation(Vector3(0.0f, 0.6f, 0.0f)) * wvp);
+		objectWvp->SetMatrix(Matrix::CreateTranslation(Vector3(0.0f, 0.6f, 0.0f)) * world * wvp);
 		pScene->GetRenderder()->VDrawMesh(m_CubeIndexCount, m_CubeIndexOffset, m_CubeVertexOffset, m_pCurrentPass->GetEffectPass());
 	}
 
@@ -517,9 +517,9 @@ HRESULT DebugGizmosNode::RenderScaleAxes(Scene* pScene, const BoundingBox& aaBox
 		ambientColor->SetVector(Color(1.0f, 1.0f, 0.0f));
 		isPicked = true;
 
-		objectWvp->SetMatrix(Matrix::CreateRotationX(XMConvertToRadians(90)) * Matrix::CreateTranslation(Vector3(0.0f, 0.0f, 0.3f)) * wvp);
+		objectWvp->SetMatrix(Matrix::CreateRotationX(XMConvertToRadians(90)) * Matrix::CreateTranslation(Vector3(0.0f, 0.0f, 0.3f)) * world * wvp);
 		pScene->GetRenderder()->VDrawMesh(m_CylinderIndexCount, m_CylinderIndexOffset, m_CylinderVertexOffset, m_pCurrentPass->GetEffectPass());
-		objectWvp->SetMatrix(Matrix::CreateRotationX(XMConvertToRadians(90)) * Matrix::CreateTranslation(Vector3(0.0f, 0.0f, 0.6f)) * wvp);
+		objectWvp->SetMatrix(Matrix::CreateRotationX(XMConvertToRadians(90)) * Matrix::CreateTranslation(Vector3(0.0f, 0.0f, 0.6f)) * world * wvp);
 		pScene->GetRenderder()->VDrawMesh(m_CubeIndexCount, m_CubeIndexOffset, m_CubeVertexOffset, m_pCurrentPass->GetEffectPass());
 	}
 
@@ -782,7 +782,7 @@ void DebugGizmosNode::ScalePicked(Scene* pScene)
 		{
 		case DebugGizmosNode::TA_AxisX: axis = world.Right(); break;
 		case DebugGizmosNode::TA_AxisY: axis = world.Up(); break;
-		case DebugGizmosNode::TA_AxisZ: axis = world.Backward(); break;
+		case DebugGizmosNode::TA_AxisZ: axis = world.Forward(); break;
 		default: return;
 		}
 
@@ -805,30 +805,39 @@ void DebugGizmosNode::ScalePicked(Scene* pScene)
 		const Matrix& world = pPickedNode->VGet()->GetWorldMatrix();
 
 		Vector3 axis;
+		Vector3 local;
 		switch (m_Axis)
 		{
-		case DebugGizmosNode::TA_AxisX: axis = world.Right(); break;
-		case DebugGizmosNode::TA_AxisY: axis = world.Up(); break;
-		case DebugGizmosNode::TA_AxisZ: axis = world.Backward(); break;
+		case DebugGizmosNode::TA_AxisX: axis = world.Right(); local = Vector3::Right; break;
+		case DebugGizmosNode::TA_AxisY: axis = world.Up(); local = Vector3::Up; break;
+		case DebugGizmosNode::TA_AxisZ: axis = world.Forward(); local = Vector3::Forward; break;
 		default: return;
 		}
 
-		Matrix cameraWorld = pScene->GetCamera()->VGet()->GetWorldMatrix();
 		Ray ray = CreateRay(pScene, world, false);
-		Plane plane(world.Translation(), axis);
-		Vector3 newOffset = ray.position + ray.direction * IntersectRayPlane(plane, ray);
+		Vector3 nodePos = world.Translation();
+		Vector3 normal = ray.direction.Cross(axis).Cross(ray.direction);
 
-		Vector3 offset = axis * Vector3::Distance((newOffset - m_LastOffset) * axis, Vector3::Zero);
-		if ((m_LastOffset - ray.position).Cross(newOffset - ray.position).Dot(Vector3::Backward) < 0.0f)
-		{
-			offset = -offset;
-		}
+		float numer = (ray.position - nodePos).Dot(normal);
+		float denom = axis.Dot(normal);
+		float distance = 0.0f;
+		if (fabsf(denom) > FLT_EPSILON)
+			distance = numer / denom;
 
-		Matrix newWorld = world + Matrix::CreateScale(m_LastScale * offset);
-		if (newWorld._11 > 0.01f && newWorld._22 > 0.01f && newWorld._33 > 0.01f)
+		Matrix object = world;
+		Vector3 scale;
+		Quaternion rotation;
+		Vector3 translation;
+		object.Decompose(scale, rotation, translation);
+
+		Vector3 newOffset = nodePos + axis * distance;
+		Vector3 offset = (newOffset - m_LastOffset) * local * 8.33f / Vector3::Distance(pScene->GetCamera()->GetPosition(), world.Translation());
+
+		scale += m_LastScale * offset;
+		if (scale.x > 0.001f && scale.y > 0.001f && scale.z > 0.001f)
 		{
-			newWorld._44 = world._44;
-			pPickedNode->VSetTransform(newWorld);
+			pPickedNode->VSetTransform(
+				Matrix::CreateScale(scale) * Matrix::Transform(Matrix::Identity, rotation) * Matrix::CreateTranslation(translation));
 		}
 
 		m_LastOffset = newOffset;
@@ -876,7 +885,7 @@ void DebugGizmosNode::RotatePicked(Scene* pScene)
 			axis, ComputeAngleOnPlane(m_LastOffset - translation, newOffset - translation, axis));
 		newRot.Normalize();
 		pPickedNode->VSetTransform(
-			Matrix::Transform(Matrix::Identity, rotation * newRot) * Matrix::CreateScale(scale) * Matrix::CreateTranslation(translation));
+			Matrix::CreateScale(scale) * Matrix::Transform(Matrix::Identity, rotation * newRot) * Matrix::CreateTranslation(translation));
 
 		m_LastOffset = newOffset;
 	}

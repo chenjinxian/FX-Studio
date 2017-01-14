@@ -85,25 +85,28 @@ bool BaseGameLogic::VLoadGame(const std::string& projectFile)
 	{
 // 		std::string assetFile = Utility::GetDirectory(projectFile) + "\\" + pAsset->GetText();
 // 		LoadAssets(assetFile);
+	}
 
-		for (tinyxml2::XMLElement* pSceneNode = pAsset->NextSiblingElement(); pSceneNode != nullptr; pSceneNode = pSceneNode->NextSiblingElement())
+	tinyxml2::XMLElement* pEditorCamera = pRoot->FirstChildElement("EditorCamera");
+	if (pEditorCamera != nullptr)
+	{
+		for (auto& gameView : m_GameViews)
 		{
-			tinyxml2::XMLElement* pCamera = pSceneNode->FirstChildElement("Camera");
-			for (auto& gameView : m_GameViews)
+			if (gameView->VGetType() == GameView_Human)
 			{
-				if (gameView->VGetType() == GameView_Human)
-				{
-					shared_ptr<HumanView> pHumanView = static_pointer_cast<HumanView, IGameView>(gameView);
-					pHumanView->LoadGame(pCamera);
-				}
+				shared_ptr<HumanView> pHumanView = static_pointer_cast<HumanView, IGameView>(gameView);
+				pHumanView->LoadGame(pEditorCamera);
 			}
-
-			tinyxml2::XMLElement* pSkybox = pSceneNode->FirstChildElement("Skybox");
-			VCreateActor(pSkybox);
-
-			tinyxml2::XMLElement* pGrid = pSceneNode->FirstChildElement("Grid");
-			VCreateActor(pGrid);
 		}
+	}
+
+	for (tinyxml2::XMLElement* pSceneNode = pEditorCamera->NextSiblingElement(); pSceneNode != nullptr; pSceneNode = pSceneNode->NextSiblingElement())
+	{
+		tinyxml2::XMLElement* pSkybox = pSceneNode->FirstChildElement("Skybox");
+		VCreateActor(pSkybox);
+
+		tinyxml2::XMLElement* pGrid = pSceneNode->FirstChildElement("Grid");
+		VCreateActor(pGrid);
 	}
 
 	if (!VLoadGameDelegate())
@@ -382,63 +385,67 @@ bool BaseGameLogic::CreateDefaultProject(const std::string& project, const std::
 	pAsset->SetText(defautAsset.c_str());
 	pRoot->InsertFirstChild(pAsset);
 
+	tinyxml2::XMLElement* pEditorCamera = outDoc.NewElement("EditorCamera");
+	pRoot->InsertEndChild(pEditorCamera);
+	{
+		pEditorCamera->SetAttribute("type", "Camera");
+		tinyxml2::XMLElement* pTranslation = outDoc.NewElement("Translation");
+		pTranslation->SetAttribute("x", 0.0f);
+		pTranslation->SetAttribute("y", 0.0f);
+		pTranslation->SetAttribute("z", 5.0f);
+		tinyxml2::XMLElement* pRotation = outDoc.NewElement("Rotation");
+		pRotation->SetAttribute("x", 45.0f);
+		pRotation->SetAttribute("y", 45.0f);
+		pRotation->SetAttribute("z", 0.0f);
+		pEditorCamera->InsertFirstChild(pTranslation);
+		pEditorCamera->InsertEndChild(pRotation);
+	}
+
 	tinyxml2::XMLElement* pScene = outDoc.NewElement("DefaultScene");
 	pRoot->InsertEndChild(pScene);
 	pScene->SetAttribute("type", "Scene");
 
-	tinyxml2::XMLElement* pCamera = outDoc.NewElement("Camera");
-	tinyxml2::XMLElement* pSkybox = outDoc.NewElement("Skybox");
-	tinyxml2::XMLElement* pGrid = outDoc.NewElement("Grid");
-	pScene->InsertFirstChild(pCamera);
-	pScene->InsertEndChild(pSkybox);
-	pScene->InsertEndChild(pGrid);
+	{
+		tinyxml2::XMLElement* pSkybox = outDoc.NewElement("Skybox");
+		tinyxml2::XMLElement* pGrid = outDoc.NewElement("Grid");
+		pScene->InsertEndChild(pSkybox);
+		pScene->InsertEndChild(pGrid);
 
-	pCamera->SetAttribute("type", "Camera");
-	tinyxml2::XMLElement* pTranslation = outDoc.NewElement("Translation");
-	pTranslation->SetAttribute("x", 0.0f);
-	pTranslation->SetAttribute("y", 0.0f);
-	pTranslation->SetAttribute("z", 5.0f);
-	tinyxml2::XMLElement* pRotation = outDoc.NewElement("Rotation");
-	pRotation->SetAttribute("x", 45.0f);
-	pRotation->SetAttribute("y", 45.0f);
-	pRotation->SetAttribute("z", 0.0f);
-	pCamera->InsertFirstChild(pTranslation);
-	pCamera->InsertEndChild(pRotation);
+		pSkybox->SetAttribute("type", "Skybox");
+		tinyxml2::XMLElement* pSkyboxRenderComponent = outDoc.NewElement("SkyboxRenderComponent");
+		pSkybox->InsertFirstChild(pSkyboxRenderComponent);
 
-	pSkybox->SetAttribute("type", "Skybox");
-	tinyxml2::XMLElement* pSkyboxRenderComponent = outDoc.NewElement("SkyboxRenderComponent");
-	pSkybox->InsertFirstChild(pSkyboxRenderComponent);
+		tinyxml2::XMLElement* pColor = outDoc.NewElement("Color");
+		pColor->SetAttribute("r", 1.0f);
+		pColor->SetAttribute("g", 1.0f);
+		pColor->SetAttribute("b", 1.0f);
+		pColor->SetAttribute("a", 1.0f);
+		tinyxml2::XMLElement* pTexture = outDoc.NewElement("Texture");
+		pTexture->SetText("Textures\\Skybox.dds");
+		pSkyboxRenderComponent->InsertFirstChild(pColor);
+		pSkyboxRenderComponent->InsertEndChild(pTexture);
 
-	tinyxml2::XMLElement* pColor = outDoc.NewElement("Color");
-	pColor->SetAttribute("r", 1.0f);
-	pColor->SetAttribute("g", 1.0f);
-	pColor->SetAttribute("b", 1.0f);
-	pColor->SetAttribute("a", 1.0f);
-	tinyxml2::XMLElement* pTexture = outDoc.NewElement("Texture");
-	pTexture->SetText("Textures\\Skybox.dds");
-	pSkyboxRenderComponent->InsertFirstChild(pColor);
-	pSkyboxRenderComponent->InsertEndChild(pTexture);
+		pGrid->SetAttribute("type", "Grid");
+		tinyxml2::XMLElement* pGridRenderComponent = outDoc.NewElement("GridRenderComponent");
+		pGrid->InsertFirstChild(pGridRenderComponent);
 
-	pGrid->SetAttribute("type", "Grid");
-	tinyxml2::XMLElement* pGridRenderComponent = outDoc.NewElement("GridRenderComponent");
-	pGrid->InsertFirstChild(pGridRenderComponent);
-
-	tinyxml2::XMLElement* pGridColor = outDoc.NewElement("Color");
-	pGridColor->SetAttribute("r", 1.0f);
-	pGridColor->SetAttribute("g", 1.0f);
-	pGridColor->SetAttribute("b", 1.0f);
-	pGridColor->SetAttribute("a", 1.0f);
-	tinyxml2::XMLElement* pGridTexture = outDoc.NewElement("Texture");
-	pGridTexture->SetText("Textures\\Grid.dds");
-	tinyxml2::XMLElement* pGridSize = outDoc.NewElement("GridSize");
-	pGridSize->SetAttribute("x", 10.0f);
-	pGridSize->SetAttribute("y", 10.0f);
-	tinyxml2::XMLElement* pTicksInterval = outDoc.NewElement("TicksInterval");
-	pTicksInterval->SetText("1.0");
-	pGridRenderComponent->InsertFirstChild(pGridColor);
-	pGridRenderComponent->InsertEndChild(pGridTexture);
-	pGridRenderComponent->InsertEndChild(pGridSize);
-	pGridRenderComponent->InsertEndChild(pTicksInterval);
+		tinyxml2::XMLElement* pGridColor = outDoc.NewElement("Color");
+		pGridColor->SetAttribute("r", 1.0f);
+		pGridColor->SetAttribute("g", 1.0f);
+		pGridColor->SetAttribute("b", 1.0f);
+		pGridColor->SetAttribute("a", 1.0f);
+		tinyxml2::XMLElement* pGridTexture = outDoc.NewElement("Texture");
+		pGridTexture->SetText("Textures\\Grid.dds");
+		tinyxml2::XMLElement* pGridSize = outDoc.NewElement("GridSize");
+		pGridSize->SetAttribute("x", 10.0f);
+		pGridSize->SetAttribute("y", 10.0f);
+		tinyxml2::XMLElement* pTicksInterval = outDoc.NewElement("TicksInterval");
+		pTicksInterval->SetText("1.0");
+		pGridRenderComponent->InsertFirstChild(pGridColor);
+		pGridRenderComponent->InsertEndChild(pGridTexture);
+		pGridRenderComponent->InsertEndChild(pGridSize);
+		pGridRenderComponent->InsertEndChild(pTicksInterval);
+	}
 
 	tinyxml2::XMLPrinter printer;
 	outDoc.Accept(&printer);

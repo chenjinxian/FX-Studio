@@ -418,14 +418,20 @@ HRESULT DebugGizmosNode::RenderScaleAxes(Scene* pScene, const BoundingBox& aaBox
 	Variable* objectWvp = m_pEffect->GetVariablesByName().at("WorldViewProjection");
 	Variable* ambientColor = m_pEffect->GetVariablesByName().at("AmbientColor");
 
-	Vector3 cameraPos = pScene->GetCamera()->GetPosition();
-	Matrix aixsWorld = Matrix::CreateScale(Vector3::Distance(cameraPos, world.Translation()) * 0.2f);
-	aixsWorld = aixsWorld * Matrix::CreateTranslation(aaBox.Center);
-	const XMMATRIX& wvp = aixsWorld * pScene->GetCamera()->GetViewMatrix() * pScene->GetCamera()->GetProjectMatrix();
+	Vector3 scale;
+	Quaternion rotation;
+	Vector3 translation;
+	Matrix temp = world;
+	temp.Decompose(scale, rotation, translation);
+
+	const XMMATRIX& viewProj = pScene->GetCamera()->GetViewMatrix() * pScene->GetCamera()->GetProjectMatrix();
 
 	bool isPicked = false;
+	Vector3 cameraPos = pScene->GetCamera()->GetPosition();
 	// x axis
 	{
+		Matrix aixsWorld = Matrix::CreateScale(Vector3::Distance(cameraPos, world.Translation()) * 0.2f) *
+			Matrix::CreateFromQuaternion(rotation) * Matrix::CreateTranslation(translation);
 		if (m_IsLButtonDown)
 		{
 			ambientColor->SetVector(Color(1.0f, 0.27f, 0.0f));
@@ -440,25 +446,31 @@ HRESULT DebugGizmosNode::RenderScaleAxes(Scene* pScene, const BoundingBox& aaBox
 		else
 			ambientColor->SetVector(Color(1.0f, 0.0f, 0.0f));
 
-		objectWvp->SetMatrix(Matrix::CreateRotationZ(XMConvertToRadians(-90)) * Matrix::CreateTranslation(Vector3(0.3f, 0.0f, 0.0f)) * wvp);
+		aixsWorld = aixsWorld * Matrix::CreateTranslation(aaBox.Center);
+
+		objectWvp->SetMatrix(Matrix::CreateRotationZ(XMConvertToRadians(-90)) * Matrix::CreateTranslation(Vector3(0.3f, 0.0f, 0.0f)) * aixsWorld * viewProj);
 		pScene->GetRenderder()->VDrawMesh(m_CylinderIndexCount, m_CylinderIndexOffset, m_CylinderVertexOffset, m_pCurrentPass->GetEffectPass());
-		objectWvp->SetMatrix(Matrix::CreateRotationZ(XMConvertToRadians(-90)) * Matrix::CreateTranslation(Vector3(0.6f, 0.0f, 0.0f)) * wvp);
+		objectWvp->SetMatrix(Matrix::CreateRotationZ(XMConvertToRadians(-90)) * Matrix::CreateTranslation(Vector3(0.6f, 0.0f, 0.0f)) * aixsWorld * viewProj);
 		pScene->GetRenderder()->VDrawMesh(m_CubeIndexCount, m_CubeIndexOffset, m_CubeVertexOffset, m_pCurrentPass->GetEffectPass());
 	}
 
 	if (m_IsLButtonDown && m_Axis == TA_AxisX)
 	{
+		Matrix aixsWorld = Matrix::CreateScale(Vector3::Distance(cameraPos, world.Translation()) * 0.2f) * world;
+		aixsWorld = aixsWorld * Matrix::CreateTranslation(aaBox.Center);
 		ambientColor->SetVector(Color(1.0f, 1.0f, 0.0f));
 		isPicked = true;
 
-		objectWvp->SetMatrix(Matrix::CreateRotationZ(XMConvertToRadians(-90)) * Matrix::CreateTranslation(Vector3(0.3f, 0.0f, 0.0f)) * world * wvp);
+		objectWvp->SetMatrix(Matrix::CreateRotationZ(XMConvertToRadians(-90)) * Matrix::CreateTranslation(Vector3(0.3f, 0.0f, 0.0f)) * aixsWorld * viewProj);
 		pScene->GetRenderder()->VDrawMesh(m_CylinderIndexCount, m_CylinderIndexOffset, m_CylinderVertexOffset, m_pCurrentPass->GetEffectPass());
-		objectWvp->SetMatrix(Matrix::CreateRotationZ(XMConvertToRadians(-90)) * Matrix::CreateTranslation(Vector3(0.6f, 0.0f, 0.0f)) * world * wvp);
+		objectWvp->SetMatrix(Matrix::CreateRotationZ(XMConvertToRadians(-90)) * Matrix::CreateTranslation(Vector3(0.6f, 0.0f, 0.0f)) * aixsWorld * viewProj);
 		pScene->GetRenderder()->VDrawMesh(m_CubeIndexCount, m_CubeIndexOffset, m_CubeVertexOffset, m_pCurrentPass->GetEffectPass());
 	}
 
 	// y axis
 	{
+		Matrix aixsWorld = Matrix::CreateScale(Vector3::Distance(cameraPos, world.Translation()) * 0.2f) *
+			Matrix::CreateFromQuaternion(rotation) * Matrix::CreateTranslation(translation);
 		if (m_IsLButtonDown)
 		{
 			ambientColor->SetVector(Color(1.0f, 0.27f, 0.0f));
@@ -473,25 +485,31 @@ HRESULT DebugGizmosNode::RenderScaleAxes(Scene* pScene, const BoundingBox& aaBox
 		else
 			ambientColor->SetVector(Color(0.0f, 1.0f, 0.0f));
 
-		objectWvp->SetMatrix(Matrix::CreateTranslation(Vector3(0.0f, 0.3f, 0.0f)) * wvp);
+		aixsWorld = aixsWorld * Matrix::CreateTranslation(aaBox.Center);
+
+		objectWvp->SetMatrix(Matrix::CreateTranslation(Vector3(0.0f, 0.3f, 0.0f)) * aixsWorld * viewProj);
 		pScene->GetRenderder()->VDrawMesh(m_CylinderIndexCount, m_CylinderIndexOffset, m_CylinderVertexOffset, m_pCurrentPass->GetEffectPass());
-		objectWvp->SetMatrix(Matrix::CreateTranslation(Vector3(0.0f, 0.6f, 0.0f)) * wvp);
+		objectWvp->SetMatrix(Matrix::CreateTranslation(Vector3(0.0f, 0.6f, 0.0f)) * aixsWorld * viewProj);
 		pScene->GetRenderder()->VDrawMesh(m_CubeIndexCount, m_CubeIndexOffset, m_CubeVertexOffset, m_pCurrentPass->GetEffectPass());
 	}
 
 	if (m_IsLButtonDown && m_Axis == TA_AxisY)
 	{
+		Matrix aixsWorld = Matrix::CreateScale(Vector3::Distance(cameraPos, world.Translation()) * 0.2f) * world;
+		aixsWorld = aixsWorld * Matrix::CreateTranslation(aaBox.Center);
 		ambientColor->SetVector(Color(1.0f, 1.0f, 0.0f));
 		isPicked = true;
 
-		objectWvp->SetMatrix(Matrix::CreateTranslation(Vector3(0.0f, 0.3f, 0.0f)) * world * wvp);
+		objectWvp->SetMatrix(Matrix::CreateTranslation(Vector3(0.0f, 0.3f, 0.0f)) * aixsWorld * viewProj);
 		pScene->GetRenderder()->VDrawMesh(m_CylinderIndexCount, m_CylinderIndexOffset, m_CylinderVertexOffset, m_pCurrentPass->GetEffectPass());
-		objectWvp->SetMatrix(Matrix::CreateTranslation(Vector3(0.0f, 0.6f, 0.0f)) * world * wvp);
+		objectWvp->SetMatrix(Matrix::CreateTranslation(Vector3(0.0f, 0.6f, 0.0f)) * aixsWorld * viewProj);
 		pScene->GetRenderder()->VDrawMesh(m_CubeIndexCount, m_CubeIndexOffset, m_CubeVertexOffset, m_pCurrentPass->GetEffectPass());
 	}
 
 	// z axis
 	{
+		Matrix aixsWorld = Matrix::CreateScale(Vector3::Distance(cameraPos, world.Translation()) * 0.2f) *
+			Matrix::CreateFromQuaternion(rotation) * Matrix::CreateTranslation(translation);
 		if (m_IsLButtonDown)
 		{
 			ambientColor->SetVector(Color(1.0f, 0.27f, 0.0f));
@@ -506,20 +524,24 @@ HRESULT DebugGizmosNode::RenderScaleAxes(Scene* pScene, const BoundingBox& aaBox
 		else
 			ambientColor->SetVector(Color(0.0f, 0.0f, 1.0f));
 
-		objectWvp->SetMatrix(Matrix::CreateRotationX(XMConvertToRadians(90)) * Matrix::CreateTranslation(Vector3(0.0f, 0.0f, 0.3f)) * wvp);
+		aixsWorld = aixsWorld * Matrix::CreateTranslation(aaBox.Center);
+
+		objectWvp->SetMatrix(Matrix::CreateRotationX(XMConvertToRadians(90)) * Matrix::CreateTranslation(Vector3(0.0f, 0.0f, 0.3f)) * aixsWorld * viewProj);
 		pScene->GetRenderder()->VDrawMesh(m_CylinderIndexCount, m_CylinderIndexOffset, m_CylinderVertexOffset, m_pCurrentPass->GetEffectPass());
-		objectWvp->SetMatrix(Matrix::CreateRotationX(XMConvertToRadians(90)) * Matrix::CreateTranslation(Vector3(0.0f, 0.0f, 0.6f)) * wvp);
+		objectWvp->SetMatrix(Matrix::CreateRotationX(XMConvertToRadians(90)) * Matrix::CreateTranslation(Vector3(0.0f, 0.0f, 0.6f)) * aixsWorld * viewProj);
 		pScene->GetRenderder()->VDrawMesh(m_CubeIndexCount, m_CubeIndexOffset, m_CubeVertexOffset, m_pCurrentPass->GetEffectPass());
 	}
 
 	if (m_IsLButtonDown && m_Axis == TA_AxisZ)
 	{
+		Matrix aixsWorld = Matrix::CreateScale(Vector3::Distance(cameraPos, world.Translation()) * 0.2f) * world;
+		aixsWorld = aixsWorld * Matrix::CreateTranslation(aaBox.Center);
 		ambientColor->SetVector(Color(1.0f, 1.0f, 0.0f));
 		isPicked = true;
 
-		objectWvp->SetMatrix(Matrix::CreateRotationX(XMConvertToRadians(90)) * Matrix::CreateTranslation(Vector3(0.0f, 0.0f, 0.3f)) * world * wvp);
+		objectWvp->SetMatrix(Matrix::CreateRotationX(XMConvertToRadians(90)) * Matrix::CreateTranslation(Vector3(0.0f, 0.0f, 0.3f)) * aixsWorld * viewProj);
 		pScene->GetRenderder()->VDrawMesh(m_CylinderIndexCount, m_CylinderIndexOffset, m_CylinderVertexOffset, m_pCurrentPass->GetEffectPass());
-		objectWvp->SetMatrix(Matrix::CreateRotationX(XMConvertToRadians(90)) * Matrix::CreateTranslation(Vector3(0.0f, 0.0f, 0.6f)) * world * wvp);
+		objectWvp->SetMatrix(Matrix::CreateRotationX(XMConvertToRadians(90)) * Matrix::CreateTranslation(Vector3(0.0f, 0.0f, 0.6f)) * aixsWorld * viewProj);
 		pScene->GetRenderder()->VDrawMesh(m_CubeIndexCount, m_CubeIndexOffset, m_CubeVertexOffset, m_pCurrentPass->GetEffectPass());
 	}
 

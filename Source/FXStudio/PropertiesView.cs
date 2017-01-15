@@ -69,6 +69,7 @@ namespace FXStudio
                 m_PropertyInstance.Properties.Add(new PropertyElement(m_HiddenProperty, typeof(bool), false, true,
                     new CategoryAttribute("Properties"), new DescriptionAttribute(m_HiddenDescription)));
             }
+            propertyGridView.SelectedObject = m_PropertyInstance;
         }
 
         private void AddCompoentProperties(XmlNode actorComponentValues, XmlNode editorComponentValues)

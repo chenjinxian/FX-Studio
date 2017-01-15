@@ -66,20 +66,6 @@
     <Compile Include="AssetsView.designer.cs">
       <DependentUpon>AssetsView.cs</DependentUpon>
     </Compile>
-    <Compile Include="ComponentInspector.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="ComponentInspector.Designer.cs">
-      <DependentUpon>ComponentInspector.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ComponentItems\BaseItem.cs" />
-    <Compile Include="ComponentItems\CategoryItem.cs" />
-    <Compile Include="ComponentItems\ColorItem.cs" />
-    <Compile Include="ComponentItems\FloatItem.cs" />
-    <Compile Include="ComponentItems\ImageItem.cs" />
-    <Compile Include="ComponentItems\Int32Item.cs" />
-    <Compile Include="ComponentItems\ItemCollection.cs" />
-    <Compile Include="ComponentItems\Vector3Item.cs" />
     <Compile Include="CustomColorTable.cs" />
     <Compile Include="DocumentView.cs">
       <SubType>Form</SubType>
@@ -215,7 +201,6 @@
   <ItemGroup>
     <Content Include="application.ico" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

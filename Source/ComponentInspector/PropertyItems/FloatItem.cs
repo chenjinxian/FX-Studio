@@ -10,44 +10,45 @@ using System.Text;
  */
 namespace Inspector
 {
-    // All classes like "PropertyItem..." inherit directly from PropertyItemGeneric or another
-    // class (eg. PropertyItemString) but the base class must be always PropertyItemGeneric
+    // All classes like "PropertyItem..." inherit directly from BaseItem or another
+    // class (eg. StringItem) but the base class must be always BaseItem
 
-    #region Integer (int32) property item class
+    #region Double property item class
 
     /// <summary>
-    /// Integer (int32) property item class.
+    /// Double property item class.
     /// </summary>
-    public class PropertyItemInt32 : PropertyItemGeneric
+    public class FloatItem : BaseItem
     {
 
         #region Private internal var./properties
 
-        private int mValue = 0;
-        private int mDefaultValue = 0;
-        private int mMinValue = 0;
-        private int mMaxValue = 100;
-        private int mIncrement = 1;
-        private bool mValidationRangeCheck = false;
+        private double mValue = 0.0;
+        private double mDefaultValue = 0.0;
+        private double mMinValue = 0.0;
+        private double mMaxValue = 100.0;
+        private double mIncrement = 1.0;
+        private ValidationRangeCheckType mValidationRangeCheck = ValidationRangeCheckType.Disabled;
         private string mEngineeringUnit = "";
-        private bool mHexadecimal = false;              // true=show value as hexadecimal
+        private int mDecimalPlaces = 1;                     // (0..10) Number of decimal digits
+        // The Value number will be format using the property .Format while printing it on the screen
 
         #endregion
 
         #region Constructors
 
-        /// <summary>
+        /// <summary> 
         /// Constructor.
         /// </summary>
-        public PropertyItemInt32()
+        public FloatItem()
         {
-            this.Text = "New int32 item";
+            this.Text = "New double item";
         }
 
         /// <summary>
         /// Constructor. The DefaultValue is the same as Value.
         /// </summary>
-        public PropertyItemInt32(string text, int value)
+        public FloatItem(string text, double value)
         {
             this.Text = text;
             this.DefaultValue = value;
@@ -57,7 +58,7 @@ namespace Inspector
         /// <summary>
         /// Constructor.
         /// </summary>
-        public PropertyItemInt32(string text, int value, int defaultValue)
+        public FloatItem(string text, double value, double defaultValue)
         {
             this.Text = text;
             this.DefaultValue = defaultValue;
@@ -69,9 +70,9 @@ namespace Inspector
         #region Public Properties
 
         /// <summary>
-        /// Get/set the int32 value
+        /// Gets/sets a double value.
         /// </summary>
-        public int Value
+        public double Value
         {
             get
             {
@@ -79,9 +80,9 @@ namespace Inspector
             }
             set
             {
-                int oldValue = mValue;
+                double oldValue = mValue;
 
-                if (mValidationRangeCheck)
+                if (mValidationRangeCheck == ValidationRangeCheckType.Automatic)
                 {
                     // Set only a valid value!
                     if (value < mMinValue)
@@ -101,9 +102,9 @@ namespace Inspector
         }
 
         /// <summary>
-        /// Get/set the int32 default value.  To sets the current Value to the DefaultValue use the SetDefaultValue() method.
+        /// Gets/sets the default double value. To sets the current Value to the DefaultValue use the SetDefaultValue() method.
         /// </summary>
-        public int DefaultValue
+        public double DefaultValue
         {
             get
             {
@@ -111,7 +112,7 @@ namespace Inspector
             }
             set
             {
-                if (mValidationRangeCheck)
+                if (mValidationRangeCheck == ValidationRangeCheckType.Automatic)
                 {
                     // Set only a valid value!
                     if (value < mMinValue)
@@ -141,40 +142,41 @@ namespace Inspector
             }
             set
             {
-                int intValue;
+                double dblValue;
                 string strValue;
+                int index;
 
                 try
                 {
                     // Try to remove any enginerring unit (char ' ','(','['). Example :
-                    // 12 (pz)  pz=pezzi
-                    // 12 pz
-                    // 12 [pz]
-                    // Will set a value of 12
+                    // 12.5 (m)  m=metri
+                    // 12.5 m
+                    // 12.5 [m]
+                    // Will set a value of 12.5
                     strValue = value;
-                    intValue = strValue.IndexOf(' ');
-                    if (intValue > 0)
-                        strValue = strValue.Remove(intValue);
-                    intValue = strValue.IndexOf('(');
-                    if (intValue > 0)
-                        strValue = strValue.Remove(intValue);
-                    intValue = strValue.IndexOf('[');
-                    if (intValue > 0)
-                        strValue = strValue.Remove(intValue);
-                    intValue = System.Convert.ToInt32(strValue);
-                    this.Value = intValue;
+                    index = strValue.IndexOf(' ');
+                    if (index > 0)
+                        strValue = strValue.Remove(index);
+                    index = strValue.IndexOf('(');
+                    if (index > 0)
+                        strValue = strValue.Remove(index);
+                    index = strValue.IndexOf('[');
+                    if (index > 0)
+                        strValue = strValue.Remove(index);
+                    dblValue = System.Convert.ToDouble(strValue);
+                    this.Value = dblValue;
                 }
                 catch
                 {
-                    // Convert to int32 failed!
+                    // Convert to double failed!
                 }
             }
         }
 
         /// <summary>
-        /// Get the minimum valid value if ValidationRangeCheck is true
+        /// Gets the current minimum value. Use the methos SetValidationRange() to set this parameter.
         /// </summary>
-        public int Minimum
+        public double Minimum
         {
             get
             {
@@ -183,9 +185,9 @@ namespace Inspector
         }
 
         /// <summary>
-        /// Get the maximum valid value if ValidationRangeCheck is true
+        /// Gets the current maximum value. Use the methos SetValidationRange() to set this parameter.
         /// </summary>
-        public int Maximum
+        public double Maximum
         {
             get
             {
@@ -194,9 +196,9 @@ namespace Inspector
         }
 
         /// <summary>
-        /// Get the increment value (while using a spin up/down button to change the value)
+        /// Gets the current increment value (while using the spin up/down buttons). Use the methos SetValidationRange() to set this parameter.
         /// </summary>
-        public int Increment
+        public double Increment
         {
             get
             {
@@ -220,10 +222,9 @@ namespace Inspector
         }
 
         /// <summary>
-        /// Get/set if a validation range check is enabled or not.
-        /// If validation range check is enabled Value must be between Minimum and Maximum.
+        /// Gets/sets if the validation range check is enabled (true) or not (false).
         /// </summary>
-        public bool ValidationRangeCheck
+        public ValidationRangeCheckType ValidationRangeCheck
         {
             get
             {
@@ -236,17 +237,24 @@ namespace Inspector
         }
 
         /// <summary>
-        /// Get/set if the Value must be show as a hexadecimal number
+        /// Gets/sets the decimal places in input data mode. Use the Format() method to show
+        /// decimals in output mode.
         /// </summary>
-        public bool Hexadecimal
+        public int DecimalPlaces
         {
             get
             {
-                return mHexadecimal;
+                return mDecimalPlaces;
             }
             set
             {
-                mHexadecimal = value;
+                if (value < 0)
+                    mDecimalPlaces = 0;
+                else
+                    if (value > 10)
+                        mDecimalPlaces = 10;
+                    else
+                        mDecimalPlaces = value;
             }
         }
 
@@ -255,9 +263,9 @@ namespace Inspector
         #region Public Methods
 
         /// <summary>
-        /// Sets the validation range parameters. An exception accour if minValue is the same as maxValue.
+        /// Sets the validation range parameters. An exception accour if the minValue is the same as the maxValue. 
         /// </summary>
-        public void SetValidationRange(int minValue, int maxValue, int incrementStep)
+        public void SetValidationRange(double minValue, double maxValue, double incrementStep, ValidationRangeCheckType validationRangeCheck)
         {
             if (minValue == maxValue)
                 // Error
@@ -276,15 +284,18 @@ namespace Inspector
                     mMaxValue = maxValue;
                 }
                 mIncrement = incrementStep;
-                ValidationRangeCheck = true;
-                // Correct invalid value!
-                if (mValue < mMinValue) mValue = mMinValue;
-                if (mValue > mMaxValue) mValue = mMaxValue;
+                ValidationRangeCheck = validationRangeCheck;
+                if (validationRangeCheck == ValidationRangeCheckType.Automatic)
+                {
+                    // Correct invalid value!
+                    if (mValue < mMinValue) mValue = mMinValue;
+                    if (mValue > mMaxValue) mValue = mMaxValue;
+                }
             }
         }
 
         /// <summary>
-        /// Sets the Value property to the current default value.
+        /// Sets the default value.
         /// </summary>
         public override void SetDefaultValue()
         {
@@ -299,15 +310,15 @@ namespace Inspector
         /// Delegate for ValueChanged event.
         /// </summary>
         /// <param name="sender">Object sender.</param>
-        /// <param name="value">Last int (int32) value.</param>
-        public delegate void ValueChangedHandle(object sender, int value);
+        /// <param name="value">Last double value.</param>
+        public delegate void ValueChangedHandle(object sender, double value);
 
         /// <summary>
-        /// This event accour when the int (int32) value property change.
+        /// This event accour when the double value property is changed.
         /// </summary>
         public event ValueChangedHandle ValueChanged;
 
-        private void RaiseValueChanged(int value)
+        private void RaiseValueChanged(double value)
         {
             if (ValueChanged != null)
                 // Raise event

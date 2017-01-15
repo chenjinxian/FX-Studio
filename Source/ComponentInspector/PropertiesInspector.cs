@@ -18,8 +18,8 @@ namespace Inspector
 		// Properties
 		private int mFirstColumnWidth = 100;                // (Pixel)
 		private int mItemHeight = 19;                       // (Pixel)
-		private PropertyItemGeneric mItemSelected = null;
-		private PropertyItemGeneric PreviousItemSelected = null;           // Used for validating data in the controls leave event (User Interface).
+		private BaseItem mItemSelected = null;
+		private BaseItem PreviousItemSelected = null;           // Used for validating data in the controls leave event (User Interface).
 		private bool mShowItemsAsCategory = true;
 		private bool mHelpVisible = true;
 		private bool mToolbarVisible = true;
@@ -88,10 +88,10 @@ namespace Inspector
 		#region Public properties
 
 		/// <summary>
-		/// Gets an PropertyItemGeneric stored into the property grid. Return null if the PropertyItemGeneric is not found.
+		/// Gets an BaseItem stored into the property grid. Return null if the BaseItem is not found.
 		/// This property is equivalent to the method GetItem().
 		/// </summary>
-		public PropertyItemGeneric this[string itemKey]
+		public BaseItem this[string itemKey]
 		{
 			get
 			{
@@ -256,9 +256,9 @@ namespace Inspector
 		}
 
 		/// <summary>
-		/// Gets or sets the current selected item. Return null if no PropertyItemGeneric is selected.
+		/// Gets or sets the current selected item. Return null if no BaseItem is selected.
 		/// </summary>
-		public PropertyItemGeneric SelectedItem
+		public BaseItem SelectedItem
 		{
 			get
 			{
@@ -390,13 +390,13 @@ namespace Inspector
 		}
 
 		/// <summary>
-		/// Return true if a specific PropertyItemGeneric exist into the property grid.
+		/// Return true if a specific BaseItem exist into the property grid.
 		/// </summary>
-		/// <param name="itemKey">Unique key for a fast PropertyItemGeneric reference.</param>
+		/// <param name="itemKey">Unique key for a fast BaseItem reference.</param>
 		/// <returns>true=Item exist  false=the property grid do not contains the item.</returns>
 		public bool ItemExist(string itemKey)
 		{
-			// Add PropertyItemGeneric to category list and PropertyItemGeneric list
+			// Add BaseItem to category list and BaseItem list
 			return ItemList.Contains(itemKey);
 		}
 
@@ -410,120 +410,6 @@ namespace Inspector
 			{
 				return CategoryList.Count;
 			}
-		}
-
-		#endregion
-
-		#region PropertyItemProgressBar : Print to screen internal functions
-
-		/// <summary>
-		/// Return the rectangle area where to paint the progress bar
-		/// </summary>
-		private Rectangle GetProgressBarRectangle(PropertyItemProgressBar progBar, Graphics g)
-		{
-			int x, y, width, height;
-			Rectangle rect;
-
-			x = mFirstColumnWidth + 2;
-			y = progBar.rectangle.Y + 2;
-			width = progBar.rectangle.Width - btnCancel.Width - 8;
-			height = progBar.rectangle.Height - 5;
-			// Validate size
-			if (width < 16) width = 16;
-			if (height < 8) height = 8;
-			rect = new Rectangle(x, y, width, height);
-			return rect;
-		}
-
-		private void PaintProgressBarArea(PropertyItemProgressBar progBarItem, Graphics g, Rectangle rect)
-		{
-			int w;
-			double size;
-			System.Drawing.SolidBrush brush;
-			System.Drawing.Drawing2D.LinearGradientBrush gradBrush;
-			RectangleF rectF;
-
-			size = (double)rect.Width / (double)(progBarItem.Maximum - progBarItem.Minimum);
-			// Stardard bar draw, from minimum to value, e.g.
-			// [#####   33%     ]
-			if (progBarItem.Value >= progBarItem.Maximum)
-				w = rect.Width;
-			else
-				w = (int)(size * (double)(progBarItem.Value - progBarItem.Minimum));
-			// Check for valid w calculation (fix it if necessary)
-			if (rect.X + w > rect.Right) w = rect.Right - rect.X;
-			// Print bar value
-			if (w <= 0) return;		// Exit
-			if (progBarItem.GradientFill)
-			{
-				// Gradient fill
-				rectF = new RectangleF(rect.X, rect.Y, w, rect.Height);
-				gradBrush = new System.Drawing.Drawing2D.LinearGradientBrush(rectF, progBarItem.BarColorStart, progBarItem.BarColorEnd, 90.1F);
-				g.FillRectangle(gradBrush, rect.X, rect.Y, w, rect.Height);
-				gradBrush.Dispose();
-			}
-			else
-			{
-				// Solid fill
-				brush = new System.Drawing.SolidBrush(progBarItem.BarColorStart);
-				g.FillRectangle(brush, rect.X, rect.Y, w, rect.Height);
-				brush.Dispose();
-			}
-		}
-
-		private void PaintProgressBarValue(PropertyItemProgressBar progBarItem, Rectangle rect, Graphics g)
-		{
-			string text = "";
-			SizeF sizeF;
-			int x, y;
-			System.Drawing.SolidBrush brush;
-			Font font;
-
-			// Print value on screen (align into bar : x=center | y=center)
-			text = progBarItem.ValuePercent.ToString("0") + " %";
-			// Print on screen
-			font = this.Font;
-			sizeF = g.MeasureString(text, font);
-			// Check font height/width size and auto adjust it if necessary
-			// (text value must fit inside rect area)
-			while (((int)sizeF.Height >= rect.Height) && (font.Size > 8))
-			{
-				font = new Font(font.FontFamily, font.Size - 1, font.Style);
-				sizeF = g.MeasureString(text, font);
-			}
-			while (((int)sizeF.Width >= rect.Width) && (font.Size > 8))
-			{
-				font = new Font(font.FontFamily, font.Size - 1, font.Style);
-				sizeF = g.MeasureString(text, font);
-			}
-			// Calculate text value x,y print position
-			x = rect.X + (rect.Width / 2) - ((int)sizeF.Width / 2);
-			y = rect.Y + (rect.Height / 2) - ((int)sizeF.Height / 2);
-			if (progBarItem.Enabled)
-				brush = new System.Drawing.SolidBrush(this.ForeColor);
-			else
-				brush = new System.Drawing.SolidBrush(Color.DarkGray);
-			g.DrawString(text, font, brush, x, y);
-			brush.Dispose();
-		}
-
-		
-		private void RefreshProgressBar(PropertyItemProgressBar progBarItem, Graphics g)
-		{
-			System.Drawing.SolidBrush brush;
-			Rectangle rect;
-
-			// calculate progress bar area
-			rect = GetProgressBarRectangle(progBarItem, g);
-			// Print bar background
-			brush = new System.Drawing.SolidBrush(progBarItem.BackgroundColor);
-			g.FillRectangle(brush, rect);
-			// Print bar
-			PaintProgressBarArea(progBarItem, g, rect);
-			// Print value (number)
-			PaintProgressBarValue(progBarItem, rect, g);
-			// Refresh done, Free memory
-			brush.Dispose();
 		}
 
 		#endregion
@@ -654,19 +540,18 @@ namespace Inspector
 		/// <summary>
 		/// Print a single Property Grid Item.
 		/// </summary>
-		private void PaintItem(PropertyItemGeneric item, Graphics g, Pen pen, Brush brush, Brush txtBrush, int x1, int x2, ref int y1, ref int y2)
+		private void PaintItem(BaseItem item, Graphics g, Pen pen, Brush brush, Brush txtBrush, int x1, int x2, ref int y1, ref int y2)
 		{
-			PropertyItemBoolean boolItem = null;
-			PropertyItemColor colItem = null;
-			PropertyItemProgressBar progBarItem = null;
+			BooleanItem boolItem = null;
+			ColorItem colItem = null;
 			SolidBrush fillBrush = null;
 			SolidBrush txtDisabledBrush = null;
 			System.Drawing.Font propFont = null;
-			PropertyItemDouble dblItem;
+			FloatItem dblItem;
 			Brush warnBrush = null;
 			//System.Media.SoundPlayer sp = null;
 			
-			//TODO:Add any new PropertyItemGeneric management here in this function...
+			//TODO:Add any new BaseItem management here in this function...
 			if (!item.Visible) return;
 			// txtDisabledBrush = new SolidBrush(Color.FromArgb(this.ForeColor.R / 2, this.ForeColor.G / 2, this.ForeColor.B / 2));
 			txtDisabledBrush = new SolidBrush(Color.DarkGray);
@@ -681,9 +566,9 @@ namespace Inspector
 			// Property value (view as bold font if values is been changed by user)
 			propFont = item.Changed ? new Font(this.Font, FontStyle.Bold) :
 									  new Font(this.Font, FontStyle.Regular);
-			if (item is PropertyItemBoolean)
+			if (item is BooleanItem)
 			{
-				boolItem = (PropertyItemBoolean)item;
+				boolItem = (BooleanItem)item;
 				if (boolItem.Value)
 					g.DrawImageUnscaled(imgList.Images[3], mFirstColumnWidth + 2, y1 + 2);
 				else
@@ -695,9 +580,9 @@ namespace Inspector
 					g.DrawString(item.ValueString, propFont, txtDisabledBrush, (float)mFirstColumnWidth + 19, (float)y1 + 2);
 			}
 			else
-				if (item is PropertyItemColor)
+				if (item is ColorItem)
 			{
-				colItem = (PropertyItemColor)item;
+				colItem = (ColorItem)item;
 				fillBrush = new SolidBrush(colItem.Value);
 				g.FillRectangle(fillBrush, mFirstColumnWidth + 2, y1 + 2, 16, y2 - y1 - 6);
 				g.DrawRectangle(new Pen(Color.Black), mFirstColumnWidth + 2, y1 + 2, 16, y2 - y1 - 6);
@@ -708,15 +593,9 @@ namespace Inspector
 					g.DrawString(item.ValueString, propFont, txtDisabledBrush, (float)mFirstColumnWidth + 28, (float)y1 + 2);
 			}
 			else
-			if (item is PropertyItemProgressBar)
+			if (item is FloatItem)
 			{
-				progBarItem = (PropertyItemProgressBar)item;
-				RefreshProgressBar(progBarItem, g);
-			}
-			else
-			if (item is PropertyItemDouble)
-			{
-				dblItem = (PropertyItemDouble)item;
+				dblItem = (FloatItem)item;
 				warnBrush = new SolidBrush(Color.Red);
 				if (item.Enabled)
 				{
@@ -753,8 +632,8 @@ namespace Inspector
 		/// </summary>
 		private void PaintAsCategory(Graphics g, Pen pen, Brush brush,Brush catBrush, Brush txtBrush, int x1, int x2, int y1, ref int y2)
 		{
-			PropertyItemCategory category = null;
-			PropertyItemGeneric item = null;
+			CategoryItem category = null;
+			BaseItem item = null;
 			int k, j;
 
 			for (k = 0; k < CategoryList.Count; k++)
@@ -892,7 +771,7 @@ namespace Inspector
 		/// Print help info on the screen for a specific property item.
 		/// </summary>
 		/// <param name="item"></param>
-		private void RefreshHelp(PropertyItemGeneric item)
+		private void RefreshHelp(BaseItem item)
 		{
 			if (item == null) return;
 			if (item.HelpVisible)
@@ -914,8 +793,8 @@ namespace Inspector
 		private void VerifyMouseUpOnCategory(MouseEventArgs e)
 		{
 			Rectangle rect;
-			PropertyItemCategory category;
-			PropertyItemGeneric item;
+			CategoryItem category;
+			BaseItem item;
 			int k, j;
 			int itemWidth;
 
@@ -931,7 +810,7 @@ namespace Inspector
 					PaintControl();
 					return;     // Exit
 				}
-				// - Property PropertyItemGeneric (search for active selected item)
+				// - Property BaseItem (search for active selected item)
 				if (category.Expanded)
 					for (j = 0; j < category.ItemList.Count; j++)
 					{
@@ -943,7 +822,7 @@ namespace Inspector
 							mItemSelected = item;
 							RefreshHelp(item);
 							PaintControl();
-							// Show input box (if PropertyItemGeneric is enabled)
+							// Show input box (if BaseItem is enabled)
 							if (pnlProp.VerticalScroll.Visible)
 								itemWidth = rect.Width - 20;
 							else
@@ -975,7 +854,7 @@ namespace Inspector
 					mItemSelected = ItemList[j];
 					RefreshHelp(ItemList[j]);
 					PaintControl();
-					// Show input box (if PropertyItemGeneric is enabled)
+					// Show input box (if BaseItem is enabled)
 					if (ItemList[j].Enabled)
 						ShowInputControl(rect.X, rect.Y, rect.Width, mItemHeight, ItemList[j]);
 					return;     // Exit
@@ -984,9 +863,9 @@ namespace Inspector
 		}
 
 		/// <summary>
-		/// Show the combo box control (eg. For editing a PropertyItemDropDownList)
+		/// Show the combo box control (eg. For editing a DropDownItem)
 		/// </summary>
-		private void ShowComboBoxControl(int X, int Y, int width, int height, PropertyItemDropDownList listItem)
+		private void ShowComboBoxControl(int X, int Y, int width, int height, DropDownItem listItem)
 		{
 			string[] list;
 			int t;
@@ -1012,9 +891,9 @@ namespace Inspector
 		}
 
 		/// <summary>
-		/// Show the check box control (eg. For editing a PropertyItemBoolean)
+		/// Show the check box control (eg. For editing a BooleanItem)
 		/// </summary>
-		private void ShowCheckBoxControl(int X, int Y, int width, int height, PropertyItemBoolean boolItem)
+		private void ShowCheckBoxControl(int X, int Y, int width, int height, BooleanItem boolItem)
 		{
 			int xOffset, yOffset;
 
@@ -1033,9 +912,9 @@ namespace Inspector
 		}
 
 		/// <summary>
-		/// Show the text box control (eg. For editing a PropertyItemString)
+		/// Show the text box control (eg. For editing a StringItem)
 		/// </summary>
-		private void ShowTextBoxControl(int X, int Y, int width, int height, PropertyItemGeneric item)
+		private void ShowTextBoxControl(int X, int Y, int width, int height, BaseItem item)
 		{
 			int xOffset;
 			int yOffset;
@@ -1063,9 +942,9 @@ namespace Inspector
 		}
 
 		/// <summary>
-		/// Show the numeric up/down text box control (eg. For editing a PropertyItemInt32)
+		/// Show the numeric up/down text box control (eg. For editing a Int32Item)
 		/// </summary>
-		private void ShowNumericUpDownControl(int X, int Y, int width, int height, PropertyItemInt32 intItem)
+		private void ShowNumericUpDownControl(int X, int Y, int width, int height, Int32Item intItem)
 		{
 			int xOffset, yOffset;
 
@@ -1091,9 +970,9 @@ namespace Inspector
 		}
 
 		/// <summary>
-		/// Show the numeric up/down text box control (eg. For editing a PropertyItemDouble)
+		/// Show the numeric up/down text box control (eg. For editing a FloatItem)
 		/// </summary>
-		private void ShowNumericUpDownControl(int X, int Y, int width, int height, PropertyItemDouble dblItem)
+		private void ShowNumericUpDownControl(int X, int Y, int width, int height, FloatItem dblItem)
 		{
 			int xOffset, yOffset;
 
@@ -1174,7 +1053,7 @@ namespace Inspector
 // 				rect = Screen.PrimaryScreen.WorkingArea;
 // 				// Show the form at mouse position
 // 				//formPos = Control.MousePosition;      
-// 				// Show the preview form under the property line that rappresent the object PropertyItemImage
+// 				// Show the preview form under the property line that rappresent the object ImageItem
 // 				// (or on the topo of the line, depending from the form height, in a way to ensure the entire form is visible)
 // 				X -= pnlProp.HorizontalScroll.Value;
 // 				Y -= pnlProp.VerticalScroll.Value;
@@ -1202,136 +1081,83 @@ namespace Inspector
 		}
 
 		/// <summary>
-		/// Show a box for date/time editing.
+		/// Show the correct input control (with focus) depending from a specific BaseItem type
 		/// </summary>
-		private void ShowDateTimeBoxControl(int X, int Y, int width, int height, PropertyItemDateTime dtTmItem)
+		private void ShowInputControl(int X, int Y, int width, int height, BaseItem item)
 		{
 			int xOffset, yOffset;
+			DropDownItem listItem = null;
+			Int32Item intItem = null;
+			BooleanItem boolItem = null;
+			FloatItem dblItem = null;
+			ImageItem imgItem = null;
 
-			xOffset = pnlProp.HorizontalScroll.Value;
-			yOffset = pnlProp.VerticalScroll.Value;
-			dtTmBox.Left = X + 1 - xOffset;
-			dtTmBox.Top = Y - yOffset;
-			dtTmBox.Width = width - 8;
-			dtTmBox.Height = height;
-			controlChangeEventLocked = true;
-			dtTmBox.Value = dtTmItem.Value;
-			dtTmBox.ShowUpDown = false;
-			switch (dtTmItem.Style)
-			{
-				case DateTimeType.OnlyDate:
-					dtTmBox.Format = DateTimePickerFormat.Long;
-					break;
-				case DateTimeType.OnlyTime:
-					dtTmBox.Format = DateTimePickerFormat.Time;
-					dtTmBox.ShowUpDown = true;
-					break;
-				case DateTimeType.DateAndTime:
-					dtTmBox.Format = DateTimePickerFormat.Custom;
-					dtTmBox.CustomFormat = dtTmItem.Format;
-					break;
-			}
-			dtTmBox.Visible = true;
-			controlChangeEventLocked = false;
-			dtTmBox.Focus();
-		}
-
-		/// <summary>
-		/// Show the correct input control (with focus) depending from a specific PropertyItemGeneric type
-		/// </summary>
-		private void ShowInputControl(int X, int Y, int width, int height, PropertyItemGeneric item)
-		{
-			int xOffset, yOffset;
-			PropertyItemDropDownList listItem = null;
-			PropertyItemInt32 intItem = null;
-			PropertyItemBoolean boolItem = null;
-			PropertyItemDouble dblItem = null;
-			PropertyItemDateTime dtTmItem = null;
-			PropertyItemImage imgItem = null;
-
-			//TODO:Add any new PropertyItemGeneric management here in this function...
+			//TODO:Add any new BaseItem management here in this function...
 			xOffset = pnlProp.HorizontalScroll.Value;
 			yOffset = pnlProp.VerticalScroll.Value;
 			HideInputControls();
-			// Show only the correct input control for the PropertyItemGeneric management
+			// Show only the correct input control for the BaseItem management
 			// - Cominciare dai tipi ultimi derivati; ad esempio se c'e questo
-			//   tipo di eredità "PropertyItemFile :  PropertyItemString : Item" deve essere verificato
-			//   per primo il tipo PropertyItemFile per evitare che questo venga gestito 
-			//   erroneamente come un tipo  PropertyItemString da cui è derivato
-			if (item is PropertyItemFile || item is PropertyItemDirectory)
+			//   tipo di eredità "FileItem :  StringItem : Item" deve essere verificato
+			//   per primo il tipo FileItem per evitare che questo venga gestito 
+			//   erroneamente come un tipo  StringItem da cui è derivato
+			if (item is FileItem)
 			{
 				// NOTA IMPORTANTE : Lasciare questo IF in questo punto, prima della 
-				// verifica del tipo  PropertyItemString
+				// verifica del tipo  StringItem
 				btnMore.Enabled = item.Enabled;
 				ShowMoreButtonControl(X, Y, width, height);
 				return;
 			}
-			if (item is PropertyItemDropDownList)
+			if (item is DropDownItem)
 			{
 				// NOTA IMPORTANTE : Lasciare questo IF in questo punto, prima della 
-				// verifica del tipo  PropertyItemString
-				listItem = (PropertyItemDropDownList)item;
+				// verifica del tipo  StringItem
+				listItem = (DropDownItem)item;
 				ShowComboBoxControl(X, Y, width, height, listItem);
 				return;
 			}
-			if (item is PropertyItemInt32)
+			if (item is Int32Item)
 			{
-				intItem = (PropertyItemInt32)item;
+				intItem = (Int32Item)item;
 				if (intItem.ValidationRangeCheck)
 					ShowNumericUpDownControl(X, Y, width, height, intItem);
 				else
 					ShowTextBoxControl(X, Y, width, height, item);
 				return;
 			}
-			if (item is  PropertyItemString)
+			if (item is  StringItem)
 			{
 				ShowTextBoxControl(X, Y, width, height, item);
 				return;
 			}
-			if (item is PropertyItemBoolean)
+			if (item is BooleanItem)
 			{
-				boolItem = (PropertyItemBoolean)item;
+				boolItem = (BooleanItem)item;
 				ShowCheckBoxControl(X, Y, width, height, boolItem);
 				return;
 			}
-			if (item is PropertyItemDouble)
+			if (item is FloatItem)
 			{
-				dblItem = (PropertyItemDouble)item;
+				dblItem = (FloatItem)item;
 				if (dblItem.ValidationRangeCheck == ValidationRangeCheckType.Automatic)
 					ShowNumericUpDownControl(X, Y, width, height, dblItem);
 				else
 					ShowTextBoxControl(X, Y, width, height, item);
 				return;
 			}
-			if (item is PropertyItemColor)
+			if (item is ColorItem)
 			{
 				ShowMoreButtonControl(X, Y, width, height);
 				return;
 			}
-			if (item is PropertyItemDateTime)
-			{
-				dtTmItem = (PropertyItemDateTime)item;
-				ShowDateTimeBoxControl(X, Y, width, height, dtTmItem);
-				return;
-			}
-			if (item is PropertyItemFont)
-			{
-				ShowMoreButtonControl(X, Y, width, height);
-				return;
-			}
-			if (item is PropertyItemImage)
+			if (item is ImageItem)
 			{
 				//ShowMoreButtonControl(X, Y, width, height);
-				imgItem = (PropertyItemImage)item;
+				imgItem = (ImageItem)item;
 				ShowMoreButtonControl(X, Y, width, height);
 				imgItem.Refresh();
 				ShowImagePreviewControl(X, Y + height, imgItem.Value, imgItem.FileName);
-				return;
-			}
-			if (item is PropertyItemProgressBar)
-			{
-				btnCancel.Enabled = item.Enabled;
-				ShowCancelButtonControl(X, Y, width, height);
 				return;
 			}
 		}
@@ -1378,24 +1204,22 @@ namespace Inspector
 
 		/// <summary>
 		/// Run this function when the btnMore button is pressed or when the user
-		/// double-click the mouse on any PropertyItemGeneric (only if the btnMore is visibile)
+		/// double-click the mouse on any BaseItem (only if the btnMore is visibile)
 		/// </summary>
 		private void MoreButtonIsPressed()
 		{
 			DialogResult diagRet;
-			PropertyItemColor colItem = null;
-			PropertyItemFont fontItem = null;
-			PropertyItemImage imgItem = null;
-			PropertyItemFile fileItem = null;
-			PropertyItemDirectory dirItem = null;
-			PropertyItemString PropertyItemString = null;
+			ColorItem colItem = null;
+			ImageItem imgItem = null;
+			FileItem fileItem = null;
+			StringItem StringItem = null;
 			string oldValue = "";
 
 			if (!btnMore.Visible) return;
 			btnMore.Enabled = false;
-			if (mItemSelected is PropertyItemColor)
+			if (mItemSelected is ColorItem)
 			{
-				colItem = (PropertyItemColor)mItemSelected;
+				colItem = (ColorItem)mItemSelected;
 				colDiag.Color = colItem.Value;
 				diagRet = colDiag.ShowDialog();
 				if (diagRet == DialogResult.OK)
@@ -1406,22 +1230,9 @@ namespace Inspector
 				btnMore.Enabled = true;
 				return;
 			}
-			if (mItemSelected is PropertyItemFont)
+			if (mItemSelected is ImageItem)
 			{
-				fontItem = (PropertyItemFont)mItemSelected;
-				fontDiag.Font = fontItem.Value;
-				diagRet = fontDiag.ShowDialog();
-				if (diagRet == DialogResult.OK)
-				{
-					fontItem.Value = fontDiag.Font;
-					PaintControl();
-				}
-				btnMore.Enabled = true;
-				return;
-			}
-			if (mItemSelected is PropertyItemImage)
-			{
-				imgItem = (PropertyItemImage)mItemSelected;
+				imgItem = (ImageItem)mItemSelected;
 				fileDiag.FileName = imgItem.FileName;
 				fileDiag.Filter = "All pictures (*.bmp;*.png;*.jpg;*.tiff;*.gif)|*.bmp;*.png;*.jpg;*.tiff;*.gif|All files (*.*)|*.*";
 				fileDiag.FilterIndex = 1;
@@ -1434,9 +1245,9 @@ namespace Inspector
 				btnMore.Enabled = true;
 				return;
 			}
-			if (mItemSelected is PropertyItemFile)
+			if (mItemSelected is FileItem)
 			{
-				fileItem = (PropertyItemFile)mItemSelected;
+				fileItem = (FileItem)mItemSelected;
 				fileDiag.FileName = fileItem.Value;
 				fileDiag.Filter = fileItem.Filter;
 				fileDiag.FilterIndex = fileItem.FilterIndex;
@@ -1449,32 +1260,18 @@ namespace Inspector
 				btnMore.Enabled = true;
 				return;
 			}
-			if (mItemSelected is PropertyItemDirectory)
-			{
-				dirItem = (PropertyItemDirectory)mItemSelected;
-				dirDiag.SelectedPath = dirItem.Value;
-				dirDiag.Description = dirItem.Description;
-				diagRet = dirDiag.ShowDialog();
-				if (diagRet == DialogResult.OK)
-				{
-					dirItem.Value = dirDiag.SelectedPath;
-					PaintControl();
-				}
-				btnMore.Enabled = true;
-				return;
-			}
-			if (mItemSelected is  PropertyItemString)
+			if (mItemSelected is  StringItem)
 			{
 				// The more button is visible when the property
 				// .ShowExpandButton is true. Use this button to run 
 				// a user defined action like to open a dialog box.
 				// (The event ExpandButtonPressed will be raised; 
 				//  add your action into this event)
-				 PropertyItemString = ( PropertyItemString)mItemSelected;
-				oldValue =  PropertyItemString.Value;
-				RaiseExpandButtonPressed( PropertyItemString);
+				 StringItem = ( StringItem)mItemSelected;
+				oldValue =  StringItem.Value;
+				RaiseExpandButtonPressed( StringItem);
 				btnMore.Enabled = true;
-				if (oldValue !=  PropertyItemString.Value)
+				if (oldValue !=  StringItem.Value)
 					// Execute control refresh if the user chage a property value
 					RefreshControl(true);
 				return;
@@ -1484,44 +1281,24 @@ namespace Inspector
 		}
 
 		/// <summary>
-		/// Run this function when the btnCancel button is pressed.
-		/// </summary>
-		private void CancelButtonIsPressed()
-		{
-			PropertyItemProgressBar progBarItem = null;
-
-			if (!btnCancel.Visible) return;
-			btnCancel.Enabled = false;
-			if (mItemSelected is PropertyItemProgressBar)
-			{
-				progBarItem = (PropertyItemProgressBar)mItemSelected;
-				RaiseCancelButtonPressed(progBarItem);
-				btnCancel.Enabled = true;
-				return;
-			}
-			// Exit
-			btnMore.Enabled = true;
-		}
-
-		/// <summary>
 		/// Validate text
 		/// </summary>
-		private void txtBox_ValidateText(PropertyItemGeneric item)
+		private void txtBox_ValidateText(BaseItem item)
 		{
 			// Validate data!
-			PropertyItemInt32 int32Item = null;
-			PropertyItemDouble dblItem = null;
+			Int32Item int32Item = null;
+			FloatItem dblItem = null;
 
 			if (item == null) return;
-			if (item is PropertyItemInt32)
+			if (item is Int32Item)
 			{
-				int32Item = (PropertyItemInt32)item;
+				int32Item = (Int32Item)item;
 				int32Item.ValueString = txtBox.Text;
 				return;
 			}
-			if (item is PropertyItemDouble)
+			if (item is FloatItem)
 			{
-				dblItem = (PropertyItemDouble)item;
+				dblItem = (FloatItem)item;
 				dblItem.ValueString = txtBox.Text;
 				if (dblItem.ValidationRangeCheck == ValidationRangeCheckType.Manual)
 				{
@@ -1552,9 +1329,9 @@ namespace Inspector
 
 		/// <summary>
 		/// Call this method to refresh the control on the screen. For fast printing set repaint to false.
-		/// Set repaint to true if you want to redraw all items (example after an PropertyItemGeneric property change).
+		/// Set repaint to true if you want to redraw all items (example after an BaseItem property change).
 		/// </summary>
-		/// <param name="repaint">true:redraw all PropertyItemGeneric by item. false:redraw using the last saved memory bitmap.</param>
+		/// <param name="repaint">true:redraw all BaseItem by item. false:redraw using the last saved memory bitmap.</param>
 		public void RefreshControl(bool repaint)
 		{
 			TraceWriteLine("RefreshControl(repaint=" + repaint.ToString() + ")");
@@ -1571,7 +1348,7 @@ namespace Inspector
 		}
 
 		/// <summary>
-		/// Set the Changed property of each PropertyItemGeneric to false.
+		/// Set the Changed property of each BaseItem to false.
 		/// </summary>
 		public void ResetChanges()
 		{
@@ -1610,14 +1387,14 @@ namespace Inspector
 		}
 
 		/// <summary>
-		/// Add a specific PropertyItemGeneric to the property grid. Be sure to use a unique key (itemKey).
+		/// Add a specific BaseItem to the property grid. Be sure to use a unique key (itemKey).
 		/// </summary>
 		/// <param name="categoryKey">The category where to append the item.</param>
-		/// <param name="itemKey">Unique key for a fast PropertyItemGeneric reference.</param>
+		/// <param name="itemKey">Unique key for a fast BaseItem reference.</param>
 		/// <param name="strItem">String item.</param>
-		public void ItemAdd(string categoryKey, string itemKey, PropertyItemString strItem)
+		public void ItemAdd(string categoryKey, string itemKey, StringItem strItem)
 		{
-			// Add PropertyItemGeneric to category list and PropertyItemGeneric list
+			// Add BaseItem to category list and BaseItem list
 			if (CategoryList.Contains(categoryKey))
 			{
 				CategoryList[categoryKey].ItemList.Add(itemKey, strItem);
@@ -1628,14 +1405,14 @@ namespace Inspector
 		}
 
 		/// <summary>
-		/// Add a specific PropertyItemGeneric to the property grid. Be sure to use a unique key (itemKey).
+		/// Add a specific BaseItem to the property grid. Be sure to use a unique key (itemKey).
 		/// </summary>
 		/// <param name="categoryKey">The category where to append the item.</param>
-		/// <param name="itemKey">Unique key for a fast PropertyItemGeneric reference.</param>
+		/// <param name="itemKey">Unique key for a fast BaseItem reference.</param>
 		/// <param name="intItem">Int32 item.</param>
-		public void ItemAdd(string categoryKey, string itemKey, PropertyItemInt32 intItem)
+		public void ItemAdd(string categoryKey, string itemKey, Int32Item intItem)
 		{
-			// Add PropertyItemGeneric to category list and PropertyItemGeneric list
+			// Add BaseItem to category list and BaseItem list
 			if (CategoryList.Contains(categoryKey))
 			{
 				CategoryList[categoryKey].ItemList.Add(itemKey, intItem);
@@ -1646,14 +1423,14 @@ namespace Inspector
 		}
 
 		/// <summary>
-		/// Add a specific PropertyItemGeneric to the property grid. Be sure to use a unique key (itemKey).
+		/// Add a specific BaseItem to the property grid. Be sure to use a unique key (itemKey).
 		/// </summary>
 		/// <param name="categoryKey">The category where to append the item.</param>
-		/// <param name="itemKey">Unique key for a fast PropertyItemGeneric reference.</param>
+		/// <param name="itemKey">Unique key for a fast BaseItem reference.</param>
 		/// <param name="cmbItem">Drop down list item.</param>
-		public void ItemAdd(string categoryKey, string itemKey, PropertyItemDropDownList cmbItem)
+		public void ItemAdd(string categoryKey, string itemKey, DropDownItem cmbItem)
 		{
-			// Add PropertyItemGeneric to category list and PropertyItemGeneric list
+			// Add BaseItem to category list and BaseItem list
 			if (CategoryList.Contains(categoryKey))
 			{
 				CategoryList[categoryKey].ItemList.Add(itemKey, cmbItem);
@@ -1664,14 +1441,14 @@ namespace Inspector
 		}
 
 		/// <summary>
-		/// Add a specific PropertyItemGeneric to the property grid. Be sure to use a unique key (itemKey).
+		/// Add a specific BaseItem to the property grid. Be sure to use a unique key (itemKey).
 		/// </summary>
 		/// <param name="categoryKey">The category where to append the item.</param>
-		/// <param name="itemKey">Unique key for a fast PropertyItemGeneric reference.</param>
+		/// <param name="itemKey">Unique key for a fast BaseItem reference.</param>
 		/// <param name="boolItem">Boolean item.</param>
-		public void ItemAdd(string categoryKey, string itemKey, PropertyItemBoolean boolItem)
+		public void ItemAdd(string categoryKey, string itemKey, BooleanItem boolItem)
 		{
-			// Add PropertyItemGeneric to category list and PropertyItemGeneric list
+			// Add BaseItem to category list and BaseItem list
 			if (CategoryList.Contains(categoryKey))
 			{
 				CategoryList[categoryKey].ItemList.Add(itemKey, boolItem);
@@ -1682,14 +1459,14 @@ namespace Inspector
 		}
 
 		/// <summary>
-		/// Add a specific PropertyItemGeneric to the property grid. Be sure to use a unique key (itemKey).
+		/// Add a specific BaseItem to the property grid. Be sure to use a unique key (itemKey).
 		/// </summary>
 		/// <param name="categoryKey">The category where to append the item.</param>
-		/// <param name="itemKey">Unique key for a fast PropertyItemGeneric reference.</param>
+		/// <param name="itemKey">Unique key for a fast BaseItem reference.</param>
 		/// <param name="dblItem">Double tem.</param>
-		public void ItemAdd(string categoryKey, string itemKey, PropertyItemDouble dblItem)
+		public void ItemAdd(string categoryKey, string itemKey, FloatItem dblItem)
 		{
-			// Add PropertyItemGeneric to category list and PropertyItemGeneric list
+			// Add BaseItem to category list and BaseItem list
 			if (CategoryList.Contains(categoryKey))
 			{
 				CategoryList[categoryKey].ItemList.Add(itemKey, dblItem);
@@ -1700,14 +1477,14 @@ namespace Inspector
 		}
 
 		/// <summary>
-		/// Add a specific PropertyItemGeneric to the property grid. Be sure to use a unique key (itemKey).
+		/// Add a specific BaseItem to the property grid. Be sure to use a unique key (itemKey).
 		/// </summary>
 		/// <param name="categoryKey">The category where to append the item.</param>
-		/// <param name="itemKey">Unique key for a fast PropertyItemGeneric reference.</param>
+		/// <param name="itemKey">Unique key for a fast BaseItem reference.</param>
 		/// <param name="colItem">Color item.</param>
-		public void ItemAdd(string categoryKey, string itemKey, PropertyItemColor colItem)
+		public void ItemAdd(string categoryKey, string itemKey, ColorItem colItem)
 		{
-			// Add PropertyItemGeneric to category list and PropertyItemGeneric list
+			// Add BaseItem to category list and BaseItem list
 			if (CategoryList.Contains(categoryKey))
 			{
 				CategoryList[categoryKey].ItemList.Add(itemKey, colItem);
@@ -1718,50 +1495,14 @@ namespace Inspector
 		}
 
 		/// <summary>
-		/// Add a specific PropertyItemGeneric to the property grid. Be sure to use a unique key (itemKey).
+		/// Add a specific BaseItem to the property grid. Be sure to use a unique key (itemKey).
 		/// </summary>
 		/// <param name="categoryKey">The category where to append the item.</param>
-		/// <param name="itemKey">Unique key for a fast PropertyItemGeneric reference.</param>
-		/// <param name="dtTmItem">Date/time item.</param>
-		public void ItemAdd(string categoryKey, string itemKey, PropertyItemDateTime dtTmItem)
-		{
-			// Add PropertyItemGeneric to category list and PropertyItemGeneric list
-			if (CategoryList.Contains(categoryKey))
-			{
-				CategoryList[categoryKey].ItemList.Add(itemKey, dtTmItem);
-				ItemList.Add(itemKey, dtTmItem);
-				if (this.SelectedItem == null)
-					this.SelectedItem = dtTmItem;
-			}
-		}
-
-		/// <summary>
-		/// Add a specific PropertyItemGeneric to the property grid. Be sure to use a unique key (itemKey).
-		/// </summary>
-		/// <param name="categoryKey">The category where to append the item.</param>
-		/// <param name="itemKey">Unique key for a fast PropertyItemGeneric reference.</param>
-		/// <param name="fontItem">Font item.</param>
-		public void ItemAdd(string categoryKey, string itemKey, PropertyItemFont fontItem)
-		{
-			// Add PropertyItemGeneric to category list and PropertyItemGeneric list
-			if (CategoryList.Contains(categoryKey))
-			{
-				CategoryList[categoryKey].ItemList.Add(itemKey, fontItem);
-				ItemList.Add(itemKey, fontItem);
-				if (this.SelectedItem == null)
-					this.SelectedItem = fontItem;
-			}
-		}
-
-		/// <summary>
-		/// Add a specific PropertyItemGeneric to the property grid. Be sure to use a unique key (itemKey).
-		/// </summary>
-		/// <param name="categoryKey">The category where to append the item.</param>
-		/// <param name="itemKey">Unique key for a fast PropertyItemGeneric reference.</param>
+		/// <param name="itemKey">Unique key for a fast BaseItem reference.</param>
 		/// <param name="imgItem">Image (picture) item.</param>
-		public void ItemAdd(string categoryKey, string itemKey, PropertyItemImage imgItem)
+		public void ItemAdd(string categoryKey, string itemKey, ImageItem imgItem)
 		{
-			// Add PropertyItemGeneric to category list and PropertyItemGeneric list
+			// Add BaseItem to category list and BaseItem list
 			if (CategoryList.Contains(categoryKey))
 			{
 				CategoryList[categoryKey].ItemList.Add(itemKey, imgItem);
@@ -1772,14 +1513,14 @@ namespace Inspector
 		}
 
 		/// <summary>
-		/// Add a specific PropertyItemGeneric to the property grid. Be sure to use a unique key (itemKey).
+		/// Add a specific BaseItem to the property grid. Be sure to use a unique key (itemKey).
 		/// </summary>
 		/// <param name="categoryKey">The category where to append the item.</param>
-		/// <param name="itemKey">Unique key for a fast PropertyItemGeneric reference.</param>
+		/// <param name="itemKey">Unique key for a fast BaseItem reference.</param>
 		/// <param name="fileItem">File (file name) item.</param>
-		public void ItemAdd(string categoryKey, string itemKey, PropertyItemFile fileItem)
+		public void ItemAdd(string categoryKey, string itemKey, FileItem fileItem)
 		{
-			// Add PropertyItemGeneric to category list and PropertyItemGeneric list
+			// Add BaseItem to category list and BaseItem list
 			if (CategoryList.Contains(categoryKey))
 			{
 				CategoryList[categoryKey].ItemList.Add(itemKey, fileItem);
@@ -1789,61 +1530,25 @@ namespace Inspector
 			}
 		}
 
-		/// <summary>
-		/// Add a specific PropertyItemGeneric to the property grid. Be sure to use a unique key (itemKey).
-		/// </summary>
-		/// <param name="categoryKey">The category where to append the item.</param>
-		/// <param name="itemKey">Unique key for a fast PropertyItemGeneric reference.</param>
-		/// <param name="dirItem">Directory (path name) item.</param>
-		public void ItemAdd(string categoryKey, string itemKey, PropertyItemDirectory dirItem)
-		{
-			// Add PropertyItemGeneric to category list and PropertyItemGeneric list
-			if (CategoryList.Contains(categoryKey))
-			{
-				CategoryList[categoryKey].ItemList.Add(itemKey, dirItem);
-				ItemList.Add(itemKey, dirItem);
-				if (this.SelectedItem == null)
-					this.SelectedItem = dirItem;
-			}
-		}
 
-		/// <summary>
-		/// Add a specific PropertyItemGeneric to the property grid. Be sure to use a unique key (itemKey).
-		/// </summary>
-		/// <param name="categoryKey">The category where to append the item.</param>
-		/// <param name="itemKey">Unique key for a fast PropertyItemGeneric reference.</param>
-		/// <param name="progBarItem">Progress bar item.</param>
-		public void ItemAdd(string categoryKey, string itemKey, PropertyItemProgressBar progBarItem)
-		{
-			// Add PropertyItemGeneric to category list and PropertyItemGeneric list
-			if (CategoryList.Contains(categoryKey))
-			{
-				CategoryList[categoryKey].ItemList.Add(itemKey, progBarItem);
-				ItemList.Add(itemKey, progBarItem);
-				if (this.SelectedItem == null)
-					this.SelectedItem = progBarItem;
-			}
-		}
-
-
-		//TODO:Add any new PropertyItemGeneric management here... (ItemAdd() function)
+		//TODO:Add any new BaseItem management here... (ItemAdd() function)
 		
 
 		/// <summary>
-		/// Add a specific category PropertyItemGeneric to the property grid. Be sure to use a unique key (categoryKey).
+		/// Add a specific category BaseItem to the property grid. Be sure to use a unique key (categoryKey).
 		/// </summary>
-		/// <param name="categoryKey">Category PropertyItemGeneric key reference.</param>
+		/// <param name="categoryKey">Category BaseItem key reference.</param>
 		/// <param name="catItem">Category item.</param>
-		public void CategoryAdd(string categoryKey, PropertyItemCategory catItem)
+		public void CategoryAdd(string categoryKey, CategoryItem catItem)
 		{
 			TraceWriteLine("CategoryAdd(categoryKey=" + categoryKey + ")");
 			CategoryList.Add(categoryKey, catItem);
 		}
 
 		/// <summary>
-		/// Return an PropertyItemGeneric value as a string. Return null if the PropertyItemGeneric is not found.
+		/// Return an BaseItem value as a string. Return null if the BaseItem is not found.
 		/// </summary>
-		/// <param name="itemKey">Unique key for a fast PropertyItemGeneric reference.</param>
+		/// <param name="itemKey">Unique key for a fast BaseItem reference.</param>
 		/// <returns>String value rappresentation.</returns>
 		public string GetItemValue(string itemKey)
 		{
@@ -1854,17 +1559,17 @@ namespace Inspector
 		}
 
 		/// <summary>
-		/// Return an PropertyItemGeneric double value. Return 0.0 if the PropertyItemGeneric is not found.
+		/// Return an BaseItem double value. Return 0.0 if the BaseItem is not found.
 		/// </summary>
-		/// <param name="itemKey">Unique key for a fast PropertyItemGeneric reference.</param>
+		/// <param name="itemKey">Unique key for a fast BaseItem reference.</param>
 		/// <returns>Double value.</returns>
 		public double GetPropertyItemDoubleValue(string itemKey)
 		{
-			PropertyItemDouble dblItem = null;
+			FloatItem dblItem = null;
 
-			if (ItemList.Contains(itemKey) && ItemList[itemKey] is PropertyItemDouble)
+			if (ItemList.Contains(itemKey) && ItemList[itemKey] is FloatItem)
 			{
-				dblItem = (PropertyItemDouble)ItemList[itemKey];
+				dblItem = (FloatItem)ItemList[itemKey];
 				return dblItem.Value;
 			}
 			else
@@ -1872,25 +1577,25 @@ namespace Inspector
 		}
 
 		/// <summary>
-		/// Sets a PropertyItemGeneric string value. Only some items ( PropertyItemString, PropertyItemDropDownList, ...) support this method.
+		/// Sets a BaseItem string value. Only some items ( StringItem, DropDownItem, ...) support this method.
 		/// </summary>
 		public void SetItemValue(string itemKey, string value)
 		{
 
-			if (ItemList.Contains(itemKey) && (ItemList[itemKey] is  PropertyItemString ||
-				ItemList[itemKey] is PropertyItemDropDownList))
+			if (ItemList.Contains(itemKey) && (ItemList[itemKey] is  StringItem ||
+				ItemList[itemKey] is DropDownItem))
 				// Set value
 				ItemList[itemKey].ValueString = value;
 		}
 
 		/// <summary>
-		/// Sets a PropertyItemGeneric double value. Only the PropertyItemDouble object support this method.
+		/// Sets a BaseItem double value. Only the FloatItem object support this method.
 		/// </summary>
 		public void SetItemValue(string itemKey, double value)
 		{
 			string format;
 
-			if (ItemList.Contains(itemKey) && ItemList[itemKey] is PropertyItemDouble)
+			if (ItemList.Contains(itemKey) && ItemList[itemKey] is FloatItem)
 			{
 				format = ItemList[itemKey].Format;
 				ItemList[itemKey].ValueString = value.ToString(format);
@@ -1898,18 +1603,18 @@ namespace Inspector
 		}
 
 		/// <summary>
-		/// Sets a PropertyItemGeneric int value. Only the PropertyItemInt32 object support this method.
+		/// Sets a BaseItem int value. Only the Int32Item object support this method.
 		/// </summary>
 		public void SetItemValue(string itemKey, int value)
 		{
-			if (ItemList.Contains(itemKey) && ItemList[itemKey] is PropertyItemInt32)
+			if (ItemList.Contains(itemKey) && ItemList[itemKey] is Int32Item)
 				ItemList[itemKey].ValueString = value.ToString();
 		}
 
 		/// <summary>
-		/// Return the text property of an item. Return null if the PropertyItemGeneric is not found.
+		/// Return the text property of an item. Return null if the BaseItem is not found.
 		/// </summary>
-		/// <param name="itemKey">Unique key for a fast PropertyItemGeneric reference.</param>
+		/// <param name="itemKey">Unique key for a fast BaseItem reference.</param>
 		/// <returns>String Text of an item.</returns>
 		public string GetItemText(string itemKey)
 		{
@@ -1920,11 +1625,11 @@ namespace Inspector
 		}
 
 		/// <summary>
-		/// Return an PropertyItemGeneric stored into the property grid. Return null if the PropertyItemGeneric is not found.
+		/// Return an BaseItem stored into the property grid. Return null if the BaseItem is not found.
 		/// </summary>
-		/// <param name="itemKey">Unique key for a fast PropertyItemGeneric reference.</param>
-		/// <returns>Generic PropertyItemGeneric object.</returns>
-		public PropertyItemGeneric GetItem(string itemKey)
+		/// <param name="itemKey">Unique key for a fast BaseItem reference.</param>
+		/// <returns>Generic BaseItem object.</returns>
+		public BaseItem GetItem(string itemKey)
 		{
 			if (ItemList.Contains(itemKey))
 				return ItemList[itemKey];
@@ -1933,9 +1638,9 @@ namespace Inspector
 		}
 
 		/// <summary>
-		/// Return a PropertyItemCategory.
+		/// Return a CategoryItem.
 		/// </summary>
-		public PropertyItemCategory GetCategory(string key)
+		public CategoryItem GetCategory(string key)
 		{
 			if (CategoryList.Contains(key))
 				return CategoryList[key];
@@ -1944,7 +1649,7 @@ namespace Inspector
 		}
 
 		/// <summary>
-		/// Return a PropertyItemCategory.
+		/// Return a CategoryItem.
 		/// </summary>
 		public void SetCategoryText(string key, string text)
 		{
@@ -1961,39 +1666,20 @@ namespace Inspector
 		/// </summary>
 		/// <param name="sender">Sender object.</param>
 		/// <param name="item">String item.</param>
-		public delegate void ExpandButtonPressedHandle(object sender, PropertyItemString item);
+		public delegate void ExpandButtonPressedHandle(object sender, StringItem item);
 
 		/// <summary>
 		/// This event accour while the user press the expand button ("...", more button).
 		/// </summary>
 		public event ExpandButtonPressedHandle ExpandButtonPressed;
 
-		private void RaiseExpandButtonPressed(PropertyItemString item)
+		private void RaiseExpandButtonPressed(StringItem item)
 		{
 			if (ExpandButtonPressed != null)
 				// Raise event
 				ExpandButtonPressed(this, item);
 		}
-
-		/// <summary>
-		/// Delegate for event CancelButtonPressed.
-		/// </summary>
-		/// <param name="sender">Sender object.</param>
-		/// <param name="item">Progress bar item.</param>
-		public delegate void CancelButtonPressedHandle(object sender, PropertyItemProgressBar item);
 		
-		/// <summary>
-		/// This event accour while the user press the cancel button ("X").
-		/// </summary>
-		public event CancelButtonPressedHandle CancelButtonPressed;
-
-		private void RaiseCancelButtonPressed(PropertyItemProgressBar item)
-		{
-			if (CancelButtonPressed != null)
-				// Raise event
-				CancelButtonPressed(this, item);
-		}
-
 		/// <summary>
 		/// Delegate for event ApplyButtonPressed.
 		/// </summary>
@@ -2025,29 +1711,29 @@ namespace Inspector
 
 		private void txtBox_TextChanged(object sender, EventArgs e)
 		{
-			PropertyItemString strItem = null;
-			//PropertyItemInt32 int32Item = null;
-			//PropertyItemDouble dblItem = null;
+			StringItem strItem = null;
+			//Int32Item int32Item = null;
+			//FloatItem dblItem = null;
 
 			TraceWriteLine("txtBox_TextChanged()");
 			if (controlChangeEventLocked) return;
 			if (mItemSelected == null) return;
-			if (mItemSelected is PropertyItemString)
+			if (mItemSelected is StringItem)
 			{
-				strItem = (PropertyItemString)mItemSelected;
+				strItem = (StringItem)mItemSelected;
 				strItem.Value = txtBox.Text;
 				return;
 			}
 			/*
-			if (mItemSelected is PropertyItemInt32)
+			if (mItemSelected is Int32Item)
 			{
-				int32Item = (PropertyItemInt32)mItemSelected;
+				int32Item = (Int32Item)mItemSelected;
 				int32Item.ValueString = txtBox.Text;
 				return;
 			}
-			if (mItemSelected is PropertyItemDouble)
+			if (mItemSelected is FloatItem)
 			{
-				dblItem = (PropertyItemDouble)mItemSelected;
+				dblItem = (FloatItem)mItemSelected;
 				dblItem.ValueString = txtBox.Text;
 				return;
 			}
@@ -2056,45 +1742,45 @@ namespace Inspector
 
 		private void cmbBox_TextChanged(object sender, EventArgs e)
 		{
-			PropertyItemDropDownList listItem = null;
+			DropDownItem listItem = null;
 
 			TraceWriteLine("cmbBox_TextChanged()");
 			if (controlChangeEventLocked) return;
 			if (mItemSelected == null) return;
-			if (mItemSelected is PropertyItemDropDownList)
+			if (mItemSelected is DropDownItem)
 			{
-				listItem = (PropertyItemDropDownList)mItemSelected;
+				listItem = (DropDownItem)mItemSelected;
 				listItem.Value = cmbBox.Text;
 			}
 		}
 
 		private void cmbBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			PropertyItemDropDownList listItem = null;
+			DropDownItem listItem = null;
 
 			TraceWriteLine("cmbBox_SelectedIndexChanged()");
 			if (controlChangeEventLocked) return;
 			if (mItemSelected == null) return;
-			if (mItemSelected is PropertyItemDropDownList)
+			if (mItemSelected is DropDownItem)
 			{
-				listItem = (PropertyItemDropDownList)mItemSelected;
+				listItem = (DropDownItem)mItemSelected;
 				listItem.Value = cmbBox.Text;
 			}
 		}
 
 		private void numUpDn_ValueChanged(object sender, EventArgs e)
 		{
-			PropertyItemInt32 int32Item = null;
+			Int32Item int32Item = null;
 			int intValue;
-			PropertyItemDouble dblItem = null;
+			FloatItem dblItem = null;
 			double dblValue;
 
 			TraceWriteLine("numUpDn_ValueChanged()");
 			if (controlChangeEventLocked) return;
 			if (mItemSelected == null) return;
-			if (mItemSelected is PropertyItemInt32)
+			if (mItemSelected is Int32Item)
 			{
-				int32Item = (PropertyItemInt32)mItemSelected;
+				int32Item = (Int32Item)mItemSelected;
 				try
 				{
 					intValue = (int)numUpDn.Value;
@@ -2106,9 +1792,9 @@ namespace Inspector
 				}
 				return;
 			}
-			if (mItemSelected is PropertyItemDouble)
+			if (mItemSelected is FloatItem)
 			{
-				dblItem = (PropertyItemDouble)mItemSelected;
+				dblItem = (FloatItem)mItemSelected;
 				try
 				{
 					dblValue = (double)numUpDn.Value;
@@ -2122,28 +1808,14 @@ namespace Inspector
 			}
 		}
 
-		private void dtTmBox_ValueChanged(object sender, EventArgs e)
-		{
-			PropertyItemDateTime dtTmItem = null;
-
-			TraceWriteLine("dtTmBox_ValueChanged()");
-			if (controlChangeEventLocked) return;
-			if (mItemSelected == null) return;
-			if (mItemSelected is PropertyItemDateTime)
-			{
-				dtTmItem = (PropertyItemDateTime)mItemSelected;
-				dtTmItem.Value = dtTmBox.Value;
-			}
-		}
-
 		private void chkBox_Click(object sender, EventArgs e)
 		{
-			PropertyItemBoolean boolItem = null;
+			BooleanItem boolItem = null;
 
 			TraceWriteLine("chkBox_Click()");
-			if (mItemSelected is PropertyItemBoolean)
+			if (mItemSelected is BooleanItem)
 			{
-				boolItem = (PropertyItemBoolean)mItemSelected;
+				boolItem = (BooleanItem)mItemSelected;
 				boolItem.Value = chkBox.Checked;
 				chkBox.Text = boolItem.ValueString;
 			}
@@ -2153,12 +1825,6 @@ namespace Inspector
 		{
 			TraceWriteLine("btnMore_Click()");
 			MoreButtonIsPressed();
-		}
-
-		private void btnCancel_Click(object sender, EventArgs e)
-		{
-			TraceWriteLine("btnCancel_Click()");
-			CancelButtonIsPressed();
 		}
 
 		private void txtBox_KeyPress(object sender, KeyPressEventArgs e)

@@ -832,7 +832,7 @@ void DebugGizmosNode::ScalePicked(Scene* pScene)
 		{
 		case DebugGizmosNode::TA_AxisX: axis = world.Right(); local = Vector3::Right; break;
 		case DebugGizmosNode::TA_AxisY: axis = world.Up(); local = Vector3::Up; break;
-		case DebugGizmosNode::TA_AxisZ: axis = world.Forward(); local = Vector3::Forward; break;
+		case DebugGizmosNode::TA_AxisZ: axis = world.Forward(); local = Vector3::Backward; break;
 		default: return;
 		}
 

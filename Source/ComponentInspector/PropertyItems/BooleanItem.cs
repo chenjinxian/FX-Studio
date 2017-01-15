@@ -10,15 +10,15 @@ using System.Text;
  */
 namespace Inspector
 {
-    // All classes like "PropertyItem..." inherit directly from PropertyItemGeneric or another
-    // class (eg. PropertyItemString) but the base class must be PropertyItemGeneric
+    // All classes like "PropertyItem..." inherit directly from BaseItem or another
+    // class (eg. StringItem) but the base class must be BaseItem
 
     #region Boolean property item class
 
     /// <summary>
     /// Boolean property item class.
     /// </summary>
-    public class PropertyItemBoolean : PropertyItemGeneric
+    public class BooleanItem : BaseItem
     {
 
         #region Private internal var./properties
@@ -35,7 +35,7 @@ namespace Inspector
         /// <summary>
         /// Constructor
         /// </summary>
-        public PropertyItemBoolean()
+        public BooleanItem()
         {
             this.Text = "New boolean item";
         }
@@ -43,7 +43,7 @@ namespace Inspector
         /// <summary>
         /// Constructor. The DefaultValue is the same as Value.
         /// </summary>
-        public PropertyItemBoolean(string text, bool value)
+        public BooleanItem(string text, bool value)
         {
             this.Text = text;
             this.DefaultValue = value;
@@ -53,7 +53,7 @@ namespace Inspector
         /// <summary>
         /// Constructor
         /// </summary>
-        public PropertyItemBoolean(string text, bool value, bool defaultValue)
+        public BooleanItem(string text, bool value, bool defaultValue)
         {
             this.Text = text;
             this.DefaultValue = defaultValue;

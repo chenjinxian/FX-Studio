@@ -10,15 +10,15 @@ using System.Text;
  */
 namespace Inspector
 {
-    // All classes like "PropertyItem..." inherit directly from PropertyItemGeneric or another
-    // class (eg. PropertyItemString) but the base class must be always PropertyItemGeneric
+    // All classes like "PropertyItem..." inherit directly from BaseItem or another
+    // class (eg. StringItem) but the base class must be always BaseItem
 
-    #region DropDownList property item class (inherit from PropertyItemString)
+    #region DropDownList property item class (inherit from StringItem)
 
     /// <summary>
-    /// DropDownList property item class (inherit from PropertyItemString).
+    /// DropDownList property item class (inherit from StringItem).
     /// </summary>
-    public class PropertyItemDropDownList : PropertyItemString
+    public class DropDownItem : StringItem
     {
 
         #region Private internal var./properties
@@ -33,7 +33,7 @@ namespace Inspector
         /// <summary>
         /// Constructor.
         /// </summary>
-        public PropertyItemDropDownList()
+        public DropDownItem()
         {
             this.Text = "New drop down list item";
         }
@@ -42,7 +42,7 @@ namespace Inspector
         /// Constructor. The DefaultValue is the same as Value.
         /// The dropDownList string format is : "dropdownitem1|dropdownitem2|...|dropdownitemN" (the separator character is "|").
         /// </summary>
-        public PropertyItemDropDownList(string text, string value, string dropDownList)
+        public DropDownItem(string text, string value, string dropDownList)
         {
             this.Text = text;
             this.DefaultValue = value;
@@ -54,7 +54,7 @@ namespace Inspector
         /// <summary>
         /// Constructor. The dropDownList string format is : "dropdownitem1|dropdownitem2|...|dropdownitemN" (the separator character is "|").
         /// </summary>
-        public PropertyItemDropDownList(string text, string value, string defaultValue, string dropDownList)
+        public DropDownItem(string text, string value, string defaultValue, string dropDownList)
         {
             this.Text = text;
             this.DefaultValue = defaultValue;

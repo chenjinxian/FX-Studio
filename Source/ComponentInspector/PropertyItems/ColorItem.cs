@@ -10,21 +10,21 @@ using System.Text;
  */
 namespace Inspector
 {
-    // All classes like "PropertyItem..." inherit directly from PropertyItemGeneric or another
-    // class (eg. PropertyItemString) but the base class must be always PropertyItemGeneric
+    // All classes like "PropertyItem..." inherit directly from BaseItem or another
+    // class (eg. StringItem) but the base class must be BaseItem
 
-    #region Font property item class
+    #region Color property item class
 
     /// <summary>
-    /// Font property item class.
+    /// Color property item class.
     /// </summary>
-    public class PropertyItemFont : PropertyItemGeneric
+    public class ColorItem : BaseItem
     {
 
         #region Private internal var./properties
 
-        private System.Drawing.Font mValue = null;
-        private System.Drawing.Font mDefaultValue = null;
+        private System.Drawing.Color mValue = System.Drawing.Color.Black;
+        private System.Drawing.Color mDefaultValue = System.Drawing.Color.Black;
 
         #endregion
 
@@ -33,15 +33,15 @@ namespace Inspector
         /// <summary>
         /// Constructor.
         /// </summary>
-        public PropertyItemFont()
+        public ColorItem()
         {
-            this.Text = "New font item";
+            this.Text = "New color item";
         }
 
         /// <summary>
         /// Constructor. The DefaultValue is the same as Value.
         /// </summary>
-        public PropertyItemFont(string text, System.Drawing.Font value)
+        public ColorItem(string text, System.Drawing.Color value)
         {
             this.Text = text;
             this.DefaultValue = value;
@@ -49,9 +49,9 @@ namespace Inspector
         }
 
         /// <summary>
-        /// Constructor.
+        /// Constructor
         /// </summary>
-        public PropertyItemFont(string text, System.Drawing.Font value, System.Drawing.Font defaultValue)
+        public ColorItem(string text, System.Drawing.Color value, System.Drawing.Color defaultValue)
         {
             this.Text = text;
             this.DefaultValue = defaultValue;
@@ -63,9 +63,9 @@ namespace Inspector
         #region Public Properties
 
         /// <summary>
-        /// Gets/sets the font value.
+        /// Gets/sets a color value.
         /// </summary>
-        public System.Drawing.Font Value
+        public System.Drawing.Color Value
         {
             get
             {
@@ -73,30 +73,19 @@ namespace Inspector
             }
             set
             {
-                System.Drawing.Font oldValue;
+                System.Drawing.Color oldValue = mValue;
 
-                if (mValue == null)
-                    oldValue = null;
-                else
-                    oldValue = (System.Drawing.Font)mValue.Clone();
                 mValue = value;
-                if (oldValue != null && mValue != null)
-                {
-                    this.Changed = (oldValue.ToString() != mValue.ToString());
-                    oldValue.Dispose();
-                }
-                else
-                    // Maybe the value is changed
-                    this.Changed = true;
+                this.Changed = (oldValue.ToArgb() != mValue.ToArgb());
                 if (this.Changed)
                     RaiseValueChanged(mValue);
             }
         }
 
         /// <summary>
-        /// Gets/sets the default value. To sets the current value to the default value use the method SetSefaultValue().
+        /// Gets/sets the current default color value. To set the current value to the default value use the method SetDefaultValue().
         /// </summary>
-        public System.Drawing.Font DefaultValue
+        public System.Drawing.Color DefaultValue
         {
             get
             {
@@ -109,19 +98,18 @@ namespace Inspector
         }
 
         /// <summary>
-        /// Gets a human readable text rappresentation of the font object.
+        /// Return a human readable text rappresentation of the color value.
         /// </summary>
         public override string ValueString
         {
             get
             {
-                string fontStr = "";
+                string colStr;
 
-                if (mValue == null)
-                    fontStr = "(none)";
-                else
-                    fontStr = mValue.ToString();
-                return fontStr;
+                colStr = mValue.ToString();
+                colStr = colStr.Replace("Color [", "");
+                colStr = colStr.Replace("]", "");
+                return colStr;
             }
         }
 
@@ -130,7 +118,7 @@ namespace Inspector
         #region Public Methods
 
         /// <summary>
-        /// Sets the Value property as the current DefaultValue property.
+        /// Sets the current default color value.
         /// </summary>
         public override void SetDefaultValue()
         {
@@ -145,15 +133,15 @@ namespace Inspector
         /// Delegate for ValueChanged event.
         /// </summary>
         /// <param name="sender">Object sender.</param>
-        /// <param name="value">Last font value.</param>
-        public delegate void ValueChangedHandle(object sender, System.Drawing.Font value);
+        /// <param name="value">Last color value.</param>
+        public delegate void ValueChangedHandle(object sender, System.Drawing.Color value);
 
         /// <summary>
-        /// This event accour when the font value property change.
+        /// This event accour when the color value property change.
         /// </summary>
         public event ValueChangedHandle ValueChanged;
 
-        private void RaiseValueChanged(System.Drawing.Font value)
+        private void RaiseValueChanged(System.Drawing.Color value)
         {
             if (ValueChanged != null)
                 // Raise event

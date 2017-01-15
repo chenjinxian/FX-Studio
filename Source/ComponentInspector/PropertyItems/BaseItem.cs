@@ -73,15 +73,15 @@ namespace Inspector
 
     #endregion
 
-    // All classes like "PropertyItem..." inherit directly from PropertyItemGeneric or another
-    // class (eg. PropertyItemString) but the base class must be PropertyItemGeneric
+    // All classes like "PropertyItem..." inherit directly from BaseItem or another
+    // class (eg. StringItem) but the base class must be BaseItem
 
     #region Generic Property Item (all items objects inherit from this object)
 
     /// <summary>
     /// Generic property item class (common items property and methods). All property grid items inherit from this class. 
     /// </summary>
-    public class PropertyItemGeneric
+    public class BaseItem
     {
 
         #region Private internal var./properties
@@ -104,7 +104,7 @@ namespace Inspector
         /// <summary>
         /// Constructor
         /// </summary>
-        public PropertyItemGeneric()
+        public BaseItem()
         {
         }
 

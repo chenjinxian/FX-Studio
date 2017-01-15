@@ -8,14 +8,14 @@ namespace Inspector
     #region Private [1] generic sorted list object collection
 
     /// <summary>
-    /// If you add PropertyItemGeneric objects to this collection the items will be sorted
+    /// If you add BaseItem objects to this collection the items will be sorted
     /// automaticaly by the Text property.
     /// </summary>
     public class SortedObjectCollection
     {
         #region Private internal var./properties
 
-        private System.Collections.SortedList listSorted;       // fullKey = PropertyItemGeneric.Text + "." + Key
+        private System.Collections.SortedList listSorted;       // fullKey = BaseItem.Text + "." + Key
         private System.Collections.SortedList listByKey;        // Collection of index to access the listSorted collection (by key)
 
         #endregion 
@@ -71,7 +71,7 @@ namespace Inspector
             int index = -1;
 
             for (t = 0; t < listSorted.Count; t++)
-                if (listSorted.GetByIndex(t) is PropertyItemGeneric)
+                if (listSorted.GetByIndex(t) is BaseItem)
                 {
                     fullKey = (string)listSorted.GetKey(t);
                     shortKey = ExtractKey(fullKey);
@@ -99,17 +99,17 @@ namespace Inspector
         /// <summary>
         /// Add any object to the sorted list. A unique key must be specified or an exception accour.
         /// </summary>
-        /// <param name="key">Unique string value used to identify an PropertyItemGeneric into a sorted list</param>
-        /// <param name="Value">Object (eg. PropertyItemGeneric object) to add to a sorted list</param>
+        /// <param name="key">Unique string value used to identify an BaseItem into a sorted list</param>
+        /// <param name="Value">Object (eg. BaseItem object) to add to a sorted list</param>
         public void Add(String key, object Value)
         {
-            PropertyItemGeneric item = null;
+            BaseItem item = null;
             string fullKey = key;
             int index = -1;
             
-            if (Value is PropertyItemGeneric)
+            if (Value is BaseItem)
             {
-                item = (PropertyItemGeneric)Value;
+                item = (BaseItem)Value;
                 fullKey = item.Text + "." + key;
             }
             listSorted.Add(fullKey, Value);
@@ -125,7 +125,7 @@ namespace Inspector
         /// <summary>
         /// Return true if the key is found into the collection
         /// </summary>
-        /// <param name="key">Unique string value used to identify an PropertyItemGeneric into a sorted list</param>
+        /// <param name="key">Unique string value used to identify an BaseItem into a sorted list</param>
         /// <returns>true:the key is been found  false:can't find the key in the sorted list</returns>
         public bool Contains(string key)
         {
@@ -133,9 +133,9 @@ namespace Inspector
         }
 
         /// <summary>
-        /// Delete an PropertyItemGeneric from the sorted list referring it by key
+        /// Delete an BaseItem from the sorted list referring it by key
         /// </summary>
-        /// <param name="key">Unique string value used to identify an PropertyItemGeneric into a sorted list</param>
+        /// <param name="key">Unique string value used to identify an BaseItem into a sorted list</param>
         public void Remove(string key)
         {
             int index = -1;
@@ -148,9 +148,9 @@ namespace Inspector
         }
 
         /// <summary>
-        /// Delete an PropertyItemGeneric from the sorted list referring it by index
+        /// Delete an BaseItem from the sorted list referring it by index
         /// </summary>
-        /// <param name="index">Unique index value (0 based) used to identify an PropertyItemGeneric into a sorted list</param>
+        /// <param name="index">Unique index value (0 based) used to identify an BaseItem into a sorted list</param>
         public void RemoveAt(int index)
         {
             string key = "";
@@ -178,9 +178,9 @@ namespace Inspector
         #region Public properties
 
         /// <summary>
-        /// Gets/sets and PropertyItemGeneric from a sorted list using the Key.
+        /// Gets/sets and BaseItem from a sorted list using the Key.
         /// </summary>
-        /// <param name="key">Unique string value used to identify an PropertyItemGeneric into a sorted list</param>
+        /// <param name="key">Unique string value used to identify an BaseItem into a sorted list</param>
         /// <returns></returns>
         public object this[String key]
         {
@@ -206,7 +206,7 @@ namespace Inspector
         }
 
         /// <summary>
-        /// Gets/sets and PropertyItemGeneric referring it by index.
+        /// Gets/sets and BaseItem referring it by index.
         /// </summary>
         /// <param name="index">A 0 based integer value</param>
         /// <returns></returns>
@@ -287,15 +287,15 @@ namespace Inspector
         #region Public methods
 
         /// <summary>
-        /// Gets/sets a PropertyItemGeneric into the collection referring it by key.
+        /// Gets/sets a BaseItem into the collection referring it by key.
         /// </summary>
-        /// <param name="key">Unique string value used to identify an PropertyItemGeneric into a sorted list.</param>
+        /// <param name="key">Unique string value used to identify an BaseItem into a sorted list.</param>
         /// <returns></returns>
-        public PropertyItemGeneric this[String key]
+        public BaseItem this[String key]
         {
             get
             {
-                return (PropertyItemGeneric)ItemList[key];
+                return (BaseItem)ItemList[key];
             }
             set
             {
@@ -304,18 +304,18 @@ namespace Inspector
         }
 
         /// <summary>
-        /// Gets/sets an PropertyItemGeneric into the collection referring it by index. 
+        /// Gets/sets an BaseItem into the collection referring it by index. 
         /// </summary>
-        /// <param name="index">Unique index value (0 based) used to identify an PropertyItemGeneric into a sorted list.</param>
+        /// <param name="index">Unique index value (0 based) used to identify an BaseItem into a sorted list.</param>
         /// <returns></returns>
-        public PropertyItemGeneric this[int index]
+        public BaseItem this[int index]
         {
             get
             {
                 if (index < 0 || index >= ItemList.Count)			// Ex. -1
                     return null;
                 else
-                    return (PropertyItemGeneric)ItemList[index];
+                    return (BaseItem)ItemList[index];
             }
             set
             {
@@ -327,144 +327,100 @@ namespace Inspector
         }
 
         /// <summary>
-        /// Return an PropertyItemGeneric key
+        /// Return an BaseItem key
         /// </summary>
-        /// <param name="index">Unique index value (0 based) used to identify an PropertyItemGeneric into a sorted list.</param>
-        /// <returns>Unique string value used to identify an PropertyItemGeneric into a sorted list.</returns>
+        /// <param name="index">Unique index value (0 based) used to identify an BaseItem into a sorted list.</param>
+        /// <returns>Unique string value used to identify an BaseItem into a sorted list.</returns>
         public string GetKey(int index)
         {
             return (string)ItemList.GetKey(index);
         }
 
         /// <summary>
-        /// Add a PropertyItemString to the sorted list. A unique key must be specified or an exception accour.
+        /// Add a StringItem to the sorted list. A unique key must be specified or an exception accour.
         /// </summary>
-        /// <param name="key">Unique string value used to identify an PropertyItemGeneric into a sorted list.</param>
+        /// <param name="key">Unique string value used to identify an BaseItem into a sorted list.</param>
         /// <param name="Value">Simple text string item.</param>
-        public void Add(String key, PropertyItemString Value)
+        public void Add(String key, StringItem Value)
         {
             ItemList.Add(key, Value);
             Value.Changed = false;
         }
 
         /// <summary>
-        /// Add an PropertyItemInt32 to the sorted list. A unique key must be specified or an exception accour.
+        /// Add an Int32Item to the sorted list. A unique key must be specified or an exception accour.
         /// </summary>
-        /// <param name="key">Unique string value used to identify an PropertyItemGeneric into a sorted list.</param>
+        /// <param name="key">Unique string value used to identify an BaseItem into a sorted list.</param>
         /// <param name="Value">Integer (32 bits) number item.</param>
-        public void Add(String key, PropertyItemInt32 Value)
+        public void Add(String key, Int32Item Value)
         {
             ItemList.Add(key, Value);
             Value.Changed = false;
         }
 
         /// <summary>
-        /// Add a  PropertyItemDouble  to the sorted list. A unique key must be specified or an exception accour.
+        /// Add a  FloatItem  to the sorted list. A unique key must be specified or an exception accour.
         /// </summary>
-        /// <param name="key">Unique string value used to identify an PropertyItemGeneric into a sorted list.</param>
+        /// <param name="key">Unique string value used to identify an BaseItem into a sorted list.</param>
         /// <param name="Value">Double (64 bits) number item.</param>
-        public void Add(String key, PropertyItemDouble  Value)
+        public void Add(String key, FloatItem  Value)
         {
             ItemList.Add(key, Value);
             Value.Changed = false;
         }
 
         /// <summary>
-        /// Add a PropertyItemBoolean to the sorted list. A unique key must be specified or an exception accour.
+        /// Add a BooleanItem to the sorted list. A unique key must be specified or an exception accour.
         /// </summary>
-        /// <param name="key">Unique string value used to identify an PropertyItemGeneric into a sorted list.</param>
-        /// <param name="Value">Boolean PropertyItemGeneric (true/false, yes/no, small/large, female/male, ...).</param>
-        public void Add(String key, PropertyItemBoolean Value)
+        /// <param name="key">Unique string value used to identify an BaseItem into a sorted list.</param>
+        /// <param name="Value">Boolean BaseItem (true/false, yes/no, small/large, female/male, ...).</param>
+        public void Add(String key, BooleanItem Value)
         {
             ItemList.Add(key, Value);
             Value.Changed = false;
         }
 
         /// <summary>
-        /// Add a PropertyItemColor to the sorted list. A unique key must be specified or an exception accour.
+        /// Add a ColorItem to the sorted list. A unique key must be specified or an exception accour.
         /// </summary>
-        /// <param name="key">Unique string value used to identify an PropertyItemGeneric into a sorted list.</param>
+        /// <param name="key">Unique string value used to identify an BaseItem into a sorted list.</param>
         /// <param name="Value">Color item.</param>
-        public void Add(String key, PropertyItemColor Value)
+        public void Add(String key, ColorItem Value)
         {
             ItemList.Add(key, Value);
             Value.Changed = false;
         }
 
         /// <summary>
-        /// Add a PropertyItemDateTime to the sorted list. A unique key must be specified or an exception accour.
+        /// Add an ImageItem to the sorted list. A unique key must be specified or an exception accour.
         /// </summary>
-        /// <param name="key">Unique string value used to identify an PropertyItemGeneric into a sorted list.</param>
-        /// <param name="Value">Date, time or date+time item.</param>
-        public void Add(String key, PropertyItemDateTime Value)
+        /// <param name="key">Unique string value used to identify an BaseItem into a sorted list.</param>
+        /// <param name="Value">Picture (image BaseItem).</param>
+        public void Add(String key, ImageItem Value)
         {
             ItemList.Add(key, Value);
             Value.Changed = false;
         }
 
         /// <summary>
-        /// Add a PropertyItemFont to the sorted list. A unique key must be specified or an exception accour.
+        /// Add a FileItem to the sorted list. A unique key must be specified or an exception accour.
         /// </summary>
-        /// <param name="key">Unique string value used to identify an PropertyItemGeneric into a sorted list.</param>
-        /// <param name="Value">Font PropertyItemGeneric (for text formatting).</param>
-        public void Add(String key, PropertyItemFont Value)
-        {
-            ItemList.Add(key, Value);
-            Value.Changed = false;
-        }
-
-        /// <summary>
-        /// Add an PropertyItemImage to the sorted list. A unique key must be specified or an exception accour.
-        /// </summary>
-        /// <param name="key">Unique string value used to identify an PropertyItemGeneric into a sorted list.</param>
-        /// <param name="Value">Picture (image PropertyItemGeneric).</param>
-        public void Add(String key, PropertyItemImage Value)
-        {
-            ItemList.Add(key, Value);
-            Value.Changed = false;
-        }
-
-        /// <summary>
-        /// Add a PropertyItemFile to the sorted list. A unique key must be specified or an exception accour.
-        /// </summary>
-        /// <param name="key">Unique string value used to identify an PropertyItemGeneric into a sorted list.</param>
-        /// <param name="Value">File PropertyItemGeneric (a file name string reference).</param>
-        public void Add(String key, PropertyItemFile Value)
-        {
-            ItemList.Add(key, Value);
-            Value.Changed = false;
-        }
-
-        /// <summary>
-        /// Add a PropertyItemDirectory to the sorted list. A unique key must be specified or an exception accour.
-        /// </summary>
-        /// <param name="key">Unique string value used to identify an PropertyItemGeneric into a sorted list.</param>
-        /// <param name="Value">Directory PropertyItemGeneric (a path string reference).</param>
-        public void Add(String key, PropertyItemDirectory Value)
-        {
-            ItemList.Add(key, Value);
-            Value.Changed = false;
-        }
-
-        /// <summary>
-        /// Add a PropertyItemProgressBar to the sorted list. A unique key must be specified or an exception accour.
-        /// </summary>
-        /// <param name="key">Unique string value used to identify an PropertyItemGeneric into a sorted list.</param>
-        /// <param name="Value">A progress bar item.</param>
-        public void Add(String key, PropertyItemProgressBar Value)
+        /// <param name="key">Unique string value used to identify an BaseItem into a sorted list.</param>
+        /// <param name="Value">File BaseItem (a file name string reference).</param>
+        public void Add(String key, FileItem Value)
         {
             ItemList.Add(key, Value);
             Value.Changed = false;
         }
 
         
-        //TODO:Add any new PropertyItemGeneric management here... (Add() function)
+        //TODO:Add any new BaseItem management here... (Add() function)
         
 
         /// <summary>
         /// Return true if the sorted list contain the key
         /// </summary>
-        /// <param name="key">Unique string value used to identify an PropertyItemGeneric into a sorted list.</param>
+        /// <param name="key">Unique string value used to identify an BaseItem into a sorted list.</param>
         /// <returns>true:key found  false:key not found</returns>
         public bool Contains(String key)
         {
@@ -472,18 +428,18 @@ namespace Inspector
         }
 
         /// <summary>
-        /// Remove a specific PropertyItemGeneric from the sorted list referring it by key.
+        /// Remove a specific BaseItem from the sorted list referring it by key.
         /// </summary>
-        /// <param name="key">Unique string value used to identify an PropertyItemGeneric into a sorted list.</param>
+        /// <param name="key">Unique string value used to identify an BaseItem into a sorted list.</param>
         public void Remove(String key)
         {
             ItemList.Remove(key);
         }
 
         /// <summary>
-        /// Remove a specific PropertyItemGeneric from the sorted list referring it by index.
+        /// Remove a specific BaseItem from the sorted list referring it by index.
         /// </summary>
-        /// <param name="index">Unique string value used to identify an PropertyItemGeneric into a sorted list.</param>
+        /// <param name="index">Unique string value used to identify an BaseItem into a sorted list.</param>
         public void RemoveAt(int index)
         {
             ItemList.RemoveAt(index);
@@ -561,13 +517,13 @@ namespace Inspector
         /// <summary>
         /// Gets/sets a Category into the collection referring it by key.
         /// </summary>
-        /// <param name="key">Unique string value used to identify an PropertyItemGeneric into a sorted list.</param>
+        /// <param name="key">Unique string value used to identify an BaseItem into a sorted list.</param>
         /// <returns></returns>
-        public PropertyItemCategory this[String key]
+        public CategoryItem this[String key]
         {
             get
             {
-                return (PropertyItemCategory)CategoryList[key];
+                return (CategoryItem)CategoryList[key];
             }
             set
             {
@@ -580,14 +536,14 @@ namespace Inspector
         /// </summary>
         /// <param name="index">Unique int value (0 based) used to identify an object into a sorted list.</param>
         /// <returns></returns>
-        public PropertyItemCategory this[int index]
+        public CategoryItem this[int index]
         {
             get
             {
                 if (index < 0 || index >= CategoryList.Count)			// Es. -1
                     return null;
                 else
-                    return (PropertyItemCategory)CategoryList[index];
+                    return (CategoryItem)CategoryList[index];
             }
             set
             {
@@ -609,19 +565,19 @@ namespace Inspector
         }
 
         /// <summary>
-        /// Add a category PropertyItemGeneric to the sorted list. A unique key must be specified or an exception accour.
+        /// Add a category BaseItem to the sorted list. A unique key must be specified or an exception accour.
         /// </summary>
-        /// <param name="key">Unique string value used to identify an PropertyItemGeneric into a sorted list.</param>
-        /// <param name="Value">Category PropertyItemGeneric used to group a set of items.</param>
-        public void Add(String key, PropertyItemCategory Value)
+        /// <param name="key">Unique string value used to identify an BaseItem into a sorted list.</param>
+        /// <param name="Value">Category BaseItem used to group a set of items.</param>
+        public void Add(String key, CategoryItem Value)
         {
             CategoryList.Add(key, Value);
         }
 
         /// <summary>
-        /// Return true if a specific category PropertyItemGeneric exit into the collection.
+        /// Return true if a specific category BaseItem exit into the collection.
         /// </summary>
-        /// <param name="key">Unique string value used to identify an PropertyItemGeneric into a collection.</param>
+        /// <param name="key">Unique string value used to identify an BaseItem into a collection.</param>
         /// <returns></returns>
         public bool Contains(String key)
         {
@@ -629,18 +585,18 @@ namespace Inspector
         }
 
         /// <summary>
-        /// Remove a specific category PropertyItemGeneric from the collection.
+        /// Remove a specific category BaseItem from the collection.
         /// </summary>
-        /// <param name="key">Unique string value used to identify an PropertyItemGeneric into a collection.</param>
+        /// <param name="key">Unique string value used to identify an BaseItem into a collection.</param>
         public void Remove(String key)
         {
             CategoryList.Remove(key);
         }
 
         /// <summary>
-        /// Remove a specific category PropertyItemGeneric from the collection.
+        /// Remove a specific category BaseItem from the collection.
         /// </summary>
-        /// <param name="index">Index (0 based) of a PropertyItemCategory in the collection.</param>
+        /// <param name="index">Index (0 based) of a CategoryItem in the collection.</param>
         public void RemoveAt(int index)
         {
             CategoryList.RemoveAt(index);

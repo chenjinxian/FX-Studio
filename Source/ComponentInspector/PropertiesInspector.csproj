@@ -70,23 +70,16 @@
       <DependentUpon>PropertiesInspector.cs</DependentUpon>
     </Compile>
     <Compile Include="PropertyItemsCollection.cs" />
-    <Compile Include="PropertyItems\PropertyItemBoolean.cs" />
-    <Compile Include="PropertyItems\PropertyItemCategory.cs" />
-    <Compile Include="PropertyItems\PropertyItemColor.cs" />
-    <Compile Include="PropertyItems\PropertyItemDateTime.cs" />
-    <Compile Include="PropertyItems\PropertyItemDirectory.cs" />
-    <Compile Include="PropertyItems\PropertyItemDouble.cs" />
-    <Compile Include="PropertyItems\PropertyItemDropDownList.cs" />
-    <Compile Include="PropertyItems\PropertyItemFile.cs" />
-    <Compile Include="PropertyItems\PropertyItemFont.cs" />
-    <Compile Include="PropertyItems\PropertyItemGeneric.cs" />
-    <Compile Include="PropertyItems\PropertyItemImage.cs" />
-    <Compile Include="PropertyItems\PropertyItemInt32.cs" />
-    <Compile Include="PropertyItems\PropertyItemProgressBar.cs" />
-    <Compile Include="PropertyItems\PropertyItemString.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="PropertyItems\PropertyItem_Readme.txt" />
+    <Compile Include="PropertyItems\BooleanItem.cs" />
+    <Compile Include="PropertyItems\CategoryItem.cs" />
+    <Compile Include="PropertyItems\ColorItem.cs" />
+    <Compile Include="PropertyItems\FloatItem.cs" />
+    <Compile Include="PropertyItems\DropDownItem.cs" />
+    <Compile Include="PropertyItems\FileItem.cs" />
+    <Compile Include="PropertyItems\BaseItem.cs" />
+    <Compile Include="PropertyItems\ImageItem.cs" />
+    <Compile Include="PropertyItems\Int32Item.cs" />
+    <Compile Include="PropertyItems\StringItem.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">

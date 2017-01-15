@@ -11,15 +11,15 @@ using System.Drawing.Imaging;
  */
 namespace Inspector
 {
-    // All classes like "PropertyItem..." inherit directly from PropertyItemGeneric or another
-    // class (eg. PropertyItemString) but the base class must be always PropertyItemGeneric
+    // All classes like "PropertyItem..." inherit directly from BaseItem or another
+    // class (eg. StringItem) but the base class must be always BaseItem
 
     #region Image (image file name with picture preview) property item class
 
     /// <summary>
     /// Image (image file name with picture preview) property item class.
     /// </summary>
-    public class PropertyItemImage : PropertyItemGeneric
+    public class ImageItem : BaseItem
     {
 
         #region Private internal var./properties
@@ -37,7 +37,7 @@ namespace Inspector
         /// <summary>
         /// Constructor.
         /// </summary>
-        public PropertyItemImage()
+        public ImageItem()
         {
             this.Text = "New image item";
         }
@@ -45,7 +45,7 @@ namespace Inspector
         /// <summary>
         /// Constructor. The DefaultValue is the same as Value.
         /// </summary>
-        public PropertyItemImage(string text, System.Drawing.Image value, string fileName)
+        public ImageItem(string text, System.Drawing.Image value, string fileName)
         {
             this.Text = text;
             this.FileName = fileName;
@@ -57,7 +57,7 @@ namespace Inspector
         /// <summary>
         /// Constructor.
         /// </summary>
-        public PropertyItemImage(string text, System.Drawing.Image value, System.Drawing.Image defaultValue, string fileName)
+        public ImageItem(string text, System.Drawing.Image value, System.Drawing.Image defaultValue, string fileName)
         {
             this.Text = text;
             this.FileName = fileName;

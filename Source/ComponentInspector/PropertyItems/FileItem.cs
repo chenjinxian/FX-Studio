@@ -10,15 +10,15 @@ using System.Text;
  */
 namespace Inspector
 {
-    // All classes like "PropertyItem..." inherit directly from PropertyItemGeneric or another
-    // class (eg. PropertyItemString) but the base class must be always PropertyItemGeneric
+    // All classes like "PropertyItem..." inherit directly from BaseItem or another
+    // class (eg. StringItem) but the base class must be always BaseItem
 
-    #region File (file string name) property item class (inherit from PropertyItemString)
+    #region File (file string name) property item class (inherit from StringItem)
 
     /// <summary>
-    /// File (file string name) property item class (inherit from PropertyItemString).
+    /// File (file string name) property item class (inherit from StringItem).
     /// </summary>
-    public class PropertyItemFile : PropertyItemString
+    public class FileItem : StringItem
     {
 
         #region Private internal var./properties
@@ -33,7 +33,7 @@ namespace Inspector
         /// <summary>
         /// Constructor.
         /// </summary>
-        public PropertyItemFile()
+        public FileItem()
         {
             this.Text = "New file item";
         }
@@ -41,7 +41,7 @@ namespace Inspector
         /// <summary>
         /// Constructor. The DefaultValue is the same as Value.
         /// </summary>
-        public PropertyItemFile(string text, string value)
+        public FileItem(string text, string value)
         {
             this.Text = text;
             this.DefaultValue = value;
@@ -51,7 +51,7 @@ namespace Inspector
         /// <summary>
         /// Constructor.
         /// </summary>
-        public PropertyItemFile(string text, string value, string defaultValue)
+        public FileItem(string text, string value, string defaultValue)
         {
             this.Text = text;
             this.DefaultValue = defaultValue;

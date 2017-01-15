@@ -195,7 +195,6 @@
             this.btnCancel.TabIndex = 8;
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Visible = false;
-            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // imgList
             // 
@@ -215,7 +214,6 @@
             this.dtTmBox.Size = new System.Drawing.Size(66, 20);
             this.dtTmBox.TabIndex = 6;
             this.dtTmBox.Visible = false;
-            this.dtTmBox.ValueChanged += new System.EventHandler(this.dtTmBox_ValueChanged);
             // 
             // chkBox
             // 

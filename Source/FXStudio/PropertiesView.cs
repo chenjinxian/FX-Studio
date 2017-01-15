@@ -39,34 +39,29 @@ namespace FXStudio
             CreateDefaultCategorys();
 
             m_PropertyInstance = new PropertyInstance();
-            PropGridAddItems();
         }
 
         private void PropGridAddItems()
         {
-            Inspector.PropertyItemCategory catItem;
-            Inspector.PropertyItemString strItem;
-            Inspector.PropertyItemDropDownList cmbItem;
-            Inspector.PropertyItemInt32 intItem;
-            Inspector.PropertyItemBoolean boolItem;
-            Inspector.PropertyItemColor colItem;
-            Inspector.PropertyItemDouble dblItem;
-            Inspector.PropertyItemDateTime dtTmItem;
-            Inspector.PropertyItemFont fontItem;
-            Inspector.PropertyItemImage imgItem;
-            Inspector.PropertyItemFile fileItem;
-            Inspector.PropertyItemDirectory dirItem;
-            Inspector.PropertyItemProgressBar progBarItem;
+            Inspector.CategoryItem catItem;
+            Inspector.StringItem strItem;
+            Inspector.DropDownItem cmbItem;
+            Inspector.Int32Item intItem;
+            Inspector.BooleanItem boolItem;
+            Inspector.ColorItem colItem;
+            Inspector.FloatItem dblItem;
+            Inspector.ImageItem imgItem;
+            Inspector.FileItem fileItem;
 
-            catItem = new Inspector.PropertyItemCategory("Main Category");
+            catItem = new Inspector.CategoryItem("Main Category");
             inspectorComponent.CategoryAdd("CatMain", catItem);
 
-            strItem = new Inspector.PropertyItemString("Line01 - Name (String)", "Jak", "Jak Smith");
+            strItem = new Inspector.StringItem("Line01 - Name (String)", "Jak", "Jak Smith");
             strItem.HelpCaption = "Name";
             strItem.HelpText = "Tell me your name...";
             inspectorComponent.ItemAdd("CatMain", "YourName", strItem);
 
-            intItem = new Inspector.PropertyItemInt32("Line02 - Age (Int32)", 0);
+            intItem = new Inspector.Int32Item("Line02 - Age (Int32)", 0);
             intItem.SetValidationRange(0, 120, 1);
             intItem.SetHelpCaptionText("Age", "Tell me your age (valid range : 0..120)");
             inspectorComponent.ItemAdd("CatMain", "MyAge", intItem);
@@ -75,47 +70,47 @@ namespace FXStudio
             inspectorComponent.SelectedItem = intItem;
             inspectorComponent.ColumnWidth = 180;
 
-            strItem = new Inspector.PropertyItemString("Line03 - Job (String)", "A software developer");
+            strItem = new Inspector.StringItem("Line03 - Job (String)", "A software developer");
             strItem.HelpText = "Tell me about your job";
             strItem.Enabled = false;
             inspectorComponent.ItemAdd("CatMain", "K03", strItem);
 
-            cmbItem = new Inspector.PropertyItemDropDownList("Line04 - Best friend (Combo list)", "Bob", "Rosy", "Max|Bob|Carl|Antony|Rosy");
+            cmbItem = new Inspector.DropDownItem("Line04 - Best friend (Combo list)", "Bob", "Rosy", "Max|Bob|Carl|Antony|Rosy");
             cmbItem.HelpCaption = "Best friend";
             cmbItem.HelpText = "Tell me the name of your best friend!";
             inspectorComponent.ItemAdd("CatMain", "K04", cmbItem);
 
-            dblItem = new Inspector.PropertyItemDouble("Line05 - Distance (Double)", 0.0, -1.0);
+            dblItem = new Inspector.FloatItem("Line05 - Distance (Double)", 0.0, -1.0);
             dblItem.DecimalPlaces = 5;
             dblItem.Format = "0.000";
             dblItem.EngineeringUnit = "[m]";
             dblItem.SetHelpCaptionText("Distance", "Set the distance offset (m) from the 0 line. Default value is -1.0 m.");
             inspectorComponent.ItemAdd("CatMain", "K05", dblItem);
 
-            boolItem = new Inspector.PropertyItemBoolean("Line06 - Sex (Bool)", true);
+            boolItem = new Inspector.BooleanItem("Line06 - Sex (Bool)", true);
             boolItem.SetValidationRange("Male", "Female");
             boolItem.SetHelpCaptionText("Sex", "Male or Female?");
             inspectorComponent.ItemAdd("CatMain", "K06", boolItem);
 
-            catItem = new Inspector.PropertyItemCategory("Options");
+            catItem = new Inspector.CategoryItem("Options");
             inspectorComponent.CategoryAdd("C1", catItem);
 
-            strItem = new Inspector.PropertyItemString("Line07 - ID Code (String)", "alpha");
+            strItem = new Inspector.StringItem("Line07 - ID Code (String)", "alpha");
             strItem.ShowExpandButton = true;
             strItem.MaxLength = 10;
             strItem.SetHelpCaptionText("Password", "Tell me your ID code (max.10 characters)");
             inspectorComponent.ItemAdd("C1", "K07", strItem);
 
-            boolItem = new Inspector.PropertyItemBoolean("Line08 - Drink wine (Bool)", true);
+            boolItem = new Inspector.BooleanItem("Line08 - Drink wine (Bool)", true);
             boolItem.SetValidationRange("No", "Yes");
             boolItem.SetHelpCaptionText("Drink wine", "Say 'Yes' if you like to drink a glass of good wine");
             inspectorComponent.ItemAdd("C1", "K08", boolItem);
 
-            colItem = new Inspector.PropertyItemColor("Line09 - Back color (Color)", Color.Red, Color.Yellow);
+            colItem = new Inspector.ColorItem("Line09 - Back color (Color)", Color.Red, Color.Yellow);
             colItem.SetHelpCaptionText("Color", "You preferit background color");
             inspectorComponent.ItemAdd("C1", "K09", colItem);
 
-            dblItem = new Inspector.PropertyItemDouble("Line10 - Distance (Double)", 94.0);
+            dblItem = new Inspector.FloatItem("Line10 - Distance (Double)", 94.0);
             dblItem.SetHelpCaptionText("Distance", "The distance (Km) from your home to your office. Valid range : 1..150");
             dblItem.DecimalPlaces = 1;
             dblItem.Format = "0.000";
@@ -123,37 +118,11 @@ namespace FXStudio
             dblItem.SetValidationRange(1.0, 150.0, 0.1, Inspector.ValidationRangeCheckType.Manual);
             inspectorComponent.ItemAdd("C1", "K10", dblItem);
 
-            dtTmItem = new Inspector.PropertyItemDateTime("Line11 - A Date", DateTime.Now, Inspector.DateTimeType.OnlyDate);
-            dtTmItem.SetHelpCaptionText("Date", "Only date");
-            inspectorComponent.ItemAdd("C1", "K11", dtTmItem);
-
-            dtTmItem = new Inspector.PropertyItemDateTime("Line12 - A Time", DateTime.Now, Inspector.DateTimeType.OnlyTime);
-            dtTmItem.SetHelpCaptionText("Time", "Only time");
-            inspectorComponent.ItemAdd("C1", "K12", dtTmItem);
-
-            dtTmItem = new Inspector.PropertyItemDateTime("Line13 - Date and Time", DateTime.Now, Inspector.DateTimeType.DateAndTime);
-            dtTmItem.SetHelpCaptionText("Date and Time", "Date and time in the same property line");
-            dtTmItem.Format = "HH:mm:ss - dd/MM/yyyy";
-            inspectorComponent.ItemAdd("C1", "K13", dtTmItem);
-
-            fontItem = new Inspector.PropertyItemFont("Line14 - Font", new System.Drawing.Font("Arial", 10.0F));
-            inspectorComponent.ItemAdd("C1", "K14", fontItem);
-
-            imgItem = new Inspector.PropertyItemImage("Line15 - Image", null, @"c:\windows\zapotec.bmp");
+            imgItem = new Inspector.ImageItem("Line15 - Image", null, @"c:\windows\zapotec.bmp");
             inspectorComponent.ItemAdd("C1", "K15", imgItem);
 
-            fileItem = new Inspector.PropertyItemFile("Line16 - File", @"c:\windows\setupapi.log");
+            fileItem = new Inspector.FileItem("Line16 - File", @"c:\windows\setupapi.log");
             inspectorComponent.ItemAdd("C1", "K16", fileItem);
-
-            dirItem = new Inspector.PropertyItemDirectory("Line17 - Directory", @"c:\windows\system32");
-            dirItem.SetHelpCaptionText("Directory", "System directory path name");
-            dirItem.Description = "Select the system directory path";
-            inspectorComponent.ItemAdd("C1", "K17", dirItem);
-
-            progBarItem = new Inspector.PropertyItemProgressBar("Line18 - Progress bar", 90);
-            inspectorComponent.ItemAdd("C1", "K18", progBarItem);
-            //progBarItem.Enabled = false;
-
 
             // Repaint control
             inspectorComponent.RefreshControl(true);

@@ -36,7 +36,7 @@ namespace Inspector
 		// Use public methods to access values into collections
 		private CategoryCollection CategoryList = null;     // Order by category
 		private ItemCollection ItemList = null;             // Order by item
-		// Internal var.
+															// Internal var.
 		private bool resizeCursorOnScreen = false;
 		private System.Drawing.Bitmap bmpPropGrid = null;   // Ultima immagine della property grid rigenerata dal metodo PaintControl()
 		private bool controlChangeEventLocked = true;
@@ -53,6 +53,9 @@ namespace Inspector
 		/// </summary>
 		public PropertiesInspector()
 		{
+			CategoryList = new CategoryCollection();
+			ItemList = new ItemCollection();
+
 			InitializeComponent();
 			// Start trace log (debug utility)
 			TraceLogStart();
@@ -61,8 +64,6 @@ namespace Inspector
 			// (only for commercial product version)
 			//TraceWriteLine("License manager started");
 			// Initialize var./properties
-			CategoryList = new CategoryCollection();
-			ItemList = new ItemCollection();
 			txtBox.BorderStyle = BorderStyle.None;
 			lblHelpCaption.Text = "";
 			lblHelpText.Text = "";
@@ -110,16 +111,16 @@ namespace Inspector
 		Bindable(false)]
 		public override string Text
 		{
-			get 
+			get
 			{
 				return base.Text;
 			}
-			set 
+			set
 			{
 				base.Text = value;
 				PaintText(value);
 			}
-		} 
+		}
 
 		/// <summary>
 		/// Gets/sets the property grid toolbar visible status.
@@ -250,7 +251,7 @@ namespace Inspector
 				if (value < 19)
 					mItemHeight = 19;
 				else
-					mItemHeight = (value < 64) ? mItemHeight = value : 
+					mItemHeight = (value < 64) ? mItemHeight = value :
 												 mItemHeight = 64;
 			}
 		}
@@ -522,17 +523,17 @@ namespace Inspector
 				// Solid color
 				g.Clear(mTextBackgroundColor);
 			else
-			{                
+			{
 				// Fill background with gradient colors
 				rect = new Rectangle(0, 0, pnlText.Width, pnlText.Height);
-				gradBrush = new System.Drawing.Drawing2D.LinearGradientBrush(rect, 
-								mTextBackgroundGradientColorStart, 
+				gradBrush = new System.Drawing.Drawing2D.LinearGradientBrush(rect,
+								mTextBackgroundGradientColorStart,
 								mTextBackgroundGradientColorFinish, 90.5F);
 				g.FillRectangle(gradBrush, rect);
 				gradBrush.Dispose();
 			}
 			g.DrawString(text, font, brush, 3F, y);
-			g.Dispose();                
+			g.Dispose();
 			brush.Dispose();
 			font.Dispose();
 		}
@@ -550,7 +551,7 @@ namespace Inspector
 			FloatItem dblItem;
 			Brush warnBrush = null;
 			//System.Media.SoundPlayer sp = null;
-			
+
 			//TODO:Add any new BaseItem management here in this function...
 			if (!item.Visible) return;
 			// txtDisabledBrush = new SolidBrush(Color.FromArgb(this.ForeColor.R / 2, this.ForeColor.G / 2, this.ForeColor.B / 2));
@@ -599,7 +600,7 @@ namespace Inspector
 				warnBrush = new SolidBrush(Color.Red);
 				if (item.Enabled)
 				{
-					if (dblItem.ValidationRangeCheck == ValidationRangeCheckType.Manual && 
+					if (dblItem.ValidationRangeCheck == ValidationRangeCheckType.Manual &&
 					   !(dblItem.Value >= dblItem.Minimum && dblItem.Value <= dblItem.Maximum))
 					{
 						//TODO:Play sound only while setting a new value
@@ -630,7 +631,7 @@ namespace Inspector
 		/// <summary>
 		/// Print on screen a category item.
 		/// </summary>
-		private void PaintAsCategory(Graphics g, Pen pen, Brush brush,Brush catBrush, Brush txtBrush, int x1, int x2, int y1, ref int y2)
+		private void PaintAsCategory(Graphics g, Pen pen, Brush brush, Brush catBrush, Brush txtBrush, int x1, int x2, int y1, ref int y2)
 		{
 			CategoryItem category = null;
 			BaseItem item = null;
@@ -645,7 +646,7 @@ namespace Inspector
 				g.DrawString(category.Text, this.Font, txtBrush, (float)x1 + 16F, (float)y1 + 2);
 				// Print plus/minus
 				category.rectangle = new Rectangle(2, y1 + 2, 13, 13);
-				
+
 				if (category.Expanded)
 					g.DrawImageUnscaled(imgList.Images[0], 2, y1 + 2);
 				else
@@ -919,7 +920,7 @@ namespace Inspector
 			int xOffset;
 			int yOffset;
 			int moreButtonWidth = 0;
-			
+
 			// Per il tipo testo semplice è possibile visualizzare il pulsante
 			// "..." (more) in modo che l'utente possa aprire una finestra personalizzata
 			if (item.ShowExpandButton)
@@ -1043,41 +1044,41 @@ namespace Inspector
 		/// </summary>
 		private void ShowImagePreviewControl(int X, int Y, Image image, string imageFileName)
 		{
-// 			Point formPos;
-// 			Rectangle rect;
-// 			
-// 			try
-// 			{
-// 				if (frmImagePreview == null)
-// 					frmImagePreview = new FrmImagePreview();
-// 				rect = Screen.PrimaryScreen.WorkingArea;
-// 				// Show the form at mouse position
-// 				//formPos = Control.MousePosition;      
-// 				// Show the preview form under the property line that rappresent the object ImageItem
-// 				// (or on the topo of the line, depending from the form height, in a way to ensure the entire form is visible)
-// 				X -= pnlProp.HorizontalScroll.Value;
-// 				Y -= pnlProp.VerticalScroll.Value;
-// 				if (ToolbarVisible)
-// 					Y += topBar.Height;
-// 				if (TextVisible)
-// 					Y += pnlText.Height;
-// 				formPos = new Point(X, Y);
-// 				formPos = this.PointToScreen(formPos);
-// 				// Adjust coord. to fix the preview form in the screen
-// 				if (formPos.Y + frmImagePreview.Height > rect.Height)
-// 					formPos.Y -= (this.RowsHeight + frmImagePreview.Height);
-// 				if (formPos.X + frmImagePreview.Width > rect.Width)
-// 					formPos.X = rect.Width - frmImagePreview.Width;
-// 				// Show image
-// 				frmImagePreview.BackgroundImage = image;
-// 				frmImagePreview.ImageFileName = imageFileName;
-// 				frmImagePreview.Show();
-// 				frmImagePreview.Location = formPos;
-// 			}
-// 			catch
-// 			{
-// 				frmImagePreview = null;
-// 			}   
+			// 			Point formPos;
+			// 			Rectangle rect;
+			// 			
+			// 			try
+			// 			{
+			// 				if (frmImagePreview == null)
+			// 					frmImagePreview = new FrmImagePreview();
+			// 				rect = Screen.PrimaryScreen.WorkingArea;
+			// 				// Show the form at mouse position
+			// 				//formPos = Control.MousePosition;      
+			// 				// Show the preview form under the property line that rappresent the object ImageItem
+			// 				// (or on the topo of the line, depending from the form height, in a way to ensure the entire form is visible)
+			// 				X -= pnlProp.HorizontalScroll.Value;
+			// 				Y -= pnlProp.VerticalScroll.Value;
+			// 				if (ToolbarVisible)
+			// 					Y += topBar.Height;
+			// 				if (TextVisible)
+			// 					Y += pnlText.Height;
+			// 				formPos = new Point(X, Y);
+			// 				formPos = this.PointToScreen(formPos);
+			// 				// Adjust coord. to fix the preview form in the screen
+			// 				if (formPos.Y + frmImagePreview.Height > rect.Height)
+			// 					formPos.Y -= (this.RowsHeight + frmImagePreview.Height);
+			// 				if (formPos.X + frmImagePreview.Width > rect.Width)
+			// 					formPos.X = rect.Width - frmImagePreview.Width;
+			// 				// Show image
+			// 				frmImagePreview.BackgroundImage = image;
+			// 				frmImagePreview.ImageFileName = imageFileName;
+			// 				frmImagePreview.Show();
+			// 				frmImagePreview.Location = formPos;
+			// 			}
+			// 			catch
+			// 			{
+			// 				frmImagePreview = null;
+			// 			}   
 		}
 
 		/// <summary>
@@ -1126,7 +1127,7 @@ namespace Inspector
 					ShowTextBoxControl(X, Y, width, height, item);
 				return;
 			}
-			if (item is  StringItem)
+			if (item is StringItem)
 			{
 				ShowTextBoxControl(X, Y, width, height, item);
 				return;
@@ -1260,18 +1261,18 @@ namespace Inspector
 				btnMore.Enabled = true;
 				return;
 			}
-			if (mItemSelected is  StringItem)
+			if (mItemSelected is StringItem)
 			{
 				// The more button is visible when the property
 				// .ShowExpandButton is true. Use this button to run 
 				// a user defined action like to open a dialog box.
 				// (The event ExpandButtonPressed will be raised; 
 				//  add your action into this event)
-				 StringItem = ( StringItem)mItemSelected;
-				oldValue =  StringItem.Value;
-				RaiseExpandButtonPressed( StringItem);
+				StringItem = (StringItem)mItemSelected;
+				oldValue = StringItem.Value;
+				RaiseExpandButtonPressed(StringItem);
 				btnMore.Enabled = true;
-				if (oldValue !=  StringItem.Value)
+				if (oldValue != StringItem.Value)
 					// Execute control refresh if the user chage a property value
 					RefreshControl(true);
 				return;
@@ -1399,7 +1400,7 @@ namespace Inspector
 			{
 				CategoryList[categoryKey].ItemList.Add(itemKey, strItem);
 				ItemList.Add(itemKey, strItem);
-				if (this.SelectedItem == null) 
+				if (this.SelectedItem == null)
 					this.SelectedItem = strItem;
 			}
 		}
@@ -1532,7 +1533,7 @@ namespace Inspector
 
 
 		//TODO:Add any new BaseItem management here... (ItemAdd() function)
-		
+
 
 		/// <summary>
 		/// Add a specific category BaseItem to the property grid. Be sure to use a unique key (categoryKey).
@@ -1582,7 +1583,7 @@ namespace Inspector
 		public void SetItemValue(string itemKey, string value)
 		{
 
-			if (ItemList.Contains(itemKey) && (ItemList[itemKey] is  StringItem ||
+			if (ItemList.Contains(itemKey) && (ItemList[itemKey] is StringItem ||
 				ItemList[itemKey] is DropDownItem))
 				// Set value
 				ItemList[itemKey].ValueString = value;
@@ -1679,7 +1680,7 @@ namespace Inspector
 				// Raise event
 				ExpandButtonPressed(this, item);
 		}
-		
+
 		/// <summary>
 		/// Delegate for event ApplyButtonPressed.
 		/// </summary>

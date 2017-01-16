@@ -18,11 +18,6 @@ namespace FXStudio
     {
         private UpdatePropertiesDelegate m_NodeDelegate;
 
-        private static string m_NameProperty = "Name";
-        private static string m_HiddenProperty = "Hidden";
-        private static string m_NameDescription = "The name of this graph item";
-        private static string m_HiddenDescription = "The hidden state of this graph item";
-
         public ProjectView()
         {
             m_NodeDelegate = null;
@@ -46,19 +41,27 @@ namespace FXStudio
             treeViewProject.Nodes.Clear();
             var rootTree = new TreeNode(Path.GetFileNameWithoutExtension(project)) { Tag = CreateProjectXmlNode(root, project) };
 
-            foreach (XmlNode sceneXml in root.ChildNodes)
+            foreach (XmlNode child in root.ChildNodes)
             {
-                XmlNode typeNode = sceneXml.Attributes["type"];
-                if (typeNode != null && typeNode.Value == "Scene")
+                XmlNode typeNode = child.Attributes["type"];
+                if (typeNode != null)
                 {
-                    var sceneTree = new TreeNode(sceneXml.Name) { Tag = CreateSceneXmlNode(sceneXml) };
-
-                    foreach (XmlNode childScene in sceneXml.ChildNodes)
+                    if (typeNode.Value == "Camera")
                     {
-                        sceneTree.Nodes.Add(new TreeNode(childScene.Name) { Tag = childScene });
+                        var cameraTree = new TreeNode(child.Name) { Tag = child };
+                        rootTree.Nodes.Add(cameraTree);
                     }
+                    else if (typeNode.Value == "Scene")
+                    {
+                        var sceneTree = new TreeNode(child.Name) { Tag = child };
 
-                    rootTree.Nodes.Add(sceneTree);
+                        foreach (XmlNode childScene in child.ChildNodes)
+                        {
+                            sceneTree.Nodes.Add(new TreeNode(childScene.Name) { Tag = childScene });
+                        }
+
+                        rootTree.Nodes.Add(sceneTree);
+                    }
                 }
             }
 
@@ -69,72 +72,24 @@ namespace FXStudio
             treeViewProject.SelectedNode = treeViewProject.Nodes[0];
         }
 
-        private void CreateProperty(
-            XmlDocument xmlDoc, string name, string description, string value, Type type, bool isReadOnly, ref XmlNode catetoryNode)
-        {
-            XmlNode propertyNode = xmlDoc.CreateElement("Property");
-            catetoryNode.AppendChild(propertyNode);
-
-            XmlAttribute attributeName = xmlDoc.CreateAttribute("Name");
-            attributeName.Value = name;
-            XmlAttribute attributeDesc = xmlDoc.CreateAttribute("Description");
-            attributeDesc.Value = description;
-            XmlAttribute attributeValue = xmlDoc.CreateAttribute("Value");
-            attributeValue.Value = value;
-            XmlAttribute attributeType = xmlDoc.CreateAttribute("Type");
-            attributeType.Value = type.ToString();
-            XmlAttribute attributeReadOnly = xmlDoc.CreateAttribute("ReadOnly");
-            attributeReadOnly.Value = isReadOnly.ToString();
-            propertyNode.Attributes.Append(attributeName);
-            propertyNode.Attributes.Append(attributeDesc);
-            propertyNode.Attributes.Append(attributeValue);
-            propertyNode.Attributes.Append(attributeType);
-            propertyNode.Attributes.Append(attributeReadOnly);
-        }
-
         private XmlNode CreateProjectXmlNode(XmlNode node, string projectLocation)
         {
             XmlDocument xmlDoc = new XmlDocument();
 
             XmlElement projectElement = xmlDoc.CreateElement("Project");
-            XmlNode categoryProjects = xmlDoc.CreateElement("Category");
-            XmlNode categoryProperties = xmlDoc.CreateElement("Category");
-            projectElement.AppendChild(categoryProjects);
-            projectElement.AppendChild(categoryProperties);
+            projectElement.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "type", "Project"));
 
-            XmlAttribute nameProjects = xmlDoc.CreateAttribute("Name");
-            nameProjects.Value = "Projects";
-            categoryProjects.Attributes.Append(nameProjects);
-            XmlAttribute nameProperties = xmlDoc.CreateAttribute("Name");
-            nameProperties.Value = "Properties";
-            categoryProperties.Attributes.Append(nameProperties);
+            XmlNode name = xmlDoc.CreateElement("Name");
+            name.InnerText = Path.GetFileNameWithoutExtension(projectLocation);
 
-            CreateProperty(xmlDoc, "Projects Location", "FX Studio projects location",
-                projectLocation, typeof(string), false, ref categoryProjects);
-            CreateProperty(xmlDoc, m_NameProperty, m_NameDescription, node.Name, typeof(string), false, ref categoryProperties);
-            CreateProperty(xmlDoc, m_HiddenProperty, m_HiddenDescription, "False", typeof(bool), true, ref categoryProperties);
+            XmlNode location = xmlDoc.CreateElement("Location");
+            location.InnerText = projectLocation;
+
+            projectElement.AppendChild(name);
+            projectElement.AppendChild(location);
 
             return projectElement;
         }
-
-        private XmlNode CreateSceneXmlNode(XmlNode node)
-        {
-            XmlDocument xmlDoc = new XmlDocument();
-
-            XmlElement projectElement = xmlDoc.CreateElement("Scene");
-            XmlNode categoryProperties = xmlDoc.CreateElement("Category");
-            projectElement.AppendChild(categoryProperties);
-
-            XmlAttribute nameProperties = xmlDoc.CreateAttribute("Name");
-            nameProperties.Value = "Properties";
-            categoryProperties.Attributes.Append(nameProperties);
-
-            CreateProperty(xmlDoc, m_NameProperty, m_NameDescription, node.Name, typeof(string), false, ref categoryProperties);
-            CreateProperty(xmlDoc, m_HiddenProperty, m_HiddenDescription, "False", typeof(bool), true, ref categoryProperties);
-
-            return projectElement;
-        }
-
 
         private void treeViewProject_AfterSelect(object sender, TreeViewEventArgs e)
         {

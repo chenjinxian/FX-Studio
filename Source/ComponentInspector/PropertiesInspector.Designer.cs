@@ -168,9 +168,9 @@
             // 
             // pnlProp
             // 
-            this.pnlProp.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.pnlProp.BackColor = System.Drawing.Color.Silver;
+            this.pnlProp.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.pnlProp.BackColor = System.Drawing.SystemColors.Window;
             this.pnlProp.Controls.Add(this.btnCancel);
             this.pnlProp.Controls.Add(this.dtTmBox);
             this.pnlProp.Controls.Add(this.chkBox);
@@ -259,8 +259,8 @@
             this.cmbBox.TabIndex = 2;
             this.cmbBox.Visible = false;
             this.cmbBox.SelectedIndexChanged += new System.EventHandler(this.cmbBox_SelectedIndexChanged);
-            this.cmbBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.cmbBox_KeyPress);
             this.cmbBox.TextChanged += new System.EventHandler(this.cmbBox_TextChanged);
+            this.cmbBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.cmbBox_KeyPress);
             // 
             // txtBox
             // 
@@ -269,15 +269,15 @@
             this.txtBox.Size = new System.Drawing.Size(68, 20);
             this.txtBox.TabIndex = 1;
             this.txtBox.Visible = false;
-            this.txtBox.DoubleClick += new System.EventHandler(this.txtBox_DoubleClick);
             this.txtBox.TextChanged += new System.EventHandler(this.txtBox_TextChanged);
-            this.txtBox.Leave += new System.EventHandler(this.txtBox_Leave);
+            this.txtBox.DoubleClick += new System.EventHandler(this.txtBox_DoubleClick);
             this.txtBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtBox_KeyPress);
+            this.txtBox.Leave += new System.EventHandler(this.txtBox_Leave);
             // 
             // picProp
             // 
-            this.picProp.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.picProp.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.picProp.BackColor = System.Drawing.Color.White;
             this.picProp.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.picProp.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
@@ -298,7 +298,7 @@
             // 
             this.fileDiag.DefaultExt = "*";
             this.fileDiag.Filter = "All pictures (*.bmp;*.png;*.jpg;*.tiff;*.gif)|*.bmp;*.png;*.jpg;*.tiff;*.gif|All " +
-                "files (*.*)|*.*";
+    "files (*.*)|*.*";
             // 
             // lblHelpCaption
             // 
@@ -313,9 +313,9 @@
             // 
             // lblHelpText
             // 
-            this.lblHelpText.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblHelpText.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.lblHelpText.Location = new System.Drawing.Point(3, 20);
             this.lblHelpText.Name = "lblHelpText";
             this.lblHelpText.Size = new System.Drawing.Size(232, 41);
@@ -336,7 +336,7 @@
             // 
             // pnlHelp
             // 
-            this.pnlHelp.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.pnlHelp.BackColor = System.Drawing.SystemColors.ButtonFace;
             this.pnlHelp.Controls.Add(this.lblHelpText);
             this.pnlHelp.Controls.Add(this.lblHelpCaption);
             this.pnlHelp.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -350,6 +350,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.SystemColors.Window;
             this.Controls.Add(this.splitBottom);
             this.Controls.Add(this.pnlProp);
             this.Controls.Add(this.pnlHelp);
@@ -358,8 +359,8 @@
             this.Name = "PropertiesInspector";
             this.Size = new System.Drawing.Size(239, 326);
             this.Load += new System.EventHandler(this.PropertyGrid_Load);
-            this.Paint += new System.Windows.Forms.PaintEventHandler(this.PropertyGrid_Paint);
             this.SizeChanged += new System.EventHandler(this.PropertyGrid_SizeChanged);
+            this.Paint += new System.Windows.Forms.PaintEventHandler(this.PropertyGrid_Paint);
             this.topBar.ResumeLayout(false);
             this.topBar.PerformLayout();
             this.pnlProp.ResumeLayout(false);

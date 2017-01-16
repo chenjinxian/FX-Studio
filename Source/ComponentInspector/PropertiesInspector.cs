@@ -34,8 +34,8 @@ namespace Inspector
 		private bool mTraceLogEnabled = true;
 		// This collections contains the same values (but with different order)
 		// Use public methods to access values into collections
-		private CategoryCollection CategoryList = null;     // Order by category
-		private ItemCollection ItemList = null;             // Order by item
+		private CategoryCollection m_CategoryList = null;
+		private ItemCollection m_ItemList = null;
 															// Internal var.
 		private bool resizeCursorOnScreen = false;
 		private System.Drawing.Bitmap bmpPropGrid = null;   // Ultima immagine della property grid rigenerata dal metodo PaintControl()
@@ -53,8 +53,8 @@ namespace Inspector
 		/// </summary>
 		public PropertiesInspector()
 		{
-			CategoryList = new CategoryCollection();
-			ItemList = new ItemCollection();
+			m_CategoryList = new CategoryCollection();
+			m_ItemList = new ItemCollection();
 
 			InitializeComponent();
 			// Start trace log (debug utility)
@@ -77,8 +77,8 @@ namespace Inspector
 		~PropertiesInspector()
 		{
 			ItemsClear();
-			CategoryList = null;
-			ItemList = null;
+			m_CategoryList = null;
+			m_ItemList = null;
 			if (bmpPropGrid != null) bmpPropGrid.Dispose();
 			TraceWriteLine("PropertiesInspector() Destructor");
 			TraceLogStop();
@@ -96,8 +96,8 @@ namespace Inspector
 		{
 			get
 			{
-				if (ItemList.Contains(itemKey))
-					return ItemList[itemKey];
+				if (m_ItemList.Contains(itemKey))
+					return m_ItemList[itemKey];
 				else
 					return null;
 			}
@@ -386,7 +386,7 @@ namespace Inspector
 		{
 			get
 			{
-				return ItemList.Count;
+				return m_ItemList.Count;
 			}
 		}
 
@@ -398,7 +398,7 @@ namespace Inspector
 		public bool ItemExist(string itemKey)
 		{
 			// Add BaseItem to category list and BaseItem list
-			return ItemList.Contains(itemKey);
+			return m_ItemList.Contains(itemKey);
 		}
 
 
@@ -409,7 +409,7 @@ namespace Inspector
 		{
 			get
 			{
-				return CategoryList.Count;
+				return m_CategoryList.Count;
 			}
 		}
 
@@ -538,9 +538,6 @@ namespace Inspector
 			font.Dispose();
 		}
 
-		/// <summary>
-		/// Print a single Property Grid Item.
-		/// </summary>
 		private void PaintItem(BaseItem item, Graphics g, Pen pen, Brush brush, Brush txtBrush, int x1, int x2, ref int y1, ref int y2)
 		{
 			BooleanItem boolItem = null;
@@ -554,7 +551,6 @@ namespace Inspector
 
 			//TODO:Add any new BaseItem management here in this function...
 			if (!item.Visible) return;
-			// txtDisabledBrush = new SolidBrush(Color.FromArgb(this.ForeColor.R / 2, this.ForeColor.G / 2, this.ForeColor.B / 2));
 			txtDisabledBrush = new SolidBrush(Color.DarkGray);
 			item.Rect = new Rectangle(mFirstColumnWidth, y1, this.Width - mFirstColumnWidth, y2 - y1);
 			if (item == mItemSelected)
@@ -580,8 +576,7 @@ namespace Inspector
 				else
 					g.DrawString(item.ValueString, propFont, txtDisabledBrush, (float)mFirstColumnWidth + 19, (float)y1 + 2);
 			}
-			else
-				if (item is ColorItem)
+			else if (item is ColorItem)
 			{
 				colItem = (ColorItem)item;
 				fillBrush = new SolidBrush(colItem.Value);
@@ -593,8 +588,7 @@ namespace Inspector
 				else
 					g.DrawString(item.ValueString, propFont, txtDisabledBrush, (float)mFirstColumnWidth + 28, (float)y1 + 2);
 			}
-			else
-			if (item is FloatItem)
+			else if (item is FloatItem)
 			{
 				dblItem = (FloatItem)item;
 				warnBrush = new SolidBrush(Color.Red);
@@ -603,10 +597,7 @@ namespace Inspector
 					if (dblItem.ValidationRangeCheck == ValidationRangeCheckType.Manual &&
 					   !(dblItem.Value >= dblItem.Minimum && dblItem.Value <= dblItem.Maximum))
 					{
-						//TODO:Play sound only while setting a new value
 						g.DrawString(item.ValueString, propFont, warnBrush, (float)mFirstColumnWidth, (float)y1 + 2);
-						//sp = new System.Media.SoundPlayer(@"c:\windows\media\Ringin.wav");
-						//sp.Play();
 					}
 					else
 						g.DrawString(item.ValueString, propFont, txtBrush, (float)mFirstColumnWidth, (float)y1 + 2);
@@ -616,7 +607,6 @@ namespace Inspector
 			}
 			else
 			{
-				// Any other item...
 				g.Clip = new Region(item.Rect);
 				if (item.Enabled)
 					g.DrawString(item.ValueString, propFont, txtBrush, (float)mFirstColumnWidth, (float)y1 + 2);
@@ -637,14 +627,13 @@ namespace Inspector
 			BaseItem item = null;
 			int k, j;
 
-			for (k = 0; k < CategoryList.Count; k++)
+			for (k = 0; k < m_CategoryList.Count; k++)
 			{
-				// - Category
-				category = CategoryList[k];
-				// Property title (text)
+				category = m_CategoryList[k];
+
 				g.FillRectangle(catBrush, x1 + 14, y1, this.Width, mItemHeight);
 				g.DrawString(category.Name, this.Font, txtBrush, (float)x1 + 16F, (float)y1 + 2);
-				// Print plus/minus
+
 				category.Rect = new Rectangle(2, y1 + 2, 13, 13);
 
 				if (category.Expanded)
@@ -653,30 +642,24 @@ namespace Inspector
 					g.DrawImageUnscaled(imgList.Images[1], 2, y1 + 2);
 				y1 = y2;
 				y2 += mItemHeight;
-				// - Property Item
+
 				if (category.Expanded)
+				{
 					for (j = 0; j < category.ItemList.Count; j++)
 					{
 						item = category.ItemList[j];
 						PaintItem(item, g, pen, brush, txtBrush, x1, x2, ref y1, ref y2);
 					}
+				}
 			}
 		}
 
-		/// <summary>
-		/// Print on screen a list of property items.
-		/// </summary>
 		private void PaintAsItemList(Graphics g, Pen pen, Brush brush, Brush txtBrush, int x1, int x2, int y1, ref int y2)
 		{
-			int j;
-
-			for (j = 0; j < ItemList.Count; j++)
-				PaintItem(ItemList[j], g, pen, brush, txtBrush, x1, x2, ref y1, ref y2);
+			for (int i = 0; i < m_ItemList.Count; i++)
+				PaintItem(m_ItemList[i], g, pen, brush, txtBrush, x1, x2, ref y1, ref y2);
 		}
 
-		/// <summary>
-		/// Paint property grid control.
-		/// </summary>
 		private void PaintControl()
 		{
 			int x1, x2, y1, y2;
@@ -693,49 +676,47 @@ namespace Inspector
 			x1 = 0;
 			x2 = this.Width;
 			if (x2 < 32) x2 = 32;
-			y2 = mItemHeight * (ItemList.Count + CategoryList.Count + 1);
+			y2 = mItemHeight * (m_ItemList.Count + m_CategoryList.Count + 1);
 			if (y2 <= 0) y2 = this.Height;
 			if (y2 < 32) y2 = 32;
 			if (mShowItemsAsCategory)
-				picProp.Height = (CategoryList.Count + ItemList.Count) * mItemHeight;
+				picProp.Height = (m_CategoryList.Count + m_ItemList.Count) * mItemHeight;
 			else
-				picProp.Height = ItemList.Count * mItemHeight;
-			// Per evitare blink faccio il disegno in un oggetto
-			// bitmap e poi lo disegno nell'oggetto G con una 
-			// singola istruzione (double buffer technology)
+				picProp.Height = m_ItemList.Count * mItemHeight;
+
 			if (bmpPropGrid != null) bmpPropGrid.Dispose();
 			bmpPropGrid = new System.Drawing.Bitmap(x2, y2);
 			g = Graphics.FromImage(bmpPropGrid);
 			g.Clear(this.BackColor);
 			y1 = 0;
 			y2 = y1 + mItemHeight;
-			// Hide input controls
+
 			HideInputControls();
-			// Barra grigia a sx
-			brush = new SolidBrush(Color.LightGray);
+
+			brush = new SolidBrush(Color.FromArgb(240, 240, 240));
 			g.FillRectangle(brush, 0, 0, 14, bmpPropGrid.Height);
 			brush.Dispose();
-			// Riga verticale separatore colonne
-			pen = new Pen(Color.LightGray);
+
+			pen = new Pen(Color.FromArgb(240, 240, 240));
 			g.DrawLine(pen, mFirstColumnWidth, 0, mFirstColumnWidth, bmpPropGrid.Height);
-			// Disegna proprietà raggruppate per categoria o come semplice lista
-			brush = new SolidBrush(Color.LightBlue);
+
+			brush = new SolidBrush(Color.FromArgb(0, 120, 215));
 			txtBrush = new SolidBrush(Color.Black);
-			catBrush = new SolidBrush(Color.LightGray);
+			catBrush = new SolidBrush(Color.FromArgb(240, 240, 240));
 			if (mShowItemsAsCategory)
 				PaintAsCategory(g, pen, brush, catBrush, txtBrush, x1, x2, y1, ref y2);
 			else
 				PaintAsItemList(g, pen, brush, txtBrush, x1, x2, y1, ref y2);
-			// Copy image from memory to screen (to avoid flick)
+
 			picProp.BackgroundImage = bmpPropGrid;
-			// Set exact image size
+
 			y2 -= mItemHeight;
 			if (y2 < 32) y2 = 32;
 			picProp.Height = y2;
-			// Print text background
+
 			text = printDemoLabel ? "DEMO" : this.Name;
 			PaintText(text);
-			// Refresh done, free memory
+
 			pen.Dispose();
 			brush.Dispose();
 			txtBrush.Dispose();
@@ -791,9 +772,9 @@ namespace Inspector
 			int k, j;
 			int itemWidth;
 
-			for (k = 0; k < CategoryList.Count; k++)
+			for (k = 0; k < m_CategoryList.Count; k++)
 			{
-				category = CategoryList[k];
+				category = m_CategoryList[k];
 				rect = category.Rect;
 				// - Category
 				if (e.X >= rect.X && e.X <= (rect.X + rect.Width) && e.Y >= rect.Y && e.Y <= (rect.Y + rect.Height))
@@ -838,18 +819,18 @@ namespace Inspector
 			Rectangle rect;
 			int j;
 
-			for (j = 0; j < ItemList.Count; j++)
+			for (j = 0; j < m_ItemList.Count; j++)
 			{
-				rect = ItemList[j].Rect;
+				rect = m_ItemList[j].Rect;
 				if (e.Y >= rect.Y && e.Y <= (rect.Y + rect.Height))
 				{
 					PreviousItemSelected = mItemSelected;
-					mItemSelected = ItemList[j];
-					RefreshHelp(ItemList[j]);
+					mItemSelected = m_ItemList[j];
+					RefreshHelp(m_ItemList[j]);
 					PaintControl();
 					// Show input box (if BaseItem is enabled)
-					if (ItemList[j].Enabled)
-						ShowInputControl(rect.X, rect.Y, rect.Width, mItemHeight, ItemList[j]);
+					if (m_ItemList[j].Enabled)
+						ShowInputControl(rect.X, rect.Y, rect.Width, mItemHeight, m_ItemList[j]);
 					return;     // Exit
 				}
 			}
@@ -1306,25 +1287,6 @@ namespace Inspector
 
 		#region Public methods
 
-		/// <summary>
-		/// Sets the default values for all items into the property grid. Redraw (RefreshControl) is automatic.
-		/// </summary>
-		public void SetDefaultValues()
-		{
-			int t;
-
-			// Set all items to the default value
-			if (ItemList == null) return;
-			for (t = 0; t < ItemList.Count; t++)
-				ItemList[t].SetDefaultValue();
-			RefreshControl(true);
-		}
-
-		/// <summary>
-		/// Call this method to refresh the control on the screen. For fast printing set repaint to false.
-		/// Set repaint to true if you want to redraw all items (example after an BaseItem property change).
-		/// </summary>
-		/// <param name="repaint">true:redraw all BaseItem by item. false:redraw using the last saved memory bitmap.</param>
 		public void RefreshControl(bool repaint)
 		{
 			TraceWriteLine("RefreshControl(repaint=" + repaint.ToString() + ")");
@@ -1348,68 +1310,52 @@ namespace Inspector
 			int t;
 
 			TraceWriteLine("ResetChanges()");
-			if (ItemList == null) return;
-			for (t = 0; t < ItemList.Count; t++)
-				ItemList[t].Changed = false;
+			if (m_ItemList == null) return;
+			for (t = 0; t < m_ItemList.Count; t++)
+				m_ItemList[t].Changed = false;
 			RefreshControl(true);
 		}
 
-		/// <summary>
-		/// Remove all items from the property grid.
-		/// </summary>
 		public void ItemsClear()
 		{
-			int t;
-
 			TraceWriteLine("ItemsClear()");
-			// Remove all category and related items
-			if (CategoryList != null)
+
+			if (m_CategoryList != null)
 			{
-				for (t = 0; t < CategoryList.Count; t++)
-					if (CategoryList[t].ItemList != null)
+				for (int i = 0; i < m_CategoryList.Count; i++)
+				{
+					if (m_CategoryList[i].ItemList != null)
 					{
-						CategoryList[t].ItemList.Clear();
-						CategoryList[t].ItemList = null;
+						m_CategoryList[i].ItemList.Clear();
+						m_CategoryList[i].ItemList = null;
 					}
-				CategoryList.Clear();
+				}
+				m_CategoryList.Clear();
 			}
-			// Remove all items
-			if (ItemList != null)
-				ItemList.Clear();
+
+			if (m_ItemList != null)
+				m_ItemList.Clear();
 			RefreshControl(true);
 		}
 
-		/// <summary>
-		/// Add a specific BaseItem to the property grid. Be sure to use a unique key (itemKey).
-		/// </summary>
-		/// <param name="categoryKey">The category where to append the item.</param>
-		/// <param name="itemKey">Unique key for a fast BaseItem reference.</param>
-		/// <param name="strItem">String item.</param>
 		public void ItemAdd(string categoryKey, string itemKey, StringItem strItem)
 		{
-			// Add BaseItem to category list and BaseItem list
-			if (CategoryList.Contains(categoryKey))
+			if (m_CategoryList.Contains(categoryKey))
 			{
-				CategoryList[categoryKey].ItemList.Add(itemKey, strItem);
-				ItemList.Add(itemKey, strItem);
+				m_CategoryList[categoryKey].ItemList.Add(itemKey, strItem);
+				m_ItemList.Add(itemKey, strItem);
 				if (this.SelectedItem == null)
 					this.SelectedItem = strItem;
 			}
 		}
 
-		/// <summary>
-		/// Add a specific BaseItem to the property grid. Be sure to use a unique key (itemKey).
-		/// </summary>
-		/// <param name="categoryKey">The category where to append the item.</param>
-		/// <param name="itemKey">Unique key for a fast BaseItem reference.</param>
-		/// <param name="intItem">Int32 item.</param>
 		public void ItemAdd(string categoryKey, string itemKey, Int32Item intItem)
 		{
 			// Add BaseItem to category list and BaseItem list
-			if (CategoryList.Contains(categoryKey))
+			if (m_CategoryList.Contains(categoryKey))
 			{
-				CategoryList[categoryKey].ItemList.Add(itemKey, intItem);
-				ItemList.Add(itemKey, intItem);
+				m_CategoryList[categoryKey].ItemList.Add(itemKey, intItem);
+				m_ItemList.Add(itemKey, intItem);
 				if (this.SelectedItem == null)
 					this.SelectedItem = intItem;
 			}
@@ -1424,10 +1370,10 @@ namespace Inspector
 		public void ItemAdd(string categoryKey, string itemKey, DropDownItem cmbItem)
 		{
 			// Add BaseItem to category list and BaseItem list
-			if (CategoryList.Contains(categoryKey))
+			if (m_CategoryList.Contains(categoryKey))
 			{
-				CategoryList[categoryKey].ItemList.Add(itemKey, cmbItem);
-				ItemList.Add(itemKey, cmbItem);
+				m_CategoryList[categoryKey].ItemList.Add(itemKey, cmbItem);
+				m_ItemList.Add(itemKey, cmbItem);
 				if (this.SelectedItem == null)
 					this.SelectedItem = cmbItem;
 			}
@@ -1442,10 +1388,10 @@ namespace Inspector
 		public void ItemAdd(string categoryKey, string itemKey, BooleanItem boolItem)
 		{
 			// Add BaseItem to category list and BaseItem list
-			if (CategoryList.Contains(categoryKey))
+			if (m_CategoryList.Contains(categoryKey))
 			{
-				CategoryList[categoryKey].ItemList.Add(itemKey, boolItem);
-				ItemList.Add(itemKey, boolItem);
+				m_CategoryList[categoryKey].ItemList.Add(itemKey, boolItem);
+				m_ItemList.Add(itemKey, boolItem);
 				if (this.SelectedItem == null)
 					this.SelectedItem = boolItem;
 			}
@@ -1460,10 +1406,10 @@ namespace Inspector
 		public void ItemAdd(string categoryKey, string itemKey, FloatItem dblItem)
 		{
 			// Add BaseItem to category list and BaseItem list
-			if (CategoryList.Contains(categoryKey))
+			if (m_CategoryList.Contains(categoryKey))
 			{
-				CategoryList[categoryKey].ItemList.Add(itemKey, dblItem);
-				ItemList.Add(itemKey, dblItem);
+				m_CategoryList[categoryKey].ItemList.Add(itemKey, dblItem);
+				m_ItemList.Add(itemKey, dblItem);
 				if (this.SelectedItem == null)
 					this.SelectedItem = dblItem;
 			}
@@ -1478,10 +1424,10 @@ namespace Inspector
 		public void ItemAdd(string categoryKey, string itemKey, ColorItem colItem)
 		{
 			// Add BaseItem to category list and BaseItem list
-			if (CategoryList.Contains(categoryKey))
+			if (m_CategoryList.Contains(categoryKey))
 			{
-				CategoryList[categoryKey].ItemList.Add(itemKey, colItem);
-				ItemList.Add(itemKey, colItem);
+				m_CategoryList[categoryKey].ItemList.Add(itemKey, colItem);
+				m_ItemList.Add(itemKey, colItem);
 				if (this.SelectedItem == null)
 					this.SelectedItem = colItem;
 			}
@@ -1496,10 +1442,10 @@ namespace Inspector
 		public void ItemAdd(string categoryKey, string itemKey, ImageItem imgItem)
 		{
 			// Add BaseItem to category list and BaseItem list
-			if (CategoryList.Contains(categoryKey))
+			if (m_CategoryList.Contains(categoryKey))
 			{
-				CategoryList[categoryKey].ItemList.Add(itemKey, imgItem);
-				ItemList.Add(itemKey, imgItem);
+				m_CategoryList[categoryKey].ItemList.Add(itemKey, imgItem);
+				m_ItemList.Add(itemKey, imgItem);
 				if (this.SelectedItem == null)
 					this.SelectedItem = imgItem;
 			}
@@ -1514,10 +1460,10 @@ namespace Inspector
 		public void ItemAdd(string categoryKey, string itemKey, FileItem fileItem)
 		{
 			// Add BaseItem to category list and BaseItem list
-			if (CategoryList.Contains(categoryKey))
+			if (m_CategoryList.Contains(categoryKey))
 			{
-				CategoryList[categoryKey].ItemList.Add(itemKey, fileItem);
-				ItemList.Add(itemKey, fileItem);
+				m_CategoryList[categoryKey].ItemList.Add(itemKey, fileItem);
+				m_ItemList.Add(itemKey, fileItem);
 				if (this.SelectedItem == null)
 					this.SelectedItem = fileItem;
 			}
@@ -1527,15 +1473,10 @@ namespace Inspector
 		//TODO:Add any new BaseItem management here... (ItemAdd() function)
 
 
-		/// <summary>
-		/// Add a specific category BaseItem to the property grid. Be sure to use a unique key (categoryKey).
-		/// </summary>
-		/// <param name="categoryKey">Category BaseItem key reference.</param>
-		/// <param name="catItem">Category item.</param>
 		public void CategoryAdd(string categoryKey, CategoryItem catItem)
 		{
 			TraceWriteLine("CategoryAdd(categoryKey=" + categoryKey + ")");
-			CategoryList.Add(categoryKey, catItem);
+			m_CategoryList.Add(categoryKey, catItem);
 		}
 
 		/// <summary>
@@ -1545,8 +1486,8 @@ namespace Inspector
 		/// <returns>String value rappresentation.</returns>
 		public string GetItemValue(string itemKey)
 		{
-			if (ItemList.Contains(itemKey))
-				return ItemList[itemKey].ValueString;
+			if (m_ItemList.Contains(itemKey))
+				return m_ItemList[itemKey].ValueString;
 			else
 				return null;
 		}
@@ -1560,9 +1501,9 @@ namespace Inspector
 		{
 			FloatItem dblItem = null;
 
-			if (ItemList.Contains(itemKey) && ItemList[itemKey] is FloatItem)
+			if (m_ItemList.Contains(itemKey) && m_ItemList[itemKey] is FloatItem)
 			{
-				dblItem = (FloatItem)ItemList[itemKey];
+				dblItem = (FloatItem)m_ItemList[itemKey];
 				return dblItem.Value;
 			}
 			else
@@ -1575,10 +1516,10 @@ namespace Inspector
 		public void SetItemValue(string itemKey, string value)
 		{
 
-			if (ItemList.Contains(itemKey) && (ItemList[itemKey] is StringItem ||
-				ItemList[itemKey] is DropDownItem))
+			if (m_ItemList.Contains(itemKey) && (m_ItemList[itemKey] is StringItem ||
+				m_ItemList[itemKey] is DropDownItem))
 				// Set value
-				ItemList[itemKey].ValueString = value;
+				m_ItemList[itemKey].ValueString = value;
 		}
 
 		/// <summary>
@@ -1588,10 +1529,10 @@ namespace Inspector
 		{
 			string format;
 
-			if (ItemList.Contains(itemKey) && ItemList[itemKey] is FloatItem)
+			if (m_ItemList.Contains(itemKey) && m_ItemList[itemKey] is FloatItem)
 			{
-				format = ItemList[itemKey].Format;
-				ItemList[itemKey].ValueString = value.ToString(format);
+				format = m_ItemList[itemKey].Format;
+				m_ItemList[itemKey].ValueString = value.ToString(format);
 			}
 		}
 
@@ -1600,8 +1541,8 @@ namespace Inspector
 		/// </summary>
 		public void SetItemValue(string itemKey, int value)
 		{
-			if (ItemList.Contains(itemKey) && ItemList[itemKey] is Int32Item)
-				ItemList[itemKey].ValueString = value.ToString();
+			if (m_ItemList.Contains(itemKey) && m_ItemList[itemKey] is Int32Item)
+				m_ItemList[itemKey].ValueString = value.ToString();
 		}
 
 		/// <summary>
@@ -1611,8 +1552,8 @@ namespace Inspector
 		/// <returns>String Text of an item.</returns>
 		public string GetItemText(string itemKey)
 		{
-			if (ItemList.Contains(itemKey))
-				return ItemList[itemKey].Name;
+			if (m_ItemList.Contains(itemKey))
+				return m_ItemList[itemKey].Name;
 			else
 				return null;
 		}
@@ -1624,8 +1565,8 @@ namespace Inspector
 		/// <returns>Generic BaseItem object.</returns>
 		public BaseItem GetItem(string itemKey)
 		{
-			if (ItemList.Contains(itemKey))
-				return ItemList[itemKey];
+			if (m_ItemList.Contains(itemKey))
+				return m_ItemList[itemKey];
 			else
 				return null;
 		}
@@ -1635,8 +1576,8 @@ namespace Inspector
 		/// </summary>
 		public CategoryItem GetCategory(string key)
 		{
-			if (CategoryList.Contains(key))
-				return CategoryList[key];
+			if (m_CategoryList.Contains(key))
+				return m_CategoryList[key];
 			else
 				return null;
 		}
@@ -1646,8 +1587,8 @@ namespace Inspector
 		/// </summary>
 		public void SetCategoryText(string key, string text)
 		{
-			if (CategoryList.Contains(key))
-				CategoryList[key].Name = text;
+			if (m_CategoryList.Contains(key))
+				m_CategoryList[key].Name = text;
 		}
 
 		#endregion

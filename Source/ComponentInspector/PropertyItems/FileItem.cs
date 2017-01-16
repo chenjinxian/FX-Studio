@@ -44,17 +44,6 @@ namespace Inspector
         public FileItem(string text, string value)
         {
             this.Name = text;
-            this.DefaultValue = value;
-            this.Value = value;
-        }
-
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        public FileItem(string text, string value, string defaultValue)
-        {
-            this.Name = text;
-            this.DefaultValue = defaultValue;
             this.Value = value;
         }
 

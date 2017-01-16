@@ -262,33 +262,18 @@ namespace Inspector
             Value.Changed = false;
         }
 
-        /// <summary>
-        /// Add a ColorItem to the sorted list. A unique key must be specified or an exception accour.
-        /// </summary>
-        /// <param name="key">Unique string value used to identify an BaseItem into a sorted list.</param>
-        /// <param name="Value">Color item.</param>
         public void Add(String key, ColorItem Value)
         {
             ItemList.Add(key, Value);
             Value.Changed = false;
         }
 
-        /// <summary>
-        /// Add an ImageItem to the sorted list. A unique key must be specified or an exception accour.
-        /// </summary>
-        /// <param name="key">Unique string value used to identify an BaseItem into a sorted list.</param>
-        /// <param name="Value">Picture (image BaseItem).</param>
         public void Add(String key, ImageItem Value)
         {
             ItemList.Add(key, Value);
             Value.Changed = false;
         }
 
-        /// <summary>
-        /// Add a FileItem to the sorted list. A unique key must be specified or an exception accour.
-        /// </summary>
-        /// <param name="key">Unique string value used to identify an BaseItem into a sorted list.</param>
-        /// <param name="Value">File BaseItem (a file name string reference).</param>
         public void Add(String key, FileItem Value)
         {
             ItemList.Add(key, Value);
@@ -299,37 +284,21 @@ namespace Inspector
         //TODO:Add any new BaseItem management here... (Add() function)
         
 
-        /// <summary>
-        /// Return true if the sorted list contain the key
-        /// </summary>
-        /// <param name="key">Unique string value used to identify an BaseItem into a sorted list.</param>
-        /// <returns>true:key found  false:key not found</returns>
         public bool Contains(String key)
         {
             return ItemList.Contains(key);
         }
 
-        /// <summary>
-        /// Remove a specific BaseItem from the sorted list referring it by key.
-        /// </summary>
-        /// <param name="key">Unique string value used to identify an BaseItem into a sorted list.</param>
         public void Remove(String key)
         {
             ItemList.Remove(key);
         }
 
-        /// <summary>
-        /// Remove a specific BaseItem from the sorted list referring it by index.
-        /// </summary>
-        /// <param name="index">Unique string value used to identify an BaseItem into a sorted list.</param>
         public void RemoveAt(int index)
         {
             ItemList.RemoveAt(index);
         }
 
-        /// <summary>
-        /// Remove all property items form the sorted list.
-        /// </summary>
         public void Clear()
         {
             ItemList.Clear();
@@ -339,9 +308,6 @@ namespace Inspector
 
         #region Public properties
 
-        /// <summary>
-        /// Get the number of property items stored into the sorted list.
-        /// </summary>
         public int Count
         {
             get
@@ -358,37 +324,20 @@ namespace Inspector
 
     #region Public Class CategoryCollection (use the collection [1])
 
-    /// <summary>
-    /// This class allow to handle a list of Category sorted by the Text property. 
-    /// Each category contains a list of property items sorted by the Text property.
-    /// </summary>
     public class CategoryCollection     // : IEnumerable
     {
-        // Declare this class as   public class CategoryCollection : IEnumerable
-        // to enable category items enumeration
-
         private SortedObjectCollection CategoryList;
         
-        /// <summary>
-        /// Constructr
-        /// </summary>
-        /// <param name="initialCapacity">Initial sorted list elements capacity</param>
         public CategoryCollection(int initialCapacity)
         {
             CategoryList = new SortedObjectCollection(initialCapacity);
         }
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
         public CategoryCollection()
         {
             CategoryList = new SortedObjectCollection();
         }
 
-        /// <summary>
-        /// Destructor (clear memory)
-        /// </summary>
         ~CategoryCollection()
         {
             CategoryList.Clear();
@@ -396,11 +345,6 @@ namespace Inspector
 
         #region Public methods
 
-        /// <summary>
-        /// Gets/sets a Category into the collection referring it by key.
-        /// </summary>
-        /// <param name="key">Unique string value used to identify an BaseItem into a sorted list.</param>
-        /// <returns></returns>
         public CategoryItem this[String key]
         {
             get
@@ -413,16 +357,11 @@ namespace Inspector
             }
         }
 
-        /// <summary>
-        /// Gets/sets a Category into the collection referring it by index.
-        /// </summary>
-        /// <param name="index">Unique int value (0 based) used to identify an object into a sorted list.</param>
-        /// <returns></returns>
         public CategoryItem this[int index]
         {
             get
             {
-                if (index < 0 || index >= CategoryList.Count)			// Es. -1
+                if (index < 0 || index >= CategoryList.Count)
                     return null;
                 else
                     return (CategoryItem)CategoryList[index];
@@ -436,57 +375,31 @@ namespace Inspector
             }
         }
 
-        /// <summary>
-        /// Return the key using the index.
-        /// </summary>
-        /// <param name="index">Unique int value (0 based) used to identify an object into a sorted list.</param>
-        /// <returns></returns>
         public string GetKey(int index)
         {
             return (string)CategoryList.GetKey(index);
         }
 
-        /// <summary>
-        /// Add a category BaseItem to the sorted list. A unique key must be specified or an exception accour.
-        /// </summary>
-        /// <param name="key">Unique string value used to identify an BaseItem into a sorted list.</param>
-        /// <param name="Value">Category BaseItem used to group a set of items.</param>
         public void Add(String key, CategoryItem Value)
         {
             CategoryList.Add(key, Value);
         }
 
-        /// <summary>
-        /// Return true if a specific category BaseItem exit into the collection.
-        /// </summary>
-        /// <param name="key">Unique string value used to identify an BaseItem into a collection.</param>
-        /// <returns></returns>
         public bool Contains(String key)
         {
             return CategoryList.Contains(key);
         }
 
-        /// <summary>
-        /// Remove a specific category BaseItem from the collection.
-        /// </summary>
-        /// <param name="key">Unique string value used to identify an BaseItem into a collection.</param>
         public void Remove(String key)
         {
             CategoryList.Remove(key);
         }
 
-        /// <summary>
-        /// Remove a specific category BaseItem from the collection.
-        /// </summary>
-        /// <param name="index">Index (0 based) of a CategoryItem in the collection.</param>
         public void RemoveAt(int index)
         {
             CategoryList.RemoveAt(index);
         }
 
-        /// <summary>
-        /// Remove all category items from the collection.
-        /// </summary>
         public void Clear()
         {
             CategoryList.Clear();
@@ -496,9 +409,6 @@ namespace Inspector
 
         #region Public properties
 
-        /// <summary>
-        /// Return the number of total category items stored into the collection.
-        /// </summary>
         public int Count
         {
             get

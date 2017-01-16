@@ -39,14 +39,12 @@ namespace FXStudio
 
             XmlNode nameNode = projectNode.SelectSingleNode("Name");
             Inspector.StringItem nameItem = new Inspector.StringItem(nameNode.Name, nameNode.InnerText);
-            nameItem.HelpCaption = nameNode.Name;
-            nameItem.HelpText = m_NameDescription;
+            nameItem.Description = m_NameDescription;
             inspectorComponent.ItemAdd("project", nameNode.Name, nameItem);
 
             XmlNode locationNode = projectNode.SelectSingleNode("Location");
             Inspector.StringItem locationItem = new Inspector.StringItem(locationNode.Name, locationNode.InnerText);
-            locationItem.HelpCaption = locationNode.Name;
-            locationItem.HelpText = m_LocationDescription;
+            locationItem.Description = m_LocationDescription;
             inspectorComponent.ItemAdd("project", locationNode.Name, locationItem);
 
             inspectorComponent.RefreshControl(true);
@@ -58,9 +56,20 @@ namespace FXStudio
             inspectorComponent.CategoryAdd("scene", category);
 
             Inspector.StringItem nameItem = new Inspector.StringItem("Name", sceneNode.Name);
-            nameItem.HelpCaption = "Name";
-            nameItem.HelpText = m_NameDescription;
+            nameItem.Description = m_NameDescription;
             inspectorComponent.ItemAdd("scene", sceneNode.Name, nameItem);
+
+            inspectorComponent.RefreshControl(true);
+        }
+
+        private void AddEditorCameraProperties(XmlNode cameraNode)
+        {
+            Inspector.CategoryItem category = new Inspector.CategoryItem("EditorCamera");
+            inspectorComponent.CategoryAdd("camera", category);
+
+            Inspector.StringItem nameItem = new Inspector.StringItem("Name", cameraNode.Name);
+            nameItem.Description = m_NameDescription;
+            inspectorComponent.ItemAdd("camera", cameraNode.Name, nameItem);
 
             inspectorComponent.RefreshControl(true);
         }
@@ -80,92 +89,92 @@ namespace FXStudio
 
         }
 
-        private void PropGridAddItems()
-        {
-            Inspector.CategoryItem catItem;
-            Inspector.StringItem strItem;
-            Inspector.DropDownItem cmbItem;
-            Inspector.Int32Item intItem;
-            Inspector.BooleanItem boolItem;
-            Inspector.ColorItem colItem;
-            Inspector.FloatItem dblItem;
-            Inspector.ImageItem imgItem;
-            Inspector.FileItem fileItem;
-
-            catItem = new Inspector.CategoryItem("Main Category");
-            inspectorComponent.CategoryAdd("CatMain", catItem);
-
-            strItem = new Inspector.StringItem("Line01 - Name (String)", "Jak", "Jak Smith");
-            strItem.HelpCaption = "Name";
-            strItem.HelpText = "Tell me your name...";
-            inspectorComponent.ItemAdd("CatMain", "YourName", strItem);
-
-            intItem = new Inspector.Int32Item("Line02 - Age (Int32)", 0);
-            intItem.SetValidationRange(0, 120, 1);
-            intItem.SetHelpCaptionText("Age", "Tell me your age (valid range : 0..120)");
-            inspectorComponent.ItemAdd("CatMain", "MyAge", intItem);
-
-            // Set current selectd item (second row) and first column size (pixel)
-            inspectorComponent.SelectedItem = intItem;
-            inspectorComponent.ColumnWidth = 180;
-
-            strItem = new Inspector.StringItem("Line03 - Job (String)", "A software developer");
-            strItem.HelpText = "Tell me about your job";
-            strItem.Enabled = false;
-            inspectorComponent.ItemAdd("CatMain", "K03", strItem);
-
-            cmbItem = new Inspector.DropDownItem("Line04 - Best friend (Combo list)", "Bob", "Rosy", "Max|Bob|Carl|Antony|Rosy");
-            cmbItem.HelpCaption = "Best friend";
-            cmbItem.HelpText = "Tell me the name of your best friend!";
-            inspectorComponent.ItemAdd("CatMain", "K04", cmbItem);
-
-            dblItem = new Inspector.FloatItem("Line05 - Distance (Double)", 0.0, -1.0);
-            dblItem.DecimalPlaces = 5;
-            dblItem.Format = "0.000";
-            dblItem.EngineeringUnit = "[m]";
-            dblItem.SetHelpCaptionText("Distance", "Set the distance offset (m) from the 0 line. Default value is -1.0 m.");
-            inspectorComponent.ItemAdd("CatMain", "K05", dblItem);
-
-            boolItem = new Inspector.BooleanItem("Line06 - Sex (Bool)", true);
-            boolItem.SetValidationRange("Male", "Female");
-            boolItem.SetHelpCaptionText("Sex", "Male or Female?");
-            inspectorComponent.ItemAdd("CatMain", "K06", boolItem);
-
-            catItem = new Inspector.CategoryItem("Options");
-            inspectorComponent.CategoryAdd("C1", catItem);
-
-            strItem = new Inspector.StringItem("Line07 - ID Code (String)", "alpha");
-            strItem.ShowExpandButton = true;
-            strItem.MaxLength = 10;
-            strItem.SetHelpCaptionText("Password", "Tell me your ID code (max.10 characters)");
-            inspectorComponent.ItemAdd("C1", "K07", strItem);
-
-            boolItem = new Inspector.BooleanItem("Line08 - Drink wine (Bool)", true);
-            boolItem.SetValidationRange("No", "Yes");
-            boolItem.SetHelpCaptionText("Drink wine", "Say 'Yes' if you like to drink a glass of good wine");
-            inspectorComponent.ItemAdd("C1", "K08", boolItem);
-
-            colItem = new Inspector.ColorItem("Line09 - Back color (Color)", Color.Red, Color.Yellow);
-            colItem.SetHelpCaptionText("Color", "You preferit background color");
-            inspectorComponent.ItemAdd("C1", "K09", colItem);
-
-            dblItem = new Inspector.FloatItem("Line10 - Distance (Double)", 94.0);
-            dblItem.SetHelpCaptionText("Distance", "The distance (Km) from your home to your office. Valid range : 1..150");
-            dblItem.DecimalPlaces = 1;
-            dblItem.Format = "0.000";
-            dblItem.EngineeringUnit = "Km";
-            dblItem.SetValidationRange(1.0, 150.0, 0.1, Inspector.ValidationRangeCheckType.Manual);
-            inspectorComponent.ItemAdd("C1", "K10", dblItem);
-
-            imgItem = new Inspector.ImageItem("Line15 - Image", null, @"c:\windows\zapotec.bmp");
-            inspectorComponent.ItemAdd("C1", "K15", imgItem);
-
-            fileItem = new Inspector.FileItem("Line16 - File", @"c:\windows\setupapi.log");
-            inspectorComponent.ItemAdd("C1", "K16", fileItem);
-
-            // Repaint control
-            inspectorComponent.RefreshControl(true);
-        }
+//         private void PropGridAddItems()
+//         {
+//             Inspector.CategoryItem catItem;
+//             Inspector.StringItem strItem;
+//             Inspector.DropDownItem cmbItem;
+//             Inspector.Int32Item intItem;
+//             Inspector.BooleanItem boolItem;
+//             Inspector.ColorItem colItem;
+//             Inspector.FloatItem dblItem;
+//             Inspector.ImageItem imgItem;
+//             Inspector.FileItem fileItem;
+// 
+//             catItem = new Inspector.CategoryItem("Main Category");
+//             inspectorComponent.CategoryAdd("CatMain", catItem);
+// 
+//             strItem = new Inspector.StringItem("Line01 - Name (String)", "Jak", "Jak Smith");
+//             strItem.HelpCaption = "Name";
+//             strItem.HelpText = "Tell me your name...";
+//             inspectorComponent.ItemAdd("CatMain", "YourName", strItem);
+// 
+//             intItem = new Inspector.Int32Item("Line02 - Age (Int32)", 0);
+//             intItem.SetValidationRange(0, 120, 1);
+//             intItem.SetHelpCaptionText("Age", "Tell me your age (valid range : 0..120)");
+//             inspectorComponent.ItemAdd("CatMain", "MyAge", intItem);
+// 
+//             // Set current selectd item (second row) and first column size (pixel)
+//             inspectorComponent.SelectedItem = intItem;
+//             inspectorComponent.ColumnWidth = 180;
+// 
+//             strItem = new Inspector.StringItem("Line03 - Job (String)", "A software developer");
+//             strItem.HelpText = "Tell me about your job";
+//             strItem.Enabled = false;
+//             inspectorComponent.ItemAdd("CatMain", "K03", strItem);
+// 
+//             cmbItem = new Inspector.DropDownItem("Line04 - Best friend (Combo list)", "Bob", "Rosy", "Max|Bob|Carl|Antony|Rosy");
+//             cmbItem.HelpCaption = "Best friend";
+//             cmbItem.HelpText = "Tell me the name of your best friend!";
+//             inspectorComponent.ItemAdd("CatMain", "K04", cmbItem);
+// 
+//             dblItem = new Inspector.FloatItem("Line05 - Distance (Double)", 0.0, -1.0);
+//             dblItem.DecimalPlaces = 5;
+//             dblItem.Format = "0.000";
+//             dblItem.EngineeringUnit = "[m]";
+//             dblItem.SetHelpCaptionText("Distance", "Set the distance offset (m) from the 0 line. Default value is -1.0 m.");
+//             inspectorComponent.ItemAdd("CatMain", "K05", dblItem);
+// 
+//             boolItem = new Inspector.BooleanItem("Line06 - Sex (Bool)", true);
+//             boolItem.SetValidationRange("Male", "Female");
+//             boolItem.SetHelpCaptionText("Sex", "Male or Female?");
+//             inspectorComponent.ItemAdd("CatMain", "K06", boolItem);
+// 
+//             catItem = new Inspector.CategoryItem("Options");
+//             inspectorComponent.CategoryAdd("C1", catItem);
+// 
+//             strItem = new Inspector.StringItem("Line07 - ID Code (String)", "alpha");
+//             strItem.ShowExpandButton = true;
+//             strItem.MaxLength = 10;
+//             strItem.SetHelpCaptionText("Password", "Tell me your ID code (max.10 characters)");
+//             inspectorComponent.ItemAdd("C1", "K07", strItem);
+// 
+//             boolItem = new Inspector.BooleanItem("Line08 - Drink wine (Bool)", true);
+//             boolItem.SetValidationRange("No", "Yes");
+//             boolItem.SetHelpCaptionText("Drink wine", "Say 'Yes' if you like to drink a glass of good wine");
+//             inspectorComponent.ItemAdd("C1", "K08", boolItem);
+// 
+//             colItem = new Inspector.ColorItem("Line09 - Back color (Color)", Color.Red, Color.Yellow);
+//             colItem.SetHelpCaptionText("Color", "You preferit background color");
+//             inspectorComponent.ItemAdd("C1", "K09", colItem);
+// 
+//             dblItem = new Inspector.FloatItem("Line10 - Distance (Double)", 94.0);
+//             dblItem.SetHelpCaptionText("Distance", "The distance (Km) from your home to your office. Valid range : 1..150");
+//             dblItem.DecimalPlaces = 1;
+//             dblItem.Format = "0.000";
+//             dblItem.EngineeringUnit = "Km";
+//             dblItem.SetValidationRange(1.0, 150.0, 0.1, Inspector.ValidationRangeCheckType.Manual);
+//             inspectorComponent.ItemAdd("C1", "K10", dblItem);
+// 
+//             imgItem = new Inspector.ImageItem("Line15 - Image", null, @"c:\windows\zapotec.bmp");
+//             inspectorComponent.ItemAdd("C1", "K15", imgItem);
+// 
+//             fileItem = new Inspector.FileItem("Line16 - File", @"c:\windows\setupapi.log");
+//             inspectorComponent.ItemAdd("C1", "K16", fileItem);
+// 
+//             // Repaint control
+//             inspectorComponent.RefreshControl(true);
+//         }
 
         public void UpdateProperties(XmlNode selectedNode)
         {
@@ -179,6 +188,10 @@ namespace FXStudio
             else if (nodeType == "Scene")
             {
                 AddSceneProperties(selectedNode);
+            }
+            else if (nodeType == "EditorCamera")
+            {
+                AddEditorCameraProperties(selectedNode);
             }
             else
             {

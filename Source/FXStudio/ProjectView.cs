@@ -46,7 +46,7 @@ namespace FXStudio
                 XmlNode typeNode = child.Attributes["type"];
                 if (typeNode != null)
                 {
-                    if (typeNode.Value == "Camera")
+                    if (typeNode.Value == "EditorCamera")
                     {
                         var cameraTree = new TreeNode(child.Name) { Tag = child };
                         rootTree.Nodes.Add(cameraTree);

@@ -39,7 +39,7 @@ namespace Inspector
         /// </summary>
         public ImageItem()
         {
-            this.Text = "New image item";
+            this.Name = "New image item";
         }
 
         /// <summary>
@@ -47,7 +47,7 @@ namespace Inspector
         /// </summary>
         public ImageItem(string text, System.Drawing.Image value, string fileName)
         {
-            this.Text = text;
+            this.Name = text;
             this.FileName = fileName;
             this.DefaultValue = value;
             this.Value = value;
@@ -59,7 +59,7 @@ namespace Inspector
         /// </summary>
         public ImageItem(string text, System.Drawing.Image value, System.Drawing.Image defaultValue, string fileName)
         {
-            this.Text = text;
+            this.Name = text;
             this.FileName = fileName;
             this.DefaultValue = defaultValue;
             this.Value = value;

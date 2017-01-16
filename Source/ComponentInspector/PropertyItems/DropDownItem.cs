@@ -35,7 +35,7 @@ namespace Inspector
         /// </summary>
         public DropDownItem()
         {
-            this.Text = "New drop down list item";
+            this.Name = "New drop down list item";
         }
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace Inspector
         /// </summary>
         public DropDownItem(string text, string value, string dropDownList)
         {
-            this.Text = text;
+            this.Name = text;
             this.DefaultValue = value;
             this.Value = value;
             mDropDownList = dropDownList.Split('|');
@@ -56,7 +56,7 @@ namespace Inspector
         /// </summary>
         public DropDownItem(string text, string value, string defaultValue, string dropDownList)
         {
-            this.Text = text;
+            this.Name = text;
             this.DefaultValue = defaultValue;
             this.Value = value;
             mDropDownList = dropDownList.Split('|');

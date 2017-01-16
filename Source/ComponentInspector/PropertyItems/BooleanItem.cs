@@ -37,7 +37,7 @@ namespace Inspector
         /// </summary>
         public BooleanItem()
         {
-            this.Text = "New boolean item";
+            this.Name = "New boolean item";
         }
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace Inspector
         /// </summary>
         public BooleanItem(string text, bool value)
         {
-            this.Text = text;
+            this.Name = text;
             this.DefaultValue = value;
             this.Value = value;
         }
@@ -55,7 +55,7 @@ namespace Inspector
         /// </summary>
         public BooleanItem(string text, bool value, bool defaultValue)
         {
-            this.Text = text;
+            this.Name = text;
             this.DefaultValue = defaultValue;
             this.Value = value;
         }

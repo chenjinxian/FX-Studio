@@ -35,7 +35,7 @@ namespace Inspector
         /// </summary>
         public ColorItem()
         {
-            this.Text = "New color item";
+            this.Name = "New color item";
         }
 
         /// <summary>
@@ -43,7 +43,7 @@ namespace Inspector
         /// </summary>
         public ColorItem(string text, System.Drawing.Color value)
         {
-            this.Text = text;
+            this.Name = text;
             this.DefaultValue = value;
             this.Value = value;
         }
@@ -53,7 +53,7 @@ namespace Inspector
         /// </summary>
         public ColorItem(string text, System.Drawing.Color value, System.Drawing.Color defaultValue)
         {
-            this.Text = text;
+            this.Name = text;
             this.DefaultValue = defaultValue;
             this.Value = value;
         }

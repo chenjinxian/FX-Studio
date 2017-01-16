@@ -556,13 +556,13 @@ namespace Inspector
 			if (!item.Visible) return;
 			// txtDisabledBrush = new SolidBrush(Color.FromArgb(this.ForeColor.R / 2, this.ForeColor.G / 2, this.ForeColor.B / 2));
 			txtDisabledBrush = new SolidBrush(Color.DarkGray);
-			item.rectangle = new Rectangle(mFirstColumnWidth, y1, this.Width - mFirstColumnWidth, y2 - y1);
+			item.Rect = new Rectangle(mFirstColumnWidth, y1, this.Width - mFirstColumnWidth, y2 - y1);
 			if (item == mItemSelected)
 				g.FillRectangle(brush, x1 + 14, y1, mFirstColumnWidth - 14, mItemHeight);
 			g.DrawLine(pen, x1, y2, x2, y2);
 			// Property title (text)
 			g.Clip = new Region(new Rectangle(x1, y1, mFirstColumnWidth, y2 - y1));
-			g.DrawString(item.Text, this.Font, txtBrush, (float)x1 + 16F, (float)y1 + 2);
+			g.DrawString(item.Name, this.Font, txtBrush, (float)x1 + 16F, (float)y1 + 2);
 			g.ResetClip();
 			// Property value (view as bold font if values is been changed by user)
 			propFont = item.Changed ? new Font(this.Font, FontStyle.Bold) :
@@ -574,7 +574,7 @@ namespace Inspector
 					g.DrawImageUnscaled(imgList.Images[3], mFirstColumnWidth + 2, y1 + 2);
 				else
 					g.DrawImageUnscaled(imgList.Images[2], mFirstColumnWidth + 2, y1 + 2);
-				g.Clip = new Region(item.rectangle);
+				g.Clip = new Region(item.Rect);
 				if (item.Enabled)
 					g.DrawString(item.ValueString, propFont, txtBrush, (float)mFirstColumnWidth + 19, (float)y1 + 2);
 				else
@@ -587,7 +587,7 @@ namespace Inspector
 				fillBrush = new SolidBrush(colItem.Value);
 				g.FillRectangle(fillBrush, mFirstColumnWidth + 2, y1 + 2, 16, y2 - y1 - 6);
 				g.DrawRectangle(new Pen(Color.Black), mFirstColumnWidth + 2, y1 + 2, 16, y2 - y1 - 6);
-				g.Clip = new Region(item.rectangle);
+				g.Clip = new Region(item.Rect);
 				if (item.Enabled)
 					g.DrawString(item.ValueString, propFont, txtBrush, (float)mFirstColumnWidth + 28, (float)y1 + 2);
 				else
@@ -617,7 +617,7 @@ namespace Inspector
 			else
 			{
 				// Any other item...
-				g.Clip = new Region(item.rectangle);
+				g.Clip = new Region(item.Rect);
 				if (item.Enabled)
 					g.DrawString(item.ValueString, propFont, txtBrush, (float)mFirstColumnWidth, (float)y1 + 2);
 				else
@@ -643,9 +643,9 @@ namespace Inspector
 				category = CategoryList[k];
 				// Property title (text)
 				g.FillRectangle(catBrush, x1 + 14, y1, this.Width, mItemHeight);
-				g.DrawString(category.Text, this.Font, txtBrush, (float)x1 + 16F, (float)y1 + 2);
+				g.DrawString(category.Name, this.Font, txtBrush, (float)x1 + 16F, (float)y1 + 2);
 				// Print plus/minus
-				category.rectangle = new Rectangle(2, y1 + 2, 13, 13);
+				category.Rect = new Rectangle(2, y1 + 2, 13, 13);
 
 				if (category.Expanded)
 					g.DrawImageUnscaled(imgList.Images[0], 2, y1 + 2);
@@ -733,7 +733,7 @@ namespace Inspector
 			if (y2 < 32) y2 = 32;
 			picProp.Height = y2;
 			// Print text background
-			text = printDemoLabel ? "DEMO" : this.Text;
+			text = printDemoLabel ? "DEMO" : this.Name;
 			PaintText(text);
 			// Refresh done, free memory
 			pen.Dispose();
@@ -775,16 +775,8 @@ namespace Inspector
 		private void RefreshHelp(BaseItem item)
 		{
 			if (item == null) return;
-			if (item.HelpVisible)
-			{
-				lblHelpCaption.Text = item.HelpCaption;
-				lblHelpText.Text = item.HelpText;
-			}
-			else
-			{
-				lblHelpCaption.Text = "";
-				lblHelpText.Text = "";
-			}
+			lblHelpCaption.Text = item.Name;
+			lblHelpText.Text = item.Description;
 		}
 
 		/// <summary>
@@ -802,7 +794,7 @@ namespace Inspector
 			for (k = 0; k < CategoryList.Count; k++)
 			{
 				category = CategoryList[k];
-				rect = category.rectangle;
+				rect = category.Rect;
 				// - Category
 				if (e.X >= rect.X && e.X <= (rect.X + rect.Width) && e.Y >= rect.Y && e.Y <= (rect.Y + rect.Height))
 				{
@@ -816,7 +808,7 @@ namespace Inspector
 					for (j = 0; j < category.ItemList.Count; j++)
 					{
 						item = category.ItemList[j];
-						rect = item.rectangle;
+						rect = item.Rect;
 						if (e.Y >= rect.Y && e.Y <= (rect.Y + rect.Height))
 						{
 							PreviousItemSelected = mItemSelected;
@@ -848,7 +840,7 @@ namespace Inspector
 
 			for (j = 0; j < ItemList.Count; j++)
 			{
-				rect = ItemList[j].rectangle;
+				rect = ItemList[j].Rect;
 				if (e.Y >= rect.Y && e.Y <= (rect.Y + rect.Height))
 				{
 					PreviousItemSelected = mItemSelected;
@@ -1620,7 +1612,7 @@ namespace Inspector
 		public string GetItemText(string itemKey)
 		{
 			if (ItemList.Contains(itemKey))
-				return ItemList[itemKey].Text;
+				return ItemList[itemKey].Name;
 			else
 				return null;
 		}
@@ -1655,7 +1647,7 @@ namespace Inspector
 		public void SetCategoryText(string key, string text)
 		{
 			if (CategoryList.Contains(key))
-				CategoryList[key].Text = text;
+				CategoryList[key].Name = text;
 		}
 
 		#endregion

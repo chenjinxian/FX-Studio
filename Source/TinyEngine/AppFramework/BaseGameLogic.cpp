@@ -388,7 +388,7 @@ bool BaseGameLogic::CreateDefaultProject(const std::string& project, const std::
 	tinyxml2::XMLElement* pEditorCamera = outDoc.NewElement("EditorCamera");
 	pRoot->InsertEndChild(pEditorCamera);
 	{
-		pEditorCamera->SetAttribute("type", "Camera");
+		pEditorCamera->SetAttribute("type", "EditorCamera");
 		tinyxml2::XMLElement* pTranslation = outDoc.NewElement("Translation");
 		pTranslation->SetAttribute("x", 0.0f);
 		pTranslation->SetAttribute("y", 0.0f);

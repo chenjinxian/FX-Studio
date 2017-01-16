@@ -42,7 +42,7 @@ namespace Inspector
         /// </summary>
         public FloatItem()
         {
-            this.Text = "New double item";
+            this.Name = "New double item";
         }
 
         /// <summary>
@@ -50,7 +50,7 @@ namespace Inspector
         /// </summary>
         public FloatItem(string text, double value)
         {
-            this.Text = text;
+            this.Name = text;
             this.DefaultValue = value;
             this.Value = value;
         }
@@ -60,7 +60,7 @@ namespace Inspector
         /// </summary>
         public FloatItem(string text, double value, double defaultValue)
         {
-            this.Text = text;
+            this.Name = text;
             this.DefaultValue = defaultValue;
             this.Value = value;
         }

@@ -41,7 +41,7 @@ namespace Inspector
         /// </summary>
         public Int32Item()
         {
-            this.Text = "New int32 item";
+            this.Name = "New int32 item";
         }
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace Inspector
         /// </summary>
         public Int32Item(string text, int value)
         {
-            this.Text = text;
+            this.Name = text;
             this.DefaultValue = value;
             this.Value = value;
         }
@@ -59,7 +59,7 @@ namespace Inspector
         /// </summary>
         public Int32Item(string text, int value, int defaultValue)
         {
-            this.Text = text;
+            this.Name = text;
             this.DefaultValue = defaultValue;
             this.Value = value;
         }

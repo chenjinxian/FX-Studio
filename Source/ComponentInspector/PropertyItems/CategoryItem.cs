@@ -38,7 +38,7 @@ namespace Inspector
         /// </summary>
         public CategoryItem()
         {
-            this.Text = "New string item";
+            this.Name = "New string item";
         }
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace Inspector
         /// </summary>
         public CategoryItem(string text)
         {
-            this.Text = text;
+            this.Name = text;
             ItemList = new ItemCollection();
         }
 

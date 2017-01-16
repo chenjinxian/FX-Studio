@@ -35,7 +35,7 @@ namespace Inspector
         /// </summary>
         public FileItem()
         {
-            this.Text = "New file item";
+            this.Name = "New file item";
         }
 
         /// <summary>
@@ -43,7 +43,7 @@ namespace Inspector
         /// </summary>
         public FileItem(string text, string value)
         {
-            this.Text = text;
+            this.Name = text;
             this.DefaultValue = value;
             this.Value = value;
         }
@@ -53,7 +53,7 @@ namespace Inspector
         /// </summary>
         public FileItem(string text, string value, string defaultValue)
         {
-            this.Text = text;
+            this.Name = text;
             this.DefaultValue = defaultValue;
             this.Value = value;
         }

@@ -47,7 +47,7 @@ namespace FXStudio
             locationItem.Description = m_LocationDescription;
             inspectorComponent.ItemAdd("project", locationNode.Name, locationItem);
 
-            inspectorComponent.RefreshControl(true);
+            inspectorComponent.UpdateControl();
         }
 
         private void AddSceneProperties(XmlNode sceneNode)
@@ -59,7 +59,7 @@ namespace FXStudio
             nameItem.Description = m_NameDescription;
             inspectorComponent.ItemAdd("scene", sceneNode.Name, nameItem);
 
-            inspectorComponent.RefreshControl(true);
+            inspectorComponent.UpdateControl();
         }
 
         private void AddEditorCameraProperties(XmlNode cameraNode)
@@ -71,7 +71,7 @@ namespace FXStudio
             nameItem.Description = m_NameDescription;
             inspectorComponent.ItemAdd("camera", cameraNode.Name, nameItem);
 
-            inspectorComponent.RefreshControl(true);
+            inspectorComponent.UpdateControl();
         }
 
         private void AddTransformProperties()

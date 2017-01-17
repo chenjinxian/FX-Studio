@@ -181,7 +181,7 @@ namespace Inspector
 
     #region Public Class ItemCollection (use the collection [1])
 
-    public class ItemCollection
+    public class ItemCollection : IEnumerable
     {
         private SortedObjectCollection ItemList;
 
@@ -200,6 +200,15 @@ namespace Inspector
             ItemList.Clear();
         }
 
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return (IEnumerator)GetEnumerator();
+        }
+
+        public BaseEnumerator GetEnumerator()
+        {
+            return new BaseEnumerator(ItemList);
+        }
 
         #region Public methods
 
@@ -320,11 +329,50 @@ namespace Inspector
   
     }
 
+    public class BaseEnumerator : IEnumerator
+    {
+        private int index = -1;
+        public SortedObjectCollection m_ItemList;
+
+        public BaseEnumerator(SortedObjectCollection itemList)
+        {
+            m_ItemList = itemList;
+        }
+
+        public bool MoveNext()
+        {
+            index++;
+            return (index < m_ItemList.Count);
+        }
+
+        public void Reset()
+        {
+            index = -1;
+        }
+
+        object IEnumerator.Current { get { return Current; } }
+
+        public BaseItem Current
+        {
+            get
+            {
+                try
+                {
+                    return (BaseItem)m_ItemList[index];
+                }
+                catch (IndexOutOfRangeException)
+                {
+                    throw new InvalidOperationException();
+                }
+            }
+        }
+    }
+
     #endregion
 
     #region Public Class CategoryCollection (use the collection [1])
 
-    public class CategoryCollection     // : IEnumerable
+    public class CategoryCollection : IEnumerable
     {
         private SortedObjectCollection CategoryList;
         
@@ -343,7 +391,17 @@ namespace Inspector
             CategoryList.Clear();
         }
 
-        #region Public methods
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return (IEnumerator)GetEnumerator();
+        }
+
+        public CategoryEnumerator GetEnumerator()
+        {
+            return new CategoryEnumerator(CategoryList);
+        }        
+
+        #region Public methods 
 
         public CategoryItem this[String key]
         {
@@ -419,6 +477,45 @@ namespace Inspector
 
         #endregion
 
+    }
+
+    public class CategoryEnumerator : IEnumerator
+    {
+        private int index = -1;
+        public SortedObjectCollection m_CategoryList;
+
+        public CategoryEnumerator(SortedObjectCollection categoryList)
+        {
+            m_CategoryList = categoryList;
+        }
+
+        public bool MoveNext()
+        {
+            index++;
+            return (index < m_CategoryList.Count);
+        }
+
+        public void Reset()
+        {
+            index = -1;
+        }
+
+        object IEnumerator.Current { get { return Current; } }
+        
+        public CategoryItem Current
+        {
+            get
+            {
+                try
+                {
+                    return (CategoryItem)m_CategoryList[index];
+                }
+                catch (IndexOutOfRangeException)
+                {
+                    throw new InvalidOperationException();
+                }
+            }
+        }
     }
 
     #endregion

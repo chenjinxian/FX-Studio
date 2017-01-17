@@ -1,13 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-/*
- * 10/08/2008
- * 
- * Part of the open source project Inspector
- * Developer : mbr ® (Massimiliano Brugnerotto)
- *  
- */
+
 namespace Inspector
 {
     public class FloatItem : BaseItem
@@ -21,8 +15,7 @@ namespace Inspector
         private float mIncrement = 1.0f;
         private ValidationRangeCheckType mValidationRangeCheck = ValidationRangeCheckType.Disabled;
         private string mEngineeringUnit = "";
-        private int mDecimalPlaces = 1;                     // (0..10) Number of decimal digits
-        // The Value number will be format using the property .Format while printing it on the screen
+        private int mDecimalPlaces = 1;
 
         #endregion
 

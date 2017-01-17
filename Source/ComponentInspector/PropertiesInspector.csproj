@@ -80,6 +80,7 @@
     <Compile Include="PropertyItems\ImageItem.cs" />
     <Compile Include="PropertyItems\Int32Item.cs" />
     <Compile Include="PropertyItems\StringItem.cs" />
+    <Compile Include="PropertyItems\Vector3Item.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">

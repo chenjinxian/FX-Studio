@@ -10,7 +10,6 @@ namespace Inspector
         #region Private internal var./properties
 
         private int mValue = 0;
-        private int mDefaultValue = 0;
         private int mMinValue = 0;
         private int mMaxValue = 100;
         private int mIncrement = 1;
@@ -24,20 +23,18 @@ namespace Inspector
 
         public Int32Item()
         {
-            this.Name = "New int32 item";
+            this.Name = "Misc";
         }
 
         public Int32Item(string text, int value)
         {
             this.Name = text;
-            this.DefaultValue = value;
             this.Value = value;
         }
 
         public Int32Item(string text, int value, int defaultValue)
         {
             this.Name = text;
-            this.DefaultValue = defaultValue;
             this.Value = value;
         }
 
@@ -70,29 +67,6 @@ namespace Inspector
                 this.Changed = (oldValue != mValue);
                 if (this.Changed)
                     RaiseValueChanged(mValue);
-            }
-        }
-
-        public int DefaultValue
-        {
-            get
-            {
-                return mDefaultValue;
-            }
-            set
-            {
-                if (mValidationRangeCheck)
-                {
-                    if (value < mMinValue)
-                        mDefaultValue = mMinValue;
-                    else
-                        if (value > mMaxValue)
-                        mDefaultValue = mMaxValue;
-                    else
-                        mDefaultValue = value;
-                }
-                else
-                    mDefaultValue = value;
             }
         }
 
@@ -228,22 +202,13 @@ namespace Inspector
 
         #region Public events
 
-        /// <summary>
-        /// Delegate for ValueChanged event.
-        /// </summary>
-        /// <param name="sender">Object sender.</param>
-        /// <param name="value">Last int (int32) value.</param>
         public delegate void ValueChangedHandle(object sender, int value);
 
-        /// <summary>
-        /// This event accour when the int (int32) value property change.
-        /// </summary>
         public event ValueChangedHandle ValueChanged;
 
         private void RaiseValueChanged(int value)
         {
             if (ValueChanged != null)
-                // Raise event
                 ValueChanged(this, value);
         }
 

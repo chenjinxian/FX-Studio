@@ -260,26 +260,6 @@ namespace Inspector
 			}
 		}
 
-		private void PaintControl()
-		{
-			int x1, x2, y1, y2;
-
-			x1 = 0;
-			x2 = this.Width;
-			if (x2 < 32) x2 = 32;
-			y2 = mItemHeight * (m_ItemList.Count + m_CategoryList.Count + 1);
-			if (y2 <= 0) y2 = this.Height;
-			if (y2 < 32) y2 = 32;
-
-			y1 = 0;
-			y2 = y1 + mItemHeight;
-
-			PaintAsCategory(x1, x2, y1, ref y2);
-
-			y2 -= mItemHeight;
-			if (y2 < 32) y2 = 32;
-		}
-
 		private void RefreshCursor(int xMouse)
 		{
 			int x1;
@@ -292,7 +272,7 @@ namespace Inspector
 			{
 				if (this.Cursor != Cursors.VSplit)
 				{
-					PaintControl();
+					UpdateControl();
 					this.Cursor = Cursors.VSplit;
 				}
 			}
@@ -475,6 +455,65 @@ namespace Inspector
 
 		#region Public methods
 
+		public void UpdateControl()
+		{
+			panelProperties.Controls.Clear();
+
+			int x1 = 0;
+			int x2 = this.Width;
+			if (x2 < 32) x2 = 32;
+			int y1 = 0;
+			int y2 = y1 + mItemHeight;
+
+			foreach (var category in m_CategoryList)
+			{
+				Button btnExpand = new Button();
+				btnExpand.Image = this.imageListExpand.Images[0];
+				btnExpand.ImageAlign = ContentAlignment.MiddleCenter;
+				btnExpand.Name = "button" + category.Name + "Expand";
+				btnExpand.Text = "";
+				btnExpand.Location = new Point(2, 2);
+				btnExpand.Size = new Size(20, 20);
+				if (category.Expanded)
+					btnExpand.Image = this.imageListExpand.Images[1];
+				else
+					btnExpand.Image = this.imageListExpand.Images[0];
+
+				Label labelCategory = new Label();
+				labelCategory.AutoSize = true;
+				labelCategory.Font = new Font("Microsoft YaHei UI", 9F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(134)));
+				labelCategory.ForeColor = Color.Black;
+				labelCategory.Location = new Point(24, 3);
+				labelCategory.Name = "label" + category.Name;
+				labelCategory.AutoSize = true;
+				labelCategory.Text = category.Name;
+
+				Panel panelCategory = new Panel();
+				panelCategory.BackColor = Color.FromArgb(240, 240, 240);
+				panelCategory.Dock = DockStyle.None;
+				panelCategory.Location = new Point(0, y1);
+				panelCategory.Name = "panel" + category.Name;
+				panelCategory.Size = new Size(this.Width, mItemHeight);
+				panelCategory.Controls.Add(btnExpand);
+				panelCategory.Controls.Add(labelCategory);
+
+				this.panelProperties.Controls.Add(panelCategory);
+
+				category.Rect = new Rectangle(2, y1 + 2, 20, 20);
+
+				y1 = y2;
+				y2 += mItemHeight;
+
+				if (category.Expanded)
+				{
+					foreach (var item in category.ItemList)
+					{
+						PaintItem(item, x1, x2, ref y1, ref y2);
+					}
+				}
+			}
+		}
+
 		public void ResetChanges()
 		{
 			int t;
@@ -482,7 +521,7 @@ namespace Inspector
 			if (m_ItemList == null) return;
 			for (t = 0; t < m_ItemList.Count; t++)
 				m_ItemList[t].Changed = false;
-			PaintControl();
+			UpdateControl();
 		}
 
 		public void ItemsClear()
@@ -502,8 +541,7 @@ namespace Inspector
 
 			if (m_ItemList != null)
 				m_ItemList.Clear();
-			panelProperties.Controls.Clear();
-			PaintControl();
+			UpdateControl();
 		}
 
 		public void ItemAdd(string categoryKey, string itemKey, StringItem strItem)
@@ -810,7 +848,7 @@ namespace Inspector
 				if (mFirstColumnWidth != e.X)
 				{
 					mFirstColumnWidth = e.X;
-					PaintControl();
+					UpdateControl();
 				}
 			}
 			else
@@ -841,8 +879,7 @@ namespace Inspector
 
 		private void PropertiesInspector_SizeChanged(object sender, EventArgs e)
 		{
-			panelProperties.Controls.Clear();
-			PaintControl();
+			UpdateControl();
 		}
 	}
 }

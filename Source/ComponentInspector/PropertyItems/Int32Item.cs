@@ -1,23 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-/*
- * 10/08/2008
- * 
- * Part of the open source project Inspector
- * Developer : mbr ® (Massimiliano Brugnerotto)
- *  
- */
+
 namespace Inspector
 {
-    // All classes like "PropertyItem..." inherit directly from BaseItem or another
-    // class (eg. StringItem) but the base class must be always BaseItem
-
-    #region Integer (int32) property item class
-
-    /// <summary>
-    /// Integer (int32) property item class.
-    /// </summary>
     public class Int32Item : BaseItem
     {
 
@@ -30,23 +16,17 @@ namespace Inspector
         private int mIncrement = 1;
         private bool mValidationRangeCheck = false;
         private string mEngineeringUnit = "";
-        private bool mHexadecimal = false;              // true=show value as hexadecimal
+        private bool mHexadecimal = false;
 
         #endregion
 
         #region Constructors
 
-        /// <summary>
-        /// Constructor.
-        /// </summary>
         public Int32Item()
         {
             this.Name = "New int32 item";
         }
 
-        /// <summary>
-        /// Constructor. The DefaultValue is the same as Value.
-        /// </summary>
         public Int32Item(string text, int value)
         {
             this.Name = text;
@@ -54,9 +34,6 @@ namespace Inspector
             this.Value = value;
         }
 
-        /// <summary>
-        /// Constructor.
-        /// </summary>
         public Int32Item(string text, int value, int defaultValue)
         {
             this.Name = text;
@@ -68,9 +45,6 @@ namespace Inspector
 
         #region Public Properties
 
-        /// <summary>
-        /// Get/set the int32 value
-        /// </summary>
         public int Value
         {
             get
@@ -83,14 +57,13 @@ namespace Inspector
 
                 if (mValidationRangeCheck)
                 {
-                    // Set only a valid value!
                     if (value < mMinValue)
                         mValue = mMinValue;
                     else
                         if (value > mMaxValue)
-                            mValue = mMaxValue;
-                        else
-                            mValue = value;
+                        mValue = mMaxValue;
+                    else
+                        mValue = value;
                 }
                 else
                     mValue = value;
@@ -100,9 +73,6 @@ namespace Inspector
             }
         }
 
-        /// <summary>
-        /// Get/set the int32 default value.  To sets the current Value to the DefaultValue use the SetDefaultValue() method.
-        /// </summary>
         public int DefaultValue
         {
             get
@@ -113,23 +83,19 @@ namespace Inspector
             {
                 if (mValidationRangeCheck)
                 {
-                    // Set only a valid value!
                     if (value < mMinValue)
                         mDefaultValue = mMinValue;
                     else
                         if (value > mMaxValue)
-                            mDefaultValue = mMaxValue;
-                        else
-                            mDefaultValue = value;
+                        mDefaultValue = mMaxValue;
+                    else
+                        mDefaultValue = value;
                 }
                 else
                     mDefaultValue = value;
             }
         }
 
-        /// <summary>
-        /// Get the value as a formatted string plus enginering unit. While setting the value do dot pass the enginering unit string.
-        /// </summary>
         public override string ValueString
         {
             get
@@ -171,9 +137,6 @@ namespace Inspector
             }
         }
 
-        /// <summary>
-        /// Get the minimum valid value if ValidationRangeCheck is true
-        /// </summary>
         public int Minimum
         {
             get
@@ -182,9 +145,6 @@ namespace Inspector
             }
         }
 
-        /// <summary>
-        /// Get the maximum valid value if ValidationRangeCheck is true
-        /// </summary>
         public int Maximum
         {
             get
@@ -193,9 +153,6 @@ namespace Inspector
             }
         }
 
-        /// <summary>
-        /// Get the increment value (while using a spin up/down button to change the value)
-        /// </summary>
         public int Increment
         {
             get
@@ -204,9 +161,6 @@ namespace Inspector
             }
         }
 
-        /// <summary>
-        /// Get/set the engineering unit. An empty string means that no engineering unit will be displayed.
-        /// </summary>
         public string EngineeringUnit
         {
             get
@@ -219,10 +173,6 @@ namespace Inspector
             }
         }
 
-        /// <summary>
-        /// Get/set if a validation range check is enabled or not.
-        /// If validation range check is enabled Value must be between Minimum and Maximum.
-        /// </summary>
         public bool ValidationRangeCheck
         {
             get
@@ -235,9 +185,6 @@ namespace Inspector
             }
         }
 
-        /// <summary>
-        /// Get/set if the Value must be show as a hexadecimal number
-        /// </summary>
         public bool Hexadecimal
         {
             get
@@ -254,19 +201,14 @@ namespace Inspector
 
         #region Public Methods
 
-        /// <summary>
-        /// Sets the validation range parameters. An exception accour if minValue is the same as maxValue.
-        /// </summary>
         public void SetValidationRange(int minValue, int maxValue, int incrementStep)
         {
             if (minValue == maxValue)
-                // Error
                 throw new ArgumentException("Parameters minValue and MaxValue can't be equal!", "minValue, maxValue");
             else
             {
                 if (minValue > maxValue)
                 {
-                    // Swap values!
                     mMinValue = maxValue;
                     mMaxValue = minValue;
                 }
@@ -277,18 +219,9 @@ namespace Inspector
                 }
                 mIncrement = incrementStep;
                 ValidationRangeCheck = true;
-                // Correct invalid value!
                 if (mValue < mMinValue) mValue = mMinValue;
                 if (mValue > mMaxValue) mValue = mMaxValue;
             }
-        }
-
-        /// <summary>
-        /// Sets the Value property to the current default value.
-        /// </summary>
-        public override void SetDefaultValue()
-        {
-            this.Value = this.DefaultValue;
         }
 
         #endregion
@@ -317,7 +250,4 @@ namespace Inspector
         #endregion
 
     }
-
-    #endregion
-
 }

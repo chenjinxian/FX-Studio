@@ -103,16 +103,6 @@ namespace Inspector
 
         #endregion
 
-        #region Public methods
-
-        public virtual void SetDefaultValue()
-        {
-            // In a derived class this method will run the following code :
-            // this.Value = this.DefaultValue;
-        }
-
-        #endregion
-
     }
 
     #endregion

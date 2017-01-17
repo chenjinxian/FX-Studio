@@ -33,26 +33,14 @@
             // 
             // inspectorComponent
             // 
-            this.inspectorComponent.ButtonApplyVisible = false;
-            this.inspectorComponent.ButtonShowTextVisible = false;
             this.inspectorComponent.ColumnWidth = 100;
             this.inspectorComponent.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.inspectorComponent.HelpVisible = true;
             this.inspectorComponent.Location = new System.Drawing.Point(0, 0);
             this.inspectorComponent.Name = "inspectorComponent";
-            this.inspectorComponent.RowsHeight = 19;
             this.inspectorComponent.SelectedItem = null;
-            this.inspectorComponent.ShowItemsAsCategory = true;
             this.inspectorComponent.Size = new System.Drawing.Size(424, 901);
             this.inspectorComponent.TabIndex = 0;
             this.inspectorComponent.Text = "PropertiesInspector";
-            this.inspectorComponent.TextBackgroundColor = System.Drawing.Color.LightBlue;
-            this.inspectorComponent.TextBackgroundColorIsGradient = true;
-            this.inspectorComponent.TextBackgroundGradientColorFinish = System.Drawing.Color.Blue;
-            this.inspectorComponent.TextBackgroundGradientColorStart = System.Drawing.Color.LightBlue;
-            this.inspectorComponent.TextVisible = false;
-            this.inspectorComponent.ToolbarVisible = true;
-            this.inspectorComponent.TraceLogEnabled = false;
             // 
             // PropertiesView
             // 

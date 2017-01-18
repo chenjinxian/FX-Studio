@@ -76,7 +76,7 @@ namespace Inspector
 
         public void Add(String key, object Value)
         {
-            string fullKey = key;            
+            string fullKey = key;
             if (Value is BaseItem)
             {
                 BaseItem item = (BaseItem)Value;
@@ -87,7 +87,7 @@ namespace Inspector
             int index = listSorted.IndexOfKey(fullKey);
             listByKey.Add(key, index);
             if (index != listSorted.Count - 1)
-                RefreshIndex(); 
+                RefreshIndex();
         }
 
         public bool Contains(string key)
@@ -119,7 +119,7 @@ namespace Inspector
             listSorted.Clear();
             listByKey.Clear();
         }
-  
+
 
         #endregion
 
@@ -259,7 +259,13 @@ namespace Inspector
             Value.Changed = false;
         }
 
-        public void Add(String key, FloatItem  Value)
+        public void Add(String key, FloatItem Value)
+        {
+            ItemList.Add(key, Value);
+            Value.Changed = false;
+        }
+
+        public void Add(String key, Vector3Item Value)
         {
             ItemList.Add(key, Value);
             Value.Changed = false;
@@ -289,9 +295,9 @@ namespace Inspector
             Value.Changed = false;
         }
 
-        
+
         //TODO:Add any new BaseItem management here... (Add() function)
-        
+
 
         public bool Contains(String key)
         {
@@ -312,7 +318,7 @@ namespace Inspector
         {
             ItemList.Clear();
         }
-  
+
         #endregion
 
         #region Public properties
@@ -326,7 +332,7 @@ namespace Inspector
         }
 
         #endregion
-  
+
     }
 
     public class BaseEnumerator : IEnumerator
@@ -375,7 +381,7 @@ namespace Inspector
     public class CategoryCollection : IEnumerable
     {
         private SortedObjectCollection CategoryList;
-        
+
         public CategoryCollection(int initialCapacity)
         {
             CategoryList = new SortedObjectCollection(initialCapacity);
@@ -399,7 +405,7 @@ namespace Inspector
         public CategoryEnumerator GetEnumerator()
         {
             return new CategoryEnumerator(CategoryList);
-        }        
+        }
 
         #region Public methods 
 
@@ -501,7 +507,7 @@ namespace Inspector
         }
 
         object IEnumerator.Current { get { return Current; } }
-        
+
         public CategoryItem Current
         {
             get

@@ -69,9 +69,9 @@ namespace Inspector
             get
             {
                 if (mEngineeringUnit.Length > 0)
-                    return (mValue.ToString(this.Format) + " " + EngineeringUnit);
+                    return (mValue + " " + EngineeringUnit);
                 else
-                    return mValue.ToString(this.Format);
+                    return mValue.ToString();
             }
             set
             {

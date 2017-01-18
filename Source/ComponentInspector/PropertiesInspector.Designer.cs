@@ -44,7 +44,7 @@
             this.panelTitle.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelTitle.Location = new System.Drawing.Point(0, 0);
             this.panelTitle.Name = "panelTitle";
-            this.panelTitle.Size = new System.Drawing.Size(352, 33);
+            this.panelTitle.Size = new System.Drawing.Size(352, 30);
             this.panelTitle.TabIndex = 0;
             // 
             // labelTitle
@@ -61,9 +61,9 @@
             // panelProperties
             // 
             this.panelProperties.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelProperties.Location = new System.Drawing.Point(0, 33);
+            this.panelProperties.Location = new System.Drawing.Point(0, 30);
             this.panelProperties.Name = "panelProperties";
-            this.panelProperties.Size = new System.Drawing.Size(352, 639);
+            this.panelProperties.Size = new System.Drawing.Size(352, 590);
             this.panelProperties.TabIndex = 1;
             // 
             // imageListExpand
@@ -75,13 +75,13 @@
             // 
             // PropertiesInspector
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Window;
             this.Controls.Add(this.panelProperties);
             this.Controls.Add(this.panelTitle);
             this.Name = "PropertiesInspector";
-            this.Size = new System.Drawing.Size(352, 672);
+            this.Size = new System.Drawing.Size(352, 620);
             this.SizeChanged += new System.EventHandler(this.PropertiesInspector_SizeChanged);
             this.panelTitle.ResumeLayout(false);
             this.panelTitle.PerformLayout();

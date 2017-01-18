@@ -60,8 +60,6 @@ namespace Inspector
         private bool m_Changed = false;
         private bool m_ShowExpandButton = false;
         private string m_Name = "New generic item";
-        private string m_Format = "";
-        private string m_Description = "";
 
         System.Drawing.Rectangle m_Rect = new System.Drawing.Rectangle();
 
@@ -83,12 +81,7 @@ namespace Inspector
 
         public bool ShowExpandButton { get { return m_ShowExpandButton; } set { m_ShowExpandButton = value; } }
 
-
         public string Name { get { return m_Name; } set { m_Name = value; } }
-
-        public string Format { get { return m_Format; } set { m_Format = value; } }
-
-        public string Description { get { return m_Description; } set { m_Description = value; } }
 
         public virtual string ValueString
         {

@@ -74,7 +74,7 @@ namespace Inspector
             {
                 Vector3 oldValue = m_Value;
                 m_Value = value;
-                this.Changed = !oldValue.Equals(m_Value);
+                this.Changed = (oldValue != null && !oldValue.Equals(m_Value));
                 if (this.Changed)
                     RaiseValueChanged(m_Value);
             }
@@ -84,7 +84,7 @@ namespace Inspector
         {
             get
             {
-                return m_Value.X + ", " + m_Value.Y + ", " + m_Value.Z;
+                return m_Value.X + "," + m_Value.Y + "," + m_Value.Z;
             }
             set
             {

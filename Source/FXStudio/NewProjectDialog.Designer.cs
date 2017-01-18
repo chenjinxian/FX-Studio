@@ -50,16 +50,18 @@
             // 
             // textBoxName
             // 
-            this.textBoxName.Location = new System.Drawing.Point(70, 10);
+            this.textBoxName.Font = new System.Drawing.Font("Microsoft YaHei UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.textBoxName.Location = new System.Drawing.Point(70, 9);
             this.textBoxName.Name = "textBoxName";
-            this.textBoxName.Size = new System.Drawing.Size(340, 21);
+            this.textBoxName.Size = new System.Drawing.Size(340, 23);
             this.textBoxName.TabIndex = 1;
             // 
             // textBoxLocation
             // 
-            this.textBoxLocation.Location = new System.Drawing.Point(70, 38);
+            this.textBoxLocation.Font = new System.Drawing.Font("Microsoft YaHei UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.textBoxLocation.Location = new System.Drawing.Point(70, 37);
             this.textBoxLocation.Name = "textBoxLocation";
-            this.textBoxLocation.Size = new System.Drawing.Size(340, 21);
+            this.textBoxLocation.Size = new System.Drawing.Size(340, 23);
             this.textBoxLocation.TabIndex = 3;
             // 
             // labelLocation

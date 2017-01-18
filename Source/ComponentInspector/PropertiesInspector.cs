@@ -17,7 +17,7 @@ namespace Inspector
 
         // Properties
         private int mFirstColumnWidth = 100;
-        private int mItemHeight = 24;
+        private int mItemHeight = 26;
         private BaseItem mItemSelected = null;
         private BaseItem PreviousItemSelected = null;
         private Color mTextForeColor = Color.White;
@@ -154,7 +154,6 @@ namespace Inspector
         {
             Label labelItem = new Label();
             labelItem.AutoSize = true;
-            labelItem.Font = new Font("Microsoft YaHei UI", 9F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(134)));
             labelItem.ForeColor = Color.Black;
             labelItem.Location = new Point(24, 3);
             labelItem.Name = "label" + item.Name;
@@ -162,7 +161,7 @@ namespace Inspector
 
             TextBox textItem = new TextBox();
             textItem.Location = new Point(100, 1);
-            textItem.Size = new Size(this.Width - 100, mItemHeight - 2);
+            textItem.Size = new Size(this.Width - 100 - 2, mItemHeight - 1);
             textItem.Name = "text" + item.Name;
             textItem.Text = item.ValueString;
             textItem.ReadOnly = item.Enabled;
@@ -175,7 +174,6 @@ namespace Inspector
         {
             Label labelItem = new Label();
             labelItem.AutoSize = true;
-            labelItem.Font = new Font("Microsoft YaHei UI", 9F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(134)));
             labelItem.ForeColor = Color.Black;
             labelItem.Location = new Point(24, 3);
             labelItem.Name = "label" + item.Name;
@@ -191,7 +189,6 @@ namespace Inspector
 
             Label labelX = new Label();
             labelX.AutoSize = true;
-            labelX.Font = new Font("Microsoft YaHei UI", 9F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(134)));
             labelX.ForeColor = Color.Black;
             labelX.Location = new Point(x1, 3);
             labelX.Name = "label" + item.Name + "X";
@@ -200,7 +197,7 @@ namespace Inspector
             x1 += labelWidth;
             TextBox textX = new TextBox();
             textX.Location = new Point(x1, 1);
-            textX.Size = new Size(textWidth, mItemHeight - 2);
+            textX.Size = new Size(textWidth, mItemHeight - 1);
             textX.Name = "text" + item.Name + "X";
             textX.Text = elements[0];
             textX.ReadOnly = item.Enabled;
@@ -208,7 +205,6 @@ namespace Inspector
             x1 += textWidth;
             Label labelY = new Label();
             labelY.AutoSize = true;
-            labelY.Font = new Font("Microsoft YaHei UI", 9F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(134)));
             labelY.ForeColor = Color.Black;
             labelY.Location = new Point(x1 + 1, 3);
             labelY.Name = "label" + item.Name + "Y";
@@ -217,7 +213,7 @@ namespace Inspector
             x1 += labelWidth;
             TextBox textY = new TextBox();
             textY.Location = new Point(x1, 1);
-            textY.Size = new Size(textWidth, mItemHeight - 2);
+            textY.Size = new Size(textWidth, mItemHeight - 1);
             textY.Name = "text" + item.Name + "Y";
             textY.Text = elements[1];
             textY.ReadOnly = item.Enabled;
@@ -225,7 +221,6 @@ namespace Inspector
             x1 += textWidth;
             Label labelZ = new Label();
             labelZ.AutoSize = true;
-            labelZ.Font = new Font("Microsoft YaHei UI", 9F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(134)));
             labelZ.ForeColor = Color.Black;
             labelZ.Location = new Point(x1 + 1, 3);
             labelZ.Name = "label" + item.Name + "Z";
@@ -234,7 +229,7 @@ namespace Inspector
             x1 += labelWidth;
             TextBox textZ = new TextBox();
             textZ.Location = new Point(x1, 1);
-            textZ.Size = new Size(textWidth, mItemHeight - 2);
+            textZ.Size = new Size(textWidth, mItemHeight - 1);
             textZ.Name = "text" + item.Name + "Z";
             textZ.Text = elements[2];
             textZ.ReadOnly = item.Enabled;
@@ -246,6 +241,64 @@ namespace Inspector
             panelItem.Controls.Add(textY);
             panelItem.Controls.Add(labelZ);
             panelItem.Controls.Add(textZ);
+        }
+
+        private void AddColorItemControl(BaseItem item, Panel panelItem)
+        {
+            Label labelItem = new Label();
+            labelItem.AutoSize = true;
+            labelItem.ForeColor = Color.Black;
+            labelItem.Location = new Point(24, 3);
+            labelItem.Name = "label" + item.Name;
+            labelItem.Text = item.Name;
+
+            Panel panelColor = new Panel();
+            panelColor.BackColor = /*((ColorItem)item).Value*/Color.White;
+            panelColor.BorderStyle = BorderStyle.FixedSingle;
+            panelColor.Dock = DockStyle.None;
+            panelColor.Location = new Point(100, 2);
+            panelColor.Name = "panel" + item.Name;
+            panelColor.Size = new Size(20, 20);
+
+            TextBox textColor = new TextBox();
+            textColor.Location = new Point(121, 1);
+            textColor.Size = new Size(this.Width - 121 - 2, mItemHeight);
+            textColor.Name = "text" + item.Name;
+            textColor.Text = item.ValueString;
+            textColor.ReadOnly = item.Enabled;
+
+            panelItem.Controls.Add(labelItem);
+            panelItem.Controls.Add(panelColor);
+            panelItem.Controls.Add(textColor);
+        }
+
+        private void AddImageItemControl(BaseItem item, Panel panelItem)
+        {
+            Label labelItem = new Label();
+            labelItem.AutoSize = true;
+            labelItem.ForeColor = Color.Black;
+            labelItem.Location = new Point(24, 3);
+            labelItem.Name = "label" + item.Name;
+            labelItem.Text = item.Name;
+
+            PictureBox pictureImage = new PictureBox();
+            pictureImage.BackColor = Color.White;
+            pictureImage.BorderStyle = BorderStyle.FixedSingle;
+            pictureImage.Dock = DockStyle.None;
+            pictureImage.Location = new Point(100, 2);
+            pictureImage.Name = "panel" + item.Name;
+            pictureImage.Size = new Size(20, 20);
+
+            TextBox textColor = new TextBox();
+            textColor.Location = new Point(121, 1);
+            textColor.Size = new Size(this.Width - 121 - 2, mItemHeight - 2);
+            textColor.Name = "text" + item.Name;
+            textColor.Text = item.ValueString;
+            textColor.ReadOnly = item.Enabled;
+
+            panelItem.Controls.Add(labelItem);
+            panelItem.Controls.Add(pictureImage);
+            panelItem.Controls.Add(textColor);
         }
 
         private void PaintItem(BaseItem item, int x1, int x2, ref int y1, ref int y2)
@@ -272,6 +325,14 @@ namespace Inspector
             else if (item is Vector3Item)
             {
                 AddVector3ItemControl(item, panelItem);
+            }
+            else if (item is ColorItem)
+            {
+                AddColorItemControl(item, panelItem);
+            }
+            else if (item is ImageItem)
+            {
+                AddImageItemControl(item, panelItem);
             }
 
             y1 = y2;
@@ -499,7 +560,6 @@ namespace Inspector
 
                 Label labelCategory = new Label();
                 labelCategory.AutoSize = true;
-                labelCategory.Font = new Font("Microsoft YaHei UI", 9F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(134)));
                 labelCategory.ForeColor = Color.Black;
                 labelCategory.Location = new Point(24, 3);
                 labelCategory.Name = "label" + category.Name;

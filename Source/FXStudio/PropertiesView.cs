@@ -15,16 +15,6 @@ namespace FXStudio
 {
     public partial class PropertiesView : ViewWindow
     {
-        private static string m_TranslationProperty = "Translation";
-        private static string m_ScaleProperty = "Scale";
-        private static string m_RotationProperty = "Rotation";
-        private static string m_NameDescription = "The name of this graph item";
-        private static string m_LocationDescription = "The location of this graph item";
-        private static string m_TranslationDescription = "The translation of this node";
-        private static string m_ScaleDescription = "The uniform scale of this node";
-        private static string m_RotationDescription = "The rotation of this node";
-
-        private Dictionary<string, XmlNode> m_ComponentsByName;
         int m_SelectedActorId;
 
         public PropertiesView()
@@ -44,8 +34,6 @@ namespace FXStudio
             XmlNode locationNode = projectNode.SelectSingleNode("Location");
             Inspector.StringItem locationItem = new Inspector.StringItem(locationNode.Name, locationNode.InnerText);
             inspectorComponent.ItemAdd("project", locationNode.Name, locationItem);
-
-            inspectorComponent.UpdateControl();
         }
 
         private void AddSceneProperties(XmlNode sceneNode)
@@ -55,30 +43,20 @@ namespace FXStudio
 
             Inspector.StringItem nameItem = new Inspector.StringItem("Name", sceneNode.Name);
             inspectorComponent.ItemAdd("scene", sceneNode.Name, nameItem);
-
-            inspectorComponent.UpdateControl();
         }
 
         private void AddEditorCameraProperties(XmlNode cameraNode)
         {
-            Inspector.CategoryItem category = new Inspector.CategoryItem("EditorCamera");
+            Inspector.CategoryItem category = new Inspector.CategoryItem(cameraNode.Name);
             inspectorComponent.CategoryAdd("camera", category);
 
             XmlNode translation = cameraNode.SelectSingleNode("Translation");
-            float x = Convert.ToSingle(translation.Attributes["x"].Value);
-            float y = Convert.ToSingle(translation.Attributes["y"].Value);
-            float z = Convert.ToSingle(translation.Attributes["z"].Value);
-            Inspector.Vector3Item translateItem = new Inspector.Vector3Item(translation.Name, new Inspector.Vector3(x, y, z));
-            inspectorComponent.ItemAdd("camera", translation.Name, translateItem);
+            if (translation != null)
+                inspectorComponent.ItemAdd("camera", translation.Name, CreateVector3Item(translation));
 
             XmlNode rotation = cameraNode.SelectSingleNode("Rotation");
-            x = Convert.ToSingle(rotation.Attributes["x"].Value);
-            y = Convert.ToSingle(rotation.Attributes["y"].Value);
-            z = Convert.ToSingle(rotation.Attributes["z"].Value);
-            Inspector.Vector3Item rotateItem = new Inspector.Vector3Item(rotation.Name, new Inspector.Vector3(x, y, z));
-            inspectorComponent.ItemAdd("camera", rotation.Name, rotateItem);
-
-            inspectorComponent.UpdateControl();
+            if (rotation != null)
+                inspectorComponent.ItemAdd("camera", rotation.Name, CreateVector3Item(rotation));
         }
 
         private void AddTransformProperties()
@@ -86,14 +64,51 @@ namespace FXStudio
 
         }
 
-        private void AddSkyboxProperties()
+        private void AddSkyboxProperties(XmlNode skyboxNode)
         {
+            Inspector.CategoryItem category = new Inspector.CategoryItem(skyboxNode.Name);
+            inspectorComponent.CategoryAdd("skybox", category);
 
+            XmlNode colorNode = skyboxNode.SelectSingleNode("Color");
+            if (colorNode != null)
+                inspectorComponent.ItemAdd("skybox", colorNode.Name, CreateColorItem(colorNode));
+
+            XmlNode textureNode = skyboxNode.SelectSingleNode("Texture");
+            Inspector.ImageItem textureItem = new Inspector.ImageItem(textureNode.Name, textureNode.InnerText);
+            inspectorComponent.ItemAdd("skybox", textureNode.Name, textureItem);
         }
 
-        private void AddGridProperties()
+        private void AddGridProperties(XmlNode gridNode)
         {
+            Inspector.CategoryItem category = new Inspector.CategoryItem(gridNode.Name);
+            inspectorComponent.CategoryAdd("grid", category);
 
+            XmlNode colorNode = gridNode.SelectSingleNode("Color");
+            if (colorNode != null)
+                inspectorComponent.ItemAdd("grid", colorNode.Name, CreateColorItem(colorNode));
+
+            XmlNode textureNode = gridNode.SelectSingleNode("Texture");
+            Inspector.ImageItem textureItem = new Inspector.ImageItem(textureNode.Name, textureNode.InnerText);
+            inspectorComponent.ItemAdd("grid", textureNode.Name, textureItem);
+        }
+
+        private Inspector.Vector3Item CreateVector3Item(XmlNode vector3Node)
+        {
+            float x = Convert.ToSingle(vector3Node.Attributes["x"].Value);
+            float y = Convert.ToSingle(vector3Node.Attributes["y"].Value);
+            float z = Convert.ToSingle(vector3Node.Attributes["z"].Value);
+            return new Inspector.Vector3Item(vector3Node.Name, new Inspector.Vector3(x, y, z));
+        }
+
+        private Inspector.ColorItem CreateColorItem(XmlNode colorNode)
+        {
+            float r = Convert.ToSingle(colorNode.Attributes["r"].Value);
+            float g = Convert.ToSingle(colorNode.Attributes["g"].Value);
+            float b = Convert.ToSingle(colorNode.Attributes["b"].Value);
+            float a = Convert.ToSingle(colorNode.Attributes["a"].Value);
+
+            return new Inspector.ColorItem(colorNode.Name,
+                Color.FromArgb((int)(a * 255.0), (int)(r * 255.0), (int)(g * 255.0), (int)(b * 255.0)));
         }
 
         public void UpdateProperties(XmlNode selectedNode)
@@ -115,34 +130,24 @@ namespace FXStudio
             }
             else
             {
-
+                foreach (XmlNode component in selectedNode.ChildNodes)
+                {
+                    if (component.Name == "TransformComponent")
+                    {
+                        AddTransformProperties();
+                    }
+                    else if (component.Name == "SkyboxRenderComponent")
+                    {
+                        AddSkyboxProperties(component);
+                    }
+                    else if (component.Name == "GridRenderComponent")
+                    {
+                        AddGridProperties(component);
+                    }
+                }
             }
-            //             m_PropertyInstance.Properties.Clear();
-            // 
-            //             m_ActorXml = selectedNode;
-            //             m_SelectedComponents = new XmlDocument();
-            //             XmlNode editorComponents = m_SelectedComponents.CreateElement("Actor");
-            //             m_SelectedComponents.AppendChild(editorComponents);
-            // 
-            //             foreach (XmlNode component in m_ActorXml.ChildNodes)
-            //             {
-            //                 XmlNode sourceEditorComponent;
-            //                 if (m_ComponentsByName.TryGetValue(component.Name, out sourceEditorComponent))
-            //                 {
-            //                     XmlDocument ownerDoc = editorComponents.OwnerDocument;
-            //                     XmlNode editorComponent = ownerDoc.ImportNode(sourceEditorComponent, true);
-            //                     editorComponents.AppendChild(editorComponent);
-            //                     AddCompoentProperties(component, editorComponent);
-            //                 }
-            //             }
-            // 
-            //             if (m_PropertyInstance.Properties.Count == 0)
-            //             {
-            //                 m_PropertyInstance.Properties.Add(new PropertyElement(m_NameProperty, typeof(string), selectedNode.Name, false,
-            //                     new CategoryAttribute("Properties"), new DescriptionAttribute(m_NameDescription)));
-            //                 m_PropertyInstance.Properties.Add(new PropertyElement(m_HiddenProperty, typeof(bool), false, true,
-            //                     new CategoryAttribute("Properties"), new DescriptionAttribute(m_HiddenDescription)));
-            //             }
+
+            inspectorComponent.UpdateControl();
         }
 
         private void AddCompoentProperties(XmlNode actorComponentValues, XmlNode editorComponentValues)

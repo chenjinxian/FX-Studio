@@ -61,6 +61,7 @@
             // panelProperties
             // 
             this.panelProperties.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelProperties.Font = new System.Drawing.Font("Microsoft YaHei UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.panelProperties.Location = new System.Drawing.Point(0, 30);
             this.panelProperties.Name = "panelProperties";
             this.panelProperties.Size = new System.Drawing.Size(352, 590);

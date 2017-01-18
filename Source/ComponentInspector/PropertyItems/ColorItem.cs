@@ -6,20 +6,7 @@ namespace Inspector
 {
     public class ColorItem : BaseItem
     {
-
-        #region Private internal var./properties
-
-        private System.Drawing.Color mValue = System.Drawing.Color.Black;
-        private System.Drawing.Color mDefaultValue = System.Drawing.Color.Black;
-
-        #endregion
-
-        #region Constructors
-
-        public ColorItem()
-        {
-            this.Name = "New color item";
-        }
+        private System.Drawing.Color m_Value = System.Drawing.Color.Black;
 
         public ColorItem(string text, System.Drawing.Color value)
         {
@@ -27,24 +14,22 @@ namespace Inspector
             this.Value = value;
         }
 
-        #endregion
-
         #region Public Properties
 
         public System.Drawing.Color Value
         {
             get
             {
-                return mValue;
+                return m_Value;
             }
             set
             {
-                System.Drawing.Color oldValue = mValue;
+                System.Drawing.Color oldValue = m_Value;
 
-                mValue = value;
-                this.Changed = (oldValue.ToArgb() != mValue.ToArgb());
+                m_Value = value;
+                this.Changed = (oldValue.ToArgb() != m_Value.ToArgb());
                 if (this.Changed)
-                    RaiseValueChanged(mValue);
+                    RaiseValueChanged(m_Value);
             }
         }
 
@@ -52,12 +37,7 @@ namespace Inspector
         {
             get
             {
-                string colStr;
-
-                colStr = mValue.ToString();
-                colStr = colStr.Replace("Color [", "");
-                colStr = colStr.Replace("]", "");
-                return colStr;
+                return m_Value.R + " " + m_Value.G + " " + m_Value.B + " " + m_Value.A;
             }
         }
 

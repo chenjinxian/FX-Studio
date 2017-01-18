@@ -23,11 +23,10 @@ namespace Inspector
             this.Name = "New image item";
         }
 
-        public ImageItem(string text, System.Drawing.Image value, string fileName)
+        public ImageItem(string text, string fileName)
         {
             this.Name = text;
             this.FileName = fileName;
-            this.Value = value;
         }
 
         #endregion

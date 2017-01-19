@@ -34,6 +34,7 @@
             // treeViewProject
             // 
             this.treeViewProject.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.treeViewProject.HideSelection = false;
             this.treeViewProject.Location = new System.Drawing.Point(0, 0);
             this.treeViewProject.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.treeViewProject.Name = "treeViewProject";

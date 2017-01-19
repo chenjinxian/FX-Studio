@@ -16,11 +16,13 @@ namespace FXStudio
 
     public partial class ProjectView : ViewWindow
     {
-        private UpdatePropertiesDelegate m_NodeDelegate;
+        private const uint INVALID_ACTOR_ID = 0;
+
+        private UpdatePropertiesDelegate m_NodeDelegate = null;
+        private TreeNode m_SceneNode = null;
 
         public ProjectView()
         {
-            m_NodeDelegate = null;
             InitializeComponent();
         }
 
@@ -53,23 +55,48 @@ namespace FXStudio
                     }
                     else if (typeNode.Value == "Scene")
                     {
-                        var sceneTree = new TreeNode(child.Name) { Tag = child };
+                        m_SceneNode = new TreeNode(child.Name) { Tag = child };
 
                         foreach (XmlNode childScene in child.ChildNodes)
                         {
-                            sceneTree.Nodes.Add(new TreeNode(childScene.Name) { Tag = childScene });
+                            m_SceneNode.Nodes.Add(new TreeNode(childScene.Name) { Tag = childScene });
                         }
 
-                        rootTree.Nodes.Add(sceneTree);
+                        rootTree.Nodes.Add(m_SceneNode);
                     }
                 }
             }
 
             treeViewProject.Nodes.Add(rootTree);
-            treeViewProject.EndUpdate();
-
-            treeViewProject.ExpandAll();
             treeViewProject.SelectedNode = treeViewProject.Nodes[0];
+            treeViewProject.EndUpdate();
+            treeViewProject.ExpandAll();
+        }
+
+        public void AddActorNode(XmlNode node)
+        {
+            if (m_SceneNode != null)
+            {
+                m_SceneNode.Nodes.Add(new TreeNode(node.Attributes["type"].Value) { Tag = node });
+                treeViewProject.SelectedNode = m_SceneNode.Nodes[m_SceneNode.Nodes.Count - 1];
+            }
+        }
+
+        public void SelectActorNode(uint actorId)
+        {
+            if (INVALID_ACTOR_ID != actorId)
+            {
+                treeViewProject.SelectedNode = m_SceneNode.Nodes[(int)(actorId - 1)];
+            }
+            else
+            {
+                treeViewProject.SelectedNode = treeViewProject.Nodes[0];
+            }
+        }
+
+        public int GetSelectActor()
+        {
+            return treeViewProject.SelectedNode.Index + 1;
         }
 
         private XmlNode CreateProjectXmlNode(XmlNode node, string projectLocation)

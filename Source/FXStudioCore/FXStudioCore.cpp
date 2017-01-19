@@ -137,7 +137,7 @@ FXSTUDIOCORE_API void SetTransformType(int type)
 	}
 }
 
-FXSTUDIOCORE_API unsigned int PickActor(int cursorX, int cursorY)
+FXSTUDIOCORE_API unsigned int GetPickedActor(int cursorX, int cursorY)
 {
 	FXStudioLogic* pEditorLogic = dynamic_cast<FXStudioLogic*>(g_pApp->GetGameLogic());
 	if (pEditorLogic == nullptr)
@@ -156,7 +156,24 @@ FXSTUDIOCORE_API unsigned int PickActor(int cursorX, int cursorY)
 		return pView->GetScene()->GetPickedActor();
 	}
 	else
-		pView->GetScene()->PickActor(cursorX, cursorY);
+		return pView->GetScene()->PickActor(cursorX, cursorY);
+}
+
+FXSTUDIOCORE_API void SetPickedActor(unsigned int actorId)
+{
+	FXStudioLogic* pEditorLogic = dynamic_cast<FXStudioLogic*>(g_pApp->GetGameLogic());
+	if (pEditorLogic == nullptr)
+	{
+		return;
+	}
+
+	shared_ptr<FXStudioView> pView = pEditorLogic->GetHumanView();
+	if (pView == nullptr)
+	{
+		return;
+	}
+
+	pView->GetScene()->SetPickedActor(actorId);
 }
 
 FXSTUDIOCORE_API unsigned int AddActor(BSTR actorResource)
@@ -166,6 +183,7 @@ FXSTUDIOCORE_API unsigned int AddActor(BSTR actorResource)
 	if (!pActor)
 		return INVALID_ACTOR_ID;
 
+	SetPickedActor(pActor->GetActorId());
 	return pActor->GetActorId();
 }
 

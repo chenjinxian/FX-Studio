@@ -49,11 +49,6 @@ namespace Inspector
 
         #region Constructors
 
-        public Vector3Item()
-        {
-            this.Name = "New double item";
-        }
-
         public Vector3Item(string text, Vector3 value)
         {
             this.Name = text;

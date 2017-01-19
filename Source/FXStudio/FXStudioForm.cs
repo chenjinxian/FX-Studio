@@ -68,7 +68,8 @@ namespace FXStudio
 
         public void PickActor(Point cursor)
         {
-            RenderMethods.PickActor(cursor.X, cursor.Y);
+            uint actorId = RenderMethods.GetPickedActor(cursor.X, cursor.Y);
+            m_ProjectView.SelectActorNode(actorId);
         }
 
         private void OpenProject(string project)
@@ -76,11 +77,25 @@ namespace FXStudio
             RenderMethods.OpenProject(project);
 
             string assetFile = string.Empty;
-            m_ProjectView.UpdateProject(project, ref assetFile, m_propertiesView.UpdateProperties);
+            m_ProjectView.UpdateProject(project, ref assetFile, UpdatePropertiesView);
             if (string.Empty != assetFile)
                 m_AssetsView.UpdateAssets(Path.GetDirectoryName(project) + @"\" + assetFile);
 
             EnableControlView(true);
+        }
+
+        private void UpdatePropertiesView(XmlNode selectedNode)
+        {
+            if (m_propertiesView.UpdateProperties(selectedNode))
+            {
+                int selectAcotrId = m_ProjectView.GetSelectActor();
+                if (selectAcotrId > 2)
+                    RenderMethods.SetPickedActor((uint)selectAcotrId);
+                else
+                    RenderMethods.SetPickedActor(0);
+            }
+            else
+                RenderMethods.SetPickedActor(0);
         }
 
         private void EnableControlView(bool enable)
@@ -308,7 +323,10 @@ namespace FXStudio
             geometryElement.AppendChild(XmlUtility.CreateTransformComponent(xmlDoc, "0", "0.5"));
             geometryElement.AppendChild(XmlUtility.CreateTeapotRenderComponent(xmlDoc));
 
-            RenderMethods.AddActor(geometryElement.OuterXml);
+            if (RenderMethods.AddActor(geometryElement.OuterXml) > 0)
+            {
+                m_ProjectView.AddActorNode(geometryElement);
+            }
         }
 
         private void toolStripButtonCube_Click(object sender, EventArgs e)
@@ -320,7 +338,10 @@ namespace FXStudio
             geometryElement.AppendChild(XmlUtility.CreateTransformComponent(xmlDoc, "-2", "0.5"));
             geometryElement.AppendChild(XmlUtility.CreateCubeRenderComponent(xmlDoc));
 
-            RenderMethods.AddActor(geometryElement.OuterXml);
+            if (RenderMethods.AddActor(geometryElement.OuterXml) > 0)
+            {
+                m_ProjectView.AddActorNode(geometryElement);
+            }
         }
 
         private void toolStripButtonSphere_Click(object sender, EventArgs e)
@@ -332,7 +353,10 @@ namespace FXStudio
             geometryElement.AppendChild(XmlUtility.CreateTransformComponent(xmlDoc));
             geometryElement.AppendChild(XmlUtility.CreateSphereRenderComponent(xmlDoc));
 
-            RenderMethods.AddActor(geometryElement.OuterXml);
+            if (RenderMethods.AddActor(geometryElement.OuterXml) > 0)
+            {
+                m_ProjectView.AddActorNode(geometryElement);
+            }
         }
 
         private void toolStripButtonCylinder_Click(object sender, EventArgs e)
@@ -344,7 +368,10 @@ namespace FXStudio
             geometryElement.AppendChild(XmlUtility.CreateTransformComponent(xmlDoc, "2", "0.5"));
             geometryElement.AppendChild(XmlUtility.CreateCylinderRenderComponent(xmlDoc));
 
-            RenderMethods.AddActor(geometryElement.OuterXml);
+            if (RenderMethods.AddActor(geometryElement.OuterXml) > 0)
+            {
+                m_ProjectView.AddActorNode(geometryElement);
+            }
         }
 
         private void toolStripButtonPlane_Click(object sender, EventArgs e)

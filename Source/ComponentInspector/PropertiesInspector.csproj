@@ -69,7 +69,6 @@
     <Compile Include="PropertiesInspector.Designer.cs">
       <DependentUpon>PropertiesInspector.cs</DependentUpon>
     </Compile>
-    <Compile Include="PropertyItemsCollection.cs" />
     <Compile Include="PropertyItems\BooleanItem.cs" />
     <Compile Include="PropertyItems\CategoryItem.cs" />
     <Compile Include="PropertyItems\ColorItem.cs" />

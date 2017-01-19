@@ -1,78 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-/*
- * 11/08/2008
- * 
- * Part of the open source project Inspector
- * Developer : mbr ® (Massimiliano Brugnerotto)
- *  
- */
+
 namespace Inspector
 {
-    // All classes like "PropertyItem..." inherit directly from BaseItem or another
-    // class (eg. StringItem) but the base class must be BaseItem
-
-    #region Category property item class
-
-    /// <summary>
-    /// Category property item class.
-    /// </summary>
     public class CategoryItem : BaseItem
     {
+        private bool m_Expanded = true;
+        private Dictionary<string, BaseItem> m_PropertyByName = null;
 
-        #region Private internal var./properties
-
-        private bool mExpanded = true;
-        /// <summary>
-        /// Items grouped into this category.
-        /// </summary>
-        public ItemCollection ItemList = null;
-
-        #endregion
-
-        #region Constructors
-
-        /// <summary>
-        /// Constructor.
-        /// </summary>
         public CategoryItem()
         {
-            this.Name = "New string item";
+            this.Name = "Misc";
         }
 
-        /// <summary>
-        /// Constructor.
-        /// </summary>
         public CategoryItem(string text)
         {
             this.Name = text;
-            ItemList = new ItemCollection();
+            m_PropertyByName = new Dictionary<string, BaseItem>();
         }
 
-        #endregion
-
-        #region Public Properties
-
-        /// <summary>
-        /// Get/set the category expanded/collapsed status.
-        /// </summary>
-        public bool Expanded
-        {
-            get
-            {
-                return mExpanded;
-            }
-            set
-            {
-                mExpanded = value;
-            }
-        }
-
-        #endregion
-
+        public bool Expanded { get { return m_Expanded; } set { m_Expanded = value; } }
+        public Dictionary<string, BaseItem> ItemList { get { return m_PropertyByName; } set { m_PropertyByName = value; } }
     }
-
-    #endregion
-
 }

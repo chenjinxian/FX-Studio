@@ -95,15 +95,15 @@ namespace FXStudio
 
         public static XmlElement CreateCubeRenderComponent(XmlDocument xmlDoc)
         {
-            XmlElement sphereElement = xmlDoc.CreateElement("CubeRenderComponent");
-            sphereElement.AppendChild(CreateColorElement(xmlDoc));
+            XmlElement cubeElement = xmlDoc.CreateElement("CubeRenderComponent");
+            cubeElement.AppendChild(CreateColorElement(xmlDoc));
 
             XmlElement texture = xmlDoc.CreateElement("Texture");
             XmlElement effect = xmlDoc.CreateElement("Effect");
             XmlElement cube = xmlDoc.CreateElement("Cube");
-            sphereElement.AppendChild(texture);
-            sphereElement.AppendChild(effect);
-            sphereElement.AppendChild(cube);
+            cubeElement.AppendChild(texture);
+            cubeElement.AppendChild(effect);
+            cubeElement.AppendChild(cube);
 
 
             texture.InnerText = @"Textures\DefaultTexture.dds";
@@ -114,8 +114,8 @@ namespace FXStudio
 
             cube.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "size", "1.0"));
             cube.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "rhcoords", "1"));
-            
-            return sphereElement;
+
+            return cubeElement;
         }
 
         public static XmlElement CreateSphereRenderComponent(XmlDocument xmlDoc)
@@ -140,21 +140,21 @@ namespace FXStudio
             sphere.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "diameter", "1.0"));
             sphere.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "tessellation", "3"));
             sphere.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "rhcoords", "1"));
-            
+
             return sphereElement;
         }
 
         public static XmlElement CreateCylinderRenderComponent(XmlDocument xmlDoc)
         {
-            XmlElement sphereElement = xmlDoc.CreateElement("CylinderRenderComponent");
-            sphereElement.AppendChild(CreateColorElement(xmlDoc));
+            XmlElement cylinderElement = xmlDoc.CreateElement("CylinderRenderComponent");
+            cylinderElement.AppendChild(CreateColorElement(xmlDoc));
 
             XmlElement texture = xmlDoc.CreateElement("Texture");
             XmlElement effect = xmlDoc.CreateElement("Effect");
             XmlElement cylinder = xmlDoc.CreateElement("Cylinder");
-            sphereElement.AppendChild(texture);
-            sphereElement.AppendChild(effect);
-            sphereElement.AppendChild(cylinder);
+            cylinderElement.AppendChild(texture);
+            cylinderElement.AppendChild(effect);
+            cylinderElement.AppendChild(cylinder);
 
 
             texture.InnerText = @"Textures\DefaultTexture.dds";
@@ -167,21 +167,21 @@ namespace FXStudio
             cylinder.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "diameter", "1.0"));
             cylinder.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "tessellation", "32"));
             cylinder.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "rhcoords", "1"));
-            
-            return sphereElement;
+
+            return cylinderElement;
         }
 
         public static XmlElement CreateTeapotRenderComponent(XmlDocument xmlDoc)
         {
-            XmlElement sphereElement = xmlDoc.CreateElement("TeapotRenderComponent");
-            sphereElement.AppendChild(CreateColorElement(xmlDoc));
+            XmlElement teapotElement = xmlDoc.CreateElement("TeapotRenderComponent");
+            teapotElement.AppendChild(CreateColorElement(xmlDoc));
 
             XmlElement texture = xmlDoc.CreateElement("Texture");
             XmlElement effect = xmlDoc.CreateElement("Effect");
             XmlElement teapot = xmlDoc.CreateElement("Teapot");
-            sphereElement.AppendChild(texture);
-            sphereElement.AppendChild(effect);
-            sphereElement.AppendChild(teapot);
+            teapotElement.AppendChild(texture);
+            teapotElement.AppendChild(effect);
+            teapotElement.AppendChild(teapot);
 
 
             texture.InnerText = @"Textures\DefaultTexture.dds";
@@ -193,8 +193,8 @@ namespace FXStudio
             teapot.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "size", "1.0"));
             teapot.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "tessellation", "8"));
             teapot.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "rhcoords", "1"));
-            
-            return sphereElement;
+
+            return teapotElement;
         }
     }
 }

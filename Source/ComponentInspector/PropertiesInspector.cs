@@ -12,28 +12,18 @@ namespace Inspector
 
     public partial class PropertiesInspector : UserControl
     {
-
-        #region Private internal var./properties
-
-        // Properties
         private int mFirstColumnWidth = 100;
         private int mItemHeight = 26;
         private BaseItem mItemSelected = null;
         private BaseItem PreviousItemSelected = null;
         private Color mTextForeColor = Color.White;
-        private CategoryCollection m_CategoryList = null;
-        private ItemCollection m_ItemList = null;
+        private Dictionary<string, CategoryItem> m_CategoryByName = null;
         private bool resizeCursorOnScreen = false;
         private bool controlChangeEventLocked = true;
 
-        #endregion
-
-        #region Control constructor/destructor
-
         public PropertiesInspector()
         {
-            m_CategoryList = new CategoryCollection();
-            m_ItemList = new ItemCollection();
+            m_CategoryByName = new Dictionary<string, CategoryItem>();
 
             InitializeComponent();
         }
@@ -41,23 +31,7 @@ namespace Inspector
         ~PropertiesInspector()
         {
             ItemsClear();
-            m_CategoryList = null;
-            m_ItemList = null;
-        }
-
-        #endregion
-
-        #region Public properties
-
-        public BaseItem this[string itemKey]
-        {
-            get
-            {
-                if (m_ItemList.Contains(itemKey))
-                    return m_ItemList[itemKey];
-                else
-                    return null;
-            }
+            m_CategoryByName = null;
         }
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible),
@@ -117,33 +91,13 @@ namespace Inspector
             }
         }
 
-
-        public int ItemsCount
-        {
-            get
-            {
-                return m_ItemList.Count;
-            }
-        }
-
-        public bool ItemExist(string itemKey)
-        {
-            // Add BaseItem to category list and BaseItem list
-            return m_ItemList.Contains(itemKey);
-        }
-
-
         public int CategoryCount
         {
             get
             {
-                return m_CategoryList.Count;
+                return m_CategoryByName.Count;
             }
         }
-
-        #endregion
-
-        #region Private internal functions
 
         private string NowTimeString()
         {
@@ -367,9 +321,9 @@ namespace Inspector
             //             int k, j;
             //             int itemWidth;
             // 
-            //             for (k = 0; k < m_CategoryList.Count; k++)
+            //             for (k = 0; k < m_CategoryByName.Count; k++)
             //             {
-            //                 category = m_CategoryList[k];
+            //                 category = m_CategoryByName[k];
             //                 rect = category.Rect;
             //                 // - Category
             //                 if (e.X >= rect.X && e.X <= (rect.X + rect.Width) && e.Y >= rect.Y && e.Y <= (rect.Y + rect.Height))
@@ -410,18 +364,18 @@ namespace Inspector
             //             Rectangle rect;
             //             int j;
             // 
-            //             for (j = 0; j < m_ItemList.Count; j++)
+            //             for (j = 0; j < m_PropertyByName.Count; j++)
             //             {
-            //                 rect = m_ItemList[j].Rect;
+            //                 rect = m_PropertyByName[j].Rect;
             //                 if (e.Y >= rect.Y && e.Y <= (rect.Y + rect.Height))
             //                 {
             //                     PreviousItemSelected = mItemSelected;
-            //                     mItemSelected = m_ItemList[j];
-            //                     RefreshHelp(m_ItemList[j]);
+            //                     mItemSelected = m_PropertyByName[j];
+            //                     RefreshHelp(m_PropertyByName[j]);
             //                     PaintControl();
             //                     // Show input box (if BaseItem is enabled)
-            //                     if (m_ItemList[j].Enabled)
-            //                         ShowInputControl(rect.X, rect.Y, rect.Width, mItemHeight, m_ItemList[j]);
+            //                     if (m_PropertyByName[j].Enabled)
+            //                         ShowInputControl(rect.X, rect.Y, rect.Width, mItemHeight, m_PropertyByName[j]);
             //                     return;     // Exit
             //                 }
             //             }
@@ -501,9 +455,6 @@ namespace Inspector
             //             btnMore.Enabled = true;
         }
 
-        /// <summary>
-        /// Validate text
-        /// </summary>
         private void txtBox_ValidateText(BaseItem item)
         {
             // Validate data!
@@ -530,10 +481,6 @@ namespace Inspector
             //             }
         }
 
-        #endregion
-
-        #region Public methods
-
         public void UpdateControl()
         {
             panelProperties.Controls.Clear();
@@ -544,16 +491,16 @@ namespace Inspector
             int y1 = 0;
             int y2 = y1 + mItemHeight;
 
-            foreach (var category in m_CategoryList)
+            foreach (var category in m_CategoryByName)
             {
                 Button btnExpand = new Button();
                 btnExpand.Image = this.imageListExpand.Images[0];
                 btnExpand.ImageAlign = ContentAlignment.MiddleCenter;
-                btnExpand.Name = "button" + category.Name + "Expand";
+                btnExpand.Name = "button" + category.Key + "Expand";
                 btnExpand.Text = "";
                 btnExpand.Location = new Point(2, 2);
                 btnExpand.Size = new Size(20, 20);
-                if (category.Expanded)
+                if (category.Value.Expanded)
                     btnExpand.Image = this.imageListExpand.Images[1];
                 else
                     btnExpand.Image = this.imageListExpand.Images[0];
@@ -562,72 +509,59 @@ namespace Inspector
                 labelCategory.AutoSize = true;
                 labelCategory.ForeColor = Color.Black;
                 labelCategory.Location = new Point(24, 3);
-                labelCategory.Name = "label" + category.Name;
+                labelCategory.Name = "label" + category.Key;
                 labelCategory.AutoSize = true;
-                labelCategory.Text = category.Name;
+                labelCategory.Text = category.Key;
 
                 Panel panelCategory = new Panel();
                 panelCategory.BackColor = Color.FromArgb(240, 240, 240);
                 panelCategory.Dock = DockStyle.None;
                 panelCategory.Location = new Point(0, y1);
-                panelCategory.Name = "panel" + category.Name;
+                panelCategory.Name = "panel" + category.Key;
                 panelCategory.Size = new Size(this.Width, mItemHeight);
                 panelCategory.Controls.Add(btnExpand);
                 panelCategory.Controls.Add(labelCategory);
 
                 this.panelProperties.Controls.Add(panelCategory);
 
-                category.Rect = new Rectangle(2, y1 + 2, 20, 20);
+                category.Value.Rect = new Rectangle(2, y1 + 2, 20, 20);
 
                 y1 = y2;
                 y2 += mItemHeight;
 
-                if (category.Expanded)
+                if (category.Value.Expanded)
                 {
-                    foreach (var item in category.ItemList)
+                    foreach (var item in category.Value.ItemList)
                     {
-                        PaintItem(item, x1, x2, ref y1, ref y2);
+                        PaintItem(item.Value, x1, x2, ref y1, ref y2);
                     }
                 }
             }
-        }
-
-        public void ResetChanges()
-        {
-            int t;
-
-            if (m_ItemList == null) return;
-            for (t = 0; t < m_ItemList.Count; t++)
-                m_ItemList[t].Changed = false;
-            UpdateControl();
         }
 
         public void ItemsClear()
         {
-            if (m_CategoryList != null)
+            if (m_CategoryByName != null)
             {
-                for (int i = 0; i < m_CategoryList.Count; i++)
+                foreach (var category in m_CategoryByName)
                 {
-                    if (m_CategoryList[i].ItemList != null)
+                    if (category.Value.ItemList != null)
                     {
-                        m_CategoryList[i].ItemList.Clear();
-                        m_CategoryList[i].ItemList = null;
+                        category.Value.ItemList.Clear();
+                        category.Value.ItemList = null;
                     }
                 }
-                m_CategoryList.Clear();
+                m_CategoryByName.Clear();
             }
 
-            if (m_ItemList != null)
-                m_ItemList.Clear();
             UpdateControl();
         }
 
         public void ItemAdd(string categoryKey, string itemKey, StringItem strItem)
         {
-            if (m_CategoryList.Contains(categoryKey))
+            if (m_CategoryByName.ContainsKey(categoryKey))
             {
-                m_CategoryList[categoryKey].ItemList.Add(itemKey, strItem);
-                m_ItemList.Add(itemKey, strItem);
+                m_CategoryByName[categoryKey].ItemList.Add(itemKey, strItem);
                 if (this.SelectedItem == null)
                     this.SelectedItem = strItem;
             }
@@ -635,11 +569,9 @@ namespace Inspector
 
         public void ItemAdd(string categoryKey, string itemKey, Int32Item intItem)
         {
-            // Add BaseItem to category list and BaseItem list
-            if (m_CategoryList.Contains(categoryKey))
+            if (m_CategoryByName.ContainsKey(categoryKey))
             {
-                m_CategoryList[categoryKey].ItemList.Add(itemKey, intItem);
-                m_ItemList.Add(itemKey, intItem);
+                m_CategoryByName[categoryKey].ItemList.Add(itemKey, intItem);
                 if (this.SelectedItem == null)
                     this.SelectedItem = intItem;
             }
@@ -647,10 +579,9 @@ namespace Inspector
 
         public void ItemAdd(string categoryKey, string itemKey, DropDownItem cmbItem)
         {
-            if (m_CategoryList.Contains(categoryKey))
+            if (m_CategoryByName.ContainsKey(categoryKey))
             {
-                m_CategoryList[categoryKey].ItemList.Add(itemKey, cmbItem);
-                m_ItemList.Add(itemKey, cmbItem);
+                m_CategoryByName[categoryKey].ItemList.Add(itemKey, cmbItem);
                 if (this.SelectedItem == null)
                     this.SelectedItem = cmbItem;
             }
@@ -658,10 +589,9 @@ namespace Inspector
 
         public void ItemAdd(string categoryKey, string itemKey, BooleanItem boolItem)
         {
-            if (m_CategoryList.Contains(categoryKey))
+            if (m_CategoryByName.ContainsKey(categoryKey))
             {
-                m_CategoryList[categoryKey].ItemList.Add(itemKey, boolItem);
-                m_ItemList.Add(itemKey, boolItem);
+                m_CategoryByName[categoryKey].ItemList.Add(itemKey, boolItem);
                 if (this.SelectedItem == null)
                     this.SelectedItem = boolItem;
             }
@@ -669,10 +599,9 @@ namespace Inspector
 
         public void ItemAdd(string categoryKey, string itemKey, FloatItem dblItem)
         {
-            if (m_CategoryList.Contains(categoryKey))
+            if (m_CategoryByName.ContainsKey(categoryKey))
             {
-                m_CategoryList[categoryKey].ItemList.Add(itemKey, dblItem);
-                m_ItemList.Add(itemKey, dblItem);
+                m_CategoryByName[categoryKey].ItemList.Add(itemKey, dblItem);
                 if (this.SelectedItem == null)
                     this.SelectedItem = dblItem;
             }
@@ -680,10 +609,9 @@ namespace Inspector
 
         public void ItemAdd(string categoryKey, string itemKey, Vector3Item vector3Item)
         {
-            if (m_CategoryList.Contains(categoryKey))
+            if (m_CategoryByName.ContainsKey(categoryKey))
             {
-                m_CategoryList[categoryKey].ItemList.Add(itemKey, vector3Item);
-                m_ItemList.Add(itemKey, vector3Item);
+                m_CategoryByName[categoryKey].ItemList.Add(itemKey, vector3Item);
                 if (this.SelectedItem == null)
                     this.SelectedItem = vector3Item;
             }
@@ -691,10 +619,9 @@ namespace Inspector
 
         public void ItemAdd(string categoryKey, string itemKey, ColorItem colItem)
         {
-            if (m_CategoryList.Contains(categoryKey))
+            if (m_CategoryByName.ContainsKey(categoryKey))
             {
-                m_CategoryList[categoryKey].ItemList.Add(itemKey, colItem);
-                m_ItemList.Add(itemKey, colItem);
+                m_CategoryByName[categoryKey].ItemList.Add(itemKey, colItem);
                 if (this.SelectedItem == null)
                     this.SelectedItem = colItem;
             }
@@ -702,10 +629,9 @@ namespace Inspector
 
         public void ItemAdd(string categoryKey, string itemKey, ImageItem imgItem)
         {
-            if (m_CategoryList.Contains(categoryKey))
+            if (m_CategoryByName.ContainsKey(categoryKey))
             {
-                m_CategoryList[categoryKey].ItemList.Add(itemKey, imgItem);
-                m_ItemList.Add(itemKey, imgItem);
+                m_CategoryByName[categoryKey].ItemList.Add(itemKey, imgItem);
                 if (this.SelectedItem == null)
                     this.SelectedItem = imgItem;
             }
@@ -713,100 +639,32 @@ namespace Inspector
 
         public void ItemAdd(string categoryKey, string itemKey, FileItem fileItem)
         {
-            if (m_CategoryList.Contains(categoryKey))
+            if (m_CategoryByName.ContainsKey(categoryKey))
             {
-                m_CategoryList[categoryKey].ItemList.Add(itemKey, fileItem);
-                m_ItemList.Add(itemKey, fileItem);
+                m_CategoryByName[categoryKey].ItemList.Add(itemKey, fileItem);
                 if (this.SelectedItem == null)
                     this.SelectedItem = fileItem;
             }
         }
 
-
-        //TODO:Add any new BaseItem management here... (ItemAdd() function)
-
-
         public void CategoryAdd(string categoryKey, CategoryItem catItem)
         {
-            m_CategoryList.Add(categoryKey, catItem);
-        }
-
-        public string GetItemValue(string itemKey)
-        {
-            if (m_ItemList.Contains(itemKey))
-                return m_ItemList[itemKey].ValueString;
-            else
-                return null;
-        }
-
-        public double GetPropertyItemDoubleValue(string itemKey)
-        {
-            FloatItem dblItem = null;
-
-            if (m_ItemList.Contains(itemKey) && m_ItemList[itemKey] is FloatItem)
-            {
-                dblItem = (FloatItem)m_ItemList[itemKey];
-                return dblItem.Value;
-            }
-            else
-                return 0.0;
-        }
-
-        public void SetItemValue(string itemKey, string value)
-        {
-
-            if (m_ItemList.Contains(itemKey) && (m_ItemList[itemKey] is StringItem ||
-                m_ItemList[itemKey] is DropDownItem))
-                m_ItemList[itemKey].ValueString = value;
-        }
-
-        public void SetItemValue(string itemKey, double value)
-        {
-            if (m_ItemList.Contains(itemKey) && m_ItemList[itemKey] is FloatItem)
-            {
-                m_ItemList[itemKey].ValueString = value.ToString();
-            }
-        }
-
-        public void SetItemValue(string itemKey, int value)
-        {
-            if (m_ItemList.Contains(itemKey) && m_ItemList[itemKey] is Int32Item)
-                m_ItemList[itemKey].ValueString = value.ToString();
-        }
-
-        public string GetItemText(string itemKey)
-        {
-            if (m_ItemList.Contains(itemKey))
-                return m_ItemList[itemKey].Name;
-            else
-                return null;
-        }
-
-        public BaseItem GetItem(string itemKey)
-        {
-            if (m_ItemList.Contains(itemKey))
-                return m_ItemList[itemKey];
-            else
-                return null;
+            m_CategoryByName.Add(categoryKey, catItem);
         }
 
         public CategoryItem GetCategory(string key)
         {
-            if (m_CategoryList.Contains(key))
-                return m_CategoryList[key];
+            if (m_CategoryByName.ContainsKey(key))
+                return m_CategoryByName[key];
             else
                 return null;
         }
 
         public void SetCategoryText(string key, string text)
         {
-            if (m_CategoryList.Contains(key))
-                m_CategoryList[key].Name = text;
+            if (m_CategoryByName.ContainsKey(key))
+                m_CategoryByName[key].Name = text;
         }
-
-        #endregion
-
-        #region Public events
 
         public delegate void ExpandButtonPressedHandle(object sender, StringItem item);
 
@@ -830,14 +688,10 @@ namespace Inspector
             {
                 // Raise event
                 ApplyButtonPressed(this, ref cancel);
-                if (!cancel)
-                    ResetChanges();
+                //                 if (!cancel)
+                //                     ResetChanges();
             }
         }
-
-        #endregion
-
-        #region Private internal events generated by user interface
 
         private void txtBox_TextChanged(object sender, EventArgs e)
         {
@@ -960,8 +814,6 @@ namespace Inspector
         {
             RaiseApplyButtonPressed();
         }
-
-        #endregion
 
         private void PropertiesInspector_SizeChanged(object sender, EventArgs e)
         {

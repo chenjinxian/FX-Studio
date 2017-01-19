@@ -19,6 +19,7 @@ namespace FXStudio
     {
         private MessageHandler m_messageHandler;
         private string m_DefaultLocation;
+        private string m_ProjectLocation;
 
         private DeserializeDockContent m_dockContent;
         private AssetsView m_AssetsView;
@@ -75,11 +76,12 @@ namespace FXStudio
         private void OpenProject(string project)
         {
             RenderMethods.OpenProject(project);
+            m_ProjectLocation = Path.GetDirectoryName(project);
 
             string assetFile = string.Empty;
             m_ProjectView.UpdateProject(project, ref assetFile, UpdatePropertiesView);
             if (string.Empty != assetFile)
-                m_AssetsView.UpdateAssets(Path.GetDirectoryName(project) + @"\" + assetFile);
+                m_AssetsView.UpdateAssets(m_ProjectLocation + @"\" + assetFile);
 
             EnableControlView(true);
         }
@@ -375,6 +377,30 @@ namespace FXStudio
         }
 
         private void toolStripButtonPlane_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void toolStripButtonImport_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog dialog = new OpenFileDialog();
+
+            dialog.Filter = "All supported formats (*.fbx; *.dae; *.blend; *.3ds; *.ase; *.obj; *.ply; *.x; *.ms3d;)|" +
+                "*.fbx; *.dae; *.blend; *.3ds; *.ase; *.obj; *.ply; *.x; *.ms3d;|" +
+                "Autodesk FBX (*.fbx)|*.fbx|" + "Autodesk 3DS (*.3ds)|*.3ds|" + "Autodesk ASE (*.ase)|*.ase|" +
+                "Collada Model (*.dae)|*.dae|" + "Blender 3D (*.blend)|*.blend|" + "Stanford Polygon Library (*.ply)|*.ply|" +
+                "Wavefront Object (*.obj)|*.obj|" + "Milkshape 3D (*.ms3d)|*.ms3d";
+            dialog.FilterIndex = 1;
+            dialog.RestoreDirectory = true;
+
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                string destFileName = m_ProjectLocation + @"\Models\" + Path.GetFileName(dialog.FileName);
+                File.Copy(dialog.FileName, destFileName);
+            }
+        }
+
+        private void toolStripButtonEffect_Click(object sender, EventArgs e)
         {
 
         }

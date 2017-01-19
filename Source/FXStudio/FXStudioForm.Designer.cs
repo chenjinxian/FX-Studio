@@ -186,6 +186,7 @@
             this.toolStripButtonImport.Size = new System.Drawing.Size(52, 61);
             this.toolStripButtonImport.Text = "Import";
             this.toolStripButtonImport.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.toolStripButtonImport.Click += new System.EventHandler(this.toolStripButtonImport_Click);
             // 
             // toolStripSeparator1
             // 
@@ -241,6 +242,7 @@
             this.toolStripButtonEffect.Size = new System.Drawing.Size(44, 61);
             this.toolStripButtonEffect.Text = "Effect";
             this.toolStripButtonEffect.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.toolStripButtonEffect.Click += new System.EventHandler(this.toolStripButtonEffect_Click);
             // 
             // toolStripButtonReBuild
             // 

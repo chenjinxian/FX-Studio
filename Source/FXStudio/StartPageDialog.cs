@@ -90,5 +90,15 @@ namespace FXStudio
             }
             appConfig.Save(ConfigurationSaveMode.Modified);
         }
+
+        private void linkLabelBlog_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            System.Diagnostics.Process.Start("http://blog.csdn.net/chenjinxian_3d");
+        }
+
+        private void linkLabelGitHub_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            System.Diagnostics.Process.Start("https://github.com/chenjinxian/FX-Studio");
+        }
     }
 }

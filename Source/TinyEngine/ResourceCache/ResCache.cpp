@@ -80,7 +80,15 @@ int DevelopmentResourceZipFile::Find(const std::string &name)
 	std::transform(lowerCase.begin(), lowerCase.end(), lowerCase.begin(), (int(*)(int)) std::tolower);
 	ZipContentsMap::const_iterator i = m_DirectoryContentsMap.find(lowerCase);
 	if (i == m_DirectoryContentsMap.end())
-		return -1;
+	{
+		// In editor mode, you can add new resouce file
+		if (AddNewResFile(name))
+		{
+			return m_AssetFileInfo.size() - 1;
+		}
+		else
+			return -1;
+	}
 
 	return i->second;
 }
@@ -108,6 +116,29 @@ bool DevelopmentResourceZipFile::VOpen()
 	return true;
 }
 
+
+bool DevelopmentResourceZipFile::AddNewResFile(const std::string& filePath)
+{
+	bool success = false;
+	HANDLE fileHandle;
+	WIN32_FIND_DATA findData;
+
+	std::wstring pathSpec = Utility::S2WS(m_AssetsDir + filePath);
+	fileHandle = FindFirstFile(pathSpec.c_str(), &findData);
+	if (fileHandle != INVALID_HANDLE_VALUE)
+	{
+		std::string lower = filePath;
+		std::transform(lower.begin(), lower.end(), lower.begin(), (int(*)(int)) std::tolower);
+		wcscpy_s(&findData.cFileName[0], MAX_PATH, Utility::S2WS(lower).c_str());
+		m_DirectoryContentsMap[lower] = m_AssetFileInfo.size();
+		m_AssetFileInfo.push_back(findData);
+		success = true;
+	}
+
+	FindClose(fileHandle);
+
+	return success;
+}
 
 int DevelopmentResourceZipFile::VGetRawResourceSize(const Resource &r)
 {

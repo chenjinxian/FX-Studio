@@ -64,6 +64,9 @@ public:
 
 protected:
 	void ReadAssetsDirectory(std::wstring fileSpec);
+
+private:
+	bool AddNewResFile(const std::string& filePath);
 };
 
 class ResHandle

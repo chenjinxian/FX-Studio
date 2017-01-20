@@ -77,7 +77,7 @@ namespace FXStudio
         {
             if (m_SceneNode != null)
             {
-                m_SceneNode.Nodes.Add(new TreeNode(node.Attributes["type"].Value) { Tag = node });
+                m_SceneNode.Nodes.Add(new TreeNode(node.Name) { Tag = node });
                 treeViewProject.SelectedNode = m_SceneNode.Nodes[m_SceneNode.Nodes.Count - 1];
             }
         }

@@ -196,5 +196,31 @@ namespace FXStudio
 
             return teapotElement;
         }
+
+        public static XmlElement CreateModelRenderComponent(XmlDocument xmlDoc, string fileName)
+        {
+            XmlElement modelElement = xmlDoc.CreateElement("ModelRenderComponent");
+            modelElement.AppendChild(CreateColorElement(xmlDoc));
+
+            XmlElement model = xmlDoc.CreateElement("Model");
+            XmlElement effect = xmlDoc.CreateElement("Effect");
+            XmlElement textures = xmlDoc.CreateElement("Textures");
+            modelElement.AppendChild(model);
+            modelElement.AppendChild(effect);
+            modelElement.AppendChild(textures);
+
+            model.InnerText = @"Models\" + fileName;
+
+            effect.InnerText = @"Effects\DefaultEffect.fx";
+            effect.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "technique", "main11"));
+            effect.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "pass", "p0"));
+
+            XmlElement textureChild = xmlDoc.CreateElement("Texture");
+            textureChild.InnerText = @"Textures\DefaultTexture.dds";
+
+            textures.AppendChild(textureChild);
+
+            return modelElement;
+        }
     }
 }

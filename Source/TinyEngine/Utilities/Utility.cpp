@@ -221,9 +221,9 @@ std::string Utility::GetFileName(const std::string& filePath)
 std::string Utility::GetDirectory(const std::string& filePath)
 {
 	std::string fullPath(filePath);
-	std::replace(fullPath.begin(), fullPath.end(), '\\', '/');
+	std::replace(fullPath.begin(), fullPath.end(), '/', '\\');
 
-	std::string::size_type lastSlashIndex = fullPath.find_last_of('/');
+	std::string::size_type lastSlashIndex = fullPath.find_last_of('\\');
 
 	if (lastSlashIndex == std::string::npos)
 	{

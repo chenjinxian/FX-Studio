@@ -40,6 +40,14 @@
     <ApplicationIcon>application.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.WizardFramework, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\Build\packages\Microsoft.VisualStudio.WizardFramework.12.0\lib\net40\Microsoft.WizardFramework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.WizardFrameworkVS, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\Build\packages\Microsoft.VisualStudio.WizardFramework.12.0\lib\net40\Microsoft.WizardFrameworkVS.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
@@ -72,6 +80,18 @@
     </Compile>
     <Compile Include="DocumentView.designer.cs">
       <DependentUpon>DocumentView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EffectTypePage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="EffectTypePage.Designer.cs">
+      <DependentUpon>EffectTypePage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EffectWizardDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EffectWizardDialog.Designer.cs">
+      <DependentUpon>EffectWizardDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="FXStudioForm.cs">
       <SubType>Form</SubType>
@@ -148,6 +168,12 @@
     <EmbeddedResource Include="AssetsView.resx">
       <DependentUpon>AssetsView.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="EffectTypePage.resx">
+      <DependentUpon>EffectTypePage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EffectWizardDialog.resx">
+      <DependentUpon>EffectWizardDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FXStudioForm.resx">
       <DependentUpon>FXStudioForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -188,6 +214,7 @@
       <DependentUpon>ViewWindow.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="App.config" />
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

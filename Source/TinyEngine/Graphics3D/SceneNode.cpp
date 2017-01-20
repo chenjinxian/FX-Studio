@@ -589,6 +589,7 @@ void GeometryNode::VPick(Scene* pScene, int cursorX, int cursorY)
 				if (ray.Intersects(tri0, tri1, tri2, distance))
 				{
 					pScene->SetPickedActor(m_Properties.GetActorId());
+					break;
 				}
 			}
 		}
@@ -673,7 +674,7 @@ ModelNode::ModelNode(
 	: SceneNode(actorId, renderComponent, renderPass, worldMatrix),
 	m_pEffect(nullptr),
 	m_pCurrentPass(nullptr),
-	m_WorldMatrix(worldMatrix)
+	m_pModel(nullptr)
 {
 	ModelRenderComponent* pMeshRender = static_cast<ModelRenderComponent*>(m_pRenderComponent);
 	if (pMeshRender != nullptr)
@@ -698,7 +699,7 @@ ModelNode::ModelNode(
 
 	Resource modelRes(m_ModelName);
 	shared_ptr<ResHandle> pModelResHandle = g_pApp->GetResCache()->GetHandle(&modelRes);
-	std::unique_ptr<Model> model(new Model(pModelResHandle->Buffer(), pModelResHandle->Size(), true));
+	m_pModel = unique_ptr<Model>(new Model(pModelResHandle->Buffer(), pModelResHandle->Size(), true));
 
 	Technique* pCurrentTechnique = m_pEffect->GetTechniquesByName().at(m_CurrentTechnique);
 	if (pCurrentTechnique == nullptr)
@@ -711,14 +712,15 @@ ModelNode::ModelNode(
 		DEBUG_ERROR("technique is not exist: " + m_CurrentTechnique);
 	}
 
-	uint32_t meshSize = model->GetMeshes().size();
+	std::vector<Vector3> totalVertices;
+	uint32_t meshSize = m_pModel->GetMeshes().size();
 	m_pVertexBuffers.resize(meshSize);
 	m_pIndexBuffers.resize(meshSize);
 	m_IndexCounts.resize(meshSize);
 	m_pTextures.resize(meshSize);
 	for (uint32_t i = 0; i < meshSize; i++)
 	{
-		auto mesh = model->GetMeshes().at(i);
+		auto mesh = m_pModel->GetMeshes().at(i);
 		ID3D11Buffer* pVertexBuffer = nullptr;
 		ID3D11Buffer* pIndexBuffer = nullptr;
 		m_pCurrentPass->CreateVertexBuffer(mesh, &pVertexBuffer);
@@ -728,9 +730,19 @@ ModelNode::ModelNode(
 		m_pIndexBuffers[i] = pIndexBuffer;
 		m_IndexCounts[i] = mesh->GetIndices().size();
 
+		std::string textureName;
 		if (m_TextureNames.size() > i)
 		{
-			Resource resource(m_TextureNames[i]);
+			textureName = m_TextureNames[i];
+		}
+		else if (!m_TextureNames.empty())
+		{
+			textureName = m_TextureNames[0];
+		}
+
+		if (!textureName.empty())
+		{
+			Resource resource(textureName);
 			shared_ptr<ResHandle> pTextureRes = g_pApp->GetResCache()->GetHandle(&resource);
 			if (pTextureRes != nullptr)
 			{
@@ -742,7 +754,11 @@ ModelNode::ModelNode(
 				}
 			}
 		}
+
+		totalVertices.insert(totalVertices.end(), mesh->GetVertices().begin(), mesh->GetVertices().end());
 	}
+
+	SetBoundingBox(totalVertices);
 }
 
 ModelNode::~ModelNode()
@@ -814,6 +830,48 @@ HRESULT ModelNode::VRender(Scene* pScene, const GameTime& gameTime)
 	}
 
 	return S_OK;
+}
+
+void ModelNode::VPick(Scene* pScene, int cursorX, int cursorY)
+{
+	const Matrix& projectMat = pScene->GetCamera()->GetProjectMatrix();
+	float viewX = (2.0f * cursorX / g_pApp->GetGameConfig().m_ScreenWidth - 1.0f) / projectMat.m[0][0];
+	float viewY = (1.0f - 2.0f * cursorY / g_pApp->GetGameConfig().m_ScreenHeight) / projectMat.m[1][1];
+
+	Matrix toLocal = (m_Properties.GetWorldMatrix() * pScene->GetCamera()->GetViewMatrix()).Invert();
+	Vector3 rayPos = toLocal.Translation();
+	//use right-hand coordinates, z should be -1
+	Vector3 rayDir = Vector3::TransformNormal(Vector3(viewX, viewY, -1.0f), toLocal);
+	rayDir.Normalize();
+
+	Ray ray(rayPos, rayDir);
+
+	float distance = 0.0f;
+	if (ray.Intersects(m_Properties.GetBoundingBox(), distance))
+	{
+		if (distance < pScene->GetPickDistance())
+		{
+			pScene->SetPickDistance(distance);
+			for (auto mesh : m_pModel->GetMeshes())
+			{
+				for (uint32_t i = 0, len = mesh->GetIndices().size(); i < len; i += 3)
+				{
+					const std::vector<Vector3>& vertices = mesh->GetVertices();
+					const std::vector<uint32_t>& indices = mesh->GetIndices();
+					Vector3 tri0 = vertices.at(indices[i]);
+					Vector3 tri1 = vertices.at(indices[i + 1]);
+					Vector3 tri2 = vertices.at(indices[i + 2]);
+
+					float distance = 0.0f;
+					if (ray.Intersects(tri0, tri1, tri2, distance))
+					{
+						pScene->SetPickedActor(m_Properties.GetActorId());
+						break;
+					}
+				}
+			}
+		}
+	}
 }
 
 SkyboxNode::SkyboxNode(ActorId actorId, WeakBaseRenderComponentPtr renderComponent, RenderPass renderPass)

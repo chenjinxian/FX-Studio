@@ -14,6 +14,7 @@ class BaseRenderComponent;
 class Effect;
 class Pass;
 class Mesh;
+class Model;
 
 typedef BaseRenderComponent* WeakBaseRenderComponentPtr;
 
@@ -187,7 +188,7 @@ public:
 	virtual HRESULT VOnDeleteSceneNode(Scene *pScene) override;
 	virtual HRESULT VOnUpdate(Scene* pScene, const GameTime& gameTime) override;
 	virtual HRESULT VRender(Scene* pScene, const GameTime& gameTime) override;
-	virtual void VPick(Scene* pScene, int cursorX, int cursorY) {}
+	virtual void VPick(Scene* pScene, int cursorX, int cursorY) override;
 
 private:
 	Effect* m_pEffect;
@@ -196,7 +197,7 @@ private:
 	std::vector<ID3D11Buffer*> m_pIndexBuffers;
 	std::vector<uint32_t> m_IndexCounts;
 	std::vector<ID3D11ShaderResourceView*> m_pTextures;
-	Matrix m_WorldMatrix;
+	std::unique_ptr<Model> m_pModel;
 
 	std::string m_ModelName;
 	std::vector<std::string> m_TextureNames;

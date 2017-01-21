@@ -417,7 +417,7 @@ namespace FXStudio
         private void toolStripButtonEffect_Click(object sender, EventArgs e)
         {
             EffectWizardDialog dialog = new EffectWizardDialog();
-            dialog.Start();
+            dialog.ShowDialog();
         }
     }
 }

@@ -40,9 +40,6 @@
     <ApplicationIcon>application.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.WizardFramework">
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\Microsoft.WizardFramework.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
@@ -75,12 +72,6 @@
     </Compile>
     <Compile Include="DocumentView.designer.cs">
       <DependentUpon>DocumentView.cs</DependentUpon>
-    </Compile>
-    <Compile Include="EffectTypePage.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="EffectTypePage.Designer.cs">
-      <DependentUpon>EffectTypePage.cs</DependentUpon>
     </Compile>
     <Compile Include="EffectWizardDialog.cs">
       <SubType>Form</SubType>
@@ -163,9 +154,6 @@
     <EmbeddedResource Include="AssetsView.resx">
       <DependentUpon>AssetsView.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="EffectTypePage.resx">
-      <DependentUpon>EffectTypePage.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="EffectWizardDialog.resx">
       <DependentUpon>EffectWizardDialog.cs</DependentUpon>
     </EmbeddedResource>
@@ -226,6 +214,10 @@
     <ProjectReference Include="..\ComponentInspector\PropertiesInspector.csproj">
       <Project>{0320cba2-69cb-48d8-8439-97f12fd3236e}</Project>
       <Name>PropertiesInspector</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WizardControl\WizardControl.csproj">
+      <Project>{870c7d59-f59b-44d1-961e-c4341daa5306}</Project>
+      <Name>WizardControl</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

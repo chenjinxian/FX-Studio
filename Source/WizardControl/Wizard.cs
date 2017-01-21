@@ -636,6 +636,7 @@ namespace CristiPotlog.WizardControl
             if (this.SelectedIndex == this.pages.Count - 1)
             {
                 this.buttonNext.Enabled = false;
+                this.buttonFinish.Enabled = true;
             }
             else
             {
@@ -732,10 +733,12 @@ namespace CristiPotlog.WizardControl
             if (this.SelectedIndex < this.pages.Count - 1)
             {
                 this.buttonNext.Enabled = true;
+                this.buttonFinish.Enabled = false;
             }
             else
             {
                 this.buttonNext.Enabled = false;
+                this.buttonFinish.Enabled = true;
             }
 
             // refresh
@@ -875,21 +878,6 @@ namespace CristiPotlog.WizardControl
             {
                 // raise Help event
                 this.Help(this, e);
-            }
-        }
-
-        /// <summary>
-        /// Raises the Load event.
-        /// </summary>
-        protected override void OnLoad(EventArgs e)
-        {
-            // raise the Load event
-            base.OnLoad(e);
-
-            // activate first page, if exists
-            if (this.pages.Count > 0)
-            {
-                this.ActivatePage(0);
             }
         }
 

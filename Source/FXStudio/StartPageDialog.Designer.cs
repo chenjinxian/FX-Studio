@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(StartPageDialog));
             this.pictureBoxStarted = new System.Windows.Forms.PictureBox();
             this.labelStarted = new System.Windows.Forms.Label();
             this.groupBoxStart = new System.Windows.Forms.GroupBox();
@@ -53,6 +54,7 @@
             // 
             this.pictureBoxStarted.BackColor = System.Drawing.SystemColors.Highlight;
             this.pictureBoxStarted.Dock = System.Windows.Forms.DockStyle.Top;
+            this.pictureBoxStarted.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxStarted.Image")));
             this.pictureBoxStarted.Location = new System.Drawing.Point(0, 0);
             this.pictureBoxStarted.Name = "pictureBoxStarted";
             this.pictureBoxStarted.Size = new System.Drawing.Size(695, 40);
@@ -62,9 +64,10 @@
             // labelStarted
             // 
             this.labelStarted.AutoSize = true;
-            this.labelStarted.BackColor = System.Drawing.SystemColors.Highlight;
+            this.labelStarted.BackColor = System.Drawing.Color.Black;
             this.labelStarted.Font = new System.Drawing.Font("Microsoft YaHei", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.labelStarted.ForeColor = System.Drawing.SystemColors.Control;
+            this.labelStarted.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.labelStarted.Location = new System.Drawing.Point(2, 6);
             this.labelStarted.Name = "labelStarted";
             this.labelStarted.Size = new System.Drawing.Size(167, 28);

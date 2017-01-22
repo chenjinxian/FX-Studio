@@ -198,3 +198,8 @@ FXSTUDIOCORE_API bool RemoveActor(unsigned int actorId)
 	return true;
 }
 
+FXSTUDIOCORE_API int* AddEffect(BSTR effectPath)
+{
+	return nullptr;
+}
+

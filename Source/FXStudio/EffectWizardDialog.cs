@@ -14,13 +14,20 @@ namespace FXStudio
 {
     public partial class EffectWizardDialog : Form
     {
+        private string m_FileName;
         private string m_EffectName;
         private string m_MaterialName;
+
+        private string m_TemplatePath;
 
         public EffectWizardDialog()
         {
             InitializeComponent();
+
+            m_TemplatePath = Directory.GetCurrentDirectory() + @"\Templates\";
         }
+
+        public string FileName { get { return m_FileName; } set { m_FileName = value; } }
 
         public string EffectName { get { return m_EffectName; } set { m_EffectName = value; } }
 
@@ -42,6 +49,14 @@ namespace FXStudio
             {
                 textBoxEffect.Text = m_EffectName;
                 textBoxMaterial.Text = m_MaterialName;
+                if (radioButtonFile.Checked)
+                {
+                    m_FileName = textBoxFile.Text;
+                }
+                else if (radioButtonHlsl.Checked)
+                {
+                    m_FileName = m_TemplatePath + textBoxName.Text;
+                }
             }
         }
 
@@ -130,12 +145,14 @@ namespace FXStudio
 
         private void textBoxEffect_TextChanged(object sender, EventArgs e)
         {
-
+            if (textBoxEffect.Text == string.Empty)
+                wizardForm.FinishEnabled = false;
         }
 
         private void textBoxMaterial_TextChanged(object sender, EventArgs e)
         {
-
+            if (textBoxMaterial.Text == string.Empty)
+                wizardForm.FinishEnabled = false;
         }
     }
 }

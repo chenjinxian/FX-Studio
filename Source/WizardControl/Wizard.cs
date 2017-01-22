@@ -863,6 +863,8 @@ namespace CristiPotlog.WizardControl
                 this.Finish(this, e);
             }
 
+            this.ParentForm.DialogResult = DialogResult.OK;
+
             // ensure parent form is closed (even when ShowDialog is not used)
             this.ParentForm.Close();
         }

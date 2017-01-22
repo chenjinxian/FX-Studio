@@ -529,3 +529,17 @@ void BaseGameApp::OnRenderFrame()
 	m_GameTime.UpdateGameTime();
 	OnUpdate(m_GameTime);
 }
+
+void BaseGameApp::AddEffect(const std::string& effectPath)
+{
+	Resource effectRes("Effects\\Skybox.fx");
+	shared_ptr<ResHandle> pEffectResHandle = g_pApp->GetResCache()->GetHandle(&effectRes);
+	if (pEffectResHandle != nullptr)
+	{
+// 		shared_ptr<HlslResourceExtraData> extra = static_pointer_cast<HlslResourceExtraData>(pEffectResHandle->GetExtraData());
+// 		if (extra != nullptr)
+// 		{
+// 			m_pEffect = extra->GetEffect();
+// 		}
+	}
+}

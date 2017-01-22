@@ -58,5 +58,8 @@ namespace FXStudio
 
         [DllImport(editorDllName, CallingConvention = CallingConvention.Cdecl)]
         public static extern bool RemoveActor(uint actorId);
+
+        [DllImport(editorDllName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern IntPtr AddEffect([MarshalAs(UnmanagedType.BStr)] string effectPath);
     }
 }

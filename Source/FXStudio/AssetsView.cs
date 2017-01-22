@@ -40,9 +40,30 @@ namespace FXStudio
             }
         }
 
+        public void AddEffect(string effectXml)
+        {
+
+        }
+
         private void AddTreeNode(TreeNode parentTree, XmlNode parentXml)
         {
 
+        }
+
+        private void treeViewAssets_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                TreeNode select = treeViewAssets.GetNodeAt(e.X, e.Y);
+                if (select != null)
+                {
+                    treeViewAssets.SelectedNode = select;
+                }
+            }
+        }
+
+        private void treeViewAssets_MouseUp(object sender, MouseEventArgs e)
+        {
         }
     }
 }

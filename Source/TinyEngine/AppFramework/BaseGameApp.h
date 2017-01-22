@@ -37,6 +37,8 @@ public:
 	void OnRenderFrame();
 	void OnClose();
 
+	void AddEffect(const std::string& effectPath);
+
 	BaseGameLogic* GetGameLogic(void) const { return m_pGameLogic; }
 	GameConfig& GetGameConfig() { return m_Config; }
 	ResCache* GetResCache() const { return m_pResCache; }

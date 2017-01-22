@@ -396,7 +396,8 @@ namespace FXStudio
             if (dialog.ShowDialog() == DialogResult.OK)
             {
                 string destFileName = m_ProjectLocation + @"\Models\" + Path.GetFileName(dialog.FileName);
-                File.Copy(dialog.FileName, destFileName, true);
+                if (destFileName != dialog.FileName)
+                    File.Copy(dialog.FileName, destFileName, true);
 
                 string fileName = Path.GetFileNameWithoutExtension(destFileName);
                 fileName = fileName.First().ToString().ToUpper() + fileName.Substring(1);
@@ -417,7 +418,16 @@ namespace FXStudio
         private void toolStripButtonEffect_Click(object sender, EventArgs e)
         {
             EffectWizardDialog dialog = new EffectWizardDialog();
-            dialog.ShowDialog();
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                string destFileName = m_ProjectLocation + @"\Effects\" + Path.GetFileName(dialog.FileName);
+                if (destFileName != dialog.FileName)
+                    File.Copy(dialog.FileName, destFileName, true);
+
+                IntPtr effectXml = RenderMethods.AddEffect(destFileName);
+                if (effectXml != null)
+                    m_AssetsView.AddEffect(Marshal.PtrToStringAnsi(effectXml));
+            }
         }
     }
 }

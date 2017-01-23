@@ -135,7 +135,7 @@ namespace FXStudio
 
         private void listViewEffect_SelectedIndexChanged(object sender, EventArgs e)
         {
-            int select = listViewEffect.SelectedIndices[0];
+//             int select = listViewEffect.SelectedIndices[0];
         }
 
         private void buttonLocation_Click(object sender, EventArgs e)

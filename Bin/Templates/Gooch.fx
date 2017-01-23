@@ -28,6 +28,24 @@ cbuffer CBufferPerFrame
 		string UIWidget = "Color";
 	> = { 0.07f,0.07f,0.07f };
 
+	float3 WarmColor <
+		string UIName = "Gooch Warm Tone";
+		string UIWidget = "Color";
+	> = { 0.5f, 0.4f, 0.05f };
+
+	float3 CoolColor <
+		string UIName = "Gooch Cool Tone";
+		string UIWidget = "Color";
+	> = { 0.05f, 0.05f, 0.6f };
+
+	float GlossTop <
+		string UIWidget = "slider";
+		float UIMin = 0.1;
+		float UIMax = 0.95;
+		float UIStep = 0.01;
+		string UIName = "Gloss Edge";
+	> = 0.65;
+
 	float Ks <
 		string UIWidget = "slider";
 		float UIMin = 0.0;
@@ -36,27 +54,35 @@ cbuffer CBufferPerFrame
 		string UIName = "Specular";
 	> = 0.4;
 
-	float Eccentricity <
+	float GlossDrop <
 		string UIWidget = "slider";
 		float UIMin = 0.0;
 		float UIMax = 1.0;
-		float UIStep = 0.0001;
-		string UIName = "Highlight Eccentricity";
-	> = 0.3;
+		float UIStep = 0.01;
+		string UIName = "Gloss Falloff";
+	> = 0.25;
+
+	float GlossEdge <
+		string UIWidget = "slider";
+		float UIMin = 0.0;
+		float UIMax = 0.5;
+		float UIStep = 0.01;
+		string UIName = "Gloss Edge";
+	> = 0.25;
+
+	float SpecExpon : SpecularPower <
+		string UIWidget = "slider";
+		float UIMin = 1.0;
+		float UIMax = 128.0;
+		float UIStep = 1.0;
+		string UIName = "Specular Power";
+	> = 5.0;
+
+	float3 SurfaceColor : DIFFUSE <
+		string UIName = "Surface";
+		string UIWidget = "Color";
+	> = { 1.0f, 1.0f, 1.0f };
 }
-
-Texture2D ColorTexture : DIFFUSE <
-	string ResourceName = "default_color.dds";
-	string UIName = "Diffuse Texture";
-	string ResourceType = "2D";
->;
-
-SamplerState ColorSampler
-{
-	Filter = MIN_MAG_MIP_LINEAR;
-	AddressU = WRAP;
-	AddressV = WRAP;
-};
 
 struct VS_INPUT {
 	float3 Position	: POSITION;
@@ -99,42 +125,41 @@ VS_OUTPUT vertex_shader(VS_INPUT IN)
 	return OUT;
 }
 
-void blinn_shading(VS_OUTPUT IN,
-	float3 LightColor,
-	float3 Nn,
-	float3 Ln,
-	float3 Vn,
-	out float3 DiffuseContrib,
-	out float3 SpecularContrib)
+float glossy_drop(float v,
+	uniform float top,
+	uniform float bot,
+	uniform float drop)
+{
+	return (drop+smoothstep(bot,top,v)*(1.0-drop));
+}
+
+void gooch_shading(vertexOutput IN,
+			float3 LightColor,
+			float3 Nn,
+			float3 Ln,
+			float3 Vn,
+			out float3 DiffuseContrib,
+			out float3 SpecularContrib)
 {
 	float3 Hn = normalize(Vn + Ln);
-	float hdn = dot(Hn, Nn);
-	float3 R = reflect(-Ln, Nn);
-	float rdv = dot(R, Vn);
-	rdv = max(rdv, 0.001);
-	float ldn = dot(Ln, Nn);
-	ldn = max(ldn, 0.0);
-	float ndv = dot(Nn, Vn);
-	float hdv = dot(Hn, Vn);
-	float eSq = Eccentricity*Eccentricity;
-	float distrib = eSq / (rdv * rdv * (eSq - 1.0) + 1.0);
-	distrib = distrib * distrib;
-	float Gb = 2.0 * hdn * ndv / hdv;
-	float Gc = 2.0 * hdn * ldn / hdv;
-	float Ga = min(1.0, min(Gb, Gc));
-	float fresnelHack = 1.0 - pow(ndv, 5.0);
-	hdn = distrib * Ga * fresnelHack / ndv;
-	DiffuseContrib = ldn * LightColor;
-	SpecularContrib = hdn * Ks * LightColor;
+	float ldn = dot(Ln,Nn);
+	float hdn = dot(Hn,Nn);
+	float4 litV = lit(ldn,hdn,SpecExpon);
+	float goochFactor = (1.0 + ldn) / 2.0;
+	float3 toneColor = lerp(CoolColor,WarmColor,goochFactor);
+	DiffuseContrib = toneColor;
+	float spec = litV.y * litV.z;
+	spec *= glossy_drop(spec,GlossTop,(GlossTop-GlossEdge),GlossDrop);
+	SpecularContrib = spec * Ks * LightColor;
 }
 
 float4 pixel_shader(VS_OUTPUT IN) : SV_Target
 {
 	float3 diffContrib;
 	float3 specContrib;
-	blinn_shading(IN,Lamp0Color, IN.WorldNormal, IN.LightVec, IN.WorldView, diffContrib, specContrib);
-	float3 diffuseColor = ColorTexture.Sample(ColorSampler,IN.UV);
-	float3 result = specContrib + (diffuseColor*(diffContrib + AmbiColor));
+	gooch_shading(IN, Lamp0Color, IN.WorldNormal, IN.LightVec, IN.WorldView, diffContrib, specContrib);
+	float3 diffuseColor = SurfaceColor;
+	float3 result = specContrib + (diffuseColor * (diffContrib + AmbiColor));
 
 	return float4(result,1);
 }

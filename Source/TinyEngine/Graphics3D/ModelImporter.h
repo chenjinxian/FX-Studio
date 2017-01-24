@@ -51,6 +51,8 @@ public:
 	const std::vector<uint32_t>& GetIndices() const;
 
 private:
+	void CalculateTangentSpace();
+
 	Model* m_pModel;
 	ModelMaterial* m_pModelMaterial;
 	std::string m_MeshName;

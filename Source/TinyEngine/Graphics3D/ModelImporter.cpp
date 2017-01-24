@@ -154,6 +154,10 @@ Mesh::Mesh(Model* pModel, aiMesh* mesh)
 			m_BiNormals.push_back(Vector3(reinterpret_cast<const float*>(&mesh->mBitangents[i])));
 		}
 	}
+	else
+	{
+		CalculateTangentSpace();
+	}
 
 	uint32_t uvChannelCount = mesh->GetNumUVChannels();
 	for (uint32_t i = 0; i < uvChannelCount; i++)
@@ -222,6 +226,8 @@ Mesh::Mesh(std::vector<VertexPositionNormalTexture> vertices, std::vector<uint16
 	{
 		m_Indices.push_back(index);
 	}
+
+	CalculateTangentSpace();
 }
 
 Mesh::~Mesh()
@@ -282,4 +288,60 @@ uint32_t Mesh::GetFaceCount() const
 const std::vector<uint32_t>& Mesh::GetIndices() const
 {
 	return m_Indices;
+}
+
+void Mesh::CalculateTangentSpace()
+{
+	std::vector<std::pair<Vector3, Vector3> > tbs;
+	tbs.resize(m_Vertices.size());
+
+	for (uint32_t i = 0, len = m_Indices.size(); i < len; i += 3)
+	{
+		uint32_t vertex0 = m_Indices[i];
+		uint32_t vertex1 = m_Indices[i + 1];
+		uint32_t vertex2 = m_Indices[i + 2];
+
+		Vector3 tri0 = m_Vertices.at(m_Indices[vertex0]);
+		Vector3 tri1 = m_Vertices.at(m_Indices[vertex1]);
+		Vector3 tri2 = m_Vertices.at(m_Indices[vertex2]);
+
+		Vector2 uv0 = m_TextureCoordinates[0].at(m_Indices[vertex0]);
+		Vector2 uv1 = m_TextureCoordinates[0].at(m_Indices[vertex1]);
+		Vector2 uv2 = m_TextureCoordinates[0].at(m_Indices[vertex2]);
+
+		Vector3 edge1 = tri1 - tri0;
+		Vector3 edge2 = tri2 - tri0;
+		Vector2 deltaU1 = uv1 - uv0;
+		Vector2 deltaU2 = uv2 - uv0;
+
+		float r = 1.0f / (deltaU1.x * deltaU2.y - deltaU2.x * deltaU1.y);
+		Vector3 tangent((deltaU2.y * edge1.x - deltaU1.y * edge2.x) * r, (deltaU2.y * edge1.y - deltaU1.y * edge2.y) * r,
+			(deltaU2.y * edge1.z - deltaU1.y * edge2.z) * r);
+		Vector3 binormal((deltaU1.x * edge2.x - deltaU2.x * edge1.x) * r, (deltaU1.x * edge2.y - deltaU2.x * edge1.y) * r,
+			(deltaU1.x * edge2.z- deltaU2.x * edge1.z) * r);
+
+		tbs[vertex0].first += tangent;
+		tbs[vertex0].second += binormal;
+		tbs[vertex1].first += tangent;
+		tbs[vertex1].second += binormal;
+		tbs[vertex2].first += tangent;
+		tbs[vertex2].second += binormal;
+	}
+
+	for (uint32_t i = 0, len = m_Vertices.size(); i < len; i += 3)
+	{
+		const Vector3& normal = m_Normals[i];
+		const std::pair<Vector3, Vector3>& tb = tbs[i];
+
+		m_Tangents[i] = (tb.first - normal * normal.Dot(tb.first));
+		m_Tangents[i].Normalize();
+		m_BiNormals[i] = (tb.second - normal * normal.Dot(tb.second));
+		m_BiNormals[i].Normalize();
+
+		if (m_Tangents[i].Cross(m_BiNormals[i]).Dot(normal) < 0.0f)
+		{
+			m_Tangents[i] = -m_Tangents[i];
+			m_BiNormals[i] = -m_BiNormals[i];
+		}
+	}
 }

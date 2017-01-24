@@ -190,18 +190,14 @@ void Pass::CreateIndexBuffer(const void* pIndexData, uint32_t size, ID3D11Buffer
 
 void Pass::CreateVertexBuffer(const Mesh* mesh, ID3D11Buffer** ppVertexBuffer) const
 {
-	std::vector<Vector3> vertices = mesh->GetVertices();
+	const std::vector<Vector3>& vertices = mesh->GetVertices();
 	uint32_t vertexCount = vertices.size();
-	std::vector<Vector2> textureCoordinates;
-	if (!mesh->GetTextureCoordinates().empty())
-	{
-		textureCoordinates = mesh->GetTextureCoordinates().at(0);
-	}
-	std::vector<Vector4> vertexColors;
-	if (!mesh->GetVertexColors().empty())
-	{
-		vertexColors = mesh->GetVertexColors().at(0);
-	}
+
+	const std::vector<std::vector<Vector2> >& textureCoordinates = mesh->GetTextureCoordinates();
+	const std::vector<std::vector<Vector4> >& vertexColors = mesh->GetVertexColors();
+	const std::vector<Vector3>& normals = mesh->GetNormals();
+	const std::vector<Vector3>& tangents = mesh->GetTangents();
+	const std::vector<Vector3>& binormals = mesh->GetBiNormals();
 
 	std::vector<float> vertexData;
 	vertexData.reserve(vertexCount * m_VertexSize);
@@ -222,22 +218,54 @@ void Pass::CreateVertexBuffer(const Mesh* mesh, ID3D11Buffer** ppVertexBuffer) c
 			}
 			else if (vertexFormat.first == "COLOR")
 			{
-				vertexData.push_back(vertexColors.at(i).x);
-				vertexData.push_back(vertexColors.at(i).y);
-				vertexData.push_back(vertexColors.at(i).z);
-				vertexData.push_back(vertexColors.at(i).w);
+				DEBUG_ASSERT(!vertexColors.empty());
+				vertexData.push_back(vertexColors[0].at(i).x);
+				vertexData.push_back(vertexColors[0].at(i).y);
+				vertexData.push_back(vertexColors[0].at(i).z);
+				vertexData.push_back(vertexColors[0].at(i).w);
 			}
 			else if (vertexFormat.first == "TEXCOORD")
 			{
-				if (textureCoordinates.size() > i)
+				DEBUG_ASSERT(!textureCoordinates.empty());
+				if (textureCoordinates[0].size() > i)
 				{
-					vertexData.push_back(textureCoordinates.at(i).x);
-					vertexData.push_back(textureCoordinates.at(i).y);
+					vertexData.push_back(textureCoordinates[0].at(i).x);
+					vertexData.push_back(textureCoordinates[0].at(i).y);
 					if (vertexFormat.second > 3)
 					{
 						vertexData.push_back(0.0f);
 						vertexData.push_back(0.0f);
 					}
+				}
+			}
+			else if (vertexFormat.first == "NORMAL")
+			{
+				vertexData.push_back(normals.at(i).x);
+				vertexData.push_back(normals.at(i).y);
+				vertexData.push_back(normals.at(i).z);
+				if (vertexFormat.second > 3)
+				{
+					vertexData.push_back(0.0f);
+				}
+			}
+			else if (vertexFormat.first == "TANGENT")
+			{
+				vertexData.push_back(tangents.at(i).x);
+				vertexData.push_back(tangents.at(i).y);
+				vertexData.push_back(tangents.at(i).z);
+				if (vertexFormat.second > 3)
+				{
+					vertexData.push_back(0.0f);
+				}
+			}
+			else if (vertexFormat.first == "BINORMAL")
+			{
+				vertexData.push_back(binormals.at(i).x);
+				vertexData.push_back(binormals.at(i).y);
+				vertexData.push_back(binormals.at(i).z);
+				if (vertexFormat.second > 3)
+				{
+					vertexData.push_back(0.0f);
 				}
 			}
 		}

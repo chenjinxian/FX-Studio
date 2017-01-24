@@ -531,6 +531,30 @@ HRESULT GeometryNode::VRender(Scene* pScene, const GameTime& gameTime)
 				variable->SetMatrix(wvp);
 			}
 		}
+		else if (variable->GetVariableSemantic() == "worldinversetranspose")
+		{
+			if (variable->GetVariableType() == "float4x4")
+			{
+				const XMMATRIX& worldIT = pScene->GetTopMatrix().Invert().Transpose();
+				variable->SetMatrix(worldIT);
+			}
+		}
+		else if (variable->GetVariableSemantic() == "world")
+		{
+			if (variable->GetVariableType() == "float4x4")
+			{
+				const XMMATRIX& world = pScene->GetTopMatrix();
+				variable->SetMatrix(world);
+			}
+		}
+		else if (variable->GetVariableSemantic() == "viewinverse")
+		{
+			if (variable->GetVariableType() == "float4x4")
+			{
+				const XMMATRIX& wvp = pScene->GetCamera()->GetViewMatrix().Invert();
+				variable->SetMatrix(wvp);
+			}
+		}
 		else if (variable->GetVariableType() == "Texture2D")
 		{
 			Resource resource(m_TextureName);

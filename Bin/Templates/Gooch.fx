@@ -134,7 +134,7 @@ float glossy_drop(float v,
 	return (drop+smoothstep(bot,top,v)*(1.0-drop));
 }
 
-void gooch_shading(vertexOutput IN,
+void gooch_shading(VS_OUTPUT IN,
 			float3 LightColor,
 			float3 Nn,
 			float3 Ln,

@@ -135,6 +135,34 @@ Mesh::Mesh(Model* pModel, aiMesh* mesh)
 		m_Vertices.push_back(Vector3(reinterpret_cast<const float*>(&mesh->mVertices[i])));
 	}
 
+	if (mesh->HasFaces())
+	{
+		m_FaceCount = mesh->mNumFaces;
+		for (uint32_t i = 0; i < m_FaceCount; i++)
+		{
+			aiFace* face = &mesh->mFaces[i];
+
+			for (uint32_t j = 0; j < face->mNumIndices; j++)
+			{
+				m_Indices.push_back(face->mIndices[j]);
+			}
+		}
+	}
+
+	uint32_t colorChannelCount = mesh->GetNumColorChannels();
+	for (uint32_t i = 0; i < colorChannelCount; i++)
+	{
+		std::vector<Vector4> vertexColors(mesh->mNumVertices);
+
+		aiColor4D* aiVertexColors = mesh->mColors[i];
+		for (uint32_t j = 0; j < mesh->mNumVertices; j++)
+		{
+			vertexColors[j] = Vector4(reinterpret_cast<const float*>(&aiVertexColors[j]));
+		}
+
+		m_VertexColors.push_back(vertexColors);
+	}
+
 	if (mesh->HasNormals())
 	{
 		m_Normals.reserve(mesh->mNumVertices);
@@ -142,21 +170,6 @@ Mesh::Mesh(Model* pModel, aiMesh* mesh)
 		{
 			m_Normals.push_back(Vector3(reinterpret_cast<const float*>(&mesh->mNormals[i])));
 		}
-	}
-
-	if (mesh->HasTangentsAndBitangents())
-	{
-		m_Tangents.reserve(mesh->mNumVertices);
-		m_BiNormals.reserve(mesh->mNumVertices);
-		for (uint32_t i = 0; i < mesh->mNumVertices; i++)
-		{
-			m_Tangents.push_back(Vector3(reinterpret_cast<const float*>(&mesh->mTangents[i])));
-			m_BiNormals.push_back(Vector3(reinterpret_cast<const float*>(&mesh->mBitangents[i])));
-		}
-	}
-	else
-	{
-		CalculateTangentSpace();
 	}
 
 	uint32_t uvChannelCount = mesh->GetNumUVChannels();
@@ -174,32 +187,19 @@ Mesh::Mesh(Model* pModel, aiMesh* mesh)
 		m_TextureCoordinates.push_back(textureCoordinates);
 	}
 
-	uint32_t colorChannelCount = mesh->GetNumColorChannels();
-	for (uint32_t i = 0; i < colorChannelCount; i++)
+	if (mesh->HasTangentsAndBitangents())
 	{
-		std::vector<Vector4> vertexColors(mesh->mNumVertices);
-
-		aiColor4D* aiVertexColors = mesh->mColors[i];
-		for (uint32_t j = 0; j < mesh->mNumVertices; j++)
+		m_Tangents.reserve(mesh->mNumVertices);
+		m_BiNormals.reserve(mesh->mNumVertices);
+		for (uint32_t i = 0; i < mesh->mNumVertices; i++)
 		{
-			vertexColors[j] = Vector4(reinterpret_cast<const float*>(&aiVertexColors[j]));
+			m_Tangents.push_back(Vector3(reinterpret_cast<const float*>(&mesh->mTangents[i])));
+			m_BiNormals.push_back(Vector3(reinterpret_cast<const float*>(&mesh->mBitangents[i])));
 		}
-
-		m_VertexColors.push_back(vertexColors);
 	}
-
-	if (mesh->HasFaces())
+	else
 	{
-		m_FaceCount = mesh->mNumFaces;
-		for (uint32_t i = 0; i < m_FaceCount; i++)
-		{
-			aiFace* face = &mesh->mFaces[i];
-
-			for (uint32_t j = 0; j < face->mNumIndices; j++)
-			{
-				m_Indices.push_back(face->mIndices[j]);
-			}
-		}
+		CalculateTangentSpace();
 	}
 }
 
@@ -327,6 +327,9 @@ void Mesh::CalculateTangentSpace()
 		tbs[vertex2].first += tangent;
 		tbs[vertex2].second += binormal;
 	}
+
+	m_Tangents.resize(m_Vertices.size());
+	m_BiNormals.resize(m_Vertices.size());
 
 	for (uint32_t i = 0, len = m_Vertices.size(); i < len; i += 3)
 	{

@@ -334,6 +334,36 @@ Variable::Variable(ID3D11Device1* pDevice, ID3DX11EffectVariable* pD3DX11EffectV
 	D3DX11_EFFECT_TYPE_DESC typeDesc;
 	m_pD3DX11EffectType->GetDesc(&typeDesc);
 	m_VariableType = typeDesc.TypeName;
+
+	for (int i = 0; i < variableDesc.Annotations; i++)
+	{
+		ID3DX11EffectVariable* annotationVar = pD3DX11EffectVariable->GetAnnotationByIndex(i);
+		ID3DX11EffectType* annotationType = annotationVar->GetType();
+		annotationType->GetDesc(&typeDesc);
+		switch (typeDesc.Type)
+		{
+		case D3D_SHADER_VARIABLE_TYPE::D3D_SVT_STRING:
+		{
+			ID3DX11EffectStringVariable* stringVal = annotationVar->AsString();
+			LPCSTR pString = nullptr;
+			stringVal->GetString(&pString);
+			break;
+		}
+		case D3D_SHADER_VARIABLE_TYPE::D3D_SVT_FLOAT:
+		{
+			ID3DX11EffectScalarVariable* scalarVal = annotationVar->AsScalar();
+			float value;
+			scalarVal->GetFloat(&value);
+			break;
+		}
+		default:
+			break;
+		}
+
+		D3DX11_EFFECT_VARIABLE_DESC annotationDesc;
+		annotationVar->GetDesc(&annotationDesc);
+		std::string name = annotationDesc.Name;
+	}
 }
 
 void Variable::SetMatrix(XMMATRIX value)

@@ -84,7 +84,8 @@ cbuffer CBufferPerFrame
 	> = { 1.0f, 1.0f, 1.0f };
 }
 
-struct VS_INPUT {
+struct VS_INPUT
+{
 	float3 Position	: POSITION;
 	float2 UV		: TEXCOORD0;
 	float3 Normal	: NORMAL;

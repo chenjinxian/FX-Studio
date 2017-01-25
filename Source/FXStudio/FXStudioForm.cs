@@ -424,9 +424,11 @@ namespace FXStudio
                 if (destFileName != dialog.FileName)
                     File.Copy(dialog.FileName, destFileName, true);
 
-                IntPtr effectXml = RenderMethods.AddEffect(destFileName);
+                IntPtr effectXml = IntPtr.Zero;
+                RenderMethods.AddEffect(@"Effects\" + Path.GetFileName(dialog.FileName), dialog.EffectName, dialog.MaterialName, ref effectXml);
+                string xml = Marshal.PtrToStringAnsi(effectXml);
                 if (effectXml != null)
-                    m_AssetsView.AddEffect(Marshal.PtrToStringAnsi(effectXml));
+                    m_AssetsView.AddEffect(Marshal.PtrToStringAuto(effectXml));
             }
         }
     }

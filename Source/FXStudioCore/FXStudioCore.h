@@ -46,7 +46,7 @@ extern "C" {
 	FXSTUDIOCORE_API bool ModifyActor(BSTR modificationXml);
 	FXSTUDIOCORE_API bool RemoveActor(unsigned int actorId);
 
-	FXSTUDIOCORE_API int* AddEffect(BSTR effectPath);
+	FXSTUDIOCORE_API void AddEffect(BSTR effectPath, BSTR effectName, BSTR materialName, int** effectXmlPtr);
 
 #ifdef __cplusplus
 }

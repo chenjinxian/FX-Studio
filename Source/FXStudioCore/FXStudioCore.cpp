@@ -198,8 +198,23 @@ FXSTUDIOCORE_API bool RemoveActor(unsigned int actorId)
 	return true;
 }
 
-FXSTUDIOCORE_API int* AddEffect(BSTR effectPath)
+FXSTUDIOCORE_API bool AddEffect(BSTR effectPath)
 {
-	return nullptr;
+	std::string path = Utility::WS2S(std::wstring(effectPath, SysStringLen(effectPath)));
+	std::string effectXml = g_pApp->AddEffect(path);
+	if (effectXml.empty())
+	{
+		return nullptr;
+	}
+	else
+	{
+		return effectXml.c_str();
+	}
+}
+
+FXSTUDIOCORE_API void AddEffect(BSTR effectPath, BSTR effectName, BSTR materialName, int** effectXmlPtr)
+{
+	std::string path = Utility::WS2S(std::wstring(effectPath, SysStringLen(effectPath)));
+	*effectXmlPtr = reinterpret_cast<int*>(g_pApp->AddEffect(path));
 }
 

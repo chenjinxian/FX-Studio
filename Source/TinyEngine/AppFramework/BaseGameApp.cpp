@@ -5,6 +5,7 @@
 #include "../ResourceCache/ResCache.h"
 #include "../ResourceCache/XmlResource.h"
 #include "../EventManager/EventManagerImpl.h"
+#include "../ResourceCache/ShaderResource.h"
 
 BaseGameApp* g_pApp = nullptr;
 const int BaseGameApp::MEGABYTE = 1024 * 1024;
@@ -530,16 +531,19 @@ void BaseGameApp::OnRenderFrame()
 	OnUpdate(m_GameTime);
 }
 
-void BaseGameApp::AddEffect(const std::string& effectPath)
+char* BaseGameApp::AddEffect(const std::string& effectPath)
 {
-	Resource effectRes("Effects\\Skybox.fx");
+	Resource effectRes(effectPath);
 	shared_ptr<ResHandle> pEffectResHandle = g_pApp->GetResCache()->GetHandle(&effectRes);
 	if (pEffectResHandle != nullptr)
 	{
-// 		shared_ptr<HlslResourceExtraData> extra = static_pointer_cast<HlslResourceExtraData>(pEffectResHandle->GetExtraData());
-// 		if (extra != nullptr)
-// 		{
-// 			m_pEffect = extra->GetEffect();
-// 		}
+		shared_ptr<HlslResourceExtraData> extra = static_pointer_cast<HlslResourceExtraData>(pEffectResHandle->GetExtraData());
+		if (extra != nullptr)
+		{
+			Effect* pEffect = extra->GetEffect();
+			return pEffect->GenerateXml();
+		}
 	}
+
+	return nullptr;
 }

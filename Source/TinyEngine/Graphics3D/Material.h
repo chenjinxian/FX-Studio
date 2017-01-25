@@ -21,14 +21,14 @@ public:
 	const std::vector<Variable*>& GetVariables() const;
 	const std::map<std::string, Variable*>& GetVariablesByName() const;
 
-	const std::string& GenerateXml();
+	char* GenerateXml();
 
 private:
 	std::vector<Technique*> m_Techniques;
 	std::map<std::string, Technique*> m_TechniquesByName;
 	std::vector<Variable*> m_Variables;
 	std::map<std::string, Variable*> m_VariablesByName;
-	std::string m_EffectXml;
+	char* m_pEffectXml;
 };
 
 class Technique : public boost::noncopyable

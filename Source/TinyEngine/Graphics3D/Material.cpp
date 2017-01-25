@@ -10,7 +10,8 @@ Effect::Effect(ID3D11Device1* pDevice, ID3DX11Effect* pD3DX11Effect)
 	: m_Techniques(),
 	m_TechniquesByName(),
 	m_Variables(),
-	m_VariablesByName()
+	m_VariablesByName(),
+	m_pEffectXml(nullptr)
 {
 	DEBUG_ASSERT(pDevice != nullptr);
 	DEBUG_ASSERT(pD3DX11Effect != nullptr);
@@ -50,6 +51,8 @@ Effect::~Effect()
 		delete variable;
 	}
 	m_Variables.clear();
+
+	SAFE_DELETE_ARRAY(m_pEffectXml);
 }
 
 const std::vector<Technique*>& Effect::GetTechniques() const
@@ -72,9 +75,9 @@ const std::map<std::string, Variable*>& Effect::GetVariablesByName() const
 	return m_VariablesByName;
 }
 
-const std::string& Effect::GenerateXml()
+char* Effect::GenerateXml()
 {
-	if (m_EffectXml.empty())
+	if (m_pEffectXml == nullptr)
 	{
 		tinyxml2::XMLDocument outDoc;
 
@@ -125,10 +128,11 @@ const std::string& Effect::GenerateXml()
 
 		tinyxml2::XMLPrinter printer;
 		outDoc.Accept(&printer);
-		m_EffectXml = printer.CStr();
+		m_pEffectXml = new char[printer.CStrSize()];
+		strncpy_s(m_pEffectXml, printer.CStrSize(), printer.CStr(), printer.CStrSize());
 	}
 	
-	return m_EffectXml;
+	return m_pEffectXml;
 }
 
 Technique::Technique(ID3D11Device1* pDevice, ID3DX11EffectTechnique* pD3DX11EffectTechnique)

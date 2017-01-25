@@ -27,7 +27,7 @@ shared_ptr<Type> MakeStrongPtr(weak_ptr<Type> pWeakPtr)
 }
 
 template <class BaseType, class SubType>
-BaseType* GenericObjectCreationFunction(void) { return new SubType; }
+BaseType* GenericObjectCreationFunction(void) { return DEBUG_NEW SubType; }
 
 template <class BaseClass, class IdType>
 class GenericObjectFactory

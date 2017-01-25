@@ -8,6 +8,7 @@ class Effect;
 class Technique;
 class Pass;
 class Variable;
+class Annotation;
 
 class Effect : public boost::noncopyable
 {
@@ -20,11 +21,14 @@ public:
 	const std::vector<Variable*>& GetVariables() const;
 	const std::map<std::string, Variable*>& GetVariablesByName() const;
 
+	const std::string& GenerateXml();
+
 private:
 	std::vector<Technique*> m_Techniques;
 	std::map<std::string, Technique*> m_TechniquesByName;
 	std::vector<Variable*> m_Variables;
 	std::map<std::string, Variable*> m_VariablesByName;
+	std::string m_EffectXml;
 };
 
 class Technique : public boost::noncopyable
@@ -81,6 +85,8 @@ public:
 	const std::string& GetVariableName() const { return m_VariableName; }
 	const std::string& GetVariableSemantic() const { return m_VariableSemantic; }
 	const std::string& GetVariableType() const { return m_VariableType; }
+	const std::string& GetVariableValue() const { return m_VariableValue; }
+	const std::vector<Annotation*>& GetAnnotations() const { return m_Annotations; }
 
 	void SetMatrix(XMMATRIX value);
 	void SetResource(ID3D11ShaderResourceView* value);
@@ -98,4 +104,19 @@ private:
 	std::string m_VariableName;
 	std::string m_VariableSemantic;
 	std::string m_VariableType;
+	std::string m_VariableValue;
+	std::vector<Annotation*> m_Annotations;
+};
+
+class Annotation : public boost::noncopyable
+{
+public:
+	Annotation(ID3DX11EffectVariable* pAnnotation);
+
+	const std::string& GetAnnotationName() const { return m_AnnotationName; }
+	const std::string& GetAnnotationValue() const { return m_AnnotationValue; }
+
+private:
+	std::string m_AnnotationName;
+	std::string m_AnnotationValue;
 };

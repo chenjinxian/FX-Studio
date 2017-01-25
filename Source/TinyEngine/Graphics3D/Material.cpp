@@ -1,7 +1,10 @@
 #include "Material.h"
 #include "ModelImporter.h"
+#include "boost/lexical_cast.hpp"
 #include <d3dcompiler.h>
 #include <cctype>
+#include <iostream>
+#include <sstream>
 
 Effect::Effect(ID3D11Device1* pDevice, ID3DX11Effect* pD3DX11Effect)
 	: m_Techniques(),
@@ -21,14 +24,14 @@ Effect::Effect(ID3D11Device1* pDevice, ID3DX11Effect* pD3DX11Effect)
 
 	for (uint32_t i = 0; i < effectDesc.Techniques; i++)
 	{
-		Technique* technique = new Technique(pDevice, pD3DX11Effect->GetTechniqueByIndex(i));
+		Technique* technique = DEBUG_NEW Technique(pDevice, pD3DX11Effect->GetTechniqueByIndex(i));
 		m_Techniques.push_back(technique);
 		m_TechniquesByName.insert(std::make_pair(technique->GetTechniqueName(), technique));
 	}
 
 	for (uint32_t i = 0; i < effectDesc.GlobalVariables; i++)
 	{
-		Variable* variable = new Variable(pDevice, pD3DX11Effect->GetVariableByIndex(i));
+		Variable* variable = DEBUG_NEW Variable(pDevice, pD3DX11Effect->GetVariableByIndex(i));
 		m_Variables.push_back(variable);
 		m_VariablesByName.insert(std::make_pair(variable->GetVariableName(), variable));
 	}
@@ -67,6 +70,65 @@ const std::vector<Variable*>& Effect::GetVariables() const
 const std::map<std::string, Variable*>& Effect::GetVariablesByName() const
 {
 	return m_VariablesByName;
+}
+
+const std::string& Effect::GenerateXml()
+{
+	if (m_EffectXml.empty())
+	{
+		tinyxml2::XMLDocument outDoc;
+
+		tinyxml2::XMLElement* pRoot = outDoc.NewElement("Material");
+		outDoc.InsertEndChild(pRoot);
+
+		pRoot->SetAttribute("id", "Default");
+		pRoot->SetAttribute("name", "DefaultMaterial");
+		pRoot->SetAttribute("effect", "DefaultEffect");
+
+
+		tinyxml2::XMLElement* pTechniques = outDoc.NewElement("Techniques");
+		pRoot->InsertEndChild(pTechniques);
+
+		for (auto technique : m_Techniques)
+		{
+			tinyxml2::XMLElement* pChildTechnique = outDoc.NewElement("Technique");
+			pChildTechnique->SetAttribute("name", technique->GetTechniqueName().c_str());
+
+			for (auto pass : technique->GetPasses())
+			{
+				tinyxml2::XMLElement* pChildPass = outDoc.NewElement("Pass");
+				pChildPass->InsertEndChild(outDoc.NewText(pass->GetPassName().c_str()));
+				pChildTechnique->InsertEndChild(pChildPass);
+			}
+
+			pTechniques->InsertEndChild(pChildTechnique);
+		}
+
+		tinyxml2::XMLElement* pVariables = outDoc.NewElement("Variables");
+		pRoot->InsertEndChild(pVariables);
+
+		for (auto variable : m_Variables)
+		{
+			tinyxml2::XMLElement* pChildVariable = outDoc.NewElement("Variable");
+			pChildVariable->SetAttribute("name", variable->GetVariableName().c_str());
+			pChildVariable->SetAttribute("value", variable->GetVariableValue().c_str());
+
+			for (auto annotation : variable->GetAnnotations())
+			{
+				tinyxml2::XMLElement* pChildAnnotation = outDoc.NewElement(annotation->GetAnnotationName().c_str());
+				pChildAnnotation->InsertEndChild(outDoc.NewText(annotation->GetAnnotationValue().c_str()));
+				pChildVariable->InsertEndChild(pChildAnnotation);
+			}
+
+			pVariables->InsertEndChild(pChildVariable);
+		}
+
+		tinyxml2::XMLPrinter printer;
+		outDoc.Accept(&printer);
+		m_EffectXml = printer.CStr();
+	}
+	
+	return m_EffectXml;
 }
 
 Technique::Technique(ID3D11Device1* pDevice, ID3DX11EffectTechnique* pD3DX11EffectTechnique)
@@ -363,34 +425,77 @@ Variable::Variable(ID3D11Device1* pDevice, ID3DX11EffectVariable* pD3DX11EffectV
 	m_pD3DX11EffectType->GetDesc(&typeDesc);
 	m_VariableType = typeDesc.TypeName;
 
-	for (int i = 0; i < variableDesc.Annotations; i++)
+	switch (typeDesc.Class)
 	{
-		ID3DX11EffectVariable* annotationVar = pD3DX11EffectVariable->GetAnnotationByIndex(i);
-		ID3DX11EffectType* annotationType = annotationVar->GetType();
-		annotationType->GetDesc(&typeDesc);
-		switch (typeDesc.Type)
+	case D3D_SHADER_VARIABLE_CLASS::D3D_SVC_SCALAR:
+	{
+		ID3DX11EffectScalarVariable* scalarVal = m_pD3DX11EffectVariable->AsScalar();
+		float value;
+		scalarVal->GetFloat(&value);
+		m_VariableValue = boost::lexical_cast<std::string>(value);
+		break;
+	}
+	case D3D_SHADER_VARIABLE_CLASS::D3D_SVC_VECTOR:
+	{
+		ID3DX11EffectVectorVariable* vectroVal = m_pD3DX11EffectVariable->AsVector();
+		std::stringstream ss;
+
+		switch (typeDesc.Columns)
 		{
-		case D3D_SHADER_VARIABLE_TYPE::D3D_SVT_STRING:
+		case 2:
 		{
-			ID3DX11EffectStringVariable* stringVal = annotationVar->AsString();
-			LPCSTR pString = nullptr;
-			stringVal->GetString(&pString);
+			Vector2 value;
+			vectroVal->GetFloatVector(reinterpret_cast<float*>(&value));
+			ss << value.x << " " << value.y;
 			break;
 		}
-		case D3D_SHADER_VARIABLE_TYPE::D3D_SVT_FLOAT:
+		case 3:
 		{
-			ID3DX11EffectScalarVariable* scalarVal = annotationVar->AsScalar();
-			float value;
-			scalarVal->GetFloat(&value);
+			Vector3 value;
+			vectroVal->GetFloatVector(reinterpret_cast<float*>(&value));
+			ss << value.x << " " << value.y << " " << value.z;
+			break;
+		}
+		case 4:
+		{
+			Vector4 value;
+			vectroVal->GetFloatVector(reinterpret_cast<float*>(&value));
+			ss << value.x << " " << value.y << " " << value.z << " " << value.w;
 			break;
 		}
 		default:
 			break;
 		}
 
-		D3DX11_EFFECT_VARIABLE_DESC annotationDesc;
-		annotationVar->GetDesc(&annotationDesc);
-		std::string name = annotationDesc.Name;
+		m_VariableValue = ss.str();
+		break;
+	}
+	case D3D_SHADER_VARIABLE_CLASS::D3D_SVC_MATRIX_COLUMNS:
+	case D3D_SHADER_VARIABLE_CLASS::D3D_SVC_MATRIX_ROWS:
+	{
+		ID3DX11EffectMatrixVariable* matrixVal = m_pD3DX11EffectVariable->AsMatrix();
+		Matrix value;
+		matrixVal->GetMatrix(reinterpret_cast<float*>(&value));
+
+		std::stringstream ss;
+		for (int i = 0; i < 4; i++)
+		{
+			for (int j = 0; j < 4; j++)
+			{
+				ss << value.m[i][j] << " ";
+			}
+		}
+		m_VariableValue = ss.str();
+		break;
+	}
+	default:
+		break;
+	}
+
+	for (int i = 0; i < variableDesc.Annotations; i++)
+	{
+		Annotation* annotation = DEBUG_NEW Annotation(m_pD3DX11EffectVariable->GetAnnotationByIndex(i));
+		m_Annotations.push_back(annotation);
 	}
 }
 
@@ -503,4 +608,37 @@ Variable& Variable::operator<<(const std::vector<XMFLOAT4X4>& values)
 	variable->SetMatrixArray(reinterpret_cast<const float*>(&values[0]), 0, (uint32_t)values.size());
 
 	return *this;
+}
+
+Annotation::Annotation(ID3DX11EffectVariable* pAnnotation)
+{
+	ID3DX11EffectType* annotationType = pAnnotation->GetType();
+	D3DX11_EFFECT_TYPE_DESC typeDesc;
+	annotationType->GetDesc(&typeDesc);
+
+	switch (typeDesc.Type)
+	{
+	case D3D_SHADER_VARIABLE_TYPE::D3D_SVT_STRING:
+	{
+		ID3DX11EffectStringVariable* stringVal = pAnnotation->AsString();
+		LPCSTR pString = nullptr;
+		stringVal->GetString(&pString);
+		m_AnnotationValue = pString;
+		break;
+	}
+	case D3D_SHADER_VARIABLE_TYPE::D3D_SVT_FLOAT:
+	{
+		ID3DX11EffectScalarVariable* scalarVal = pAnnotation->AsScalar();
+		float value;
+		scalarVal->GetFloat(&value);
+		m_AnnotationValue = boost::lexical_cast<std::string>(value);
+		break;
+	}
+	default:
+		break;
+	}
+
+	D3DX11_EFFECT_VARIABLE_DESC annotationDesc;
+	pAnnotation->GetDesc(&annotationDesc);
+	m_AnnotationName = annotationDesc.Name;
 }

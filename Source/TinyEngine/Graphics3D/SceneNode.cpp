@@ -632,7 +632,7 @@ void GeometryNode::CreateCube()
 		std::vector<uint16_t> indices;
 		GeometricPrimitive::CreateCube(vertices, indices, size, useRHcoords);
 		m_IndexCount = indices.size();
-		m_Mesh = unique_ptr<Mesh>(new Mesh(vertices, indices, true));
+		m_Mesh = unique_ptr<Mesh>(DEBUG_NEW Mesh(vertices, indices, true));
 	}
 }
 
@@ -649,7 +649,7 @@ void GeometryNode::CreateSphere()
 		std::vector<uint16_t> indices;
 		GeometricPrimitive::CreateSphere(vertices, indices, diameter, tessellation, useRHcoords);
 		m_IndexCount = indices.size();
-		m_Mesh = unique_ptr<Mesh>(new Mesh(vertices, indices, true));
+		m_Mesh = unique_ptr<Mesh>(DEBUG_NEW Mesh(vertices, indices, true));
 	}
 }
 
@@ -667,7 +667,7 @@ void GeometryNode::CreateCylinder()
 		std::vector<uint16_t> indices;
 		GeometricPrimitive::CreateCylinder(vertices, indices, height, diameter, tessellation, useRHcoords);
 		m_IndexCount = indices.size();
-		m_Mesh = unique_ptr<Mesh>(new Mesh(vertices, indices, true));
+		m_Mesh = unique_ptr<Mesh>(DEBUG_NEW Mesh(vertices, indices, true));
 	}
 }
 
@@ -684,7 +684,7 @@ void GeometryNode::CreateTeapot()
 		std::vector<uint16_t> indices;
 		GeometricPrimitive::CreateTeapot(vertices, indices, size, tessellation, useRHcoords);
 		m_IndexCount = indices.size();
-		m_Mesh = unique_ptr<Mesh>(new Mesh(vertices, indices, true));
+		m_Mesh = unique_ptr<Mesh>(DEBUG_NEW Mesh(vertices, indices, true));
 	}
 }
 
@@ -723,7 +723,7 @@ ModelNode::ModelNode(
 
 	Resource modelRes(m_ModelName);
 	shared_ptr<ResHandle> pModelResHandle = g_pApp->GetResCache()->GetHandle(&modelRes);
-	m_pModel = unique_ptr<Model>(new Model(pModelResHandle->Buffer(), pModelResHandle->Size(), true, true));
+	m_pModel = unique_ptr<Model>(DEBUG_NEW Model(pModelResHandle->Buffer(), pModelResHandle->Size(), true, true));
 
 	Technique* pCurrentTechnique = m_pEffect->GetTechniquesByName().at(m_CurrentTechnique);
 	if (pCurrentTechnique == nullptr)
@@ -924,10 +924,6 @@ SkyboxNode::SkyboxNode(ActorId actorId, WeakBaseRenderComponentPtr renderCompone
 		}
 	}
 
-	Resource modelRes("Models\\Sphere.obj");
-	shared_ptr<ResHandle> pModelResHandle = g_pApp->GetResCache()->GetHandle(&modelRes);
-	std::unique_ptr<Model> model(new Model(pModelResHandle->Buffer(), pModelResHandle->Size(), true));
-
 	Technique* pCurrentTechnique = m_pEffect->GetTechniquesByName().at("main11");
 	if (pCurrentTechnique == nullptr)
 	{
@@ -939,9 +935,12 @@ SkyboxNode::SkyboxNode(ActorId actorId, WeakBaseRenderComponentPtr renderCompone
 		DEBUG_ERROR(std::string("technique is not exist: ") + "p0");
 	}
 
-	Mesh* mesh = model->GetMeshes().at(0);
-	m_pCurrentPass->CreateVertexBuffer(mesh, &m_pVertexBuffer);
-	m_pCurrentPass->CreateIndexBuffer(mesh, &m_pIndexBuffer);
+	std::vector<VertexPositionNormalTexture> vertices;
+	std::vector<uint16_t> indices;
+	GeometricPrimitive::CreateSphere(vertices, indices);
+	unique_ptr<Mesh> mesh = unique_ptr<Mesh>(DEBUG_NEW Mesh(vertices, indices, true));
+	m_pCurrentPass->CreateVertexBuffer(mesh.get(), &m_pVertexBuffer);
+	m_pCurrentPass->CreateIndexBuffer(mesh.get(), &m_pIndexBuffer);
 	m_IndexCount = mesh->GetIndices().size();
 }
 

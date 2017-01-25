@@ -632,7 +632,7 @@ void GeometryNode::CreateCube()
 		std::vector<uint16_t> indices;
 		GeometricPrimitive::CreateCube(vertices, indices, size, useRHcoords);
 		m_IndexCount = indices.size();
-		m_Mesh = unique_ptr<Mesh>(new Mesh(vertices, indices));
+		m_Mesh = unique_ptr<Mesh>(new Mesh(vertices, indices, true));
 	}
 }
 
@@ -647,9 +647,9 @@ void GeometryNode::CreateSphere()
 
 		std::vector<VertexPositionNormalTexture> vertices;
 		std::vector<uint16_t> indices;
-		GeometricPrimitive::CreateGeoSphere(vertices, indices, diameter, tessellation, false);
+		GeometricPrimitive::CreateSphere(vertices, indices, diameter, tessellation, useRHcoords);
 		m_IndexCount = indices.size();
-		m_Mesh = unique_ptr<Mesh>(new Mesh(vertices, indices));
+		m_Mesh = unique_ptr<Mesh>(new Mesh(vertices, indices, true));
 	}
 }
 
@@ -667,7 +667,7 @@ void GeometryNode::CreateCylinder()
 		std::vector<uint16_t> indices;
 		GeometricPrimitive::CreateCylinder(vertices, indices, height, diameter, tessellation, useRHcoords);
 		m_IndexCount = indices.size();
-		m_Mesh = unique_ptr<Mesh>(new Mesh(vertices, indices));
+		m_Mesh = unique_ptr<Mesh>(new Mesh(vertices, indices, true));
 	}
 }
 
@@ -684,7 +684,7 @@ void GeometryNode::CreateTeapot()
 		std::vector<uint16_t> indices;
 		GeometricPrimitive::CreateTeapot(vertices, indices, size, tessellation, useRHcoords);
 		m_IndexCount = indices.size();
-		m_Mesh = unique_ptr<Mesh>(new Mesh(vertices, indices));
+		m_Mesh = unique_ptr<Mesh>(new Mesh(vertices, indices, true));
 	}
 }
 
@@ -723,7 +723,7 @@ ModelNode::ModelNode(
 
 	Resource modelRes(m_ModelName);
 	shared_ptr<ResHandle> pModelResHandle = g_pApp->GetResCache()->GetHandle(&modelRes);
-	m_pModel = unique_ptr<Model>(new Model(pModelResHandle->Buffer(), pModelResHandle->Size(), true));
+	m_pModel = unique_ptr<Model>(new Model(pModelResHandle->Buffer(), pModelResHandle->Size(), true, true));
 
 	Technique* pCurrentTechnique = m_pEffect->GetTechniquesByName().at(m_CurrentTechnique);
 	if (pCurrentTechnique == nullptr)

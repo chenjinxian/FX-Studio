@@ -266,3 +266,6 @@ Bin/WeifenLuo.WinFormsUI.Docking.dll
 Bin/WeifenLuo.WinFormsUI.Docking.ThemeVS2013.dll
 Bin/PropertiesInspector.dll
 Bin/WizardControl.dll
+Lib/x64/DirectXTK.lib
+Bin/FXStudioCore.lib
+Bin/FXStudioCore.dll

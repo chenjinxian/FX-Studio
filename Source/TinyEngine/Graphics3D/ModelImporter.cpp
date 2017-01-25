@@ -6,7 +6,7 @@
 
 #pragma comment(lib, "assimp-vc140-mt.lib")
 
-Model::Model(const std::string& filename, bool flipUVs /*= false*/)
+Model::Model(const std::string& filename, bool flipUVs /*= false*/, bool tangent /*= false*/)
 	: m_Meshes(), m_Materials()
 {
 	Assimp::Importer importer;
@@ -35,13 +35,13 @@ Model::Model(const std::string& filename, bool flipUVs /*= false*/)
 	{
 		for (uint32_t i = 0; i < scene->mNumMeshes; i++)
 		{
-			Mesh* mesh = DEBUG_NEW Mesh(this, (scene->mMeshes[i]));
+			Mesh* mesh = DEBUG_NEW Mesh(this, (scene->mMeshes[i]), tangent);
 			m_Meshes.push_back(mesh);
 		}
 	}
 }
 
-Model::Model(const void* pBuffer, uint32_t length, bool flipUVs /*= false*/)
+Model::Model(const void* pBuffer, uint32_t length, bool flipUVs /*= false*/, bool tangent /*= false*/)
 	: m_Meshes(), m_Materials()
 {
 	Assimp::Importer importer;
@@ -72,7 +72,7 @@ Model::Model(const void* pBuffer, uint32_t length, bool flipUVs /*= false*/)
 		m_Meshes.reserve(scene->mNumMeshes);
 		for (uint32_t i = 0; i < scene->mNumMeshes; i++)
 		{
-			Mesh* mesh = DEBUG_NEW Mesh(this, (scene->mMeshes[i]));
+			Mesh* mesh = DEBUG_NEW Mesh(this, (scene->mMeshes[i]), tangent);
 			m_Meshes.push_back(mesh);
 		}
 	}
@@ -113,7 +113,7 @@ const std::vector<ModelMaterial*>& Model::GetMaterials() const
 	return m_Materials;
 }
 
-Mesh::Mesh(Model* pModel, aiMesh* mesh)
+Mesh::Mesh(Model* pModel, aiMesh* mesh, bool tangent)
 	: m_pModel(pModel),
 	m_pModelMaterial(nullptr),
 	m_MeshName(),
@@ -197,13 +197,13 @@ Mesh::Mesh(Model* pModel, aiMesh* mesh)
 			m_BiNormals.push_back(Vector3(reinterpret_cast<const float*>(&mesh->mBitangents[i])));
 		}
 	}
-	else
+	else if(tangent)
 	{
 		CalculateTangentSpace();
 	}
 }
 
-Mesh::Mesh(std::vector<VertexPositionNormalTexture> vertices, std::vector<uint16_t> indices)
+Mesh::Mesh(std::vector<VertexPositionNormalTexture> vertices, std::vector<uint16_t> indices, bool tangent)
 {
 	m_Vertices.reserve(vertices.size());
 	m_Normals.reserve(vertices.size());
@@ -227,7 +227,8 @@ Mesh::Mesh(std::vector<VertexPositionNormalTexture> vertices, std::vector<uint16
 		m_Indices.push_back(index);
 	}
 
-	CalculateTangentSpace();
+	if (tangent)
+		CalculateTangentSpace();
 }
 
 Mesh::~Mesh()

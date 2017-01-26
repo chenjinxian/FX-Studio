@@ -429,6 +429,7 @@ namespace FXStudio
                     if (destFileName != sourceFileName)
                         File.Copy(sourceFileName, destFileName, true);
                 }
+
                 string destOjbect = m_ProjectLocation + @"\Effects\" + Path.GetFileNameWithoutExtension(sourceFileName) + ".fxo";
                 var processInfo = new ProcessStartInfo
                 {
@@ -442,18 +443,17 @@ namespace FXStudio
                     RedirectStandardOutput = true,
                     RedirectStandardError = true
                 };
-                using (var fxcProcess = Process.Start(processInfo))
-                {
-                    string compileInfo = fxcProcess.StandardOutput.ReadToEnd();
-                    string errorInfo = fxcProcess.StandardError.ReadToEnd();
-                    fxcProcess.WaitForExit();
-                }
+                var fxcProcess = Process.Start(processInfo);
+                string compileInfo = fxcProcess.StandardOutput.ReadToEnd();
+                string errorInfo = fxcProcess.StandardError.ReadToEnd();
+                fxcProcess.WaitForExit();
 
                 IntPtr effectXml = IntPtr.Zero;
-                RenderMethods.AddEffect(@"Effects\" + Path.GetFileName(destOjbect), dialog.EffectName, dialog.MaterialName, ref effectXml);
-                string xml = Marshal.PtrToStringAnsi(effectXml);
-                if (effectXml != null)
-                    m_AssetsView.AddEffect(Marshal.PtrToStringAuto(effectXml));
+                if (errorInfo == string.Empty)
+                {
+                    RenderMethods.AddEffect(@"Effects\" + Path.GetFileName(destOjbect), dialog.EffectName, dialog.MaterialName, ref effectXml);
+                }
+                m_AssetsView.AddEffect(Marshal.PtrToStringAnsi(effectXml));
             }
         }
     }

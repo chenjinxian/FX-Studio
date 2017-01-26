@@ -461,18 +461,10 @@ bool BaseGameLogic::CreateDefaultAsset(const std::string& asset)
 	tinyxml2::XMLElement* pRoot = outDoc.NewElement("Assets");
 	outDoc.InsertEndChild(pRoot);
 
-	tinyxml2::XMLElement* pCameras = outDoc.NewElement("Cameras");
 	tinyxml2::XMLElement* pEffects = outDoc.NewElement("Effects");
-	tinyxml2::XMLElement* pGeometries = outDoc.NewElement("Geometries");
-	tinyxml2::XMLElement* pLights = outDoc.NewElement("Lights");
-	tinyxml2::XMLElement* pMaterials = outDoc.NewElement("Materials");
 	tinyxml2::XMLElement* pModels = outDoc.NewElement("Models");
 	tinyxml2::XMLElement* pTextures = outDoc.NewElement("Textures");
-	pRoot->InsertFirstChild(pCameras);
 	pRoot->InsertEndChild(pEffects);
-	pRoot->InsertEndChild(pGeometries);
-	pRoot->InsertEndChild(pLights);
-	pRoot->InsertEndChild(pMaterials);
 	pRoot->InsertEndChild(pModels);
 	pRoot->InsertEndChild(pTextures);
 
@@ -481,21 +473,19 @@ bool BaseGameLogic::CreateDefaultAsset(const std::string& asset)
 	pChildEffect->InsertFirstChild(outDoc.NewText("Effects\\DefaultEffect.fx"));
 	pEffects->InsertFirstChild(pChildEffect);
 
-	tinyxml2::XMLElement* pChildMaterial = outDoc.NewElement("Material");
-	pMaterials->InsertFirstChild(pChildMaterial);
 
-	pChildMaterial->SetAttribute("name", "DefaultMaterial");
-	tinyxml2::XMLElement* pChildTechnique = outDoc.NewElement("Technique");
-	pChildTechnique->SetAttribute("name", "main11");
-	tinyxml2::XMLElement* pChildPass = outDoc.NewElement("Pass");
-	pChildPass->InsertFirstChild(outDoc.NewText("p0"));
-	pChildTechnique->InsertFirstChild(pChildPass);
-	pChildMaterial->InsertFirstChild(pChildTechnique);
+// 	pChildMaterial->SetAttribute("name", "DefaultMaterial");
+// 	tinyxml2::XMLElement* pChildTechnique = outDoc.NewElement("Technique");
+// 	pChildTechnique->SetAttribute("name", "main11");
+// 	tinyxml2::XMLElement* pChildPass = outDoc.NewElement("Pass");
+// 	pChildPass->InsertFirstChild(outDoc.NewText("p0"));
+// 	pChildTechnique->InsertFirstChild(pChildPass);
+// 	pChildMaterial->InsertFirstChild(pChildTechnique);
 
-	tinyxml2::XMLElement* pChildImage = outDoc.NewElement("Image");
-	pChildImage->SetAttribute("name", "DefaultColor");
-	pChildImage->InsertFirstChild(outDoc.NewText("Textures\\DefaultColor.dds"));
-	pTextures->InsertFirstChild(pChildImage);
+	tinyxml2::XMLElement* pChildTexture = outDoc.NewElement("Textures");
+	pChildTexture->SetAttribute("name", "DefaultColor");
+	pChildTexture->InsertFirstChild(outDoc.NewText("Textures\\DefaultColor.dds"));
+	pTextures->InsertFirstChild(pChildTexture);
 
 	tinyxml2::XMLPrinter printer;
 	outDoc.Accept(&printer);

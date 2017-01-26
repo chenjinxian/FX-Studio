@@ -31,10 +31,8 @@
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Animations");
             System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Effects");
-            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Materials");
-            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Models");
-            System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("Textures");
-            this.treeViewAssets = new System.Windows.Forms.TreeView();
+            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Models");
+            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Textures");
             this.contextMenuStripAnimation = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.playToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.stopToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -49,12 +47,106 @@
             this.importToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStripTexture = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.addTextureFromFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.treeViewAssets = new System.Windows.Forms.TreeView();
             this.contextMenuStripAnimation.SuspendLayout();
             this.contextMenuStripEffect.SuspendLayout();
             this.contextMenuStripMaterial.SuspendLayout();
             this.contextMenuStripModel.SuspendLayout();
             this.contextMenuStripTexture.SuspendLayout();
             this.SuspendLayout();
+            // 
+            // contextMenuStripAnimation
+            // 
+            this.contextMenuStripAnimation.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.playToolStripMenuItem,
+            this.stopToolStripMenuItem});
+            this.contextMenuStripAnimation.Name = "contextMenuStripAnimation";
+            this.contextMenuStripAnimation.Size = new System.Drawing.Size(99, 48);
+            // 
+            // playToolStripMenuItem
+            // 
+            this.playToolStripMenuItem.Name = "playToolStripMenuItem";
+            this.playToolStripMenuItem.Size = new System.Drawing.Size(98, 22);
+            this.playToolStripMenuItem.Text = "Play";
+            // 
+            // stopToolStripMenuItem
+            // 
+            this.stopToolStripMenuItem.Name = "stopToolStripMenuItem";
+            this.stopToolStripMenuItem.Size = new System.Drawing.Size(98, 22);
+            this.stopToolStripMenuItem.Text = "Stop";
+            // 
+            // contextMenuStripEffect
+            // 
+            this.contextMenuStripEffect.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.addEffectToolStripMenuItem,
+            this.addEffectFromFileToolStripMenuItem});
+            this.contextMenuStripEffect.Name = "contextMenuStripEffect";
+            this.contextMenuStripEffect.Size = new System.Drawing.Size(182, 48);
+            // 
+            // addEffectToolStripMenuItem
+            // 
+            this.addEffectToolStripMenuItem.Name = "addEffectToolStripMenuItem";
+            this.addEffectToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
+            this.addEffectToolStripMenuItem.Text = "Add Effect...";
+            // 
+            // addEffectFromFileToolStripMenuItem
+            // 
+            this.addEffectFromFileToolStripMenuItem.Name = "addEffectFromFileToolStripMenuItem";
+            this.addEffectFromFileToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
+            this.addEffectFromFileToolStripMenuItem.Text = "Add Effect From File";
+            // 
+            // contextMenuStripMaterial
+            // 
+            this.contextMenuStripMaterial.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.addMaterialToolStripMenuItem,
+            this.addMaterialFromFileToolStripMenuItem,
+            this.addMaterialFromNewEffectToolStripMenuItem});
+            this.contextMenuStripMaterial.Name = "contextMenuStripMaterial";
+            this.contextMenuStripMaterial.Size = new System.Drawing.Size(243, 70);
+            // 
+            // addMaterialToolStripMenuItem
+            // 
+            this.addMaterialToolStripMenuItem.Name = "addMaterialToolStripMenuItem";
+            this.addMaterialToolStripMenuItem.Size = new System.Drawing.Size(242, 22);
+            this.addMaterialToolStripMenuItem.Text = "Add Material";
+            // 
+            // addMaterialFromFileToolStripMenuItem
+            // 
+            this.addMaterialFromFileToolStripMenuItem.Name = "addMaterialFromFileToolStripMenuItem";
+            this.addMaterialFromFileToolStripMenuItem.Size = new System.Drawing.Size(242, 22);
+            this.addMaterialFromFileToolStripMenuItem.Text = "Add Material From File";
+            // 
+            // addMaterialFromNewEffectToolStripMenuItem
+            // 
+            this.addMaterialFromNewEffectToolStripMenuItem.Name = "addMaterialFromNewEffectToolStripMenuItem";
+            this.addMaterialFromNewEffectToolStripMenuItem.Size = new System.Drawing.Size(242, 22);
+            this.addMaterialFromNewEffectToolStripMenuItem.Text = "Add Material From New Effect...";
+            // 
+            // contextMenuStripModel
+            // 
+            this.contextMenuStripModel.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.importToolStripMenuItem});
+            this.contextMenuStripModel.Name = "contextMenuStripModel";
+            this.contextMenuStripModel.Size = new System.Drawing.Size(120, 26);
+            // 
+            // importToolStripMenuItem
+            // 
+            this.importToolStripMenuItem.Name = "importToolStripMenuItem";
+            this.importToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
+            this.importToolStripMenuItem.Text = "Import...";
+            // 
+            // contextMenuStripTexture
+            // 
+            this.contextMenuStripTexture.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.addTextureFromFileToolStripMenuItem});
+            this.contextMenuStripTexture.Name = "contextMenuStripTexture";
+            this.contextMenuStripTexture.Size = new System.Drawing.Size(199, 26);
+            // 
+            // addTextureFromFileToolStripMenuItem
+            // 
+            this.addTextureFromFileToolStripMenuItem.Name = "addTextureFromFileToolStripMenuItem";
+            this.addTextureFromFileToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
+            this.addTextureFromFileToolStripMenuItem.Text = "Add Texture From File...";
             // 
             // treeViewAssets
             // 
@@ -68,124 +160,27 @@
             treeNode2.ContextMenuStrip = this.contextMenuStripEffect;
             treeNode2.Name = "Effects";
             treeNode2.Text = "Effects";
-            treeNode3.ContextMenuStrip = this.contextMenuStripMaterial;
-            treeNode3.Name = "Materials";
-            treeNode3.Text = "Materials";
-            treeNode4.ContextMenuStrip = this.contextMenuStripModel;
-            treeNode4.Name = "Models";
-            treeNode4.Text = "Models";
-            treeNode5.ContextMenuStrip = this.contextMenuStripTexture;
-            treeNode5.Name = "Textures";
-            treeNode5.Text = "Textures";
+            treeNode3.ContextMenuStrip = this.contextMenuStripModel;
+            treeNode3.Name = "Models";
+            treeNode3.Text = "Models";
+            treeNode4.ContextMenuStrip = this.contextMenuStripTexture;
+            treeNode4.Name = "Textures";
+            treeNode4.Text = "Textures";
             this.treeViewAssets.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
             treeNode1,
             treeNode2,
             treeNode3,
-            treeNode4,
-            treeNode5});
-            this.treeViewAssets.Size = new System.Drawing.Size(355, 706);
+            treeNode4});
+            this.treeViewAssets.Size = new System.Drawing.Size(355, 765);
             this.treeViewAssets.TabIndex = 0;
             this.treeViewAssets.MouseDown += new System.Windows.Forms.MouseEventHandler(this.treeViewAssets_MouseDown);
             this.treeViewAssets.MouseUp += new System.Windows.Forms.MouseEventHandler(this.treeViewAssets_MouseUp);
             // 
-            // contextMenuStripAnimation
-            // 
-            this.contextMenuStripAnimation.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.playToolStripMenuItem,
-            this.stopToolStripMenuItem});
-            this.contextMenuStripAnimation.Name = "contextMenuStripAnimation";
-            this.contextMenuStripAnimation.Size = new System.Drawing.Size(104, 48);
-            // 
-            // playToolStripMenuItem
-            // 
-            this.playToolStripMenuItem.Name = "playToolStripMenuItem";
-            this.playToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
-            this.playToolStripMenuItem.Text = "Play";
-            // 
-            // stopToolStripMenuItem
-            // 
-            this.stopToolStripMenuItem.Name = "stopToolStripMenuItem";
-            this.stopToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
-            this.stopToolStripMenuItem.Text = "Stop";
-            // 
-            // contextMenuStripEffect
-            // 
-            this.contextMenuStripEffect.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.addEffectToolStripMenuItem,
-            this.addEffectFromFileToolStripMenuItem});
-            this.contextMenuStripEffect.Name = "contextMenuStripEffect";
-            this.contextMenuStripEffect.Size = new System.Drawing.Size(194, 48);
-            // 
-            // addEffectToolStripMenuItem
-            // 
-            this.addEffectToolStripMenuItem.Name = "addEffectToolStripMenuItem";
-            this.addEffectToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
-            this.addEffectToolStripMenuItem.Text = "Add Effect...";
-            // 
-            // addEffectFromFileToolStripMenuItem
-            // 
-            this.addEffectFromFileToolStripMenuItem.Name = "addEffectFromFileToolStripMenuItem";
-            this.addEffectFromFileToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
-            this.addEffectFromFileToolStripMenuItem.Text = "Add Effect From File";
-            // 
-            // contextMenuStripMaterial
-            // 
-            this.contextMenuStripMaterial.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.addMaterialToolStripMenuItem,
-            this.addMaterialFromFileToolStripMenuItem,
-            this.addMaterialFromNewEffectToolStripMenuItem});
-            this.contextMenuStripMaterial.Name = "contextMenuStripMaterial";
-            this.contextMenuStripMaterial.Size = new System.Drawing.Size(262, 70);
-            // 
-            // addMaterialToolStripMenuItem
-            // 
-            this.addMaterialToolStripMenuItem.Name = "addMaterialToolStripMenuItem";
-            this.addMaterialToolStripMenuItem.Size = new System.Drawing.Size(261, 22);
-            this.addMaterialToolStripMenuItem.Text = "Add Material";
-            // 
-            // addMaterialFromFileToolStripMenuItem
-            // 
-            this.addMaterialFromFileToolStripMenuItem.Name = "addMaterialFromFileToolStripMenuItem";
-            this.addMaterialFromFileToolStripMenuItem.Size = new System.Drawing.Size(261, 22);
-            this.addMaterialFromFileToolStripMenuItem.Text = "Add Material From File";
-            // 
-            // addMaterialFromNewEffectToolStripMenuItem
-            // 
-            this.addMaterialFromNewEffectToolStripMenuItem.Name = "addMaterialFromNewEffectToolStripMenuItem";
-            this.addMaterialFromNewEffectToolStripMenuItem.Size = new System.Drawing.Size(261, 22);
-            this.addMaterialFromNewEffectToolStripMenuItem.Text = "Add Material From New Effect...";
-            // 
-            // contextMenuStripModel
-            // 
-            this.contextMenuStripModel.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.importToolStripMenuItem});
-            this.contextMenuStripModel.Name = "contextMenuStripModel";
-            this.contextMenuStripModel.Size = new System.Drawing.Size(126, 26);
-            // 
-            // importToolStripMenuItem
-            // 
-            this.importToolStripMenuItem.Name = "importToolStripMenuItem";
-            this.importToolStripMenuItem.Size = new System.Drawing.Size(125, 22);
-            this.importToolStripMenuItem.Text = "Import...";
-            // 
-            // contextMenuStripTexture
-            // 
-            this.contextMenuStripTexture.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.addTextureFromFileToolStripMenuItem});
-            this.contextMenuStripTexture.Name = "contextMenuStripTexture";
-            this.contextMenuStripTexture.Size = new System.Drawing.Size(214, 26);
-            // 
-            // addTextureFromFileToolStripMenuItem
-            // 
-            this.addTextureFromFileToolStripMenuItem.Name = "addTextureFromFileToolStripMenuItem";
-            this.addTextureFromFileToolStripMenuItem.Size = new System.Drawing.Size(213, 22);
-            this.addTextureFromFileToolStripMenuItem.Text = "Add Texture From File...";
-            // 
             // AssetsView
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(355, 706);
+            this.ClientSize = new System.Drawing.Size(355, 765);
             this.Controls.Add(this.treeViewAssets);
             this.Name = "AssetsView";
             this.TabText = "Assets";

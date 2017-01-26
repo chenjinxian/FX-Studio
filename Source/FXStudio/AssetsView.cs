@@ -32,17 +32,27 @@ namespace FXStudio
             foreach (XmlNode node in rootXml.ChildNodes)
             {
                 TreeNode treeNode = treeViewAssets.Nodes[node.Name];
-                foreach (XmlNode child in node.ChildNodes)
+                if (treeNode != null)
                 {
-                    if (treeNode != null)
+                    foreach (XmlNode child in node.ChildNodes)
+                    {
                         treeNode.Nodes.Add(new TreeNode(child.Attributes.GetNamedItem("name").Value));
+                    }
                 }
             }
         }
 
-        public void AddEffect(string effectXml)
+        public void AddEffect(string effectXmlString)
         {
+            XmlDocument effectDoc = new XmlDocument();
+            effectDoc.LoadXml(effectXmlString);
+            XmlElement effectXmlNode = effectDoc.DocumentElement;
 
+            TreeNode effectsTreeNode = treeViewAssets.Nodes["Effects"];
+            if (effectsTreeNode != null)
+            {
+                effectsTreeNode.Nodes.Add(new TreeNode(effectXmlNode.Attributes.GetNamedItem("name").Value));
+            }
         }
 
         private void AddTreeNode(TreeNode parentTree, XmlNode parentXml)

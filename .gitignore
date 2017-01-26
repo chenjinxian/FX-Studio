@@ -268,3 +268,5 @@ Bin/WizardControl.dll
 Lib/x64/DirectXTK.lib
 Bin/FXStudioCore.lib
 Bin/FXStudioCore.dll
+Bin/FXStudio.exe
+Lib/x64/Effects11.lib

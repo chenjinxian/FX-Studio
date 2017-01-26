@@ -15,7 +15,7 @@ HlslResourceExtraData::~HlslResourceExtraData()
 	SAFE_DELETE(m_pEffect);
 }
 
-bool FxEffectResourceLoader::VLoadResource(char *rawBuffer, uint32_t rawSize, shared_ptr<ResHandle> handle)
+bool FxSourceEffectResourceLoader::VLoadResource(char *rawBuffer, uint32_t rawSize, shared_ptr<ResHandle> handle)
 {
 	BaseGameApp::Renderer renderer = g_pApp->GetRendererType();
 	if (renderer == BaseGameApp::Renderer_D3D11)
@@ -33,17 +33,30 @@ bool FxEffectResourceLoader::VLoadResource(char *rawBuffer, uint32_t rawSize, sh
 	return false;
 }
 
-bool CsoEffectResourceLoader::VLoadResource(char *rawBuffer, uint32_t rawSize, shared_ptr<ResHandle> handle)
+bool FxObjectEffectResourceLoader::VLoadResource(char *rawBuffer, uint32_t rawSize, shared_ptr<ResHandle> handle)
 {
-	return true;
+	BaseGameApp::Renderer renderer = g_pApp->GetRendererType();
+	if (renderer == BaseGameApp::Renderer_D3D11)
+	{
+		shared_ptr<HlslResourceExtraData> extra = shared_ptr<HlslResourceExtraData>(DEBUG_NEW HlslResourceExtraData());
+
+		if (g_pApp->GetRendererAPI()->VCreateShaderFromMemory(rawBuffer, rawSize, extra))
+		{
+			handle->SetExtraData(extra);
+			return true;
+		}
+	}
+
+	DEBUG_ASSERT(0 && "Unsupported Renderer in TextureResourceLoader::VLoadResource");
+	return false;
 }
 
-shared_ptr<IResourceLoader> CreateFxEffectResourceLoader()
+shared_ptr<IResourceLoader> CreateFxSourceEffectResourceLoader()
 {
-	return shared_ptr<IResourceLoader>(DEBUG_NEW FxEffectResourceLoader());
+	return shared_ptr<IResourceLoader>(DEBUG_NEW FxSourceEffectResourceLoader());
 }
 
-shared_ptr<IResourceLoader> CreateCsoEffectResourceLoader()
+shared_ptr<IResourceLoader> CreateFxObjectEffectResourceLoader()
 {
-	return shared_ptr<IResourceLoader>(DEBUG_NEW CsoEffectResourceLoader());
+	return shared_ptr<IResourceLoader>(DEBUG_NEW FxObjectEffectResourceLoader());
 }

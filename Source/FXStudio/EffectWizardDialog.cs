@@ -33,6 +33,8 @@ namespace FXStudio
 
         public string MaterialName { get { return m_MaterialName; } set { m_MaterialName = value; } }
 
+        public bool IsEffectFromExist() { return radioButtonFile.Checked; }
+
         private void wizardForm_AfterSwitchPages(object sender, CristiPotlog.WizardControl.Wizard.AfterSwitchPagesEventArgs e)
         {
             WizardPage newPage = wizardForm.Pages[e.NewIndex];

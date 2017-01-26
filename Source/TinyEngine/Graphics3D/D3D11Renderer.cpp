@@ -764,6 +764,7 @@ bool D3D11Renderer::VCompileShaderFromMemory(const void* pBuffer, uint32_t lengh
 		char* errorMessage = (errorMessages != nullptr ? (char*)errorMessages->GetBufferPointer() : "D3DX11CompileEffectFromMemory() failed");
 		DEBUG_ERROR(errorMessage);
 		SAFE_RELEASE(errorMessages);
+		return false;
 	}
 
 	pShaderExtra->m_pEffect = DEBUG_NEW Effect(m_pDevice, pShaderExtra->m_pD3DX11Effect);
@@ -771,8 +772,28 @@ bool D3D11Renderer::VCompileShaderFromMemory(const void* pBuffer, uint32_t lengh
 	return true;
 }
 
-bool D3D11Renderer::VCreateShaderFromMemory(const void* pBuffer, uint32_t lenght, shared_ptr<IResourceExtraData> pExtraData)
+bool D3D11Renderer::VCreateShaderFromMemory(const void* pBuffer, uint32_t length, shared_ptr<IResourceExtraData> pExtraData)
 {
+	if (m_pDevice == nullptr && m_pDeviceContext == nullptr)
+	{
+		return false;
+	}
+
+	shared_ptr<HlslResourceExtraData> pShaderExtra = dynamic_pointer_cast<HlslResourceExtraData>(pExtraData);
+	if (pShaderExtra == nullptr)
+	{
+		return false;
+	}
+
+	HRESULT hr = D3DX11CreateEffectFromMemory(pBuffer, length, 0, m_pDevice, &pShaderExtra->m_pD3DX11Effect);
+	if (FAILED(hr))
+	{
+		DEBUG_ERROR("D3DX11CreateEffectFromMemory() failed.");
+		return false;
+	}
+
+	pShaderExtra->m_pEffect = DEBUG_NEW Effect(m_pDevice, pShaderExtra->m_pD3DX11Effect);
+
 	return true;
 }
 

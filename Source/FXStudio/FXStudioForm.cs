@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Xml;
@@ -420,12 +421,36 @@ namespace FXStudio
             EffectWizardDialog dialog = new EffectWizardDialog();
             if (dialog.ShowDialog() == DialogResult.OK)
             {
-                string destFileName = m_ProjectLocation + @"\Effects\" + Path.GetFileName(dialog.FileName);
-                if (destFileName != dialog.FileName)
-                    File.Copy(dialog.FileName, destFileName, true);
+                string sourceFileName = dialog.FileName;
+
+                if (!dialog.IsEffectFromExist())
+                {
+                    string destFileName = m_ProjectLocation + @"\Effects\" + Path.GetFileName(sourceFileName);
+                    if (destFileName != sourceFileName)
+                        File.Copy(sourceFileName, destFileName, true);
+                }
+                string destOjbect = m_ProjectLocation + @"\Effects\" + Path.GetFileNameWithoutExtension(sourceFileName) + ".fxo";
+                var processInfo = new ProcessStartInfo
+                {
+                    FileName = "fxc.exe",
+#if (Debug)
+                    Arguments = "/Od /Zi /T fx_5_0 /nologo /Fo \"" + destOjbect + "\" " + sourceFileName,
+#else
+                    Arguments = "/T fx_5_0 /nologo /Fo \"" + destOjbect + "\" " + sourceFileName,
+#endif
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true
+                };
+                using (var fxcProcess = Process.Start(processInfo))
+                {
+                    string compileInfo = fxcProcess.StandardOutput.ReadToEnd();
+                    string errorInfo = fxcProcess.StandardError.ReadToEnd();
+                    fxcProcess.WaitForExit();
+                }
 
                 IntPtr effectXml = IntPtr.Zero;
-                RenderMethods.AddEffect(@"Effects\" + Path.GetFileName(dialog.FileName), dialog.EffectName, dialog.MaterialName, ref effectXml);
+                RenderMethods.AddEffect(@"Effects\" + Path.GetFileName(destOjbect), dialog.EffectName, dialog.MaterialName, ref effectXml);
                 string xml = Marshal.PtrToStringAnsi(effectXml);
                 if (effectXml != null)
                     m_AssetsView.AddEffect(Marshal.PtrToStringAuto(effectXml));

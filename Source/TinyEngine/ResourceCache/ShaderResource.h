@@ -5,8 +5,8 @@
 class HlslResourceExtraData : public IResourceExtraData
 {
 	friend class D3D11Renderer;
-	friend class FxEffectResourceLoader;
-	friend class CsoEffectResourceLoader;
+	friend class FxSourceEffectResourceLoader;
+	friend class FxObjectEffectResourceLoader;
 
 public:
 	HlslResourceExtraData();
@@ -29,16 +29,16 @@ public:
 	virtual bool VLoadResource(char *rawBuffer, uint32_t rawSize, shared_ptr<ResHandle> handle) override { return true; }
 };
 
-class FxEffectResourceLoader : public ShaderResourceLoader
+class FxSourceEffectResourceLoader : public ShaderResourceLoader
 {
 public:
 	virtual std::string VGetPattern() override { return "*.fx"; }
 	virtual bool VLoadResource(char *rawBuffer, uint32_t rawSize, shared_ptr<ResHandle> handle) override;
 };
 
-class CsoEffectResourceLoader : public ShaderResourceLoader
+class FxObjectEffectResourceLoader : public ShaderResourceLoader
 {
 public:
-	virtual std::string VGetPattern() override { return "*.cso"; }
+	virtual std::string VGetPattern() override { return "*.fxo"; }
 	virtual bool VLoadResource(char *rawBuffer, uint32_t rawSize, shared_ptr<ResHandle> handle) override;
 };

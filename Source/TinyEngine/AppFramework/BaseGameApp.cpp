@@ -477,7 +477,8 @@ bool BaseGameApp::InitResource()
 		m_pResCache->RegisterLoader(CreateBmpResourceLoader());
 		m_pResCache->RegisterLoader(CreateTiffResourceLoader());
 		m_pResCache->RegisterLoader(CreateXmlResourceLoader());
-		m_pResCache->RegisterLoader(CreateFxEffectResourceLoader());
+		m_pResCache->RegisterLoader(CreateFxSourceEffectResourceLoader());
+		m_pResCache->RegisterLoader(CreateFxObjectEffectResourceLoader());
 	}
 
 	m_pResCache->Preload("*.dds", NULL);
@@ -486,6 +487,7 @@ bool BaseGameApp::InitResource()
 	m_pResCache->Preload("*.bmp", NULL);
 	m_pResCache->Preload("*.tiff", NULL);
 	m_pResCache->Preload("*.fx", NULL);
+	m_pResCache->Preload("*.fxo", NULL);
 	return true;
 }
 

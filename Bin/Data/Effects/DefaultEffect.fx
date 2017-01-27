@@ -26,19 +26,19 @@ cbuffer CBufferPerFrame
 	> = { 0.8f, 0.8f, 1.0f };
 
 	float Ks <
+		string UIName = "Specular Intensity";
 		string UIWidget = "slider";
 		float UIMin = 0.0;
 		float UIMax = 1.0;
 		float UIStep = 0.01;
-		string UIName = "Specular Intensity";
 	> = 0.5;
 
 	float SpecExpon : SpecularPower <
+		string UIName = "Specular Power";
 		string UIWidget = "slider";
 		float UIMin = 1.0;
 		float UIMax = 128.0;
 		float UIStep = 1.0;
-		string UIName = "Specular Power";
 	> = 30.0;
 }
 

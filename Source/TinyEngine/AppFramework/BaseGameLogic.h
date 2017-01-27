@@ -122,5 +122,9 @@ private:
 	bool CreateDefaultProject(const std::string& project, const std::string& defautAsset);
 	bool CreateDefaultAsset(const std::string& asset);
 	bool LoadAssets(const std::string& asset);
+	void AddVariableElement(
+		tinyxml2::XMLDocument& outDoc,
+		tinyxml2::XMLElement* pVariables,
+		const char* name, const char* value, std::vector<tinyxml2::XMLElement*> pAnnotations);
 };
 

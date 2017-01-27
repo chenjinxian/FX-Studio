@@ -119,7 +119,7 @@ char* Effect::GenerateXml()
 			for (auto annotation : variable->GetAnnotations())
 			{
 				tinyxml2::XMLElement* pChildAnnotation = outDoc.NewElement(annotation->GetAnnotationName().c_str());
-				pChildAnnotation->InsertEndChild(outDoc.NewText(annotation->GetAnnotationValue().c_str()));
+				pChildAnnotation->SetText(annotation->GetAnnotationValue().c_str());
 				pChildVariable->InsertEndChild(pChildAnnotation);
 			}
 

@@ -453,10 +453,24 @@ bool BaseGameLogic::CreateDefaultProject(const std::string& project, const std::
 	return Utility::WriteFileData(project, printer.CStr(), printer.CStrSize() - 1);
 }
 
+void BaseGameLogic::AddVariableElement(
+	tinyxml2::XMLDocument& outDoc,
+	tinyxml2::XMLElement* pVariables,
+	const char* name, const char* value, std::vector<tinyxml2::XMLElement*> pAnnotations)
+{
+	tinyxml2::XMLElement* pChildVariable = outDoc.NewElement("Variable");
+	pChildVariable->SetAttribute("name", name);
+	pChildVariable->SetAttribute("value", value);
+	for (auto annotation : pAnnotations)
+	{
+		pChildVariable->InsertEndChild(annotation);
+	}
+	pVariables->InsertEndChild(pChildVariable);
+}
+
 bool BaseGameLogic::CreateDefaultAsset(const std::string& asset)
 {
 	tinyxml2::XMLDocument outDoc;
-	outDoc.InsertFirstChild(outDoc.NewDeclaration());
 
 	tinyxml2::XMLElement* pRoot = outDoc.NewElement("Assets");
 	outDoc.InsertEndChild(pRoot);
@@ -469,23 +483,132 @@ bool BaseGameLogic::CreateDefaultAsset(const std::string& asset)
 	pRoot->InsertEndChild(pTextures);
 
 	tinyxml2::XMLElement* pChildEffect = outDoc.NewElement("Effect");
+	pChildEffect->SetAttribute("id", "DefaultEffect");
 	pChildEffect->SetAttribute("name", "DefaultEffect");
-	pChildEffect->InsertFirstChild(outDoc.NewText("Effects\\DefaultEffect.fx"));
-	pEffects->InsertFirstChild(pChildEffect);
+	pChildEffect->SetAttribute("url", "DefaultEffect.fx");
+	pEffects->InsertEndChild(pChildEffect);
 
+	tinyxml2::XMLElement* pTechniques = outDoc.NewElement("Techniques");
+	tinyxml2::XMLElement* pVariables = outDoc.NewElement("Variables");
+	pChildEffect->InsertEndChild(pTechniques);
+	pChildEffect->InsertEndChild(pVariables);
 
-// 	pChildMaterial->SetAttribute("name", "DefaultMaterial");
-// 	tinyxml2::XMLElement* pChildTechnique = outDoc.NewElement("Technique");
-// 	pChildTechnique->SetAttribute("name", "main11");
-// 	tinyxml2::XMLElement* pChildPass = outDoc.NewElement("Pass");
-// 	pChildPass->InsertFirstChild(outDoc.NewText("p0"));
-// 	pChildTechnique->InsertFirstChild(pChildPass);
-// 	pChildMaterial->InsertFirstChild(pChildTechnique);
+	tinyxml2::XMLElement* pChildTechnique = outDoc.NewElement("Technique");
+	pChildTechnique->SetAttribute("name", "main11");
+	tinyxml2::XMLElement* pChildPass = outDoc.NewElement("Pass");
+	pChildPass->InsertEndChild(outDoc.NewText("p0"));
+	pChildTechnique->InsertEndChild(pChildPass);
+	pTechniques->InsertEndChild(pChildTechnique);
 
-	tinyxml2::XMLElement* pChildTexture = outDoc.NewElement("Textures");
+	{
+		tinyxml2::XMLElement* pAnnotation = outDoc.NewElement("UIWidget");
+		pAnnotation->SetText("None");
+		std::vector<tinyxml2::XMLElement*> annotations;
+		annotations.push_back(pAnnotation);
+		AddVariableElement(outDoc, pVariables, "WorldITXf", "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0", annotations);
+	}
+
+	{
+		tinyxml2::XMLElement* pAnnotation = outDoc.NewElement("UIWidget");
+		pAnnotation->SetText("None");
+		std::vector<tinyxml2::XMLElement*> annotations;
+		annotations.push_back(pAnnotation);
+		AddVariableElement(outDoc, pVariables, "WvpXf", "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0", annotations);
+	}
+
+	{
+		tinyxml2::XMLElement* pAnnotation = outDoc.NewElement("UIWidget");
+		pAnnotation->SetText("None");
+		std::vector<tinyxml2::XMLElement*> annotations;
+		annotations.push_back(pAnnotation);
+		AddVariableElement(outDoc, pVariables, "WorldXf", "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0", annotations);
+	}
+
+	{
+		tinyxml2::XMLElement* pAnnotation = outDoc.NewElement("UIWidget");
+		pAnnotation->SetText("None");
+		std::vector<tinyxml2::XMLElement*> annotations;
+		annotations.push_back(pAnnotation);
+		AddVariableElement(outDoc, pVariables, "ViewIXf", "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0", annotations);
+	}
+
+	{
+		std::vector<tinyxml2::XMLElement*> annotations;
+		tinyxml2::XMLElement* pAnnotation1 = outDoc.NewElement("Object");
+		pAnnotation1->SetText("PointLight0");
+		tinyxml2::XMLElement* pAnnotation2 = outDoc.NewElement("Space");
+		pAnnotation2->SetText("World");
+		annotations.push_back(pAnnotation1);
+		annotations.push_back(pAnnotation2);
+		AddVariableElement(outDoc, pVariables, "LightPos", "10 10 -10", annotations);
+	}
+
+	{
+		std::vector<tinyxml2::XMLElement*> annotations;
+		tinyxml2::XMLElement* pAnnotation1 = outDoc.NewElement("UIName");
+		pAnnotation1->SetText("Ambient Lighting");
+		tinyxml2::XMLElement* pAnnotation2 = outDoc.NewElement("UIWidget");
+		pAnnotation2->SetText("Color");
+		annotations.push_back(pAnnotation1);
+		annotations.push_back(pAnnotation2);
+		AddVariableElement(outDoc, pVariables, "AmbiColor", "0.1 0.1 0.1", annotations);
+	}
+
+	{
+		std::vector<tinyxml2::XMLElement*> annotations;
+		tinyxml2::XMLElement* pAnnotation1 = outDoc.NewElement("UIName");
+		pAnnotation1->SetText("Surface Color");
+		tinyxml2::XMLElement* pAnnotation2 = outDoc.NewElement("UIWidget");
+		pAnnotation2->SetText("Color");
+		annotations.push_back(pAnnotation1);
+		annotations.push_back(pAnnotation2);
+		AddVariableElement(outDoc, pVariables, "SurfColor", "0.8 0.8 1", annotations);
+	}
+
+	{
+		std::vector<tinyxml2::XMLElement*> annotations;
+		tinyxml2::XMLElement* pAnnotation1 = outDoc.NewElement("UIName");
+		pAnnotation1->SetText("Specular Intensity");
+		tinyxml2::XMLElement* pAnnotation2 = outDoc.NewElement("UIWidget");
+		pAnnotation2->SetText("slider");
+		tinyxml2::XMLElement* pAnnotation3 = outDoc.NewElement("UIMin");
+		pAnnotation3->SetText("0");
+		tinyxml2::XMLElement* pAnnotation4 = outDoc.NewElement("UIMax");
+		pAnnotation4->SetText("1");
+		tinyxml2::XMLElement* pAnnotation5 = outDoc.NewElement("UIStep");
+		pAnnotation5->SetText("0.01");
+		annotations.push_back(pAnnotation1);
+		annotations.push_back(pAnnotation2);
+		annotations.push_back(pAnnotation3);
+		annotations.push_back(pAnnotation4);
+		annotations.push_back(pAnnotation5);
+		AddVariableElement(outDoc, pVariables, "Ks", "0.5", annotations);
+	}
+
+	{
+		std::vector<tinyxml2::XMLElement*> annotations;
+		tinyxml2::XMLElement* pAnnotation1 = outDoc.NewElement("UIName");
+		pAnnotation1->SetText("Specular Power");
+		tinyxml2::XMLElement* pAnnotation2 = outDoc.NewElement("UIWidget");
+		pAnnotation2->SetText("slider");
+		tinyxml2::XMLElement* pAnnotation3 = outDoc.NewElement("UIMin");
+		pAnnotation3->SetText("1");
+		tinyxml2::XMLElement* pAnnotation4 = outDoc.NewElement("UIMax");
+		pAnnotation4->SetText("128");
+		tinyxml2::XMLElement* pAnnotation5 = outDoc.NewElement("UIStep");
+		pAnnotation5->SetText("1");
+		annotations.push_back(pAnnotation1);
+		annotations.push_back(pAnnotation2);
+		annotations.push_back(pAnnotation3);
+		annotations.push_back(pAnnotation4);
+		annotations.push_back(pAnnotation5);
+		AddVariableElement(outDoc, pVariables, "SpecExpon", "30", annotations);
+	}
+
+	tinyxml2::XMLElement* pChildTexture = outDoc.NewElement("Texture");
 	pChildTexture->SetAttribute("name", "DefaultColor");
-	pChildTexture->InsertFirstChild(outDoc.NewText("Textures\\DefaultColor.dds"));
-	pTextures->InsertFirstChild(pChildTexture);
+	pChildTexture->InsertEndChild(outDoc.NewText("Textures\\DefaultColor.dds"));
+	pTextures->InsertEndChild(pChildTexture);
 
 	tinyxml2::XMLPrinter printer;
 	outDoc.Accept(&printer);

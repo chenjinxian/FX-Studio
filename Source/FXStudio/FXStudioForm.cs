@@ -435,9 +435,9 @@ namespace FXStudio
                 {
                     FileName = "fxc.exe",
 #if (Debug)
-                    Arguments = "/Od /Zi /T fx_5_0 /nologo /Fo \"" + destOjbect + "\" " + sourceFileName,
+                    Arguments = "/Od /Zi /T fx_5_0 /nologo /Fo \"" + destOjbect + "\" \"" + sourceFileName + "\"",
 #else
-                    Arguments = "/T fx_5_0 /nologo /Fo \"" + destOjbect + "\" " + sourceFileName,
+                    Arguments = "/T fx_5_0 /nologo /Fo \"" + destOjbect + "\" \"" + sourceFileName + "\"",
 #endif
                     UseShellExecute = false,
                     RedirectStandardOutput = true,

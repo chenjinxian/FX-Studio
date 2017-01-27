@@ -39,20 +39,20 @@
             this.contextMenuStripEffect = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.addEffectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addEffectFromFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.contextMenuStripMaterial = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.addMaterialToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.addMaterialFromFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.addMaterialFromNewEffectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStripModel = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.importToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStripTexture = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.addTextureFromFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.contextMenuStripMaterial = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.addMaterialToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.addMaterialFromFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.addMaterialFromNewEffectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.treeViewAssets = new System.Windows.Forms.TreeView();
             this.contextMenuStripAnimation.SuspendLayout();
             this.contextMenuStripEffect.SuspendLayout();
-            this.contextMenuStripMaterial.SuspendLayout();
             this.contextMenuStripModel.SuspendLayout();
             this.contextMenuStripTexture.SuspendLayout();
+            this.contextMenuStripMaterial.SuspendLayout();
             this.SuspendLayout();
             // 
             // contextMenuStripAnimation
@@ -95,6 +95,32 @@
             this.addEffectFromFileToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
             this.addEffectFromFileToolStripMenuItem.Text = "Add Effect From File";
             // 
+            // contextMenuStripModel
+            // 
+            this.contextMenuStripModel.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.importToolStripMenuItem});
+            this.contextMenuStripModel.Name = "contextMenuStripModel";
+            this.contextMenuStripModel.Size = new System.Drawing.Size(120, 26);
+            // 
+            // importToolStripMenuItem
+            // 
+            this.importToolStripMenuItem.Name = "importToolStripMenuItem";
+            this.importToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
+            this.importToolStripMenuItem.Text = "Import...";
+            // 
+            // contextMenuStripTexture
+            // 
+            this.contextMenuStripTexture.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.addTextureFromFileToolStripMenuItem});
+            this.contextMenuStripTexture.Name = "contextMenuStripTexture";
+            this.contextMenuStripTexture.Size = new System.Drawing.Size(199, 26);
+            // 
+            // addTextureFromFileToolStripMenuItem
+            // 
+            this.addTextureFromFileToolStripMenuItem.Name = "addTextureFromFileToolStripMenuItem";
+            this.addTextureFromFileToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
+            this.addTextureFromFileToolStripMenuItem.Text = "Add Texture From File...";
+            // 
             // contextMenuStripMaterial
             // 
             this.contextMenuStripMaterial.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -122,32 +148,6 @@
             this.addMaterialFromNewEffectToolStripMenuItem.Size = new System.Drawing.Size(242, 22);
             this.addMaterialFromNewEffectToolStripMenuItem.Text = "Add Material From New Effect...";
             // 
-            // contextMenuStripModel
-            // 
-            this.contextMenuStripModel.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.importToolStripMenuItem});
-            this.contextMenuStripModel.Name = "contextMenuStripModel";
-            this.contextMenuStripModel.Size = new System.Drawing.Size(120, 26);
-            // 
-            // importToolStripMenuItem
-            // 
-            this.importToolStripMenuItem.Name = "importToolStripMenuItem";
-            this.importToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
-            this.importToolStripMenuItem.Text = "Import...";
-            // 
-            // contextMenuStripTexture
-            // 
-            this.contextMenuStripTexture.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.addTextureFromFileToolStripMenuItem});
-            this.contextMenuStripTexture.Name = "contextMenuStripTexture";
-            this.contextMenuStripTexture.Size = new System.Drawing.Size(199, 26);
-            // 
-            // addTextureFromFileToolStripMenuItem
-            // 
-            this.addTextureFromFileToolStripMenuItem.Name = "addTextureFromFileToolStripMenuItem";
-            this.addTextureFromFileToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
-            this.addTextureFromFileToolStripMenuItem.Text = "Add Texture From File...";
-            // 
             // treeViewAssets
             // 
             this.treeViewAssets.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -173,6 +173,8 @@
             treeNode4});
             this.treeViewAssets.Size = new System.Drawing.Size(355, 765);
             this.treeViewAssets.TabIndex = 0;
+            this.treeViewAssets.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeViewAssets_AfterSelect);
+            this.treeViewAssets.VisibleChanged += new System.EventHandler(this.treeViewAssets_VisibleChanged);
             this.treeViewAssets.MouseDown += new System.Windows.Forms.MouseEventHandler(this.treeViewAssets_MouseDown);
             this.treeViewAssets.MouseUp += new System.Windows.Forms.MouseEventHandler(this.treeViewAssets_MouseUp);
             // 
@@ -187,9 +189,9 @@
             this.Text = "AssetsView";
             this.contextMenuStripAnimation.ResumeLayout(false);
             this.contextMenuStripEffect.ResumeLayout(false);
-            this.contextMenuStripMaterial.ResumeLayout(false);
             this.contextMenuStripModel.ResumeLayout(false);
             this.contextMenuStripTexture.ResumeLayout(false);
+            this.contextMenuStripMaterial.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }

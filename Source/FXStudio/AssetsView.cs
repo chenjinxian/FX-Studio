@@ -14,17 +14,22 @@ namespace FXStudio
 {
     public partial class AssetsView : ViewWindow
     {
+        private UpdatePropertiesDelegate m_NodeDelegate = null;
+
         public AssetsView()
         {
             InitializeComponent();
         }
 
-        public void UpdateAssets(string assetFile)
+        public void UpdateAssets(string assetFile, UpdatePropertiesDelegate updateProps)
         {
             if (!File.Exists(assetFile))
             {
                 return;
             }
+
+            m_NodeDelegate = updateProps;
+
             XmlDocument doc = new XmlDocument();
             doc.Load(assetFile);
             XmlElement rootXml = doc.DocumentElement;
@@ -34,9 +39,19 @@ namespace FXStudio
                 TreeNode treeNode = treeViewAssets.Nodes[node.Name];
                 if (treeNode != null)
                 {
+                    treeNode.Tag = node;
                     foreach (XmlNode child in node.ChildNodes)
                     {
-                        treeNode.Nodes.Add(new TreeNode(child.Attributes.GetNamedItem("name").Value));
+                        if (node.Name == "Effects")
+                        {
+                            AddEffect(treeNode, child);
+                        }
+                        else
+                        {
+                            XmlNode nameNode = child.Attributes["name"];
+                            if (nameNode != null)
+                                treeNode.Nodes.Add(new TreeNode(nameNode.Value) { Tag = child });
+                        }
                     }
                 }
             }
@@ -51,13 +66,30 @@ namespace FXStudio
             TreeNode effectsTreeNode = treeViewAssets.Nodes["Effects"];
             if (effectsTreeNode != null)
             {
-                effectsTreeNode.Nodes.Add(new TreeNode(effectXmlNode.Attributes.GetNamedItem("name").Value));
+                AddEffect(effectsTreeNode, effectXmlNode);
             }
         }
 
-        private void AddTreeNode(TreeNode parentTree, XmlNode parentXml)
+        private void AddEffect(TreeNode treeNode, XmlNode effectNode)
         {
+            XmlNode nameNode = effectNode.Attributes["name"];
+            if (nameNode != null)
+            {
+                TreeNode effectRoot = new TreeNode(nameNode.Value) { Tag = effectNode };
+                treeNode.Nodes.Add(effectRoot);
 
+                XmlNode urlNode = effectNode.Attributes["url"];
+                effectRoot.Nodes.Add(new TreeNode(urlNode.Value) { Tag = urlNode });
+
+                XmlNode techniqueRoot = effectNode.SelectSingleNode("Techniques");
+                TreeNode apiNode = new TreeNode("Direct3D11") { Tag = techniqueRoot };
+                effectRoot.Nodes.Add(apiNode);
+
+                foreach (XmlNode techniqueChild in techniqueRoot)
+                {
+                    apiNode.Nodes.Add(new TreeNode(techniqueChild.Attributes["name"].Value) { Tag = techniqueChild });
+                }
+            }
         }
 
         private void treeViewAssets_MouseDown(object sender, MouseEventArgs e)
@@ -74,6 +106,27 @@ namespace FXStudio
 
         private void treeViewAssets_MouseUp(object sender, MouseEventArgs e)
         {
+        }
+
+        private void treeViewAssets_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            XmlNode element = (XmlNode)e.Node.Tag;
+            if (element != null && m_NodeDelegate != null)
+            {
+                m_NodeDelegate(element);
+            }
+        }
+
+        private void treeViewAssets_VisibleChanged(object sender, EventArgs e)
+        {
+            if (treeViewAssets.SelectedNode != null)
+            {
+                XmlNode element = (XmlNode)treeViewAssets.SelectedNode.Tag;
+                if (element != null && m_NodeDelegate != null)
+                {
+                    m_NodeDelegate(element);
+                }
+            }
         }
     }
 }

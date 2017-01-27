@@ -41,6 +41,7 @@
             this.treeViewProject.Size = new System.Drawing.Size(381, 948);
             this.treeViewProject.TabIndex = 0;
             this.treeViewProject.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeViewProject_AfterSelect);
+            this.treeViewProject.VisibleChanged += new System.EventHandler(this.treeViewProject_VisibleChanged);
             // 
             // ProjectView
             // 

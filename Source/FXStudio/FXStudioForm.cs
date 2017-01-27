@@ -52,9 +52,6 @@ namespace FXStudio
             if (panel != null)
             {
                 m_messageHandler = new MessageHandler(this, m_renderView.GetRenderPanel());
-
-                //                 IntPtr hInstance = Marshal.GetHINSTANCE(this.GetType().Module);
-                //                 RenderMethods.CreateInstance(hInstance, IntPtr.Zero, panel.Handle, 1, panel.Width, panel.Height);
             }
         }
 
@@ -80,16 +77,16 @@ namespace FXStudio
             m_ProjectLocation = Path.GetDirectoryName(project);
 
             string assetFile = string.Empty;
-            m_ProjectView.UpdateProject(project, ref assetFile, UpdatePropertiesView);
+            m_ProjectView.UpdateProject(project, ref assetFile, UpdateProjectPropertiesView);
             if (string.Empty != assetFile)
-                m_AssetsView.UpdateAssets(m_ProjectLocation + @"\" + assetFile);
+                m_AssetsView.UpdateAssets(m_ProjectLocation + @"\" + assetFile, m_propertiesView.UpdateAssetProperties);
 
             EnableControlView(true);
         }
 
-        private void UpdatePropertiesView(XmlNode selectedNode)
+        private void UpdateProjectPropertiesView(XmlNode selectedNode)
         {
-            if (m_propertiesView.UpdateProperties(selectedNode))
+            if (m_propertiesView.UpdateProjectProperties(selectedNode))
             {
                 int selectAcotrId = m_ProjectView.GetSelectActor();
                 if (selectAcotrId > 2)

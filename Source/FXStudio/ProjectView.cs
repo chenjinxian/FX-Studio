@@ -68,7 +68,7 @@ namespace FXStudio
             }
 
             treeViewProject.Nodes.Add(rootTree);
-            treeViewProject.SelectedNode = treeViewProject.Nodes[0];
+            treeViewProject.SelectedNode = m_SceneNode;
             treeViewProject.EndUpdate();
             treeViewProject.ExpandAll();
         }
@@ -90,7 +90,7 @@ namespace FXStudio
             }
             else
             {
-                treeViewProject.SelectedNode = treeViewProject.Nodes[0];
+                treeViewProject.SelectedNode = m_SceneNode;
             }
         }
 
@@ -124,6 +124,18 @@ namespace FXStudio
             if (element != null && m_NodeDelegate != null)
             {
                 m_NodeDelegate(element);
+            }
+        }
+
+        private void treeViewProject_VisibleChanged(object sender, EventArgs e)
+        {
+            if (treeViewProject.SelectedNode != null)
+            {
+                XmlNode element = (XmlNode)treeViewProject.SelectedNode.Tag;
+                if (element != null && m_NodeDelegate != null)
+                {
+                    m_NodeDelegate(element);
+                }
             }
         }
     }

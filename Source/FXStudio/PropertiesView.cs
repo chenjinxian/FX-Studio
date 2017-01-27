@@ -22,7 +22,33 @@ namespace FXStudio
             InitializeComponent();
         }
 
-        public bool UpdateProperties(XmlNode selectedNode)
+        public void UpdateAssetProperties(XmlNode selectedNode)
+        {
+            inspectorComponent.ItemsClear();
+
+            string nodeName = selectedNode.Name;
+            if (nodeName == "Effect")
+            {
+
+            }
+            else if (nodeName == "Model")
+            {
+
+            }
+            else if (nodeName == "Texture")
+            {
+                Inspector.CategoryItem category = new Inspector.CategoryItem("Image Properties");
+                inspectorComponent.CategoryAdd("ImageProperties", category);
+
+                string textureName = selectedNode.Attributes["name"].Value;
+                Inspector.StringItem nameItem = new Inspector.StringItem(textureName, selectedNode.InnerText);
+                inspectorComponent.ItemAdd("ImageProperties", textureName, nameItem);
+            }
+
+            inspectorComponent.UpdateControl();
+        }
+
+        public bool UpdateProjectProperties(XmlNode selectedNode)
         {
             inspectorComponent.ItemsClear();
 

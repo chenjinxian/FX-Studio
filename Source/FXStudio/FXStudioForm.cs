@@ -424,7 +424,10 @@ namespace FXStudio
                 {
                     string destFileName = m_ProjectLocation + @"\Effects\" + Path.GetFileName(sourceFileName);
                     if (destFileName != sourceFileName)
+                    {
                         File.Copy(sourceFileName, destFileName, true);
+                        sourceFileName = destFileName;
+                    }
                 }
 
                 string destOjbect = m_ProjectLocation + @"\Effects\" + Path.GetFileNameWithoutExtension(sourceFileName) + ".fxo";
@@ -448,7 +451,7 @@ namespace FXStudio
                 IntPtr effectXml = IntPtr.Zero;
                 if (errorInfo == string.Empty)
                 {
-                    RenderMethods.AddEffect(@"Effects\" + Path.GetFileName(destOjbect), dialog.EffectName, dialog.MaterialName, ref effectXml);
+                    RenderMethods.AddEffect(@"Effects\" + Path.GetFileName(destOjbect), sourceFileName, dialog.EffectName, ref effectXml);
                 }
                 m_AssetsView.AddEffect(Marshal.PtrToStringAnsi(effectXml));
             }

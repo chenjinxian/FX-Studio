@@ -483,9 +483,9 @@ bool BaseGameLogic::CreateDefaultAsset(const std::string& asset)
 	pRoot->InsertEndChild(pTextures);
 
 	tinyxml2::XMLElement* pChildEffect = outDoc.NewElement("Effect");
-	pChildEffect->SetAttribute("id", "DefaultEffect");
 	pChildEffect->SetAttribute("name", "DefaultEffect");
-	pChildEffect->SetAttribute("url", "DefaultEffect.fx");
+	pChildEffect->SetAttribute("object", "DefaultEffect.fx");
+	pChildEffect->SetAttribute("source", "DefaultEffect.fx");
 	pEffects->InsertEndChild(pChildEffect);
 
 	tinyxml2::XMLElement* pTechniques = outDoc.NewElement("Techniques");

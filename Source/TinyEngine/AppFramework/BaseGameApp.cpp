@@ -533,9 +533,9 @@ void BaseGameApp::OnRenderFrame()
 	OnUpdate(m_GameTime);
 }
 
-char* BaseGameApp::AddEffect(const std::string& effectPath)
+char* BaseGameApp::AddEffect(const std::string& effectObjectPath, const std::string& effectSourcePath, const std::string& effectName)
 {
-	Resource effectRes(effectPath);
+	Resource effectRes(effectObjectPath);
 	shared_ptr<ResHandle> pEffectResHandle = g_pApp->GetResCache()->GetHandle(&effectRes);
 	if (pEffectResHandle != nullptr)
 	{
@@ -543,7 +543,7 @@ char* BaseGameApp::AddEffect(const std::string& effectPath)
 		if (extra != nullptr)
 		{
 			Effect* pEffect = extra->GetEffect();
-			return pEffect->GenerateXml();
+			return pEffect->GenerateXml(effectObjectPath, effectSourcePath, effectName);
 		}
 	}
 

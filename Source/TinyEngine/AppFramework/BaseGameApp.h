@@ -37,7 +37,7 @@ public:
 	void OnRenderFrame();
 	void OnClose();
 
-	char* AddEffect(const std::string& effectPath);
+	char* AddEffect(const std::string& effectObjectPath, const std::string& effectSourcePath, const std::string& effectName);
 
 	BaseGameLogic* GetGameLogic(void) const { return m_pGameLogic; }
 	GameConfig& GetGameConfig() { return m_Config; }

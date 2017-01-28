@@ -59,6 +59,9 @@ namespace FXStudio
 
         public void AddEffect(string effectXmlString)
         {
+            if (string.IsNullOrEmpty(effectXmlString))
+                return;
+
             XmlDocument effectDoc = new XmlDocument();
             effectDoc.LoadXml(effectXmlString);
             XmlElement effectXmlNode = effectDoc.DocumentElement;
@@ -78,7 +81,7 @@ namespace FXStudio
                 TreeNode effectRoot = new TreeNode(nameNode.Value) { Tag = effectNode };
                 treeNode.Nodes.Add(effectRoot);
 
-                XmlNode urlNode = effectNode.Attributes["url"];
+                XmlNode urlNode = effectNode.Attributes["source"];
                 effectRoot.Nodes.Add(new TreeNode(urlNode.Value) { Tag = urlNode });
 
                 XmlNode techniqueRoot = effectNode.SelectSingleNode("Techniques");

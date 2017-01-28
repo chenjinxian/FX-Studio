@@ -21,7 +21,7 @@ public:
 	const std::vector<Variable*>& GetVariables() const;
 	const std::map<std::string, Variable*>& GetVariablesByName() const;
 
-	char* GenerateXml();
+	char* GenerateXml(const std::string& effectObjectPath, const std::string& effectSourcePath, const std::string& effectName);
 
 private:
 	std::vector<Technique*> m_Techniques;

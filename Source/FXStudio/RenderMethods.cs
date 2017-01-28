@@ -61,9 +61,9 @@ namespace FXStudio
 
         [DllImport(editorDllName, CallingConvention = CallingConvention.Cdecl)]
         public static extern void AddEffect(
-            [MarshalAs(UnmanagedType.BStr)] string effectPath,
+            [MarshalAs(UnmanagedType.BStr)] string effectObjectPath,
+            [MarshalAs(UnmanagedType.BStr)] string effectSourcePath,
             [MarshalAs(UnmanagedType.BStr)] string effectName,
-            [MarshalAs(UnmanagedType.BStr)] string MaterialName,
             ref IntPtr effectXmlPtr);
     }
 }

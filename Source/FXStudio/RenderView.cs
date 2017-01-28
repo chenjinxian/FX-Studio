@@ -10,16 +10,23 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
+using System.Xml;
 
 namespace FXStudio
 {
     public partial class RenderView : ViewWindow
     {
+        private ModifyEffectDelegate m_ModifyDelegate = null;
         private ToolStripButton[] m_TransformButtons;
 
         public RenderView()
         {
             InitializeComponent();
+        }
+
+        public void SetModifyEffectDelegate(ModifyEffectDelegate modifyDelegate)
+        {
+            m_ModifyDelegate = modifyDelegate;
         }
 
         public Panel GetRenderPanel()
@@ -70,17 +77,31 @@ namespace FXStudio
 
         private void panelRender_DragDrop(object sender, DragEventArgs e)
         {
-
+            TreeNode effectNode = (TreeNode)e.Data.GetData(typeof(TreeNode).ToString(), false);
+            if (effectNode != null)
+            {
+                XmlNode element = (XmlNode)effectNode.Tag;
+                if (element != null && m_ModifyDelegate != null)
+                {
+                    Point targetPoint = panelRender.PointToClient(new Point(e.X, e.Y));
+                    uint actorId = RenderMethods.GetPickedActor(targetPoint.X, targetPoint.Y);
+                    m_ModifyDelegate(element, actorId);
+                }
+            }
         }
 
         private void panelRender_DragOver(object sender, DragEventArgs e)
         {
-            Point targetPoint = panelRender.PointToClient(new Point(e.X, e.Y));
-            uint actorId = RenderMethods.GetPickedActor(targetPoint.X, targetPoint.Y);
-            if (actorId != 0)
-                e.Effect = DragDropEffects.Copy;
-            else
-                e.Effect = DragDropEffects.None;
+            string[] formats = e.Data.GetFormats();
+            if (formats.Contains(typeof(TreeNode).ToString()))
+            {
+                Point targetPoint = panelRender.PointToClient(new Point(e.X, e.Y));
+                uint actorId = RenderMethods.GetPickedActor(targetPoint.X, targetPoint.Y);
+                if (actorId != 0)
+                    e.Effect = DragDropEffects.Copy;
+                else
+                    e.Effect = DragDropEffects.None;
+            }
         }
     }
 }

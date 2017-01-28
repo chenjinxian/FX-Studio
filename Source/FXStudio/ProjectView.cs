@@ -12,8 +12,6 @@ using System.Xml;
 
 namespace FXStudio
 {
-    public delegate void UpdatePropertiesDelegate(XmlNode selectedNode);
-
     public partial class ProjectView : ViewWindow
     {
         private UpdatePropertiesDelegate m_NodeDelegate = null;
@@ -92,9 +90,14 @@ namespace FXStudio
             }
         }
 
-        public int GetSelectActor()
+        public int GetSelectActorId()
         {
             return treeViewProject.SelectedNode.Index + 1;
+        }
+
+        public XmlNode GetSelectActorXml()
+        {
+            return (XmlNode)treeViewProject.SelectedNode.Tag;
         }
 
         private XmlNode CreateProjectXmlNode(XmlNode node, string projectLocation)

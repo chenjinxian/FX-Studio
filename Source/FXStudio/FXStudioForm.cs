@@ -16,6 +16,10 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace FXStudio
 {
+    public delegate void UpdatePropertiesDelegate(XmlNode selectedNode);
+    public delegate void ModifyEffectDelegate(XmlNode effectNode, uint actorId);
+    public delegate void ModifyActorDelegate(XmlNode actorNode);
+
     public partial class FXStudioForm : Form
     {
         private MessageHandler m_messageHandler;
@@ -77,25 +81,66 @@ namespace FXStudio
             m_ProjectLocation = Path.GetDirectoryName(project);
 
             string assetFile = string.Empty;
-            m_ProjectView.UpdateProject(project, ref assetFile, UpdateProjectPropertiesView);
+            m_ProjectView.UpdateProject(project, ref assetFile, selectedNode =>
+            {
+                if (m_propertiesView.UpdateProjectProperties(selectedNode))
+                {
+                    int selectAcotrId = m_ProjectView.GetSelectActorId();
+                    if (selectAcotrId > 2)
+                        RenderMethods.SetPickedActor((uint)selectAcotrId);
+                    else
+                        RenderMethods.SetPickedActor(0);
+                }
+                else
+                    RenderMethods.SetPickedActor(0);
+            });
+
             if (string.Empty != assetFile)
                 m_AssetsView.UpdateAssets(m_ProjectLocation + @"\" + assetFile, m_propertiesView.UpdateAssetProperties);
 
-            EnableControlView(true);
-        }
-
-        private void UpdateProjectPropertiesView(XmlNode selectedNode)
-        {
-            if (m_propertiesView.UpdateProjectProperties(selectedNode))
+            m_renderView.SetModifyEffectDelegate((effectNode, actorId) =>
             {
-                int selectAcotrId = m_ProjectView.GetSelectActor();
-                if (selectAcotrId > 2)
-                    RenderMethods.SetPickedActor((uint)selectAcotrId);
-                else
-                    RenderMethods.SetPickedActor(0);
-            }
-            else
-                RenderMethods.SetPickedActor(0);
+                m_ProjectView.SelectActorNode(actorId);
+                XmlNode actorNode = m_ProjectView.GetSelectActorXml();
+
+                XmlDocument xmlDoc = new XmlDocument();
+                XmlElement xmlActor = xmlDoc.CreateElement("Actor");
+
+                xmlActor.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "id", actorId.ToString()));
+
+                XmlElement renderComponent = null;
+                string nodeType = actorNode.Attributes["type"].Value;
+                if (nodeType == "Model")
+                {
+                    renderComponent = xmlDoc.CreateElement("ModelRenderComponent");
+                }
+                else if (nodeType == "Cube")
+                {
+                    renderComponent = xmlDoc.CreateElement("CubeRenderComponent");
+                }
+                else if (nodeType == "Sphere")
+                {
+                    renderComponent = xmlDoc.CreateElement("SphereRenderComponent");
+                }
+                else if (nodeType == "Cylinder")
+                {
+                    renderComponent = xmlDoc.CreateElement("CylinderRenderComponent");
+                }
+                else if (nodeType == "Teapot")
+                {
+                    renderComponent = xmlDoc.CreateElement("TeapotRenderComponent");
+                }
+
+                XmlElement effect = xmlDoc.CreateElement("Effect");
+                renderComponent.AppendChild(effect);
+                effect.InnerText = effectNode.Attributes["object"].Value;
+                effect.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "technique", "main11"));
+                effect.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "pass", "p0"));
+                xmlActor.AppendChild(renderComponent);
+
+                RenderMethods.ModifyActor(xmlActor.OuterXml);
+            });
+            EnableControlView(true);
         }
 
         private void EnableControlView(bool enable)
@@ -317,7 +362,7 @@ namespace FXStudio
         private void toolStripButtonTeapot_Click(object sender, EventArgs e)
         {
             XmlDocument xmlDoc = new XmlDocument();
-            XmlElement geometryElement = xmlDoc.CreateElement("Geometry");
+            XmlElement geometryElement = xmlDoc.CreateElement("Teapot");
 
             geometryElement.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "type", "Teapot"));
             geometryElement.AppendChild(XmlUtility.CreateTransformComponent(xmlDoc, "0", "0.5"));
@@ -332,7 +377,7 @@ namespace FXStudio
         private void toolStripButtonCube_Click(object sender, EventArgs e)
         {
             XmlDocument xmlDoc = new XmlDocument();
-            XmlElement geometryElement = xmlDoc.CreateElement("Geometry");
+            XmlElement geometryElement = xmlDoc.CreateElement("Cube");
 
             geometryElement.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "type", "Cube"));
             geometryElement.AppendChild(XmlUtility.CreateTransformComponent(xmlDoc, "-2", "0.5"));
@@ -347,7 +392,7 @@ namespace FXStudio
         private void toolStripButtonSphere_Click(object sender, EventArgs e)
         {
             XmlDocument xmlDoc = new XmlDocument();
-            XmlElement geometryElement = xmlDoc.CreateElement("Geometry");
+            XmlElement geometryElement = xmlDoc.CreateElement("Sphere");
 
             geometryElement.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "type", "Sphere"));
             geometryElement.AppendChild(XmlUtility.CreateTransformComponent(xmlDoc));
@@ -362,7 +407,7 @@ namespace FXStudio
         private void toolStripButtonCylinder_Click(object sender, EventArgs e)
         {
             XmlDocument xmlDoc = new XmlDocument();
-            XmlElement geometryElement = xmlDoc.CreateElement("Geometry");
+            XmlElement geometryElement = xmlDoc.CreateElement("Cylinder");
 
             geometryElement.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "type", "Cylinder"));
             geometryElement.AppendChild(XmlUtility.CreateTransformComponent(xmlDoc, "2", "0.5"));

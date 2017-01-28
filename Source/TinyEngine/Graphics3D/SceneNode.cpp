@@ -429,6 +429,45 @@ GeometryNode::GeometryNode(ActorType actorType, ActorId actorId, WeakBaseRenderC
 	m_pIndexBuffer(nullptr),
 	m_Mesh(nullptr)
 {
+	if (actorType == m_Cube)
+	{
+		CreateCube();
+	}
+	if (actorType == m_Sphere)
+	{
+		CreateSphere();
+	}
+	else if (actorType == m_Cylinder)
+	{
+		CreateCylinder();
+	}
+	else if (actorType == m_Teapot)
+	{
+		CreateTeapot();
+	}
+	else if (actorType == m_Plane)
+	{
+		CreatePlane();
+	}
+	else
+	{
+
+	}
+
+	SetBoundingBox(m_Mesh->GetVertices());
+}
+
+GeometryNode::~GeometryNode()
+{
+	SAFE_RELEASE(m_pVertexBuffer);
+	SAFE_RELEASE(m_pIndexBuffer);
+}
+
+HRESULT GeometryNode::VOnInitSceneNode(Scene* pScene)
+{
+	SAFE_RELEASE(m_pVertexBuffer);
+	SAFE_RELEASE(m_pIndexBuffer);
+
 	GeometryRenderComponent* pGeometryRender = static_cast<GeometryRenderComponent*>(m_pRenderComponent);
 	if (pGeometryRender != nullptr)
 	{
@@ -465,46 +504,9 @@ GeometryNode::GeometryNode(ActorType actorType, ActorId actorId, WeakBaseRenderC
 		DEBUG_ERROR("technique is not exist: " + m_CurrentTechnique);
 	}
 
-	if (actorType == m_Cube)
-	{
-		CreateCube();
-	}
-	if (actorType == m_Sphere)
-	{
-		CreateSphere();
-	}
-	else if (actorType == m_Cylinder)
-	{
-		CreateCylinder();
-	}
-	else if (actorType == m_Teapot)
-	{
-		CreateTeapot();
-	}
-	else if (actorType == m_Plane)
-	{
-		CreatePlane();
-	}
-	else
-	{
-
-	}
-
-
 	m_pCurrentPass->CreateVertexBuffer(m_Mesh.get(), &m_pVertexBuffer);
 	m_pCurrentPass->CreateIndexBuffer(m_Mesh.get(), &m_pIndexBuffer);
 
-	SetBoundingBox(m_Mesh->GetVertices());
-}
-
-GeometryNode::~GeometryNode()
-{
-	SAFE_RELEASE(m_pVertexBuffer);
-	SAFE_RELEASE(m_pIndexBuffer);
-}
-
-HRESULT GeometryNode::VOnInitSceneNode(Scene* pScene)
-{
 	return S_OK;
 }
 

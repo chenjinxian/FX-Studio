@@ -15,8 +15,6 @@ namespace FXStudio
 {
     public partial class PropertiesView : ViewWindow
     {
-        int m_SelectedActorId;
-
         public PropertiesView()
         {
             InitializeComponent();

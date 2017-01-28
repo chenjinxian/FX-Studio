@@ -16,8 +16,6 @@ namespace FXStudio
 
     public partial class ProjectView : ViewWindow
     {
-        private const uint INVALID_ACTOR_ID = 0;
-
         private UpdatePropertiesDelegate m_NodeDelegate = null;
         private TreeNode m_SceneNode = null;
 
@@ -84,7 +82,7 @@ namespace FXStudio
 
         public void SelectActorNode(uint actorId)
         {
-            if (INVALID_ACTOR_ID != actorId)
+            if (actorId != 0)
             {
                 treeViewProject.SelectedNode = m_SceneNode.Nodes[(int)(actorId - 1)];
             }

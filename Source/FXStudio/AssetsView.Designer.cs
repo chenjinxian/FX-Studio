@@ -150,6 +150,7 @@
             // 
             // treeViewAssets
             // 
+            this.treeViewAssets.AllowDrop = true;
             this.treeViewAssets.Dock = System.Windows.Forms.DockStyle.Fill;
             this.treeViewAssets.Font = new System.Drawing.Font("Microsoft YaHei UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.treeViewAssets.Location = new System.Drawing.Point(0, 0);
@@ -173,8 +174,12 @@
             treeNode4});
             this.treeViewAssets.Size = new System.Drawing.Size(355, 765);
             this.treeViewAssets.TabIndex = 0;
+            this.treeViewAssets.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.treeViewAssets_ItemDrag);
             this.treeViewAssets.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeViewAssets_AfterSelect);
             this.treeViewAssets.VisibleChanged += new System.EventHandler(this.treeViewAssets_VisibleChanged);
+            this.treeViewAssets.DragDrop += new System.Windows.Forms.DragEventHandler(this.treeViewAssets_DragDrop);
+            this.treeViewAssets.DragEnter += new System.Windows.Forms.DragEventHandler(this.treeViewAssets_DragEnter);
+            this.treeViewAssets.DragOver += new System.Windows.Forms.DragEventHandler(this.treeViewAssets_DragOver);
             this.treeViewAssets.MouseDown += new System.Windows.Forms.MouseEventHandler(this.treeViewAssets_MouseDown);
             this.treeViewAssets.MouseUp += new System.Windows.Forms.MouseEventHandler(this.treeViewAssets_MouseUp);
             // 

@@ -144,7 +144,20 @@ void Scene::NewRenderComponentDelegate(IEventDataPtr pEventData)
 
 void Scene::ModifiedRenderComponentDelegate(IEventDataPtr pEventData)
 {
+	shared_ptr<EvtData_Modified_Render_Component> pCastEventData = static_pointer_cast<EvtData_Modified_Render_Component>(pEventData);
 
+	ActorId actorId = pCastEventData->GetActorId();
+	if (actorId == INVALID_ACTOR_ID)
+	{
+		DEBUG_ERROR("Scene::ModifiedRenderComponentDelegate - unknown actor id!");
+		return;
+	}
+
+	shared_ptr<ISceneNode> pSceneNode = FindActor(actorId);
+	if (pSceneNode == nullptr || FAILED(pSceneNode->VOnInitSceneNode(this)))
+	{
+		DEBUG_ERROR("Failed to restore scene node to the scene for actorid ");
+	}
 }
 
 void Scene::DestroyActorDelegate(IEventDataPtr pEventData)

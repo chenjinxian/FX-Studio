@@ -174,11 +174,15 @@
             // 
             // panelRender
             // 
+            this.panelRender.AllowDrop = true;
             this.panelRender.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelRender.Location = new System.Drawing.Point(0, 25);
             this.panelRender.Name = "panelRender";
             this.panelRender.Size = new System.Drawing.Size(756, 569);
             this.panelRender.TabIndex = 1;
+            this.panelRender.DragDrop += new System.Windows.Forms.DragEventHandler(this.panelRender_DragDrop);
+            this.panelRender.DragEnter += new System.Windows.Forms.DragEventHandler(this.panelRender_DragEnter);
+            this.panelRender.DragOver += new System.Windows.Forms.DragEventHandler(this.panelRender_DragOver);
             // 
             // RenderView
             // 

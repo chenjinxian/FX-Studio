@@ -9,11 +9,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace FXStudio
 {
     public partial class AssetsView : ViewWindow
     {
+        private string m_ProjectLocation;
         private UpdatePropertiesDelegate m_NodeDelegate = null;
 
         public AssetsView()
@@ -28,6 +31,7 @@ namespace FXStudio
                 return;
             }
 
+            m_ProjectLocation = Path.GetDirectoryName(assetFile);
             m_NodeDelegate = updateProps;
 
             XmlDocument doc = new XmlDocument();
@@ -57,7 +61,47 @@ namespace FXStudio
             }
         }
 
-        public void AddEffect(string effectXmlString)
+        public void AddEffect(string sourceFileName, string effectName, bool fromExist)
+        {
+            if (!fromExist)
+            {
+                string destFileName = m_ProjectLocation + @"\Effects\" + Path.GetFileName(sourceFileName);
+                if (destFileName != sourceFileName)
+                {
+                    File.Copy(sourceFileName, destFileName, true);
+                    sourceFileName = destFileName;
+                }
+            }
+
+            string destOjbect = m_ProjectLocation + @"\Effects\" + Path.GetFileNameWithoutExtension(sourceFileName) + ".fxo";
+            var processInfo = new ProcessStartInfo
+            {
+                FileName = "fxc.exe",
+#if (Debug)
+                Arguments = "/Od /Zi /T fx_5_0 /nologo /Fo \"" + destOjbect + "\" \"" + sourceFileName + "\"",
+#else
+                    Arguments = "/T fx_5_0 /nologo /Fo \"" + destOjbect + "\" \"" + sourceFileName + "\"",
+#endif
+                CreateNoWindow = true,
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                WindowStyle = ProcessWindowStyle.Hidden
+            };
+            var fxcProcess = Process.Start(processInfo);
+            string compileInfo = fxcProcess.StandardOutput.ReadToEnd();
+            string errorInfo = fxcProcess.StandardError.ReadToEnd();
+            fxcProcess.WaitForExit();
+
+            IntPtr effectXml = IntPtr.Zero;
+            if (errorInfo == string.Empty)
+            {
+                RenderMethods.AddEffect(@"Effects\" + Path.GetFileName(destOjbect), sourceFileName, effectName, ref effectXml);
+                AddEffect(Marshal.PtrToStringAnsi(effectXml));
+            }
+        }
+
+        private void AddEffect(string effectXmlString)
         {
             if (string.IsNullOrEmpty(effectXmlString))
                 return;
@@ -130,6 +174,39 @@ namespace FXStudio
                     m_NodeDelegate(element);
                 }
             }
+        }
+
+        private void treeViewAssets_DragEnter(object sender, DragEventArgs e)
+        {
+            string[] formats = e.Data.GetFormats();
+            if (formats.Contains(DataFormats.FileDrop))
+            {
+                e.Effect = DragDropEffects.Copy;
+            }
+        }
+
+        private void treeViewAssets_DragDrop(object sender, DragEventArgs e)
+        {
+            string[] fileList = (string[])e.Data.GetData(DataFormats.FileDrop, false);
+            foreach (string file in fileList)
+            {
+                if (Path.GetExtension(file) == ".fx")
+                {
+                    AddEffect(file, Path.GetFileNameWithoutExtension(file), true);
+                }
+            }
+        }
+
+        private void treeViewAssets_ItemDrag(object sender, ItemDragEventArgs e)
+        {
+            TreeNode node = (TreeNode)e.Item;
+            if (node.Parent != null && node.Parent.Name == "Effects")
+                DoDragDrop(e.Item, DragDropEffects.Copy);
+        }
+
+        private void treeViewAssets_DragOver(object sender, DragEventArgs e)
+        {
+
         }
     }
 }

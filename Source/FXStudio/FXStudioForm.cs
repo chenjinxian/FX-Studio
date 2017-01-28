@@ -418,42 +418,7 @@ namespace FXStudio
             EffectWizardDialog dialog = new EffectWizardDialog();
             if (dialog.ShowDialog() == DialogResult.OK)
             {
-                string sourceFileName = dialog.FileName;
-
-                if (!dialog.IsEffectFromExist())
-                {
-                    string destFileName = m_ProjectLocation + @"\Effects\" + Path.GetFileName(sourceFileName);
-                    if (destFileName != sourceFileName)
-                    {
-                        File.Copy(sourceFileName, destFileName, true);
-                        sourceFileName = destFileName;
-                    }
-                }
-
-                string destOjbect = m_ProjectLocation + @"\Effects\" + Path.GetFileNameWithoutExtension(sourceFileName) + ".fxo";
-                var processInfo = new ProcessStartInfo
-                {
-                    FileName = "fxc.exe",
-#if (Debug)
-                    Arguments = "/Od /Zi /T fx_5_0 /nologo /Fo \"" + destOjbect + "\" \"" + sourceFileName + "\"",
-#else
-                    Arguments = "/T fx_5_0 /nologo /Fo \"" + destOjbect + "\" \"" + sourceFileName + "\"",
-#endif
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true
-                };
-                var fxcProcess = Process.Start(processInfo);
-                string compileInfo = fxcProcess.StandardOutput.ReadToEnd();
-                string errorInfo = fxcProcess.StandardError.ReadToEnd();
-                fxcProcess.WaitForExit();
-
-                IntPtr effectXml = IntPtr.Zero;
-                if (errorInfo == string.Empty)
-                {
-                    RenderMethods.AddEffect(@"Effects\" + Path.GetFileName(destOjbect), sourceFileName, dialog.EffectName, ref effectXml);
-                }
-                m_AssetsView.AddEffect(Marshal.PtrToStringAnsi(effectXml));
+                m_AssetsView.AddEffect(dialog.FileName, dialog.EffectName, dialog.IsEffectFromExist());
             }
         }
     }

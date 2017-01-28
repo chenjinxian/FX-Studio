@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
+using System.Diagnostics;
 
 namespace FXStudio
 {
@@ -60,6 +61,26 @@ namespace FXStudio
                 toolStripButtonRotate,
                 toolStripButtonScale
             };
+        }
+
+        private void panelRender_DragEnter(object sender, DragEventArgs e)
+        {
+
+        }
+
+        private void panelRender_DragDrop(object sender, DragEventArgs e)
+        {
+
+        }
+
+        private void panelRender_DragOver(object sender, DragEventArgs e)
+        {
+            Point targetPoint = panelRender.PointToClient(new Point(e.X, e.Y));
+            uint actorId = RenderMethods.GetPickedActor(targetPoint.X, targetPoint.Y);
+            if (actorId != 0)
+                e.Effect = DragDropEffects.Copy;
+            else
+                e.Effect = DragDropEffects.None;
         }
     }
 }

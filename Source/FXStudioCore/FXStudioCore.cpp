@@ -189,6 +189,17 @@ FXSTUDIOCORE_API unsigned int AddActor(BSTR actorResource)
 
 FXSTUDIOCORE_API bool ModifyActor(BSTR modificationXml)
 {
+	std::string actorModificationXML = Utility::WS2S(std::wstring(modificationXml, SysStringLen(modificationXml)));
+	tinyxml2::XMLDocument doc;
+	if (doc.Parse(actorModificationXML.c_str(), actorModificationXML.length()) != tinyxml2::XML_SUCCESS)
+		return false;
+
+	tinyxml2::XMLElement* pRoot = doc.RootElement();
+	if (pRoot == nullptr)
+		return false;
+
+	g_pApp->GetGameLogic()->VModifyActor(pRoot->IntAttribute("id"), pRoot);
+
 	return true;
 }
 

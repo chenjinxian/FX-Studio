@@ -544,6 +544,17 @@ void Variable::SetVector(FXMVECTOR value)
 	variable->SetFloatVector(reinterpret_cast<const float*>(&value));
 }
 
+void Variable::SetFloat(float value)
+{
+	ID3DX11EffectScalarVariable* variable = m_pD3DX11EffectVariable->AsScalar();
+	if (!variable->IsValid())
+	{
+		DEBUG_ERROR("Invalid effect variable cast.");
+	}
+
+	variable->SetFloat(value);
+}
+
 Variable& Variable::operator<<(ID3D11UnorderedAccessView* value)
 {
 	ID3DX11EffectUnorderedAccessViewVariable* variable = m_pD3DX11EffectVariable->AsUnorderedAccessView();
@@ -566,19 +577,6 @@ Variable& Variable::operator<<(int value)
 	}
 
 	variable->SetInt(value);
-
-	return *this;
-}
-
-Variable& Variable::operator<<(float value)
-{
-	ID3DX11EffectScalarVariable* variable = m_pD3DX11EffectVariable->AsScalar();
-	if (!variable->IsValid())
-	{
-		DEBUG_ERROR("Invalid effect variable cast.");
-	}
-
-	variable->SetFloat(value);
 
 	return *this;
 }

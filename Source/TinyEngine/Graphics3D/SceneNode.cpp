@@ -559,7 +559,7 @@ HRESULT GeometryNode::VRender(Scene* pScene, const GameTime& gameTime)
 	const std::map<std::string, Variable*>& variables = m_pEffect->GetVariablesByName();
 	for (const tinyxml2::XMLElement* pNode = pVariables->FirstChildElement(); pNode; pNode = pNode->NextSiblingElement())
 	{
-		auto variable = variables.at(pNode->Attribute("name"));
+		Variable* variable = variables.at(pNode->Attribute("name"));
 
 		if (variable->GetVariableSemantic() == "worldviewprojection")
 		{
@@ -595,10 +595,14 @@ HRESULT GeometryNode::VRender(Scene* pScene, const GameTime& gameTime)
 		}
 		else if (variable->GetVariableType() == "float3")
 		{
-
+			std::stringstream ss(pNode->Attribute("value"));
+			Vector3 value;
+			ss >> value.x >> value.y >> value.z;
+			variable->SetVector(value);
 		}
 		else if (variable->GetVariableType() == "float")
 		{
+			variable->SetFloat(pNode->FloatAttribute("value"));
 		}
 		else
 		{

@@ -95,9 +95,9 @@ public:
 	void SetMatrix(XMMATRIX value);
 	void SetResource(ID3D11ShaderResourceView* value);
 	void SetVector(FXMVECTOR value);
+	void SetFloat(float value);
 	Variable& operator<<(ID3D11UnorderedAccessView* value);
 	Variable& operator<<(int value);
-	Variable& operator<<(float value);
 	Variable& operator<<(const std::vector<float>& values);
 	Variable& operator<<(const std::vector<XMFLOAT2>& values);
 	Variable& operator<<(const std::vector<XMFLOAT4X4>& values);

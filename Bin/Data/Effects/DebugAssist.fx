@@ -2,7 +2,7 @@
 
 cbuffer CBufferPerFrame
 {
-	float4 AmbientColor : AMBIENT;
+	float3 AmbientColor : AMBIENT;
 }
 
 cbuffer CBufferPerObject
@@ -42,7 +42,7 @@ VS_OUTPUT vertex_shader(VS_INPUT IN)
 
 float4 pixel_shader(VS_OUTPUT IN) : SV_Target
 {
-	return AmbientColor;
+	return float4(AmbientColor, 1.0f);
 }
 
 /************* Techniques *************/

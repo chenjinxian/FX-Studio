@@ -106,7 +106,7 @@ namespace FXStudio
             cubeElement.AppendChild(cube);
 
 
-            texture.InnerText = @"Textures\DefaultTexture.dds";
+            texture.InnerText = @"Textures\DefaultColor.dds";
 
             effect.InnerText = @"Effects\DefaultEffect.fx";
             effect.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "technique", "main11"));
@@ -131,7 +131,7 @@ namespace FXStudio
             sphereElement.AppendChild(sphere);
 
 
-            texture.InnerText = @"Textures\DefaultTexture.dds";
+            texture.InnerText = @"Textures\DefaultColor.dds";
 
             effect.InnerText = @"Effects\DefaultEffect.fx";
             effect.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "technique", "main11"));
@@ -157,7 +157,7 @@ namespace FXStudio
             cylinderElement.AppendChild(cylinder);
 
 
-            texture.InnerText = @"Textures\DefaultTexture.dds";
+            texture.InnerText = @"Textures\DefaultColor.dds";
 
             effect.InnerText = @"Effects\DefaultEffect.fx";
             effect.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "technique", "main11"));
@@ -184,7 +184,7 @@ namespace FXStudio
             teapotElement.AppendChild(teapot);
 
 
-            texture.InnerText = @"Textures\DefaultTexture.dds";
+            texture.InnerText = @"Textures\DefaultColor.dds";
 
             effect.InnerText = @"Effects\DefaultEffect.fx";
             effect.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "technique", "main11"));
@@ -216,7 +216,7 @@ namespace FXStudio
             effect.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "pass", "p0"));
 
             XmlElement textureChild = xmlDoc.CreateElement("Texture");
-            textureChild.InnerText = @"Textures\DefaultTexture.dds";
+            textureChild.InnerText = @"Textures\DefaultColor.dds";
 
             textures.AppendChild(textureChild);
 

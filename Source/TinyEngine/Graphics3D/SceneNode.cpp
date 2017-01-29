@@ -507,11 +507,33 @@ HRESULT GeometryNode::VOnInitSceneNode(Scene* pScene)
 	m_pCurrentPass->CreateVertexBuffer(m_Mesh.get(), &m_pVertexBuffer);
 	m_pCurrentPass->CreateIndexBuffer(m_Mesh.get(), &m_pIndexBuffer);
 
+	const std::vector<Variable*>& variables = m_pEffect->GetVariables();
+	for (auto variable : variables)
+	{
+		if (variable->GetVariableType() == "Texture2D")
+		{
+			Resource resource(m_TextureName);
+			shared_ptr<ResHandle> pTextureRes = g_pApp->GetResCache()->GetHandle(&resource);
+			if (pTextureRes != nullptr)
+			{
+				shared_ptr<D3D11TextureResourceExtraData> extra =
+					static_pointer_cast<D3D11TextureResourceExtraData>(pTextureRes->GetExtraData());
+				if (extra != nullptr)
+				{
+					variable->SetResource(extra->GetTexture());
+				}
+			}
+		}
+	}
+
 	return S_OK;
 }
 
 HRESULT GeometryNode::VOnDeleteSceneNode(Scene *pScene)
 {
+	SAFE_RELEASE(m_pVertexBuffer);
+	SAFE_RELEASE(m_pIndexBuffer);
+
 	return S_OK;
 }
 
@@ -522,6 +544,8 @@ HRESULT GeometryNode::VOnUpdate(Scene* pScene, const GameTime& gameTime)
 
 HRESULT GeometryNode::VRender(Scene* pScene, const GameTime& gameTime)
 {
+	const tinyxml2::XMLDocument* pEffectXmlDoc = m_pEffect->GetEffectXmlDoc();
+
 	const std::vector<Variable*>& variables = m_pEffect->GetVariables();
 	for (auto variable : variables)
 	{
@@ -555,20 +579,6 @@ HRESULT GeometryNode::VRender(Scene* pScene, const GameTime& gameTime)
 			{
 				const XMMATRIX& wvp = pScene->GetCamera()->GetViewMatrix().Invert();
 				variable->SetMatrix(wvp);
-			}
-		}
-		else if (variable->GetVariableType() == "Texture2D")
-		{
-			Resource resource(m_TextureName);
-			shared_ptr<ResHandle> pTextureRes = g_pApp->GetResCache()->GetHandle(&resource);
-			if (pTextureRes != nullptr)
-			{
-				shared_ptr<D3D11TextureResourceExtraData> extra =
-					static_pointer_cast<D3D11TextureResourceExtraData>(pTextureRes->GetExtraData());
-				if (extra != nullptr)
-				{
-					variable->SetResource(extra->GetTexture());
-				}
 			}
 		}
 	}

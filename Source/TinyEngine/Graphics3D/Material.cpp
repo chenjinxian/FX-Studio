@@ -11,7 +11,8 @@ Effect::Effect(ID3D11Device1* pDevice, ID3DX11Effect* pD3DX11Effect)
 	m_TechniquesByName(),
 	m_Variables(),
 	m_VariablesByName(),
-	m_pEffectXml(nullptr)
+	m_pEffectXmlDoc(nullptr),
+	m_pEffectXmlString(nullptr)
 {
 	DEBUG_ASSERT(pDevice != nullptr);
 	DEBUG_ASSERT(pD3DX11Effect != nullptr);
@@ -52,7 +53,7 @@ Effect::~Effect()
 	}
 	m_Variables.clear();
 
-	SAFE_DELETE_ARRAY(m_pEffectXml);
+	SAFE_DELETE_ARRAY(m_pEffectXmlString);
 }
 
 const std::vector<Technique*>& Effect::GetTechniques() const
@@ -77,47 +78,47 @@ const std::map<std::string, Variable*>& Effect::GetVariablesByName() const
 
 char* Effect::GenerateXml(const std::string& effectObjectPath, const std::string& effectSourcePath, const std::string& effectName)
 {
-	if (m_pEffectXml == nullptr)
+	if (m_pEffectXmlString == nullptr)
 	{
-		tinyxml2::XMLDocument outDoc;
+		m_pEffectXmlDoc = std::make_unique<tinyxml2::XMLDocument>(DEBUG_NEW tinyxml2::XMLDocument());
 
-		tinyxml2::XMLElement* pRoot = outDoc.NewElement("Material");
-		outDoc.InsertEndChild(pRoot);
+		tinyxml2::XMLElement* pRoot = m_pEffectXmlDoc->NewElement("Material");
+		m_pEffectXmlDoc->InsertEndChild(pRoot);
 
 		pRoot->SetAttribute("name", effectName.c_str());
 		pRoot->SetAttribute("object", effectObjectPath.c_str());
 		pRoot->SetAttribute("source", effectSourcePath.c_str());
 
-		tinyxml2::XMLElement* pTechniques = outDoc.NewElement("Techniques");
+		tinyxml2::XMLElement* pTechniques = m_pEffectXmlDoc->NewElement("Techniques");
 		pRoot->InsertEndChild(pTechniques);
 
 		for (auto technique : m_Techniques)
 		{
-			tinyxml2::XMLElement* pChildTechnique = outDoc.NewElement("Technique");
+			tinyxml2::XMLElement* pChildTechnique = m_pEffectXmlDoc->NewElement("Technique");
 			pChildTechnique->SetAttribute("name", technique->GetTechniqueName().c_str());
 
 			for (auto pass : technique->GetPasses())
 			{
-				tinyxml2::XMLElement* pChildPass = outDoc.NewElement("Pass");
-				pChildPass->InsertEndChild(outDoc.NewText(pass->GetPassName().c_str()));
+				tinyxml2::XMLElement* pChildPass = m_pEffectXmlDoc->NewElement("Pass");
+				pChildPass->InsertEndChild(m_pEffectXmlDoc->NewText(pass->GetPassName().c_str()));
 				pChildTechnique->InsertEndChild(pChildPass);
 			}
 
 			pTechniques->InsertEndChild(pChildTechnique);
 		}
 
-		tinyxml2::XMLElement* pVariables = outDoc.NewElement("Variables");
+		tinyxml2::XMLElement* pVariables = m_pEffectXmlDoc->NewElement("Variables");
 		pRoot->InsertEndChild(pVariables);
 
 		for (auto variable : m_Variables)
 		{
-			tinyxml2::XMLElement* pChildVariable = outDoc.NewElement("Variable");
+			tinyxml2::XMLElement* pChildVariable = m_pEffectXmlDoc->NewElement("Variable");
 			pChildVariable->SetAttribute("name", variable->GetVariableName().c_str());
 			pChildVariable->SetAttribute("value", variable->GetVariableValue().c_str());
 
 			for (auto annotation : variable->GetAnnotations())
 			{
-				tinyxml2::XMLElement* pChildAnnotation = outDoc.NewElement(annotation->GetAnnotationName().c_str());
+				tinyxml2::XMLElement* pChildAnnotation = m_pEffectXmlDoc->NewElement(annotation->GetAnnotationName().c_str());
 				pChildAnnotation->SetText(annotation->GetAnnotationValue().c_str());
 				pChildVariable->InsertEndChild(pChildAnnotation);
 			}
@@ -126,12 +127,12 @@ char* Effect::GenerateXml(const std::string& effectObjectPath, const std::string
 		}
 
 		tinyxml2::XMLPrinter printer;
-		outDoc.Accept(&printer);
-		m_pEffectXml = new char[printer.CStrSize()];
-		strncpy_s(m_pEffectXml, printer.CStrSize(), printer.CStr(), printer.CStrSize());
+		m_pEffectXmlDoc->Accept(&printer);
+		m_pEffectXmlString = new char[printer.CStrSize()];
+		strncpy_s(m_pEffectXmlString, printer.CStrSize(), printer.CStr(), printer.CStrSize());
 	}
 	
-	return m_pEffectXml;
+	return m_pEffectXmlString;
 }
 
 Technique::Technique(ID3D11Device1* pDevice, ID3DX11EffectTechnique* pD3DX11EffectTechnique)

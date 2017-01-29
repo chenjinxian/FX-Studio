@@ -22,13 +22,17 @@ public:
 	const std::map<std::string, Variable*>& GetVariablesByName() const;
 
 	char* GenerateXml(const std::string& effectObjectPath, const std::string& effectSourcePath, const std::string& effectName);
+	const char* GetEffectXmlString() { return m_pEffectXmlString; }
+	const tinyxml2::XMLDocument* GetEffectXmlDoc() { return m_pEffectXmlDoc.get(); }
 
 private:
 	std::vector<Technique*> m_Techniques;
 	std::map<std::string, Technique*> m_TechniquesByName;
 	std::vector<Variable*> m_Variables;
 	std::map<std::string, Variable*> m_VariablesByName;
-	char* m_pEffectXml;
+
+	unique_ptr<tinyxml2::XMLDocument> m_pEffectXmlDoc;
+	char* m_pEffectXmlString;
 };
 
 class Technique : public boost::noncopyable

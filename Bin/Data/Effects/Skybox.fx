@@ -7,7 +7,7 @@ cbuffer CBufferPerObject
 
 TextureCube SkyboxTexture <
     string UIName =  "Skybox Texture";
-    string ResourceType = "3D";
+    string ResourceType = "Cube";
 >;
 
 SamplerState TrilinearSampler

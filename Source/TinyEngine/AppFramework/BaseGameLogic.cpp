@@ -3,6 +3,7 @@
 #include "../Actors/ActorFactory.h"
 #include "../Actors/Actor.h"
 #include "../ResourceCache/XmlResource.h"
+#include "../ResourceCache/ShaderResource.h"
 #include "../EventManager/Events.h"
 #include "../UserInterface/HumanView.h"
 #include "boost/lexical_cast.hpp"
@@ -83,8 +84,8 @@ bool BaseGameLogic::VLoadGame(const std::string& projectFile)
 	tinyxml2::XMLElement* pAsset = pRoot->FirstChildElement("AssetFile");
 	if (pAsset != nullptr)
 	{
-// 		std::string assetFile = Utility::GetDirectory(projectFile) + "\\" + pAsset->GetText();
-// 		LoadAssets(assetFile);
+		std::string assetFile = Utility::GetDirectory(projectFile) + "\\" + pAsset->GetText();
+		LoadAssets(assetFile);
 	}
 
 	tinyxml2::XMLElement* pEditorCamera = pRoot->FirstChildElement("EditorCamera");
@@ -495,6 +496,7 @@ bool BaseGameLogic::CreateDefaultAsset(const std::string& asset)
 
 	tinyxml2::XMLElement* pChildTechnique = outDoc.NewElement("Technique");
 	pChildTechnique->SetAttribute("name", "main11");
+	pChildTechnique->SetAttribute("checked", true);
 	tinyxml2::XMLElement* pChildPass = outDoc.NewElement("Pass");
 	pChildPass->InsertEndChild(outDoc.NewText("p0"));
 	pChildTechnique->InsertEndChild(pChildPass);
@@ -631,14 +633,32 @@ bool BaseGameLogic::LoadAssets(const std::string& asset)
 		return false;
 	}
 
-	tinyxml2::XMLElement* pModels = pRoot->FirstChildElement("Models");
-	if (pModels)
+	tinyxml2::XMLElement* pEffects = pRoot->FirstChildElement("Effects");
+	if (pEffects != nullptr)
 	{
-		for (tinyxml2::XMLElement* pNode = pModels->FirstChildElement(); pNode; pNode = pNode->NextSiblingElement())
+		for (tinyxml2::XMLElement* pNode = pEffects->FirstChildElement(); pNode; pNode = pNode->NextSiblingElement())
 		{
-			VCreateActor(pNode);
+			Resource effectRes(pNode->Attribute("object"));
+			shared_ptr<ResHandle> pEffectResHandle = g_pApp->GetResCache()->GetHandle(&effectRes);
+			if (pEffectResHandle != nullptr)
+			{
+				shared_ptr<HlslResourceExtraData> extra = static_pointer_cast<HlslResourceExtraData>(pEffectResHandle->GetExtraData());
+				if (extra != nullptr)
+				{
+					Effect* pEffect = extra->GetEffect();
+					pEffect->GenerateXml(pNode->Attribute("object"), pNode->Attribute("source"), pNode->Attribute("name"));
+				}
+			}
 		}
 	}
+
+// 	tinyxml2::XMLElement* pModels = pRoot->FirstChildElement("Models");
+// 	if (pModels)
+// 	{
+// 		for (tinyxml2::XMLElement* pNode = pModels->FirstChildElement(); pNode; pNode = pNode->NextSiblingElement())
+// 		{
+// 		}
+// 	}
 
 	return true;
 }

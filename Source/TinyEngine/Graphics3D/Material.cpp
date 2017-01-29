@@ -82,7 +82,7 @@ char* Effect::GenerateXml(const std::string& effectObjectPath, const std::string
 	{
 		m_pEffectXmlDoc = std::make_unique<tinyxml2::XMLDocument>(DEBUG_NEW tinyxml2::XMLDocument());
 
-		tinyxml2::XMLElement* pRoot = m_pEffectXmlDoc->NewElement("Material");
+		tinyxml2::XMLElement* pRoot = m_pEffectXmlDoc->NewElement("Effect");
 		m_pEffectXmlDoc->InsertEndChild(pRoot);
 
 		pRoot->SetAttribute("name", effectName.c_str());
@@ -92,10 +92,18 @@ char* Effect::GenerateXml(const std::string& effectObjectPath, const std::string
 		tinyxml2::XMLElement* pTechniques = m_pEffectXmlDoc->NewElement("Techniques");
 		pRoot->InsertEndChild(pTechniques);
 
+		bool firstCheck = true;
 		for (auto technique : m_Techniques)
 		{
 			tinyxml2::XMLElement* pChildTechnique = m_pEffectXmlDoc->NewElement("Technique");
 			pChildTechnique->SetAttribute("name", technique->GetTechniqueName().c_str());
+			if (firstCheck)
+			{
+				pChildTechnique->SetAttribute("checked", true);
+				firstCheck = false;
+			}
+			else
+				pChildTechnique->SetAttribute("checked", false);
 
 			for (auto pass : technique->GetPasses())
 			{

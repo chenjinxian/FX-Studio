@@ -168,8 +168,6 @@ private:
 
 	std::string m_TextureName;
 	std::string m_EffectName;
-	std::string m_CurrentTechnique;
-	std::string m_CurrentPass;
 
 	static const std::string m_Cube;
 	static const std::string m_Sphere;

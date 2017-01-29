@@ -473,8 +473,6 @@ HRESULT GeometryNode::VOnInitSceneNode(Scene* pScene)
 	{
 		m_TextureName = pGeometryRender->GetTextureName();
 		m_EffectName = pGeometryRender->GetEffectName();
-		m_CurrentTechnique = pGeometryRender->GetCurrentTechniqueName();
-		m_CurrentPass = pGeometryRender->GetCurrentPassName();
 	}
 
 	Resource effectRes(m_EffectName);
@@ -493,40 +491,49 @@ HRESULT GeometryNode::VOnInitSceneNode(Scene* pScene)
 		DEBUG_ERROR("effect is not exist or valid: " + m_EffectName);
 	}
 
-	Technique* pCurrentTechnique = m_pEffect->GetTechniquesByName().at(m_CurrentTechnique);
-	if (pCurrentTechnique == nullptr)
+	const tinyxml2::XMLDocument* xmlDoc = m_pEffect->GetEffectXmlDoc();
+	if (xmlDoc == nullptr)
 	{
-		DEBUG_ERROR("technique is not exist: " + m_CurrentTechnique);
+		DEBUG_ERROR("not generate effect xml string");
+		return S_FALSE;
 	}
-	m_pCurrentPass = pCurrentTechnique->GetPassesByName().at(m_CurrentPass);
-	if (m_pCurrentPass == nullptr)
+	const tinyxml2::XMLElement* rootNode = xmlDoc->RootElement();
+	if (rootNode == nullptr)
 	{
-		DEBUG_ERROR("technique is not exist: " + m_CurrentTechnique);
+		DEBUG_ERROR("effect xml is invalid");
 	}
 
-	m_pCurrentPass->CreateVertexBuffer(m_Mesh.get(), &m_pVertexBuffer);
-	m_pCurrentPass->CreateIndexBuffer(m_Mesh.get(), &m_pIndexBuffer);
-
-	const std::vector<Variable*>& variables = m_pEffect->GetVariables();
-	for (auto variable : variables)
+	const tinyxml2::XMLElement* pTechniques = rootNode->FirstChildElement("Techniques");
+	if (pTechniques == nullptr)
 	{
-		if (variable->GetVariableType() == "Texture2D")
+		DEBUG_ERROR("effect xml is invalid");
+	}
+
+	for (const tinyxml2::XMLElement* pNode = pTechniques->FirstChildElement(); pNode; pNode = pNode->NextSiblingElement())
+	{
+		if (pNode->BoolAttribute("checked"))
 		{
-			Resource resource(m_TextureName);
-			shared_ptr<ResHandle> pTextureRes = g_pApp->GetResCache()->GetHandle(&resource);
-			if (pTextureRes != nullptr)
+			std::string techniqueName = pNode->Attribute("name");
+			Technique* pCurrentTechnique = m_pEffect->GetTechniquesByName().at(techniqueName);
+			if (pCurrentTechnique == nullptr)
 			{
-				shared_ptr<D3D11TextureResourceExtraData> extra =
-					static_pointer_cast<D3D11TextureResourceExtraData>(pTextureRes->GetExtraData());
-				if (extra != nullptr)
-				{
-					variable->SetResource(extra->GetTexture());
-				}
+				DEBUG_ERROR("technique is not exist: " + techniqueName);
 			}
+
+			m_pCurrentPass = pCurrentTechnique->GetPasses().at(0);
+			if (m_pCurrentPass == nullptr)
+			{
+				DEBUG_ERROR("technique is not exist: " + techniqueName);
+			}
+
+			m_pCurrentPass->CreateVertexBuffer(m_Mesh.get(), &m_pVertexBuffer);
+			m_pCurrentPass->CreateIndexBuffer(m_Mesh.get(), &m_pIndexBuffer);
+
+			return S_OK;
 		}
 	}
 
-	return S_OK;
+	return S_FALSE;
 }
 
 HRESULT GeometryNode::VOnDeleteSceneNode(Scene *pScene)
@@ -579,6 +586,20 @@ HRESULT GeometryNode::VRender(Scene* pScene, const GameTime& gameTime)
 			{
 				const XMMATRIX& wvp = pScene->GetCamera()->GetViewMatrix().Invert();
 				variable->SetMatrix(wvp);
+			}
+		}
+		else if (variable->GetVariableType() == "Texture2D")
+		{
+			Resource resource(m_TextureName);
+			shared_ptr<ResHandle> pTextureRes = g_pApp->GetResCache()->GetHandle(&resource);
+			if (pTextureRes != nullptr)
+			{
+				shared_ptr<D3D11TextureResourceExtraData> extra =
+					static_pointer_cast<D3D11TextureResourceExtraData>(pTextureRes->GetExtraData());
+				if (extra != nullptr)
+				{
+					variable->SetResource(extra->GetTexture());
+				}
 			}
 		}
 	}

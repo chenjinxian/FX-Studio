@@ -491,13 +491,13 @@ HRESULT GeometryNode::VOnInitSceneNode(Scene* pScene)
 		DEBUG_ERROR("effect is not exist or valid: " + m_EffectName);
 	}
 
-	const tinyxml2::XMLDocument* xmlDoc = m_pEffect->GetEffectXmlDoc();
-	if (xmlDoc == nullptr)
+	const tinyxml2::XMLDocument* pEffectXmlDoc = m_pEffect->GetEffectXmlDoc();
+	if (pEffectXmlDoc == nullptr)
 	{
 		DEBUG_ERROR("not generate effect xml string");
 		return S_FALSE;
 	}
-	const tinyxml2::XMLElement* rootNode = xmlDoc->RootElement();
+	const tinyxml2::XMLElement* rootNode = pEffectXmlDoc->RootElement();
 	if (rootNode == nullptr)
 	{
 		DEBUG_ERROR("effect xml is invalid");
@@ -551,11 +551,16 @@ HRESULT GeometryNode::VOnUpdate(Scene* pScene, const GameTime& gameTime)
 
 HRESULT GeometryNode::VRender(Scene* pScene, const GameTime& gameTime)
 {
-	const tinyxml2::XMLDocument* pEffectXmlDoc = m_pEffect->GetEffectXmlDoc();
+	DEBUG_ASSERT(m_pEffect->GetEffectXmlDoc() != nullptr && m_pEffect->GetEffectXmlDoc()->RootElement() != nullptr);
 
-	const std::vector<Variable*>& variables = m_pEffect->GetVariables();
-	for (auto variable : variables)
+	const tinyxml2::XMLElement* pVariables = m_pEffect->GetEffectXmlDoc()->RootElement()->FirstChildElement("Variables");
+	DEBUG_ASSERT(pVariables != nullptr);
+
+	const std::map<std::string, Variable*>& variables = m_pEffect->GetVariablesByName();
+	for (const tinyxml2::XMLElement* pNode = pVariables->FirstChildElement(); pNode; pNode = pNode->NextSiblingElement())
 	{
+		auto variable = variables.at(pNode->Attribute("name"));
+
 		if (variable->GetVariableSemantic() == "worldviewprojection")
 		{
 			if (variable->GetVariableType() == "float4x4")
@@ -588,19 +593,16 @@ HRESULT GeometryNode::VRender(Scene* pScene, const GameTime& gameTime)
 				variable->SetMatrix(wvp);
 			}
 		}
-		else if (variable->GetVariableType() == "Texture2D")
+		else if (variable->GetVariableType() == "float3")
 		{
-			Resource resource(m_TextureName);
-			shared_ptr<ResHandle> pTextureRes = g_pApp->GetResCache()->GetHandle(&resource);
-			if (pTextureRes != nullptr)
-			{
-				shared_ptr<D3D11TextureResourceExtraData> extra =
-					static_pointer_cast<D3D11TextureResourceExtraData>(pTextureRes->GetExtraData());
-				if (extra != nullptr)
-				{
-					variable->SetResource(extra->GetTexture());
-				}
-			}
+
+		}
+		else if (variable->GetVariableType() == "float")
+		{
+		}
+		else
+		{
+
 		}
 	}
 

@@ -565,7 +565,7 @@ HRESULT GeometryNode::VRender(Scene* pScene, const GameTime& gameTime)
 		{
 			if (variable->GetVariableType() == "float4x4")
 			{
-				const XMMATRIX& wvp = pScene->GetCamera()->GetWorldViewProjection(pScene);
+				const Matrix& wvp = pScene->GetCamera()->GetWorldViewProjection(pScene);
 				variable->SetMatrix(wvp);
 			}
 		}
@@ -573,7 +573,7 @@ HRESULT GeometryNode::VRender(Scene* pScene, const GameTime& gameTime)
 		{
 			if (variable->GetVariableType() == "float4x4")
 			{
-				const XMMATRIX& worldIT = pScene->GetTopMatrix().Invert().Transpose();
+				Matrix& worldIT = pScene->GetTopMatrix().Invert().Transpose();
 				variable->SetMatrix(worldIT);
 			}
 		}
@@ -581,7 +581,7 @@ HRESULT GeometryNode::VRender(Scene* pScene, const GameTime& gameTime)
 		{
 			if (variable->GetVariableType() == "float4x4")
 			{
-				const XMMATRIX& world = pScene->GetTopMatrix();
+				const Matrix& world = pScene->GetTopMatrix();
 				variable->SetMatrix(world);
 			}
 		}
@@ -589,9 +589,16 @@ HRESULT GeometryNode::VRender(Scene* pScene, const GameTime& gameTime)
 		{
 			if (variable->GetVariableType() == "float4x4")
 			{
-				const XMMATRIX& wvp = pScene->GetCamera()->GetViewMatrix().Invert();
-				variable->SetMatrix(wvp);
+				Matrix& viewI = pScene->GetCamera()->GetViewMatrix().Invert();
+				variable->SetMatrix(viewI);
 			}
+		}
+		else if (variable->GetVariableType() == "float4")
+		{
+			std::stringstream ss(pNode->Attribute("value"));
+			Vector4 value;
+			ss >> value.x >> value.y >> value.z >> value.w;
+			variable->SetVector(value);
 		}
 		else if (variable->GetVariableType() == "float3")
 		{
@@ -600,13 +607,36 @@ HRESULT GeometryNode::VRender(Scene* pScene, const GameTime& gameTime)
 			ss >> value.x >> value.y >> value.z;
 			variable->SetVector(value);
 		}
+		else if (variable->GetVariableType() == "float2")
+		{
+			std::stringstream ss(pNode->Attribute("value"));
+			Vector2 value;
+			ss >> value.x >> value.y;
+			variable->SetVector(value);
+		}
 		else if (variable->GetVariableType() == "float")
 		{
 			variable->SetFloat(pNode->FloatAttribute("value"));
 		}
-		else
+		else if (variable->GetVariableType() == "Texture1D" ||
+			variable->GetVariableType() == "Texture2D" || variable->GetVariableType() == "TextureCube")
 		{
-
+			const tinyxml2::XMLElement* pResourceNode = pNode->FirstChildElement("ResourceName");
+			if (pResourceNode != nullptr)
+			{
+				 std::string textureName = std::string("Textures\\") + pResourceNode->GetText();
+				 Resource resource(textureName);
+				 shared_ptr<ResHandle> pTextureRes = g_pApp->GetResCache()->GetHandle(&resource);
+				 if (pTextureRes != nullptr)
+				 {
+					 shared_ptr<D3D11TextureResourceExtraData> extra =
+						 static_pointer_cast<D3D11TextureResourceExtraData>(pTextureRes->GetExtraData());
+					 if (extra != nullptr)
+					 {
+						 variable->SetResource(extra->GetTexture());
+					 }
+				 }
+			}
 		}
 	}
 
@@ -743,10 +773,26 @@ ModelNode::ModelNode(
 	if (pMeshRender != nullptr)
 	{
 		m_ModelName = pMeshRender->GetModelName();
-		m_TextureNames = pMeshRender->GetTextureName();
+	}
+
+	Resource modelRes(m_ModelName);
+	shared_ptr<ResHandle> pModelResHandle = g_pApp->GetResCache()->GetHandle(&modelRes);
+	m_pModel = unique_ptr<Model>(DEBUG_NEW Model(pModelResHandle->Buffer(), pModelResHandle->Size(), true, true));
+}
+
+ModelNode::~ModelNode()
+{
+	VOnDeleteSceneNode(nullptr);
+}
+
+HRESULT ModelNode::VOnInitSceneNode(Scene *pScene)
+{
+	VOnDeleteSceneNode(pScene);
+
+	ModelRenderComponent* pMeshRender = static_cast<ModelRenderComponent*>(m_pRenderComponent);
+	if (pMeshRender != nullptr)
+	{
 		m_EffectName = pMeshRender->GetEffectName();
-		m_CurrentTechnique = pMeshRender->GetCurrentTechniqueName();
-		m_CurrentPass = pMeshRender->GetCurrentPassName();
 	}
 
 	Resource effectRes(m_EffectName);
@@ -760,71 +806,76 @@ ModelNode::ModelNode(
 		}
 	}
 
-	Resource modelRes(m_ModelName);
-	shared_ptr<ResHandle> pModelResHandle = g_pApp->GetResCache()->GetHandle(&modelRes);
-	m_pModel = unique_ptr<Model>(DEBUG_NEW Model(pModelResHandle->Buffer(), pModelResHandle->Size(), true, true));
-
-	Technique* pCurrentTechnique = m_pEffect->GetTechniquesByName().at(m_CurrentTechnique);
-	if (pCurrentTechnique == nullptr)
+	if (m_pEffect == nullptr)
 	{
-		DEBUG_ERROR("technique is not exist: " + m_CurrentTechnique);
-	}
-	m_pCurrentPass = pCurrentTechnique->GetPassesByName().at(m_CurrentPass);
-	if (m_pCurrentPass == nullptr)
-	{
-		DEBUG_ERROR("technique is not exist: " + m_CurrentTechnique);
+		DEBUG_ERROR("effect is not exist or valid: " + m_EffectName);
 	}
 
-	std::vector<Vector3> totalVertices;
-	uint32_t meshSize = m_pModel->GetMeshes().size();
-	m_pVertexBuffers.resize(meshSize);
-	m_pIndexBuffers.resize(meshSize);
-	m_IndexCounts.resize(meshSize);
-	m_pTextures.resize(meshSize);
-	for (uint32_t i = 0; i < meshSize; i++)
+	const tinyxml2::XMLDocument* pEffectXmlDoc = m_pEffect->GetEffectXmlDoc();
+	if (pEffectXmlDoc == nullptr)
 	{
-		auto mesh = m_pModel->GetMeshes().at(i);
-		ID3D11Buffer* pVertexBuffer = nullptr;
-		ID3D11Buffer* pIndexBuffer = nullptr;
-		m_pCurrentPass->CreateVertexBuffer(mesh, &pVertexBuffer);
-		m_pCurrentPass->CreateIndexBuffer(mesh, &pIndexBuffer);
+		DEBUG_ERROR("not generate effect xml string");
+		return S_FALSE;
+	}
+	const tinyxml2::XMLElement* rootNode = pEffectXmlDoc->RootElement();
+	if (rootNode == nullptr)
+	{
+		DEBUG_ERROR("effect xml is invalid");
+	}
 
-		m_pVertexBuffers[i] = pVertexBuffer;
-		m_pIndexBuffers[i] = pIndexBuffer;
-		m_IndexCounts[i] = mesh->GetIndices().size();
+	const tinyxml2::XMLElement* pTechniques = rootNode->FirstChildElement("Techniques");
+	if (pTechniques == nullptr)
+	{
+		DEBUG_ERROR("effect xml is invalid");
+	}
 
-		std::string textureName;
-		if (m_TextureNames.size() > i)
+	for (const tinyxml2::XMLElement* pNode = pTechniques->FirstChildElement(); pNode; pNode = pNode->NextSiblingElement())
+	{
+		if (pNode->BoolAttribute("checked"))
 		{
-			textureName = m_TextureNames[i];
-		}
-		else if (!m_TextureNames.empty())
-		{
-			textureName = m_TextureNames[0];
-		}
-
-		if (!textureName.empty())
-		{
-			Resource resource(textureName);
-			shared_ptr<ResHandle> pTextureRes = g_pApp->GetResCache()->GetHandle(&resource);
-			if (pTextureRes != nullptr)
+			std::string techniqueName = pNode->Attribute("name");
+			Technique* pCurrentTechnique = m_pEffect->GetTechniquesByName().at(techniqueName);
+			if (pCurrentTechnique == nullptr)
 			{
-				shared_ptr<D3D11TextureResourceExtraData> extra =
-					static_pointer_cast<D3D11TextureResourceExtraData>(pTextureRes->GetExtraData());
-				if (extra != nullptr)
-				{
-					m_pTextures[i] = extra->GetTexture();
-				}
+				DEBUG_ERROR("technique is not exist: " + techniqueName);
 			}
-		}
 
-		totalVertices.insert(totalVertices.end(), mesh->GetVertices().begin(), mesh->GetVertices().end());
+			m_pCurrentPass = pCurrentTechnique->GetPasses().at(0);
+			if (m_pCurrentPass == nullptr)
+			{
+				DEBUG_ERROR("technique is not exist: " + techniqueName);
+			}
+
+			std::vector<Vector3> totalVertices;
+			uint32_t meshSize = m_pModel->GetMeshes().size();
+			m_pVertexBuffers.resize(meshSize);
+			m_pIndexBuffers.resize(meshSize);
+			m_IndexCounts.resize(meshSize);
+			for (uint32_t i = 0; i < meshSize; i++)
+			{
+				auto mesh = m_pModel->GetMeshes().at(i);
+				ID3D11Buffer* pVertexBuffer = nullptr;
+				ID3D11Buffer* pIndexBuffer = nullptr;
+				m_pCurrentPass->CreateVertexBuffer(mesh, &pVertexBuffer);
+				m_pCurrentPass->CreateIndexBuffer(mesh, &pIndexBuffer);
+
+				m_pVertexBuffers[i] = pVertexBuffer;
+				m_pIndexBuffers[i] = pIndexBuffer;
+				m_IndexCounts[i] = mesh->GetIndices().size();
+
+				totalVertices.insert(totalVertices.end(), mesh->GetVertices().begin(), mesh->GetVertices().end());
+			}
+
+			SetBoundingBox(totalVertices);
+
+			return S_OK;
+		}
 	}
 
-	SetBoundingBox(totalVertices);
+	return S_FALSE;
 }
 
-ModelNode::~ModelNode()
+HRESULT ModelNode::VOnDeleteSceneNode(Scene* pScene)
 {
 	for (auto pVertexBuffer : m_pVertexBuffers)
 	{
@@ -837,15 +888,7 @@ ModelNode::~ModelNode()
 		SAFE_RELEASE(pIndexBuffer);
 	}
 	m_pIndexBuffers.clear();
-}
-
-HRESULT ModelNode::VOnInitSceneNode(Scene *pScene)
-{
-	return S_OK;
-}
-
-HRESULT ModelNode::VOnDeleteSceneNode(Scene* pScene)
-{
+	
 	return S_OK;
 }
 
@@ -856,17 +899,91 @@ HRESULT ModelNode::VOnUpdate(Scene* pScene, const GameTime& gameTime)
 
 HRESULT ModelNode::VRender(Scene* pScene, const GameTime& gameTime)
 {
-	const std::vector<Variable*>& variables = m_pEffect->GetVariables();
-	for (auto variable : variables)
+	DEBUG_ASSERT(m_pEffect->GetEffectXmlDoc() != nullptr && m_pEffect->GetEffectXmlDoc()->RootElement() != nullptr);
+
+	const tinyxml2::XMLElement* pVariables = m_pEffect->GetEffectXmlDoc()->RootElement()->FirstChildElement("Variables");
+	DEBUG_ASSERT(pVariables != nullptr);
+
+	const std::map<std::string, Variable*>& variables = m_pEffect->GetVariablesByName();
+	for (const tinyxml2::XMLElement* pNode = pVariables->FirstChildElement(); pNode; pNode = pNode->NextSiblingElement())
 	{
-		const std::string& semantic = variable->GetVariableSemantic();
-		if (semantic == "worldviewprojection")
+		Variable* variable = variables.at(pNode->Attribute("name"));
+
+		if (variable->GetVariableSemantic() == "worldviewprojection")
 		{
-			const std::string& type = variable->GetVariableType();
-			if (type == "float4x4")
+			if (variable->GetVariableType() == "float4x4")
 			{
-				const XMMATRIX& wvp = pScene->GetCamera()->GetWorldViewProjection(pScene);
+				const Matrix& wvp = pScene->GetCamera()->GetWorldViewProjection(pScene);
 				variable->SetMatrix(wvp);
+			}
+		}
+		else if (variable->GetVariableSemantic() == "worldinversetranspose")
+		{
+			if (variable->GetVariableType() == "float4x4")
+			{
+				Matrix& worldIT = pScene->GetTopMatrix().Invert().Transpose();
+				variable->SetMatrix(worldIT);
+			}
+		}
+		else if (variable->GetVariableSemantic() == "world")
+		{
+			if (variable->GetVariableType() == "float4x4")
+			{
+				const Matrix& world = pScene->GetTopMatrix();
+				variable->SetMatrix(world);
+			}
+		}
+		else if (variable->GetVariableSemantic() == "viewinverse")
+		{
+			if (variable->GetVariableType() == "float4x4")
+			{
+				Matrix& viewI = pScene->GetCamera()->GetViewMatrix().Invert();
+				variable->SetMatrix(viewI);
+			}
+		}
+		else if (variable->GetVariableType() == "float4")
+		{
+			std::stringstream ss(pNode->Attribute("value"));
+			Vector4 value;
+			ss >> value.x >> value.y >> value.z >> value.w;
+			variable->SetVector(value);
+		}
+		else if (variable->GetVariableType() == "float3")
+		{
+			std::stringstream ss(pNode->Attribute("value"));
+			Vector3 value;
+			ss >> value.x >> value.y >> value.z;
+			variable->SetVector(value);
+		}
+		else if (variable->GetVariableType() == "float2")
+		{
+			std::stringstream ss(pNode->Attribute("value"));
+			Vector2 value;
+			ss >> value.x >> value.y;
+			variable->SetVector(value);
+		}
+		else if (variable->GetVariableType() == "float")
+		{
+			variable->SetFloat(pNode->FloatAttribute("value"));
+		}
+		else if (variable->GetVariableType() == "Texture1D" ||
+			variable->GetVariableType() == "Texture2D" || variable->GetVariableType() == "TextureCube")
+		{
+			const tinyxml2::XMLElement* pResourceNode = pNode->FirstChildElement("ResourceName");
+			if (pResourceNode != nullptr)
+			{
+				std::string textureName = std::string("Textures\\") + pResourceNode->GetText();
+				Resource resource(textureName);
+				shared_ptr<ResHandle> pTextureRes = g_pApp->GetResCache()->GetHandle(&resource);
+				if (pTextureRes != nullptr)
+				{
+					shared_ptr<D3D11TextureResourceExtraData> extra =
+						static_pointer_cast<D3D11TextureResourceExtraData>(pTextureRes->GetExtraData());
+					if (extra != nullptr)
+					{
+						variable->SetResource(extra->GetTexture());
+					}
+				}
 			}
 		}
 	}
@@ -875,15 +992,15 @@ HRESULT ModelNode::VRender(Scene* pScene, const GameTime& gameTime)
 
 	for (uint32_t i = 0, count = m_IndexCounts.size(); i < count; i++)
 	{
-		for (auto variable : variables)
-		{
-			const std::string& type = variable->GetVariableType();
-			if (type == "Texture2D")
-			{
-				variable->SetResource(m_pTextures[i]);
-				break;
-			}
-		}
+// 		for (auto variable : variables)
+// 		{
+// 			const std::string& type = variable->GetVariableType();
+// 			if (type == "Texture2D")
+// 			{
+// 				variable->SetResource(m_pTextures[i]);
+// 				break;
+// 			}
+// 		}
 
 		uint32_t stride = m_pCurrentPass->GetVertexSize();
 		uint32_t offset = 0;

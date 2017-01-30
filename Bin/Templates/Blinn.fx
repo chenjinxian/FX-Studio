@@ -1,7 +1,5 @@
 /************* Resources *************/
 
-#define FLIP_TEXTURE_Y
-
 cbuffer CBufferPerObject
 {
 	float4x4 WorldITXf : WorldInverseTranspose	< string UIWidget = "None"; >;

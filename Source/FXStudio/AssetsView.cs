@@ -94,7 +94,7 @@ namespace FXStudio
             fxcProcess.WaitForExit();
 
             IntPtr effectXml = IntPtr.Zero;
-            if (errorInfo == string.Empty)
+            if (!string.IsNullOrEmpty(compileInfo))
             {
                 RenderMethods.AddEffect(@"Effects\" + Path.GetFileName(destOjbect), sourceFileName, effectName, ref effectXml);
                 AddEffect(Marshal.PtrToStringAnsi(effectXml));

@@ -194,14 +194,10 @@ private:
 	std::vector<ID3D11Buffer*> m_pVertexBuffers;
 	std::vector<ID3D11Buffer*> m_pIndexBuffers;
 	std::vector<uint32_t> m_IndexCounts;
-	std::vector<ID3D11ShaderResourceView*> m_pTextures;
 	std::unique_ptr<Model> m_pModel;
 
 	std::string m_ModelName;
-	std::vector<std::string> m_TextureNames;
 	std::string m_EffectName;
-	std::string m_CurrentTechnique;
-	std::string m_CurrentPass;
 };
 
 class SkyboxNode : public SceneNode

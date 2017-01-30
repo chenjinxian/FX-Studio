@@ -777,7 +777,7 @@ ModelNode::ModelNode(
 
 	Resource modelRes(m_ModelName);
 	shared_ptr<ResHandle> pModelResHandle = g_pApp->GetResCache()->GetHandle(&modelRes);
-	m_pModel = unique_ptr<Model>(DEBUG_NEW Model(pModelResHandle->Buffer(), pModelResHandle->Size()));
+	m_pModel = unique_ptr<Model>(DEBUG_NEW Model(pModelResHandle->Buffer(), pModelResHandle->Size(), true));
 }
 
 ModelNode::~ModelNode()

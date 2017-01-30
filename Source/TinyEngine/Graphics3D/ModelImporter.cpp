@@ -362,8 +362,7 @@ void Mesh::CalculateTangentSpace()
 		}
 	}
 
-	std::unique_ptr<Assimp::SpatialSort> vertexFinder(DEBUG_NEW Assimp::SpatialSort());
-	vertexFinder->Fill(reinterpret_cast<aiVector3D*>(&m_Vertices.front()), m_Vertices.size(), sizeof(aiVector3D));
+	std::unique_ptr<SpatialSort> vertexFinder(DEBUG_NEW SpatialSort(m_Vertices));
 	float posEpsilon = (m_AABox.Extents * 2.0f).Length() * 0.0001f;
 
 	std::vector<uint32_t> verticesFound;
@@ -376,7 +375,7 @@ void Mesh::CalculateTangentSpace()
 			continue;
 
 		closeVertices.clear();
-		vertexFinder->FindPositions(aiVector3D(m_Vertices[i].x, m_Vertices[i].y, m_Vertices[i].z), posEpsilon, verticesFound);
+		vertexFinder->FindPositions(m_Vertices[i], posEpsilon, verticesFound);
 		closeVertices.reserve(verticesFound.size() + 5);
 		closeVertices.push_back(i);
 

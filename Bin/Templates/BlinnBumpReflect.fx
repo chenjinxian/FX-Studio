@@ -95,6 +95,9 @@ TextureCube EnvTexture : ENVIRONMENT <
 SamplerState EnvSampler
 {
 	Filter = MIN_MAG_MIP_LINEAR;
+	AddressU = CLAMP;
+	AddressV = CLAMP;
+	AddressW = CLAMP;
 };
 
 /************* Data Structures *************/
@@ -144,8 +147,6 @@ VS_OUTPUT vertex_shader(VS_INPUT IN)
 	return OUT;
 }
 
-/************* Pixel Shader *************/
-
 void blinn_shading(VS_OUTPUT IN,
 	float3 LightColor,
 	float3 Nn,
@@ -175,6 +176,8 @@ void blinn_shading(VS_OUTPUT IN,
 	SpecularContrib = hdn * Ks * LightColor;
 }
 
+/************* Pixel Shader *************/
+
 float4 pixel_shader(VS_OUTPUT IN) : SV_Target
 {
 	float3 bump = Bump * (2.0 * NormalTexture.Sample(NormalSampler, IN.UV).xyz - 1.0);
@@ -185,7 +188,7 @@ float4 pixel_shader(VS_OUTPUT IN) : SV_Target
 	float3 diffContrib;
 	float3 specContrib;
 	blinn_shading(IN, Lamp0Color, WorldNormal, IN.LightVec, IN.WorldView, diffContrib, specContrib);
-	float3 diffuseColor = ColorTexture.Sample(ColorSampler, IN.UV).xyz;
+	float3 diffuseColor = ColorTexture.Sample(ColorSampler, IN.UV).rgb;
 	float3 result = specContrib + (diffuseColor * (diffContrib + AmbiColor));
 
 	float3 reflVec = -reflect(IN.WorldView, WorldNormal);

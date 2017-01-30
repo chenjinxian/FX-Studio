@@ -104,8 +104,6 @@ VS_OUTPUT vertex_shader(VS_INPUT IN)
 	return OUT;
 }
 
-/************* Pixel Shader *************/
-
 void blinn_shading(VS_OUTPUT IN,
 	float3 LightColor,
 	float3 Nn,
@@ -135,12 +133,14 @@ void blinn_shading(VS_OUTPUT IN,
 	SpecularContrib = hdn * Ks * LightColor;
 }
 
+/************* Pixel Shader *************/
+
 float4 pixel_shader(VS_OUTPUT IN) : SV_Target
 {
 	float3 diffContrib;
 	float3 specContrib;
 	blinn_shading(IN, Lamp0Color, IN.WorldNormal, IN.LightVec, IN.WorldView, diffContrib, specContrib);
-	float3 diffuseColor = ColorTexture.Sample(ColorSampler, IN.UV).xyz;
+	float3 diffuseColor = ColorTexture.Sample(ColorSampler, IN.UV).rgb;
 	float3 result = specContrib + (diffuseColor * (diffContrib + AmbiColor));
 
 	return float4(result,1);

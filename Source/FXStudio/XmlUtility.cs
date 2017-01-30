@@ -138,7 +138,7 @@ namespace FXStudio
             effect.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "pass", "p0"));
 
             sphere.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "diameter", "1.0"));
-            sphere.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "tessellation", "32"));
+            sphere.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "tessellation", "6"));
             sphere.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "rhcoords", "1"));
 
             return sphereElement;

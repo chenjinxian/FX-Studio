@@ -716,7 +716,7 @@ void GeometryNode::CreateSphere()
 
 		std::vector<VertexPositionNormalTexture> vertices;
 		std::vector<uint16_t> indices;
-		GeometricPrimitive::CreateSphere(vertices, indices, diameter, tessellation, useRHcoords);
+		GeometricPrimitive::CreateGeoSphere(vertices, indices, diameter, tessellation, useRHcoords);
 		m_IndexCount = indices.size();
 		m_Mesh = unique_ptr<Mesh>(DEBUG_NEW Mesh(vertices, indices));
 	}

@@ -451,7 +451,7 @@ bool BaseGameLogic::CreateDefaultProject(const std::string& project, const std::
 	tinyxml2::XMLPrinter printer;
 	outDoc.Accept(&printer);
 
-	return Utility::WriteFileData(project, printer.CStr(), printer.CStrSize() - 1);
+	return Utility::WriteFileData(project, printer.CStr(), printer.CStrSize());
 }
 
 void BaseGameLogic::AddVariableElement(
@@ -615,7 +615,7 @@ bool BaseGameLogic::CreateDefaultAsset(const std::string& asset)
 	tinyxml2::XMLPrinter printer;
 	outDoc.Accept(&printer);
 
-	return Utility::WriteFileData(asset, printer.CStr(), printer.CStrSize() - 1);
+	return Utility::WriteFileData(asset, printer.CStr(), printer.CStrSize());
 }
 
 bool BaseGameLogic::LoadAssets(const std::string& asset)

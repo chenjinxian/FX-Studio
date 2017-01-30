@@ -395,7 +395,7 @@ namespace FXStudio
             XmlElement geometryElement = xmlDoc.CreateElement("Sphere");
 
             geometryElement.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "type", "Sphere"));
-            geometryElement.AppendChild(XmlUtility.CreateTransformComponent(xmlDoc));
+            geometryElement.AppendChild(XmlUtility.CreateTransformComponent(xmlDoc, "0", "0.5"));
             geometryElement.AppendChild(XmlUtility.CreateSphereRenderComponent(xmlDoc));
 
             if (RenderMethods.AddActor(geometryElement.OuterXml) > 0)

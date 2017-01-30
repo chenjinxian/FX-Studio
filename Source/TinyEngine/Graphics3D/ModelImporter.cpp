@@ -6,22 +6,12 @@
 
 #pragma comment(lib, "assimp-vc140-mt.lib")
 
-Model::Model(const std::string& filename, bool flipUVs /*= false*/, bool tangent /*= false*/)
+Model::Model(const std::string& filename, bool flipUVs /*= false*/)
 	: m_Meshes(), m_Materials()
 {
 	Assimp::Importer importer;
 
-	uint32_t flags =
-		aiProcess_CalcTangentSpace |
-		aiProcess_JoinIdenticalVertices |
-		aiProcess_FindDegenerates |
-		aiProcess_FindInvalidData |
-		aiProcess_GenUVCoords |
-		aiProcess_TransformUVCoords |
-		aiProcess_OptimizeMeshes |
-		aiProcess_OptimizeGraph |
-		aiProcess_SortByPType |
-		aiProcess_FlipWindingOrder;
+	uint32_t flags = aiProcessPreset_TargetRealtime_Fast;
 
 	if (flipUVs)
 	{
@@ -46,28 +36,18 @@ Model::Model(const std::string& filename, bool flipUVs /*= false*/, bool tangent
 	{
 		for (uint32_t i = 0; i < scene->mNumMeshes; i++)
 		{
-			Mesh* mesh = DEBUG_NEW Mesh(this, (scene->mMeshes[i]), tangent);
+			Mesh* mesh = DEBUG_NEW Mesh(this, (scene->mMeshes[i]));
 			m_Meshes.push_back(mesh);
 		}
 	}
 }
 
-Model::Model(const void* pBuffer, uint32_t length, bool flipUVs /*= false*/, bool tangent /*= false*/)
+Model::Model(const void* pBuffer, uint32_t length, bool flipUVs /*= false*/)
 	: m_Meshes(), m_Materials()
 {
 	Assimp::Importer importer;
 
-	uint32_t flags =
-		aiProcess_CalcTangentSpace |
-		aiProcess_JoinIdenticalVertices |
-		aiProcess_FindDegenerates |
-		aiProcess_FindInvalidData |
-		aiProcess_GenUVCoords |
-		aiProcess_TransformUVCoords |
-		aiProcess_OptimizeMeshes |
-		aiProcess_OptimizeGraph |
-		aiProcess_SortByPType |
-		aiProcess_FlipWindingOrder;
+	uint32_t flags = aiProcessPreset_TargetRealtime_Fast;
 
 	if (flipUVs)
 	{
@@ -94,7 +74,7 @@ Model::Model(const void* pBuffer, uint32_t length, bool flipUVs /*= false*/, boo
 		m_Meshes.reserve(scene->mNumMeshes);
 		for (uint32_t i = 0; i < scene->mNumMeshes; i++)
 		{
-			Mesh* mesh = DEBUG_NEW Mesh(this, (scene->mMeshes[i]), tangent);
+			Mesh* mesh = DEBUG_NEW Mesh(this, (scene->mMeshes[i]));
 			m_Meshes.push_back(mesh);
 		}
 	}
@@ -135,7 +115,7 @@ const std::vector<ModelMaterial*>& Model::GetMaterials() const
 	return m_Materials;
 }
 
-Mesh::Mesh(Model* pModel, aiMesh* mesh, bool tangent)
+Mesh::Mesh(Model* pModel, aiMesh* mesh)
 	: m_pModel(pModel),
 	m_pModelMaterial(nullptr),
 	m_MeshName(),
@@ -219,13 +199,9 @@ Mesh::Mesh(Model* pModel, aiMesh* mesh, bool tangent)
 			m_BiNormals.push_back(Vector3(reinterpret_cast<const float*>(&mesh->mBitangents[i])));
 		}
 	}
-	else if(tangent)
-	{
-		CalculateTangentSpace();
-	}
 }
 
-Mesh::Mesh(std::vector<VertexPositionNormalTexture> vertices, std::vector<uint16_t> indices, bool tangent)
+Mesh::Mesh(std::vector<VertexPositionNormalTexture> vertices, std::vector<uint16_t> indices)
 {
 	m_Vertices.reserve(vertices.size());
 	m_Normals.reserve(vertices.size());
@@ -249,8 +225,7 @@ Mesh::Mesh(std::vector<VertexPositionNormalTexture> vertices, std::vector<uint16
 		m_Indices.push_back(index);
 	}
 
-	if (tangent)
-		CalculateTangentSpace();
+	CalculateTangentSpace();
 }
 
 Mesh::~Mesh()

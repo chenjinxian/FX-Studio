@@ -13,8 +13,8 @@ class Model : public boost::noncopyable
 	friend class Mesh;
 
 public:
-	Model(const std::string& filename, bool flipUVs = false, bool tangent = false);
-	Model(const void* pBuffer, uint32_t length, bool flipUVs = false, bool tangent = false);
+	Model(const std::string& filename, bool flipUVs = false);
+	Model(const void* pBuffer, uint32_t length, bool flipUVs = false);
 	~Model();
 
 	bool HasMeshes() const;
@@ -33,8 +33,8 @@ class Mesh : public boost::noncopyable
 	friend class Model;
 
 public:
-	Mesh(Model* pModel, aiMesh* mesh, bool tangent = false);
-	Mesh(std::vector<VertexPositionNormalTexture> vertices, std::vector<uint16_t> indices, bool tangent = false);
+	Mesh(Model* pModel, aiMesh* mesh);
+	Mesh(std::vector<VertexPositionNormalTexture> vertices, std::vector<uint16_t> indices);
 	~Mesh();
 
 	Model* GetModel();

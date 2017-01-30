@@ -701,7 +701,7 @@ void GeometryNode::CreateCube()
 		std::vector<uint16_t> indices;
 		GeometricPrimitive::CreateCube(vertices, indices, size, useRHcoords);
 		m_IndexCount = indices.size();
-		m_Mesh = unique_ptr<Mesh>(DEBUG_NEW Mesh(vertices, indices, true));
+		m_Mesh = unique_ptr<Mesh>(DEBUG_NEW Mesh(vertices, indices));
 	}
 }
 
@@ -718,7 +718,7 @@ void GeometryNode::CreateSphere()
 		std::vector<uint16_t> indices;
 		GeometricPrimitive::CreateSphere(vertices, indices, diameter, tessellation, useRHcoords);
 		m_IndexCount = indices.size();
-		m_Mesh = unique_ptr<Mesh>(DEBUG_NEW Mesh(vertices, indices, true));
+		m_Mesh = unique_ptr<Mesh>(DEBUG_NEW Mesh(vertices, indices));
 	}
 }
 
@@ -736,7 +736,7 @@ void GeometryNode::CreateCylinder()
 		std::vector<uint16_t> indices;
 		GeometricPrimitive::CreateCylinder(vertices, indices, height, diameter, tessellation, useRHcoords);
 		m_IndexCount = indices.size();
-		m_Mesh = unique_ptr<Mesh>(DEBUG_NEW Mesh(vertices, indices, true));
+		m_Mesh = unique_ptr<Mesh>(DEBUG_NEW Mesh(vertices, indices));
 	}
 }
 
@@ -753,7 +753,7 @@ void GeometryNode::CreateTeapot()
 		std::vector<uint16_t> indices;
 		GeometricPrimitive::CreateTeapot(vertices, indices, size, tessellation, useRHcoords);
 		m_IndexCount = indices.size();
-		m_Mesh = unique_ptr<Mesh>(DEBUG_NEW Mesh(vertices, indices, true));
+		m_Mesh = unique_ptr<Mesh>(DEBUG_NEW Mesh(vertices, indices));
 	}
 }
 
@@ -777,7 +777,7 @@ ModelNode::ModelNode(
 
 	Resource modelRes(m_ModelName);
 	shared_ptr<ResHandle> pModelResHandle = g_pApp->GetResCache()->GetHandle(&modelRes);
-	m_pModel = unique_ptr<Model>(DEBUG_NEW Model(pModelResHandle->Buffer(), pModelResHandle->Size(), true, true));
+	m_pModel = unique_ptr<Model>(DEBUG_NEW Model(pModelResHandle->Buffer(), pModelResHandle->Size()));
 }
 
 ModelNode::~ModelNode()
@@ -1094,7 +1094,7 @@ SkyboxNode::SkyboxNode(ActorId actorId, WeakBaseRenderComponentPtr renderCompone
 	std::vector<VertexPositionNormalTexture> vertices;
 	std::vector<uint16_t> indices;
 	GeometricPrimitive::CreateSphere(vertices, indices);
-	unique_ptr<Mesh> mesh = unique_ptr<Mesh>(DEBUG_NEW Mesh(vertices, indices, true));
+	unique_ptr<Mesh> mesh = unique_ptr<Mesh>(DEBUG_NEW Mesh(vertices, indices));
 	m_pCurrentPass->CreateVertexBuffer(mesh.get(), &m_pVertexBuffer);
 	m_pCurrentPass->CreateIndexBuffer(mesh.get(), &m_pIndexBuffer);
 	m_IndexCount = mesh->GetIndices().size();

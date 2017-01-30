@@ -214,6 +214,7 @@
     <ClInclude Include="UserInterface\HumanView.h" />
     <ClInclude Include="UserInterface\UserInterface.h" />
     <ClInclude Include="Utilities\ConcurrentQueue.h" />
+    <ClInclude Include="Utilities\SpatialSort.h" />
     <ClInclude Include="Utilities\Templates.h" />
     <ClInclude Include="Utilities\Utility.h" />
   </ItemGroup>
@@ -248,6 +249,7 @@
     <ClCompile Include="ResourceCache\XmlResource.cpp" />
     <ClCompile Include="ResourceCache\ZipFile.cpp" />
     <ClCompile Include="UserInterface\HumanView.cpp" />
+    <ClCompile Include="Utilities\SpatialSort.cpp" />
     <ClCompile Include="Utilities\Utility.cpp" />
   </ItemGroup>
   <ItemGroup>

@@ -62,6 +62,9 @@ private:
 	std::vector<Vector3> m_BiNormals;
 	std::vector<std::vector<Vector2> > m_TextureCoordinates;
 	std::vector<std::vector<Vector4> > m_VertexColors;
-	uint32_t m_FaceCount;
 	std::vector<uint32_t> m_Indices;
+	uint32_t m_FaceCount;
+
+	BoundingBox m_AABox;
+	BoundingSphere m_Sphere;
 };

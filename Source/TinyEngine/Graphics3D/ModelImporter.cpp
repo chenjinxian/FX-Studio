@@ -1,5 +1,6 @@
 #include "ModelImporter.h"
 #include "ModelMaterial.h"
+#include "../Utilities/SpatialSort.h"
 #include "assimp/Importer.hpp"
 #include "assimp/scene.h"
 #include "assimp/postprocess.h"
@@ -137,6 +138,8 @@ Mesh::Mesh(Model* pModel, aiMesh* mesh)
 		m_Vertices.push_back(Vector3(reinterpret_cast<const float*>(&mesh->mVertices[i])));
 	}
 
+	BoundingBox::CreateFromPoints(m_AABox, m_Vertices.size(), &m_Vertices.front(), sizeof(Vector3));
+
 	if (mesh->HasFaces())
 	{
 		m_FaceCount = mesh->mNumFaces;
@@ -225,6 +228,7 @@ Mesh::Mesh(std::vector<VertexPositionNormalTexture> vertices, std::vector<uint16
 		m_Indices.push_back(index);
 	}
 
+	BoundingBox::CreateFromPoints(m_AABox, m_Vertices.size(), &m_Vertices.front(), sizeof(Vector3));
 	CalculateTangentSpace();
 }
 
@@ -290,39 +294,29 @@ const std::vector<uint32_t>& Mesh::GetIndices() const
 
 void Mesh::CalculateTangentSpace()
 {
-	std::vector<std::pair<Vector3, Vector3> > tbs;
-	tbs.resize(m_Vertices.size());
+	if (!m_Tangents.empty()) return;
+	if (m_Normals.empty() || m_TextureCoordinates.empty())
+	{
+		DEBUG_ERROR("Generate vertex normal and texturecoords first");
+		return;
+	}
 
-	bool hasNorml = !m_Normals.empty();
-	if (m_Normals.empty())
-		m_Normals.resize(m_Vertices.size());
+	const float angleEpsilon = 0.9999f;
+	std::vector<bool> vertexDone(m_Vertices.size(), false);
+
+	m_Tangents.resize(m_Vertices.size());
+	m_BiNormals.resize(m_Vertices.size());
 
 	for (uint32_t i = 0, len = m_Indices.size(); i < len; i += 3)
 	{
-		uint32_t vertex0 = m_Indices[i];
-		uint32_t vertex1 = m_Indices[i + 1];
-		uint32_t vertex2 = m_Indices[i + 2];
+		const uint32_t vertex0 = m_Indices[i];
+		const uint32_t vertex1 = m_Indices[i + 1];
+		const uint32_t vertex2 = m_Indices[i + 2];
 
-		Vector3 tri0 = m_Vertices.at(vertex0);
-		Vector3 tri1 = m_Vertices.at(vertex1);
-		Vector3 tri2 = m_Vertices.at(vertex2);
-
-		Vector2 uv0 = m_TextureCoordinates[0].at(vertex0);
-		Vector2 uv1 = m_TextureCoordinates[0].at(vertex1);
-		Vector2 uv2 = m_TextureCoordinates[0].at(vertex2);
-
-		Vector3 edge1 = tri1 - tri0;
-		Vector3 edge2 = tri2 - tri0;
-		Vector2 deltaUV1 = uv1 - uv0;
-		Vector2 deltaUV2 = uv2 - uv0;
-
-		if (!hasNorml)
-		{
-			Vector3 normal = edge1.Cross(edge2); normal.Normalize();
-			m_Normals[vertex0] += normal;
-			m_Normals[vertex1] += normal;
-			m_Normals[vertex2] += normal;
-		}
+		Vector3 edge1 = m_Vertices.at(vertex1) - m_Vertices.at(vertex0);
+		Vector3 edge2 = m_Vertices.at(vertex2) - m_Vertices.at(vertex0);
+		Vector2 deltaUV1 = m_TextureCoordinates[0].at(vertex1) - m_TextureCoordinates[0].at(vertex0);
+		Vector2 deltaUV2 = m_TextureCoordinates[0].at(vertex2) - m_TextureCoordinates[0].at(vertex0);
 
 		float dirCorrection = (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y) < 0.0f ? -1.0f : 1.0f;
 		if (deltaUV1 == Vector2::Zero && deltaUV2 == Vector2::Zero)
@@ -331,65 +325,89 @@ void Mesh::CalculateTangentSpace()
 			deltaUV2.x = 1.0f; deltaUV2.y = 0.0f;
 		}
 
-		Vector3 tangent, binormal;
-		tangent = (edge1 * deltaUV2.y - edge2 * deltaUV1.y) * dirCorrection;
-		binormal = (edge1 * deltaUV2.x - edge2 * deltaUV1.x) * dirCorrection;
+		Vector3 tangent = (edge1 * deltaUV2.y - edge2 * deltaUV1.y) * dirCorrection;
+		Vector3 binormal = (edge1 * deltaUV2.x - edge2 * deltaUV1.x) * dirCorrection;
+	
+		for (uint32_t j = 0; j < 3; j++)
+		{
+			const uint32_t index = m_Indices[i + j];
+			Vector3 localTangent = tangent - m_Normals[index] * (tangent.Dot(m_Normals[index]));
+			Vector3 localBinormal = binormal - m_Normals[index] * (binormal.Dot(m_Normals[index]));
+			localTangent.Normalize();
+			localBinormal.Normalize();
 
-		tbs[vertex0].first += tangent;
-		tbs[vertex0].second += binormal;
-		tbs[vertex1].first += tangent;
-		tbs[vertex1].second += binormal;
-		tbs[vertex2].first += tangent;
-		tbs[vertex2].second += binormal;
+			bool invalidT = std::isnan(localTangent.x) || std::isfinite(localTangent.x) ||
+				std::isnan(localTangent.x) || std::isfinite(localTangent.x) ||
+				std::isnan(localTangent.x) || std::isfinite(localTangent.x);
+			bool invalidB = std::isnan(localBinormal.x) || std::isfinite(localBinormal.x) ||
+				std::isnan(localBinormal.x) || std::isfinite(localBinormal.x) ||
+				std::isnan(localBinormal.x) || std::isfinite(localBinormal.x);
+
+			if (invalidT != invalidB)
+			{
+				if (invalidT)
+				{
+					localTangent = m_Normals[index].Cross(localBinormal);
+					localTangent.Normalize();
+				}
+				else
+				{
+					localBinormal = localTangent.Cross(m_Normals[index]);
+					localBinormal.Normalize();
+				}
+			}
+
+			m_Tangents[index] = localTangent;
+			m_BiNormals[index] = localBinormal;
+		}
 	}
 
-	m_Tangents.resize(m_Vertices.size());
-	m_BiNormals.resize(m_Vertices.size());
+	std::unique_ptr<Assimp::SpatialSort> vertexFinder(DEBUG_NEW Assimp::SpatialSort());
+	vertexFinder->Fill(reinterpret_cast<aiVector3D*>(&m_Vertices.front()), m_Vertices.size(), sizeof(aiVector3D));
+	float posEpsilon = (m_AABox.Extents * 2.0f).Length() * 0.0001f;
 
-	for (uint32_t i = 0, len = m_Vertices.size(); i < len; i += 3)
+	std::vector<uint32_t> verticesFound;
+	const float fLimit = cos(XMConvertToRadians(45.0f));
+	std::vector<uint32_t> closeVertices;
+
+	for (uint32_t i = 0, len = m_Vertices.size(); i < len; i++)
 	{
-		m_Normals[i].Normalize();
-		const Vector3& normal = m_Normals[i];
-		const std::pair<Vector3, Vector3>& tb = tbs[i];
+		if (vertexDone[i])
+			continue;
 
-// 		m_Tangents[i] = (tb.first - normal * normal.Dot(tb.first));
-// 		m_Tangents[i].Normalize();
-// 		m_BiNormals[i] = (tb.second - normal * normal.Dot(tb.second));
-// 		m_BiNormals[i].Normalize();
-// 
-// 		if (m_Tangents[i].Cross(m_BiNormals[i]).Dot(normal) > 0.0f)
-// 		{
-// 			m_Tangents[i] = -m_Tangents[i];
-// 			m_BiNormals[i] = -m_BiNormals[i];
-// 		}
+		closeVertices.clear();
+		vertexFinder->FindPositions(aiVector3D(m_Vertices[i].x, m_Vertices[i].y, m_Vertices[i].z), posEpsilon, verticesFound);
+		closeVertices.reserve(verticesFound.size() + 5);
+		closeVertices.push_back(i);
 
-		Vector3 localTangent = tb.first - normal * (tb.first * normal);
-		Vector3 localBinormal = tb.second - normal * (tb.second * normal);
-		localTangent.Normalize();
-		localBinormal.Normalize();
-
-		bool invalidT = std::isnan(localTangent.x) || std::isfinite(localTangent.x) ||
-			std::isnan(localTangent.x) || std::isfinite(localTangent.x) ||
-			std::isnan(localTangent.x) || std::isfinite(localTangent.x);
-		bool invalidB = std::isnan(localBinormal.x) || std::isfinite(localBinormal.x) ||
-			std::isnan(localBinormal.x) || std::isfinite(localBinormal.x) ||
-			std::isnan(localBinormal.x) || std::isfinite(localBinormal.x);
-
-		if (invalidT != invalidB)
+		for (uint32_t j : verticesFound)
 		{
-			if (invalidT)
-			{
-				localTangent = normal.Cross(localBinormal);
-				localTangent.Normalize();
-			}
-			else
-			{
-				localBinormal = localTangent.Cross(normal);
-				localBinormal.Normalize();
-			}
+			if (vertexDone[j])
+				continue;
+			if (m_Normals[j].Dot(m_Normals[i]) < angleEpsilon)
+				continue;
+			if (m_Tangents[j].Dot(m_Tangents[i]) < fLimit)
+				continue;
+			if (m_BiNormals[j].Dot(m_BiNormals[i]) < fLimit)
+				continue;
+
+			closeVertices.push_back(j);
+			vertexDone[j] = true;
 		}
 
-		m_Tangents[i] = localTangent;
-		m_BiNormals[i] = localBinormal;
+		Vector3 smoothTangent, smoothBinormal;
+		for (uint32_t j : closeVertices)
+		{
+			smoothTangent += m_Tangents[j];
+			smoothBinormal += m_BiNormals[j];
+		}
+		smoothTangent.Normalize();
+		smoothBinormal.Normalize();
+
+		for (uint32_t j : closeVertices)
+		{
+			m_Tangents[j] = smoothTangent;
+			m_BiNormals[j] = smoothBinormal;
+		}
 	}
 }

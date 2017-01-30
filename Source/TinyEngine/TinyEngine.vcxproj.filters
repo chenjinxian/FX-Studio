@@ -151,6 +151,9 @@
     <ClInclude Include="Graphics3D\DebugGizmosNode.h">
       <Filter>Graphics3D</Filter>
     </ClInclude>
+    <ClInclude Include="Utilities\SpatialSort.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Debugging\Logger.cpp">
@@ -245,6 +248,9 @@
     </ClCompile>
     <ClCompile Include="Graphics3D\DebugGizmosNode.cpp">
       <Filter>Graphics3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Utilities\SpatialSort.cpp">
+      <Filter>Utilities</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

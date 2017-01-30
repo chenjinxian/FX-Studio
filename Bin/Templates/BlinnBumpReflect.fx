@@ -1,7 +1,5 @@
 /************* Resources *************/
 
-#define FLIP_TEXTURE_Y
-
 cbuffer CBufferPerObject
 {
 	float4x4 WorldITXf : WorldInverseTranspose	< string UIWidget = "None"; >;
@@ -97,9 +95,6 @@ TextureCube EnvTexture : ENVIRONMENT <
 SamplerState EnvSampler
 {
 	Filter = MIN_MAG_MIP_LINEAR;
-	AddressU = Clamp;
-	AddressV = Clamp;
-	AddressW = Clamp;
 };
 
 /************* Data Structures *************/
@@ -122,7 +117,6 @@ struct VS_OUTPUT
 	float2 UV				: TEXCOORD0;
 	float3 LightVec			: TEXCOORD1;
 	float3 WorldView		: TEXCOORD2;
-	float3 ReflectVec		: TEXCOORD3;
 };
 
 /************* Vertex Shader *************/
@@ -146,7 +140,6 @@ VS_OUTPUT vertex_shader(VS_INPUT IN)
 	OUT.UV = IN.UV;
 #endif
 	OUT.WorldView = normalize(ViewIXf[3].xyz - Pw);
-	OUT.ReflectVec = -reflect(OUT.WorldView, OUT.WorldNormal);
 
 	return OUT;
 }
@@ -162,21 +155,21 @@ void blinn_shading(VS_OUTPUT IN,
 	out float3 SpecularContrib)
 {
 	float3 Hn = normalize(Vn + Ln);
-	float hdn = dot(Hn,Nn);
-	float3 R = reflect(-Ln,Nn);
-	float rdv = dot(R,Vn);
-	rdv = max(rdv,0.001);
-	float ldn=dot(Ln,Nn);
-	ldn = max(ldn,0.0);
-	float ndv = dot(Nn,Vn);
-	float hdv = dot(Hn,Vn);
-	float eSq = Eccentricity*Eccentricity;
+	float hdn = dot(Hn, Nn);
+	float3 R = reflect(-Ln, Nn);
+	float rdv = dot(R, Vn);
+	rdv = max(rdv, 0.001);
+	float ldn = dot(Ln, Nn);
+	ldn = max(ldn, 0.0);
+	float ndv = dot(Nn, Vn);
+	float hdv = dot(Hn, Vn);
+	float eSq = Eccentricity * Eccentricity;
 	float distrib = eSq / (rdv * rdv * (eSq - 1.0) + 1.0);
 	distrib = distrib * distrib;
 	float Gb = 2.0 * hdn * ndv / hdv;
 	float Gc = 2.0 * hdn * ldn / hdv;
-	float Ga = min(1.0,min(Gb,Gc));
-	float fresnelHack = 1.0 - pow(ndv,5.0);
+	float Ga = min(1.0, min(Gb, Gc));
+	float fresnelHack = 1.0 - pow(ndv, 5.0);
 	hdn = distrib * Ga * fresnelHack / ndv;
 	DiffuseContrib = ldn * LightColor;
 	SpecularContrib = hdn * Ks * LightColor;
@@ -184,21 +177,22 @@ void blinn_shading(VS_OUTPUT IN,
 
 float4 pixel_shader(VS_OUTPUT IN) : SV_Target
 {
-	float3 bump = Bump * ((2 * NormalTexture.Sample(NormalSampler, IN.UV).xyz) - 1.0);
+	float3 bump = Bump * (2.0 * NormalTexture.Sample(NormalSampler, IN.UV).xyz - 1.0);
 	float3x3 tbn = float3x3(IN.WorldTangent, IN.WorldBinormal, IN.WorldNormal);
-	float3 Nn = mul(bump, tbn);
-	Nn = normalize(Nn);
+	float3 WorldNormal = mul(bump, tbn);
+	WorldNormal = normalize(WorldNormal);
 
 	float3 diffContrib;
 	float3 specContrib;
-	blinn_shading(IN, Lamp0Color, Nn, IN.LightVec, IN.WorldView, diffContrib, specContrib);
+	blinn_shading(IN, Lamp0Color, WorldNormal, IN.LightVec, IN.WorldView, diffContrib, specContrib);
 	float3 diffuseColor = ColorTexture.Sample(ColorSampler, IN.UV).xyz;
 	float3 result = specContrib + (diffuseColor * (diffContrib + AmbiColor));
 
-	float3 reflColor = Kr * EnvTexture.Sample(EnvSampler, IN.ReflectVec).rgb;
+	float3 reflVec = -reflect(IN.WorldView, WorldNormal);
+	float3 reflColor = Kr * EnvTexture.Sample(EnvSampler, reflVec).rgb;
 	result += diffuseColor * reflColor;
 
-	return float4(result,1);
+	return float4(result, 1);
 }
 
 RasterizerState DisableCulling

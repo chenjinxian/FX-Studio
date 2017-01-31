@@ -459,19 +459,16 @@ GeometryNode::GeometryNode(ActorType actorType, ActorId actorId, WeakBaseRenderC
 
 GeometryNode::~GeometryNode()
 {
-	SAFE_RELEASE(m_pVertexBuffer);
-	SAFE_RELEASE(m_pIndexBuffer);
+	VOnDeleteSceneNode(nullptr);
 }
 
 HRESULT GeometryNode::VOnInitSceneNode(Scene* pScene)
 {
-	SAFE_RELEASE(m_pVertexBuffer);
-	SAFE_RELEASE(m_pIndexBuffer);
+	VOnDeleteSceneNode(pScene);
 
 	GeometryRenderComponent* pGeometryRender = static_cast<GeometryRenderComponent*>(m_pRenderComponent);
 	if (pGeometryRender != nullptr)
 	{
-		m_TextureName = pGeometryRender->GetTextureName();
 		m_EffectName = pGeometryRender->GetEffectName();
 	}
 
@@ -495,7 +492,6 @@ HRESULT GeometryNode::VOnInitSceneNode(Scene* pScene)
 	if (pEffectXmlDoc == nullptr)
 	{
 		DEBUG_ERROR("not generate effect xml string");
-		return S_FALSE;
 	}
 	const tinyxml2::XMLElement* rootNode = pEffectXmlDoc->RootElement();
 	if (rootNode == nullptr)
@@ -528,7 +524,6 @@ HRESULT GeometryNode::VOnInitSceneNode(Scene* pScene)
 
 			m_pCurrentPass->CreateVertexBuffer(m_Mesh.get(), &m_pVertexBuffer);
 			m_pCurrentPass->CreateIndexBuffer(m_Mesh.get(), &m_pIndexBuffer);
-
 			return S_OK;
 		}
 	}
@@ -1094,10 +1089,17 @@ SkyboxNode::SkyboxNode(ActorId actorId, WeakBaseRenderComponentPtr renderCompone
 	std::vector<VertexPositionNormalTexture> vertices;
 	std::vector<uint16_t> indices;
 	GeometricPrimitive::CreateSphere(vertices, indices);
-	unique_ptr<Mesh> mesh = unique_ptr<Mesh>(DEBUG_NEW Mesh(vertices, indices));
-	m_pCurrentPass->CreateVertexBuffer(mesh.get(), &m_pVertexBuffer);
-	m_pCurrentPass->CreateIndexBuffer(mesh.get(), &m_pIndexBuffer);
-	m_IndexCount = mesh->GetIndices().size();
+
+	std::vector<Vector3> points;
+	points.reserve(vertices.size());
+	for (auto vertex : vertices)
+	{
+		points.push_back(vertex.position);
+	}
+
+	m_pCurrentPass->CreateVertexBuffer(&points.front(), points.size() * sizeof(Vector3), &m_pVertexBuffer);
+	m_pCurrentPass->CreateIndexBuffer(&indices.front(), indices.size() * sizeof(uint16_t), &m_pIndexBuffer);
+	m_IndexCount = indices.size();
 }
 
 SkyboxNode::~SkyboxNode()
@@ -1162,7 +1164,7 @@ HRESULT SkyboxNode::VRender(Scene* pScene, const GameTime& gameTime)
 	uint32_t stride = m_pCurrentPass->GetVertexSize();
 	uint32_t offset = 0;
 	pScene->GetRenderder()->VSetVertexBuffers(m_pVertexBuffer, &stride, &offset);
-	pScene->GetRenderder()->VSetIndexBuffer(m_pIndexBuffer, IRenderer::Format_uint32, 0);
+	pScene->GetRenderder()->VSetIndexBuffer(m_pIndexBuffer, IRenderer::Format_uint16, 0);
 	pScene->GetRenderder()->VDrawMesh(m_IndexCount, 0, 0, m_pCurrentPass->GetEffectPass());
 
 	return S_OK;

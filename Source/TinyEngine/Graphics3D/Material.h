@@ -24,6 +24,7 @@ public:
 	char* GenerateXml(const std::string& effectObjectPath, const std::string& effectSourcePath, const std::string& effectName);
 	const char* GetEffectXmlString() { return m_pEffectXmlString; }
 	const tinyxml2::XMLDocument* GetEffectXmlDoc() { return m_pEffectXmlDoc.get(); }
+	void SetEffectXmlString(const char* effectXmlStr, int size);
 
 private:
 	std::vector<Technique*> m_Techniques;

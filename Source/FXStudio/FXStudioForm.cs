@@ -460,7 +460,7 @@ namespace FXStudio
 
         private void toolStripButtonEffect_Click(object sender, EventArgs e)
         {
-            EffectWizardDialog dialog = new EffectWizardDialog();
+            EffectWizardDialog dialog = new EffectWizardDialog(m_ProjectLocation);
             if (dialog.ShowDialog() == DialogResult.OK)
             {
                 m_AssetsView.AddEffect(dialog.FileName, dialog.EffectName, dialog.IsEffectFromExist());

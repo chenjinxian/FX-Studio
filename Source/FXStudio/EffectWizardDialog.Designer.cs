@@ -29,21 +29,21 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.ListViewItem listViewItem10 = new System.Windows.Forms.ListViewItem("Empty", 0);
-            System.Windows.Forms.ListViewItem listViewItem11 = new System.Windows.Forms.ListViewItem("Blinn", 1);
-            System.Windows.Forms.ListViewItem listViewItem12 = new System.Windows.Forms.ListViewItem("Blinn bump reflect", 2);
-            System.Windows.Forms.ListViewItem listViewItem13 = new System.Windows.Forms.ListViewItem("Gooch", 3);
-            System.Windows.Forms.ListViewItem listViewItem14 = new System.Windows.Forms.ListViewItem("Gooch bump reflect", 4);
-            System.Windows.Forms.ListViewItem listViewItem15 = new System.Windows.Forms.ListViewItem("Lambert", 5);
-            System.Windows.Forms.ListViewItem listViewItem16 = new System.Windows.Forms.ListViewItem("Lambert bump reflect", 6);
-            System.Windows.Forms.ListViewItem listViewItem17 = new System.Windows.Forms.ListViewItem("Phong", 7);
-            System.Windows.Forms.ListViewItem listViewItem18 = new System.Windows.Forms.ListViewItem("Phong bump reflect", 8);
+            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem("Empty", 0);
+            System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem("Blinn", 1);
+            System.Windows.Forms.ListViewItem listViewItem3 = new System.Windows.Forms.ListViewItem("Blinn bump reflect", 2);
+            System.Windows.Forms.ListViewItem listViewItem4 = new System.Windows.Forms.ListViewItem("Gooch", 3);
+            System.Windows.Forms.ListViewItem listViewItem5 = new System.Windows.Forms.ListViewItem("Gooch bump reflect", 4);
+            System.Windows.Forms.ListViewItem listViewItem6 = new System.Windows.Forms.ListViewItem("Lambert", 5);
+            System.Windows.Forms.ListViewItem listViewItem7 = new System.Windows.Forms.ListViewItem("Lambert bump reflect", 6);
+            System.Windows.Forms.ListViewItem listViewItem8 = new System.Windows.Forms.ListViewItem("Phong", 7);
+            System.Windows.Forms.ListViewItem listViewItem9 = new System.Windows.Forms.ListViewItem("Phong bump reflect", 8);
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EffectWizardDialog));
             this.wizardForm = new CristiPotlog.WizardControl.Wizard();
             this.wizardPageName = new CristiPotlog.WizardControl.WizardPage();
             this.checkBoxMaterial = new System.Windows.Forms.CheckBox();
             this.textBoxMaterial = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
+            this.labelMaterial = new System.Windows.Forms.Label();
             this.textBoxEffect = new System.Windows.Forms.TextBox();
             this.labelEffect = new System.Windows.Forms.Label();
             this.wizardPageTemplate = new CristiPotlog.WizardControl.WizardPage();
@@ -97,14 +97,14 @@
             // 
             this.wizardPageName.Controls.Add(this.checkBoxMaterial);
             this.wizardPageName.Controls.Add(this.textBoxMaterial);
-            this.wizardPageName.Controls.Add(this.label2);
+            this.wizardPageName.Controls.Add(this.labelMaterial);
             this.wizardPageName.Controls.Add(this.textBoxEffect);
             this.wizardPageName.Controls.Add(this.labelEffect);
             this.wizardPageName.Description = "Use this page to customize the name of the Effect and Materials to be created whe" +
     "n the wizard is complete";
             this.wizardPageName.Location = new System.Drawing.Point(0, 0);
             this.wizardPageName.Name = "wizardPageName";
-            this.wizardPageName.Size = new System.Drawing.Size(496, 312);
+            this.wizardPageName.Size = new System.Drawing.Size(496, 304);
             this.wizardPageName.TabIndex = 12;
             this.wizardPageName.Title = "New Effect Name";
             // 
@@ -128,15 +128,15 @@
             this.textBoxMaterial.TabIndex = 8;
             this.textBoxMaterial.TextChanged += new System.EventHandler(this.textBoxMaterial_TextChanged);
             // 
-            // label2
+            // labelMaterial
             // 
-            this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Microsoft YaHei UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label2.Location = new System.Drawing.Point(12, 121);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(98, 17);
-            this.label2.TabIndex = 7;
-            this.label2.Text = "Material Name:";
+            this.labelMaterial.AutoSize = true;
+            this.labelMaterial.Font = new System.Drawing.Font("Microsoft YaHei UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.labelMaterial.Location = new System.Drawing.Point(12, 121);
+            this.labelMaterial.Name = "labelMaterial";
+            this.labelMaterial.Size = new System.Drawing.Size(98, 17);
+            this.labelMaterial.TabIndex = 7;
+            this.labelMaterial.Text = "Material Name:";
             // 
             // textBoxEffect
             // 
@@ -219,15 +219,15 @@
             // listViewEffect
             // 
             this.listViewEffect.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem10,
-            listViewItem11,
-            listViewItem12,
-            listViewItem13,
-            listViewItem14,
-            listViewItem15,
-            listViewItem16,
-            listViewItem17,
-            listViewItem18});
+            listViewItem1,
+            listViewItem2,
+            listViewItem3,
+            listViewItem4,
+            listViewItem5,
+            listViewItem6,
+            listViewItem7,
+            listViewItem8,
+            listViewItem9});
             this.listViewEffect.LargeImageList = this.imageListEffect;
             this.listViewEffect.Location = new System.Drawing.Point(12, 75);
             this.listViewEffect.MultiSelect = false;
@@ -260,7 +260,7 @@
             this.wizardPageFile.Description = "Use this page to import an existing effect";
             this.wizardPageFile.Location = new System.Drawing.Point(0, 0);
             this.wizardPageFile.Name = "wizardPageFile";
-            this.wizardPageFile.Size = new System.Drawing.Size(428, 225);
+            this.wizardPageFile.Size = new System.Drawing.Size(428, 208);
             this.wizardPageFile.TabIndex = 13;
             this.wizardPageFile.Title = "New Effect from File";
             // 
@@ -300,7 +300,7 @@
             this.wizardPageSelect.Font = new System.Drawing.Font("Microsoft YaHei UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.wizardPageSelect.Location = new System.Drawing.Point(0, 0);
             this.wizardPageSelect.Name = "wizardPageSelect";
-            this.wizardPageSelect.Size = new System.Drawing.Size(428, 225);
+            this.wizardPageSelect.Size = new System.Drawing.Size(428, 208);
             this.wizardPageSelect.TabIndex = 10;
             this.wizardPageSelect.Title = "Add Effect";
             // 
@@ -401,7 +401,7 @@
         private System.Windows.Forms.TextBox textBoxName;
         private System.Windows.Forms.Label labelName;
         private System.Windows.Forms.TextBox textBoxMaterial;
-        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label labelMaterial;
         private System.Windows.Forms.TextBox textBoxEffect;
         private System.Windows.Forms.Label labelEffect;
         private System.Windows.Forms.CheckBox checkBoxMaterial;

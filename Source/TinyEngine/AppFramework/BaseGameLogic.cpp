@@ -646,7 +646,9 @@ bool BaseGameLogic::LoadAssets(const std::string& asset)
 				if (extra != nullptr)
 				{
 					Effect* pEffect = extra->GetEffect();
-					pEffect->GenerateXml(pNode->Attribute("object"), pNode->Attribute("source"), pNode->Attribute("name"));
+					tinyxml2::XMLPrinter printer;
+					pNode->Accept(&printer);
+					pEffect->SetEffectXmlString(printer.CStr(), printer.CStrSize());
 				}
 			}
 		}

@@ -80,7 +80,7 @@ char* Effect::GenerateXml(const std::string& effectObjectPath, const std::string
 {
 	if (m_pEffectXmlString == nullptr)
 	{
-		m_pEffectXmlDoc = std::make_unique<tinyxml2::XMLDocument>(DEBUG_NEW tinyxml2::XMLDocument());
+		m_pEffectXmlDoc = std::unique_ptr<tinyxml2::XMLDocument>(DEBUG_NEW tinyxml2::XMLDocument());
 
 		tinyxml2::XMLElement* pRoot = m_pEffectXmlDoc->NewElement("Effect");
 		m_pEffectXmlDoc->InsertEndChild(pRoot);
@@ -141,6 +141,21 @@ char* Effect::GenerateXml(const std::string& effectObjectPath, const std::string
 	}
 	
 	return m_pEffectXmlString;
+}
+
+void Effect::SetEffectXmlString(const char* effectXmlStr, int effectXmlSize)
+{
+	SAFE_DELETE_ARRAY(m_pEffectXmlString);
+
+	m_pEffectXmlString = new char[effectXmlSize];
+	strncpy_s(m_pEffectXmlString, effectXmlSize, effectXmlStr, effectXmlSize);
+
+	if (m_pEffectXmlDoc == nullptr)
+	{
+		m_pEffectXmlDoc = std::unique_ptr<tinyxml2::XMLDocument>(DEBUG_NEW tinyxml2::XMLDocument());
+	}
+
+	m_pEffectXmlDoc->Parse(effectXmlStr, effectXmlSize);
 }
 
 Technique::Technique(ID3D11Device1* pDevice, ID3DX11EffectTechnique* pD3DX11EffectTechnique)

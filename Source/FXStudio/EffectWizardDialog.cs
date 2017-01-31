@@ -18,12 +18,14 @@ namespace FXStudio
         private string m_EffectName;
         private string m_MaterialName;
 
+        private string m_EffectDir;
         private string m_TemplatePath;
 
-        public EffectWizardDialog()
+        public EffectWizardDialog(string projectLocation)
         {
             InitializeComponent();
 
+            m_EffectDir = projectLocation + @"\Effects\";
             m_TemplatePath = Directory.GetCurrentDirectory() + @"\Templates\";
         }
 
@@ -112,6 +114,7 @@ namespace FXStudio
             wizardForm.SelectedPage = wizardPageSelect;
             wizardForm.NextEnabled = false;
             wizardForm.FinishEnabled = false;
+            textBoxLocation.Text = m_EffectDir;
         }
 
         private void textBoxFile_TextChanged(object sender, EventArgs e)
@@ -137,7 +140,16 @@ namespace FXStudio
 
         private void listViewEffect_SelectedIndexChanged(object sender, EventArgs e)
         {
-//             int select = listViewEffect.SelectedIndices[0];
+            int count = listViewEffect.SelectedItems.Count;
+            if (listViewEffect.SelectedIndices.Count > 0)
+            {
+                textBoxName.Text = listViewEffect.SelectedItems[0].Text + ".fx";
+            }
+            else
+            {
+                textBoxName.Text = "";
+                wizardForm.FinishEnabled = false;
+            }
         }
 
         private void buttonLocation_Click(object sender, EventArgs e)

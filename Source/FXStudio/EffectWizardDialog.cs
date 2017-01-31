@@ -16,7 +16,6 @@ namespace FXStudio
     {
         private string m_FileName;
         private string m_EffectName;
-        private string m_MaterialName;
 
         private string m_EffectDir;
         private string m_TemplatePath;
@@ -25,15 +24,13 @@ namespace FXStudio
         {
             InitializeComponent();
 
-            m_EffectDir = projectLocation + @"\Effects\";
+            m_EffectDir = projectLocation + @"\Effects";
             m_TemplatePath = Directory.GetCurrentDirectory() + @"\Templates\";
         }
 
         public string FileName { get { return m_FileName; } set { m_FileName = value; } }
 
         public string EffectName { get { return m_EffectName; } set { m_EffectName = value; } }
-
-        public string MaterialName { get { return m_MaterialName; } set { m_MaterialName = value; } }
 
         public bool IsEffectFromExist() { return radioButtonFile.Checked; }
 
@@ -47,19 +44,18 @@ namespace FXStudio
             }
             else if (newPage == wizardPageTemplate)
             {
-                wizardForm.NextEnabled = (listViewEffect.SelectedIndices.Count > 0) && Directory.Exists(textBoxLocation.Text);
+                wizardForm.NextEnabled = !string.IsNullOrEmpty(textBoxName.Text);
             }
             else if (newPage == wizardPageName)
             {
                 textBoxEffect.Text = m_EffectName;
-                textBoxMaterial.Text = m_MaterialName;
                 if (radioButtonFile.Checked)
                 {
                     m_FileName = textBoxFile.Text;
                 }
                 else if (radioButtonHlsl.Checked)
                 {
-                    m_FileName = m_TemplatePath + textBoxName.Text;
+                    m_FileName = textBoxLocation.Text + @"\" + textBoxName.Text;
                 }
             }
         }
@@ -119,7 +115,7 @@ namespace FXStudio
 
         private void textBoxFile_TextChanged(object sender, EventArgs e)
         {
-            wizardForm.NextEnabled = (textBoxFile.Text != string.Empty) && File.Exists(textBoxFile.Text);
+            wizardForm.NextEnabled = (!string.IsNullOrEmpty(textBoxFile.Text)) && File.Exists(textBoxFile.Text);
         }
 
         private void buttonFile_Click(object sender, EventArgs e)
@@ -134,7 +130,6 @@ namespace FXStudio
             {
                 textBoxFile.Text = dialog.FileName;
                 m_EffectName = Path.GetFileNameWithoutExtension(dialog.FileName);
-                m_MaterialName = m_EffectName + "_Material";
             }
         }
 
@@ -143,7 +138,7 @@ namespace FXStudio
             int count = listViewEffect.SelectedItems.Count;
             if (listViewEffect.SelectedIndices.Count > 0)
             {
-                textBoxName.Text = listViewEffect.SelectedItems[0].Text + ".fx";
+                textBoxName.Text = (string)listViewEffect.SelectedItems[0].Tag + ".fx";
             }
             else
             {
@@ -154,19 +149,34 @@ namespace FXStudio
 
         private void buttonLocation_Click(object sender, EventArgs e)
         {
-
+            FolderBrowserDialog dialog = new FolderBrowserDialog();
+            dialog.SelectedPath = textBoxLocation.Text;
+            dialog.ShowNewFolderButton = true;
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                textBoxLocation.Text = dialog.SelectedPath;
+            }
         }
 
         private void textBoxEffect_TextChanged(object sender, EventArgs e)
         {
-            if (textBoxEffect.Text == string.Empty)
+            if (string.IsNullOrEmpty(textBoxEffect.Text))
                 wizardForm.FinishEnabled = false;
         }
 
-        private void textBoxMaterial_TextChanged(object sender, EventArgs e)
+        private void textBoxName_TextChanged(object sender, EventArgs e)
         {
-            if (textBoxMaterial.Text == string.Empty)
-                wizardForm.FinishEnabled = false;
+            wizardForm.NextEnabled = !string.IsNullOrEmpty(textBoxName.Text);
+            m_EffectName = Path.GetFileNameWithoutExtension(textBoxName.Text);
+        }
+
+        private void wizardForm_Finish(object sender, EventArgs e)
+        {
+            if (!File.Exists(m_FileName))
+            {
+                string destFileName = m_TemplatePath + (string)listViewEffect.SelectedItems[0].Tag + ".fx";
+                File.Copy(destFileName, m_FileName);
+            }
         }
     }
 }

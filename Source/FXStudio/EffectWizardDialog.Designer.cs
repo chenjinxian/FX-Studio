@@ -40,12 +40,6 @@
             System.Windows.Forms.ListViewItem listViewItem9 = new System.Windows.Forms.ListViewItem("Phong bump reflect", 8);
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EffectWizardDialog));
             this.wizardForm = new CristiPotlog.WizardControl.Wizard();
-            this.wizardPageName = new CristiPotlog.WizardControl.WizardPage();
-            this.checkBoxMaterial = new System.Windows.Forms.CheckBox();
-            this.textBoxMaterial = new System.Windows.Forms.TextBox();
-            this.labelMaterial = new System.Windows.Forms.Label();
-            this.textBoxEffect = new System.Windows.Forms.TextBox();
-            this.labelEffect = new System.Windows.Forms.Label();
             this.wizardPageTemplate = new CristiPotlog.WizardControl.WizardPage();
             this.buttonLocation = new System.Windows.Forms.Button();
             this.textBoxLocation = new System.Windows.Forms.TextBox();
@@ -58,23 +52,26 @@
             this.buttonFile = new System.Windows.Forms.Button();
             this.textBoxFile = new System.Windows.Forms.TextBox();
             this.labelFile = new System.Windows.Forms.Label();
+            this.wizardPageName = new CristiPotlog.WizardControl.WizardPage();
+            this.textBoxEffect = new System.Windows.Forms.TextBox();
+            this.labelEffect = new System.Windows.Forms.Label();
             this.wizardPageSelect = new CristiPotlog.WizardControl.WizardPage();
             this.groupBoxSelect = new System.Windows.Forms.GroupBox();
             this.radioButtonHlsl = new System.Windows.Forms.RadioButton();
             this.radioButtonFile = new System.Windows.Forms.RadioButton();
             this.radioButtonEmpty = new System.Windows.Forms.RadioButton();
             this.wizardForm.SuspendLayout();
-            this.wizardPageName.SuspendLayout();
             this.wizardPageTemplate.SuspendLayout();
             this.wizardPageFile.SuspendLayout();
+            this.wizardPageName.SuspendLayout();
             this.wizardPageSelect.SuspendLayout();
             this.groupBoxSelect.SuspendLayout();
             this.SuspendLayout();
             // 
             // wizardForm
             // 
-            this.wizardForm.Controls.Add(this.wizardPageTemplate);
             this.wizardForm.Controls.Add(this.wizardPageName);
+            this.wizardForm.Controls.Add(this.wizardPageTemplate);
             this.wizardForm.Controls.Add(this.wizardPageFile);
             this.wizardForm.Controls.Add(this.wizardPageSelect);
             this.wizardForm.HeaderFont = new System.Drawing.Font("Microsoft YaHei UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
@@ -91,70 +88,8 @@
             this.wizardForm.TabIndex = 0;
             this.wizardForm.BeforeSwitchPages += new CristiPotlog.WizardControl.Wizard.BeforeSwitchPagesEventHandler(this.wizardForm_BeforeSwitchPages);
             this.wizardForm.AfterSwitchPages += new CristiPotlog.WizardControl.Wizard.AfterSwitchPagesEventHandler(this.wizardForm_AfterSwitchPages);
+            this.wizardForm.Finish += new System.EventHandler(this.wizardForm_Finish);
             this.wizardForm.Load += new System.EventHandler(this.wizardForm_Load);
-            // 
-            // wizardPageName
-            // 
-            this.wizardPageName.Controls.Add(this.checkBoxMaterial);
-            this.wizardPageName.Controls.Add(this.textBoxMaterial);
-            this.wizardPageName.Controls.Add(this.labelMaterial);
-            this.wizardPageName.Controls.Add(this.textBoxEffect);
-            this.wizardPageName.Controls.Add(this.labelEffect);
-            this.wizardPageName.Description = "Use this page to customize the name of the Effect and Materials to be created whe" +
-    "n the wizard is complete";
-            this.wizardPageName.Location = new System.Drawing.Point(0, 0);
-            this.wizardPageName.Name = "wizardPageName";
-            this.wizardPageName.Size = new System.Drawing.Size(496, 304);
-            this.wizardPageName.TabIndex = 12;
-            this.wizardPageName.Title = "New Effect Name";
-            // 
-            // checkBoxMaterial
-            // 
-            this.checkBoxMaterial.AutoSize = true;
-            this.checkBoxMaterial.Checked = true;
-            this.checkBoxMaterial.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxMaterial.Location = new System.Drawing.Point(16, 153);
-            this.checkBoxMaterial.Name = "checkBoxMaterial";
-            this.checkBoxMaterial.Size = new System.Drawing.Size(169, 17);
-            this.checkBoxMaterial.TabIndex = 9;
-            this.checkBoxMaterial.Text = "Create a material for this effect";
-            this.checkBoxMaterial.UseVisualStyleBackColor = true;
-            // 
-            // textBoxMaterial
-            // 
-            this.textBoxMaterial.Location = new System.Drawing.Point(115, 119);
-            this.textBoxMaterial.Name = "textBoxMaterial";
-            this.textBoxMaterial.Size = new System.Drawing.Size(369, 20);
-            this.textBoxMaterial.TabIndex = 8;
-            this.textBoxMaterial.TextChanged += new System.EventHandler(this.textBoxMaterial_TextChanged);
-            // 
-            // labelMaterial
-            // 
-            this.labelMaterial.AutoSize = true;
-            this.labelMaterial.Font = new System.Drawing.Font("Microsoft YaHei UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.labelMaterial.Location = new System.Drawing.Point(12, 121);
-            this.labelMaterial.Name = "labelMaterial";
-            this.labelMaterial.Size = new System.Drawing.Size(98, 17);
-            this.labelMaterial.TabIndex = 7;
-            this.labelMaterial.Text = "Material Name:";
-            // 
-            // textBoxEffect
-            // 
-            this.textBoxEffect.Location = new System.Drawing.Point(115, 90);
-            this.textBoxEffect.Name = "textBoxEffect";
-            this.textBoxEffect.Size = new System.Drawing.Size(369, 20);
-            this.textBoxEffect.TabIndex = 6;
-            this.textBoxEffect.TextChanged += new System.EventHandler(this.textBoxEffect_TextChanged);
-            // 
-            // labelEffect
-            // 
-            this.labelEffect.AutoSize = true;
-            this.labelEffect.Font = new System.Drawing.Font("Microsoft YaHei UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.labelEffect.Location = new System.Drawing.Point(12, 92);
-            this.labelEffect.Name = "labelEffect";
-            this.labelEffect.Size = new System.Drawing.Size(82, 17);
-            this.labelEffect.TabIndex = 5;
-            this.labelEffect.Text = "Effect Name:";
             // 
             // wizardPageTemplate
             // 
@@ -168,7 +103,7 @@
             this.wizardPageTemplate.Description = "The imported effect will be saved with the specified  filename and location";
             this.wizardPageTemplate.Location = new System.Drawing.Point(0, 0);
             this.wizardPageTemplate.Name = "wizardPageTemplate";
-            this.wizardPageTemplate.Size = new System.Drawing.Size(496, 304);
+            this.wizardPageTemplate.Size = new System.Drawing.Size(428, 208);
             this.wizardPageTemplate.TabIndex = 11;
             this.wizardPageTemplate.Title = "Select a HLSL FX Template";
             // 
@@ -205,6 +140,7 @@
             this.textBoxName.Name = "textBoxName";
             this.textBoxName.Size = new System.Drawing.Size(328, 20);
             this.textBoxName.TabIndex = 4;
+            this.textBoxName.TextChanged += new System.EventHandler(this.textBoxName_TextChanged);
             // 
             // labelName
             // 
@@ -218,6 +154,15 @@
             // 
             // listViewEffect
             // 
+            listViewItem1.Tag = "Empty";
+            listViewItem2.Tag = "Blinn";
+            listViewItem3.Tag = "BlinnBumpReflect";
+            listViewItem4.Tag = "Gooch";
+            listViewItem5.Tag = "GoochBumpReflect";
+            listViewItem6.Tag = "Lambert";
+            listViewItem7.Tag = "LambertBumpReflect";
+            listViewItem8.Tag = "Phong";
+            listViewItem9.Tag = "PhongBumpReflect";
             this.listViewEffect.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
             listViewItem1,
             listViewItem2,
@@ -291,6 +236,36 @@
             this.labelFile.Size = new System.Drawing.Size(66, 17);
             this.labelFile.TabIndex = 0;
             this.labelFile.Text = "Effect File:";
+            // 
+            // wizardPageName
+            // 
+            this.wizardPageName.Controls.Add(this.textBoxEffect);
+            this.wizardPageName.Controls.Add(this.labelEffect);
+            this.wizardPageName.Description = "Use this page to customize the name of the Effect and to be created when the wiza" +
+    "rd is complete";
+            this.wizardPageName.Location = new System.Drawing.Point(0, 0);
+            this.wizardPageName.Name = "wizardPageName";
+            this.wizardPageName.Size = new System.Drawing.Size(496, 304);
+            this.wizardPageName.TabIndex = 12;
+            this.wizardPageName.Title = "New Effect Name";
+            // 
+            // textBoxEffect
+            // 
+            this.textBoxEffect.Location = new System.Drawing.Point(115, 90);
+            this.textBoxEffect.Name = "textBoxEffect";
+            this.textBoxEffect.Size = new System.Drawing.Size(369, 20);
+            this.textBoxEffect.TabIndex = 6;
+            this.textBoxEffect.TextChanged += new System.EventHandler(this.textBoxEffect_TextChanged);
+            // 
+            // labelEffect
+            // 
+            this.labelEffect.AutoSize = true;
+            this.labelEffect.Font = new System.Drawing.Font("Microsoft YaHei UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.labelEffect.Location = new System.Drawing.Point(12, 92);
+            this.labelEffect.Name = "labelEffect";
+            this.labelEffect.Size = new System.Drawing.Size(82, 17);
+            this.labelEffect.TabIndex = 5;
+            this.labelEffect.Text = "Effect Name:";
             // 
             // wizardPageSelect
             // 
@@ -366,12 +341,12 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "EffectWizardDialog";
             this.wizardForm.ResumeLayout(false);
-            this.wizardPageName.ResumeLayout(false);
-            this.wizardPageName.PerformLayout();
             this.wizardPageTemplate.ResumeLayout(false);
             this.wizardPageTemplate.PerformLayout();
             this.wizardPageFile.ResumeLayout(false);
             this.wizardPageFile.PerformLayout();
+            this.wizardPageName.ResumeLayout(false);
+            this.wizardPageName.PerformLayout();
             this.wizardPageSelect.ResumeLayout(false);
             this.groupBoxSelect.ResumeLayout(false);
             this.groupBoxSelect.PerformLayout();
@@ -400,10 +375,7 @@
         private System.Windows.Forms.Label labelLocation;
         private System.Windows.Forms.TextBox textBoxName;
         private System.Windows.Forms.Label labelName;
-        private System.Windows.Forms.TextBox textBoxMaterial;
-        private System.Windows.Forms.Label labelMaterial;
         private System.Windows.Forms.TextBox textBoxEffect;
         private System.Windows.Forms.Label labelEffect;
-        private System.Windows.Forms.CheckBox checkBoxMaterial;
     }
 }

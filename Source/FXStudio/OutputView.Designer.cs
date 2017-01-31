@@ -33,7 +33,7 @@
             this.toolStripLabelHelp = new System.Windows.Forms.ToolStripLabel();
             this.toolStripComboBoxType = new System.Windows.Forms.ToolStripComboBox();
             this.toolStripButtonClear = new System.Windows.Forms.ToolStripButton();
-            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
+            this.richTextBoxOutput = new System.Windows.Forms.RichTextBox();
             this.toolStripOutput.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -53,7 +53,7 @@
             // toolStripLabelHelp
             // 
             this.toolStripLabelHelp.Name = "toolStripLabelHelp";
-            this.toolStripLabelHelp.Size = new System.Drawing.Size(116, 22);
+            this.toolStripLabelHelp.Size = new System.Drawing.Size(107, 22);
             this.toolStripLabelHelp.Text = "Show output from:";
             // 
             // toolStripComboBoxType
@@ -75,22 +75,22 @@
             this.toolStripButtonClear.Text = "toolStripButtonClear";
             this.toolStripButtonClear.ToolTipText = "Clear All";
             // 
-            // richTextBox1
+            // richTextBoxOutput
             // 
-            this.richTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.richTextBox1.Location = new System.Drawing.Point(0, 25);
-            this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.ReadOnly = true;
-            this.richTextBox1.Size = new System.Drawing.Size(637, 427);
-            this.richTextBox1.TabIndex = 1;
-            this.richTextBox1.Text = "";
+            this.richTextBoxOutput.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.richTextBoxOutput.Location = new System.Drawing.Point(0, 25);
+            this.richTextBoxOutput.Name = "richTextBoxOutput";
+            this.richTextBoxOutput.ReadOnly = true;
+            this.richTextBoxOutput.Size = new System.Drawing.Size(637, 465);
+            this.richTextBoxOutput.TabIndex = 1;
+            this.richTextBoxOutput.Text = "";
             // 
             // OutputView
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(637, 452);
-            this.Controls.Add(this.richTextBox1);
+            this.ClientSize = new System.Drawing.Size(637, 490);
+            this.Controls.Add(this.richTextBoxOutput);
             this.Controls.Add(this.toolStripOutput);
             this.Name = "OutputView";
             this.TabText = "Output";
@@ -105,7 +105,7 @@
         #endregion
 
         private System.Windows.Forms.ToolStrip toolStripOutput;
-        private System.Windows.Forms.RichTextBox richTextBox1;
+        private System.Windows.Forms.RichTextBox richTextBoxOutput;
         private System.Windows.Forms.ToolStripLabel toolStripLabelHelp;
         private System.Windows.Forms.ToolStripComboBox toolStripComboBoxType;
         private System.Windows.Forms.ToolStripButton toolStripButtonClear;

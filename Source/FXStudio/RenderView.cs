@@ -81,11 +81,11 @@ namespace FXStudio
             if (effectNode != null)
             {
                 XmlNode element = (XmlNode)effectNode.Tag;
-                if (element != null && m_ModifyDelegate != null)
+                if (element != null)
                 {
                     Point targetPoint = panelRender.PointToClient(new Point(e.X, e.Y));
                     uint actorId = RenderMethods.GetPickedActor(targetPoint.X, targetPoint.Y);
-                    m_ModifyDelegate(element, actorId);
+                    m_ModifyDelegate?.Invoke(element, actorId);
                 }
             }
         }

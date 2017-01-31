@@ -122,9 +122,9 @@ namespace FXStudio
         private void treeViewProject_AfterSelect(object sender, TreeViewEventArgs e)
         {
             XmlNode element = (XmlNode)e.Node.Tag;
-            if (element != null && m_NodeDelegate != null)
+            if (element != null)
             {
-                m_NodeDelegate(element);
+                m_NodeDelegate?.Invoke(element);
             }
         }
 
@@ -133,9 +133,9 @@ namespace FXStudio
             if (treeViewProject.SelectedNode != null)
             {
                 XmlNode element = (XmlNode)treeViewProject.SelectedNode.Tag;
-                if (element != null && m_NodeDelegate != null)
+                if (element != null)
                 {
-                    m_NodeDelegate(element);
+                    m_NodeDelegate?.Invoke(element);
                 }
             }
         }

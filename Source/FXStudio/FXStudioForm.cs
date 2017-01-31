@@ -19,6 +19,7 @@ namespace FXStudio
     public delegate void UpdatePropertiesDelegate(XmlNode selectedNode);
     public delegate void ModifyEffectDelegate(XmlNode effectNode, uint actorId);
     public delegate void ModifyActorDelegate(XmlNode actorNode);
+    public delegate void UpdateOutputDelegate(string output, string error);
 
     public partial class FXStudioForm : Form
     {
@@ -96,7 +97,8 @@ namespace FXStudio
             });
 
             if (string.Empty != assetFile)
-                m_AssetsView.UpdateAssets(m_ProjectLocation + @"\" + assetFile, m_propertiesView.UpdateAssetProperties);
+                m_AssetsView.UpdateAssets(
+                    m_ProjectLocation + @"\" + assetFile, m_propertiesView.UpdateAssetProperties, m_outputView.UpdateCompileInfo);
 
             m_renderView.SetModifyEffectDelegate((effectNode, actorId) =>
             {

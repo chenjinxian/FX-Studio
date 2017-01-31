@@ -16,5 +16,12 @@ namespace FXStudio
         {
             InitializeComponent();
         }
+
+        public void UpdateCompileInfo(string output, string error)
+        {
+            richTextBoxOutput.AppendText(error);
+            richTextBoxOutput.AppendText(output);
+            richTextBoxOutput.ScrollToCaret();
+        }
     }
 }

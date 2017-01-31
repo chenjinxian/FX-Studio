@@ -163,7 +163,7 @@ float4 pixel_shader(VS_OUTPUT IN) : SV_Target
 
 	float3 reflVec = -reflect(IN.WorldView, WorldNormal);
 	float vdn = dot(IN.WorldView, WorldNormal);
-	half fres = KrMin + (Kr - KrMin) * pow(1 - abs(vdn), FresExp);
+	float fres = KrMin + (Kr - KrMin) * pow(abs(1 - abs(vdn)), FresExp);
 	float3 reflColor = fres * EnvTexture.Sample(EnvSampler, reflVec).rgb;
 	result += reflColor;
 

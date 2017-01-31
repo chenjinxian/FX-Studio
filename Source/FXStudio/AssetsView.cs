@@ -18,13 +18,14 @@ namespace FXStudio
     {
         private string m_ProjectLocation;
         private UpdatePropertiesDelegate m_NodeDelegate = null;
+        private UpdateOutputDelegate m_OuputDeleagate = null;
 
         public AssetsView()
         {
             InitializeComponent();
         }
 
-        public void UpdateAssets(string assetFile, UpdatePropertiesDelegate updateProps)
+        public void UpdateAssets(string assetFile, UpdatePropertiesDelegate updateProps, UpdateOutputDelegate updateOutput)
         {
             if (!File.Exists(assetFile))
             {
@@ -33,6 +34,7 @@ namespace FXStudio
 
             m_ProjectLocation = Path.GetDirectoryName(assetFile);
             m_NodeDelegate = updateProps;
+            m_OuputDeleagate = updateOutput;
 
             XmlDocument doc = new XmlDocument();
             doc.Load(assetFile);
@@ -93,12 +95,14 @@ namespace FXStudio
             string errorInfo = fxcProcess.StandardError.ReadToEnd();
             fxcProcess.WaitForExit();
 
+            m_OuputDeleagate?.Invoke(compileInfo, errorInfo);
+
             IntPtr effectXml = IntPtr.Zero;
             if (!string.IsNullOrEmpty(compileInfo))
             {
                 RenderMethods.AddEffect(@"Effects\" + Path.GetFileName(destOjbect), sourceFileName, effectName, ref effectXml);
                 AddEffect(Marshal.PtrToStringAnsi(effectXml));
-            }
+            }       
         }
 
         private void AddEffect(string effectXmlString)
@@ -158,9 +162,9 @@ namespace FXStudio
         private void treeViewAssets_AfterSelect(object sender, TreeViewEventArgs e)
         {
             XmlNode element = (XmlNode)e.Node.Tag;
-            if (element != null && m_NodeDelegate != null)
+            if (element != null)
             {
-                m_NodeDelegate(element);
+                m_NodeDelegate?.Invoke(element);
             }
         }
 
@@ -169,9 +173,9 @@ namespace FXStudio
             if (treeViewAssets.SelectedNode != null)
             {
                 XmlNode element = (XmlNode)treeViewAssets.SelectedNode.Tag;
-                if (element != null && m_NodeDelegate != null)
+                if (element != null)
                 {
-                    m_NodeDelegate(element);
+                    m_NodeDelegate?.Invoke(element);
                 }
             }
         }

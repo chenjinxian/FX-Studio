@@ -166,7 +166,6 @@ private:
 	uint32_t m_IndexCount;
 	std::unique_ptr<Mesh> m_Mesh;
 
-	std::string m_TextureName;
 	std::string m_EffectName;
 
 	static const std::string m_Cube;

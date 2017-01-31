@@ -24,7 +24,7 @@ RasterizerState DisableCulling
 
 struct VS_INPUT
 {
-    float4 ObjectPosition : POSITION;
+    float3 ObjectPosition : POSITION;
 };
 
 struct VS_OUTPUT
@@ -39,7 +39,7 @@ VS_OUTPUT vertex_shader(VS_INPUT IN)
 {
     VS_OUTPUT OUT = (VS_OUTPUT)0;
     
-    OUT.Position = mul(IN.ObjectPosition, WorldViewProjection);
+    OUT.Position = mul(float4(IN.ObjectPosition, 1.0f), WorldViewProjection);
     OUT.TextureCoordinate = IN.ObjectPosition.xyz;
     
     return OUT;

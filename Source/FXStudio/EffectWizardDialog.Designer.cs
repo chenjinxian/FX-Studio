@@ -59,7 +59,8 @@
             this.groupBoxSelect = new System.Windows.Forms.GroupBox();
             this.radioButtonHlsl = new System.Windows.Forms.RadioButton();
             this.radioButtonFile = new System.Windows.Forms.RadioButton();
-            this.radioButtonEmpty = new System.Windows.Forms.RadioButton();
+            this.labelFileInfo = new System.Windows.Forms.Label();
+            this.labelHlslInfo = new System.Windows.Forms.Label();
             this.wizardForm.SuspendLayout();
             this.wizardPageTemplate.SuspendLayout();
             this.wizardPageFile.SuspendLayout();
@@ -70,10 +71,10 @@
             // 
             // wizardForm
             // 
-            this.wizardForm.Controls.Add(this.wizardPageName);
             this.wizardForm.Controls.Add(this.wizardPageTemplate);
             this.wizardForm.Controls.Add(this.wizardPageFile);
             this.wizardForm.Controls.Add(this.wizardPageSelect);
+            this.wizardForm.Controls.Add(this.wizardPageName);
             this.wizardForm.HeaderFont = new System.Drawing.Font("Microsoft YaHei UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.wizardForm.HeaderImage = ((System.Drawing.Image)(resources.GetObject("wizardForm.HeaderImage")));
             this.wizardForm.HeaderTitleFont = new System.Drawing.Font("Microsoft YaHei UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
@@ -103,7 +104,7 @@
             this.wizardPageTemplate.Description = "The imported effect will be saved with the specified  filename and location";
             this.wizardPageTemplate.Location = new System.Drawing.Point(0, 0);
             this.wizardPageTemplate.Name = "wizardPageTemplate";
-            this.wizardPageTemplate.Size = new System.Drawing.Size(428, 208);
+            this.wizardPageTemplate.Size = new System.Drawing.Size(496, 304);
             this.wizardPageTemplate.TabIndex = 11;
             this.wizardPageTemplate.Title = "Select a HLSL FX Template";
             // 
@@ -205,7 +206,7 @@
             this.wizardPageFile.Description = "Use this page to import an existing effect";
             this.wizardPageFile.Location = new System.Drawing.Point(0, 0);
             this.wizardPageFile.Name = "wizardPageFile";
-            this.wizardPageFile.Size = new System.Drawing.Size(428, 208);
+            this.wizardPageFile.Size = new System.Drawing.Size(496, 304);
             this.wizardPageFile.TabIndex = 13;
             this.wizardPageFile.Title = "New Effect from File";
             // 
@@ -275,16 +276,17 @@
             this.wizardPageSelect.Font = new System.Drawing.Font("Microsoft YaHei UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.wizardPageSelect.Location = new System.Drawing.Point(0, 0);
             this.wizardPageSelect.Name = "wizardPageSelect";
-            this.wizardPageSelect.Size = new System.Drawing.Size(428, 208);
+            this.wizardPageSelect.Size = new System.Drawing.Size(496, 304);
             this.wizardPageSelect.TabIndex = 10;
             this.wizardPageSelect.Title = "Add Effect";
             // 
             // groupBoxSelect
             // 
+            this.groupBoxSelect.Controls.Add(this.labelHlslInfo);
+            this.groupBoxSelect.Controls.Add(this.labelFileInfo);
             this.groupBoxSelect.Controls.Add(this.radioButtonHlsl);
             this.groupBoxSelect.Controls.Add(this.radioButtonFile);
-            this.groupBoxSelect.Controls.Add(this.radioButtonEmpty);
-            this.groupBoxSelect.Location = new System.Drawing.Point(12, 81);
+            this.groupBoxSelect.Location = new System.Drawing.Point(12, 79);
             this.groupBoxSelect.Name = "groupBoxSelect";
             this.groupBoxSelect.Size = new System.Drawing.Size(472, 206);
             this.groupBoxSelect.TabIndex = 1;
@@ -294,9 +296,10 @@
             // radioButtonHlsl
             // 
             this.radioButtonHlsl.AutoSize = true;
-            this.radioButtonHlsl.Location = new System.Drawing.Point(6, 82);
+            this.radioButtonHlsl.Font = new System.Drawing.Font("Microsoft YaHei UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.radioButtonHlsl.Location = new System.Drawing.Point(6, 70);
             this.radioButtonHlsl.Name = "radioButtonHlsl";
-            this.radioButtonHlsl.Size = new System.Drawing.Size(72, 21);
+            this.radioButtonHlsl.Size = new System.Drawing.Size(78, 23);
             this.radioButtonHlsl.TabIndex = 2;
             this.radioButtonHlsl.TabStop = true;
             this.radioButtonHlsl.Text = "HLSL FX";
@@ -306,26 +309,38 @@
             // radioButtonFile
             // 
             this.radioButtonFile.AutoSize = true;
-            this.radioButtonFile.Location = new System.Drawing.Point(6, 53);
+            this.radioButtonFile.Font = new System.Drawing.Font("Microsoft YaHei UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.radioButtonFile.Location = new System.Drawing.Point(6, 24);
             this.radioButtonFile.Name = "radioButtonFile";
-            this.radioButtonFile.Size = new System.Drawing.Size(113, 21);
+            this.radioButtonFile.Size = new System.Drawing.Size(121, 23);
             this.radioButtonFile.TabIndex = 1;
             this.radioButtonFile.TabStop = true;
             this.radioButtonFile.Text = "Effect from File";
             this.radioButtonFile.UseVisualStyleBackColor = true;
             this.radioButtonFile.CheckedChanged += new System.EventHandler(this.radioButton_CheckedChanged);
             // 
-            // radioButtonEmpty
+            // labelFileInfo
             // 
-            this.radioButtonEmpty.AutoSize = true;
-            this.radioButtonEmpty.Location = new System.Drawing.Point(6, 24);
-            this.radioButtonEmpty.Name = "radioButtonEmpty";
-            this.radioButtonEmpty.Size = new System.Drawing.Size(98, 21);
-            this.radioButtonEmpty.TabIndex = 0;
-            this.radioButtonEmpty.TabStop = true;
-            this.radioButtonEmpty.Text = "Emtpy Effect";
-            this.radioButtonEmpty.UseVisualStyleBackColor = true;
-            this.radioButtonEmpty.CheckedChanged += new System.EventHandler(this.radioButton_CheckedChanged);
+            this.labelFileInfo.AutoSize = true;
+            this.labelFileInfo.ForeColor = System.Drawing.SystemColors.GrayText;
+            this.labelFileInfo.Location = new System.Drawing.Point(23, 48);
+            this.labelFileInfo.Name = "labelFileInfo";
+            this.labelFileInfo.Size = new System.Drawing.Size(159, 17);
+            this.labelFileInfo.TabIndex = 4;
+            this.labelFileInfo.Text = "Adds an effect from a file.";
+            // 
+            // labelHlslInfo
+            // 
+            this.labelHlslInfo.AutoSize = true;
+            this.labelHlslInfo.ForeColor = System.Drawing.SystemColors.GrayText;
+            this.labelHlslInfo.Location = new System.Drawing.Point(23, 94);
+            this.labelHlslInfo.MaximumSize = new System.Drawing.Size(430, 0);
+            this.labelHlslInfo.Name = "labelHlslInfo";
+            this.labelHlslInfo.Size = new System.Drawing.Size(426, 51);
+            this.labelHlslInfo.TabIndex = 5;
+            this.labelHlslInfo.Text = "High Level Shading Language (HLSL) is a shading language developed by Microsoft f" +
+    "or use with the Direct3D API. Use this profile to create an effect that referenc" +
+    "e a Microsoft Direct3D 11 FX file.";
             // 
             // EffectWizardDialog
             // 
@@ -363,7 +378,6 @@
         private System.Windows.Forms.GroupBox groupBoxSelect;
         private System.Windows.Forms.RadioButton radioButtonHlsl;
         private System.Windows.Forms.RadioButton radioButtonFile;
-        private System.Windows.Forms.RadioButton radioButtonEmpty;
         private CristiPotlog.WizardControl.WizardPage wizardPageFile;
         private System.Windows.Forms.Button buttonFile;
         private System.Windows.Forms.TextBox textBoxFile;
@@ -377,5 +391,7 @@
         private System.Windows.Forms.Label labelName;
         private System.Windows.Forms.TextBox textBoxEffect;
         private System.Windows.Forms.Label labelEffect;
+        private System.Windows.Forms.Label labelHlslInfo;
+        private System.Windows.Forms.Label labelFileInfo;
     }
 }

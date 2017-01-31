@@ -85,7 +85,7 @@ VS_OUTPUT vertex_shader(VS_INPUT IN)
 {
 	VS_OUTPUT OUT = (VS_OUTPUT)0;
 
-	float4 Po = float4(IN.Position.xyz, 1);
+	float4 Po = float4(IN.Position.xyz, 1.0);
 	OUT.HPosition = mul(Po, WvpXf);
 
 	OUT.WorldNormal = normalize(mul(float4(IN.Normal, 0), WorldITXf).xyz);
@@ -143,7 +143,7 @@ float4 pixel_shader(VS_OUTPUT IN) : SV_Target
 	float3 diffuseColor = ColorTexture.Sample(ColorSampler, IN.UV).rgb;
 	float3 result = specContrib + (diffuseColor * (diffContrib + AmbiColor));
 
-	return float4(result,1);
+	return float4(result, 1.0);
 }
 
 RasterizerState DisableCulling

@@ -93,16 +93,8 @@ namespace FXStudio
 
         private void radioButton_CheckedChanged(object sender, EventArgs e)
         {
-            if (radioButtonEmpty.Checked)
-            {
-                wizardForm.NextEnabled = false;
-                wizardForm.FinishEnabled = true;
-            }
-            else
-            {
-                wizardForm.NextEnabled = true;
-                wizardForm.FinishEnabled = false;
-            }
+            wizardForm.NextEnabled = true;
+            wizardForm.FinishEnabled = false;
         }
 
         private void wizardForm_Load(object sender, EventArgs e)
@@ -166,7 +158,7 @@ namespace FXStudio
 
         private void textBoxName_TextChanged(object sender, EventArgs e)
         {
-            wizardForm.NextEnabled = !string.IsNullOrEmpty(textBoxName.Text);
+            wizardForm.NextEnabled = !string.IsNullOrEmpty(textBoxName.Text) && (listViewEffect.SelectedIndices.Count > 0);
             m_EffectName = Path.GetFileNameWithoutExtension(textBoxName.Text);
         }
 

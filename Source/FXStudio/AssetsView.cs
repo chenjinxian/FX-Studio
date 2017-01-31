@@ -65,16 +65,6 @@ namespace FXStudio
 
         public void AddEffect(string sourceFileName, string effectName, bool fromExist)
         {
-            if (!fromExist)
-            {
-                string destFileName = m_ProjectLocation + @"\Effects\" + Path.GetFileName(sourceFileName);
-                if (destFileName != sourceFileName)
-                {
-                    File.Copy(sourceFileName, destFileName, true);
-                    sourceFileName = destFileName;
-                }
-            }
-
             string destOjbect = m_ProjectLocation + @"\Effects\" + Path.GetFileNameWithoutExtension(sourceFileName) + ".fxo";
             var processInfo = new ProcessStartInfo
             {

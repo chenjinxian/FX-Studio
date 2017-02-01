@@ -6,7 +6,6 @@
 #include "../ResourceCache/ShaderResource.h"
 #include "../EventManager/Events.h"
 #include "../UserInterface/HumanView.h"
-#include "boost/lexical_cast.hpp"
 
 BaseGameLogic::BaseGameLogic()
 	: m_Actors(),
@@ -61,7 +60,7 @@ std::string BaseGameLogic::GetActorXml(ActorId id)
 	if (pActor)
 		return pActor->ToXml();
 	else
-		DEBUG_ERROR("Couldn't find actor: " + boost::lexical_cast<std::string>(id));
+		DEBUG_ERROR("Couldn't find actor: " + std::to_string(id));
 
 	return std::string();
 }

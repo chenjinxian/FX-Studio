@@ -1,5 +1,4 @@
 #include "TransformComponent.h"
-#include "boost/lexical_cast.hpp"
 
 const std::string TransformComponent::m_Name = "TransformComponent";
 

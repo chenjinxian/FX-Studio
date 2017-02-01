@@ -1,6 +1,5 @@
 #include "Actor.h"
 #include "ActorComponent.h"
-#include "boost/lexical_cast.hpp"
 
 Actor::Actor(ActorId actorId)
 	: m_ActorId(actorId),
@@ -11,13 +10,13 @@ Actor::Actor(ActorId actorId)
 
 Actor::~Actor()
 {
-	DEBUG_LOG("Actor", std::string("Destroying Actor ") + boost::lexical_cast<std::string>(m_ActorId));
+	DEBUG_LOG("Actor", std::string("Destroying Actor ") + std::to_string(m_ActorId));
 	DEBUG_ASSERT(m_ActorComponents.empty());
 }
 
 bool Actor::Init(tinyxml2::XMLElement* pData)
 {
-	DEBUG_LOG("Actor", std::string("Initializing Actor ") + boost::lexical_cast<std::string>(m_ActorId));
+	DEBUG_LOG("Actor", std::string("Initializing Actor ") + std::to_string(m_ActorId));
 
 	m_ActorType = pData->Attribute("type");
 	return true;

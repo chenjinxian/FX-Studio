@@ -1,6 +1,5 @@
 #include "Material.h"
 #include "ModelImporter.h"
-#include "boost/lexical_cast.hpp"
 #include <d3dcompiler.h>
 #include <cctype>
 #include <iostream>
@@ -459,7 +458,7 @@ Variable::Variable(ID3D11Device1* pDevice, ID3DX11EffectVariable* pD3DX11EffectV
 		ID3DX11EffectScalarVariable* scalarVal = m_pD3DX11EffectVariable->AsScalar();
 		float value;
 		scalarVal->GetFloat(&value);
-		m_VariableValue = boost::lexical_cast<std::string>(value);
+		m_VariableValue = std::to_string(value);
 		break;
 	}
 	case D3D_SHADER_VARIABLE_CLASS::D3D_SVC_VECTOR:
@@ -656,7 +655,7 @@ Annotation::Annotation(ID3DX11EffectVariable* pAnnotation)
 		ID3DX11EffectScalarVariable* scalarVal = pAnnotation->AsScalar();
 		float value;
 		scalarVal->GetFloat(&value);
-		m_AnnotationValue = boost::lexical_cast<std::string>(value);
+		m_AnnotationValue = std::to_string(value);
 		break;
 	}
 	default:

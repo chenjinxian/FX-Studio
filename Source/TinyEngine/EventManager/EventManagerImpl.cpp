@@ -1,6 +1,5 @@
 #include "EventManagerImpl.h"
 #include "../Debugging/Logger.h"
-#include "boost/lexical_cast.hpp"
 
 EventManager::EventManager(const char* name, bool setAsGlobal)
 	: IEventManager(nullptr, setAsGlobal), m_ActiveQueue(0)
@@ -15,7 +14,7 @@ EventManager::~EventManager()
 
 bool EventManager::VAddListener(const EventListenerDelegate& eventDelegate, EventType type)
 {
-	DEBUG_LOG("Events", "Attempting to add delegate function for event type: " + boost::lexical_cast<std::string>(type));
+	DEBUG_LOG("Events", "Attempting to add delegate function for event type: " + std::to_string(type));
 
 	void* ptr = eventDelegate.slot_function().functor.func_ptr;
 	auto findIt = m_EventConnections.find(ptr);
@@ -28,7 +27,7 @@ bool EventManager::VAddListener(const EventListenerDelegate& eventDelegate, Even
 	{
 		EventListenerSignal& eventSignal = m_EventSignals[type];
 		m_EventConnections.insert(std::make_pair(ptr, eventSignal.connect(eventDelegate)));
-		DEBUG_LOG("Events", "Successfully added delegate for event type: " + boost::lexical_cast<std::string>(type));
+		DEBUG_LOG("Events", "Successfully added delegate for event type: " + std::to_string(type));
 
 		return true;
 	}
@@ -144,7 +143,7 @@ bool EventManager::VUpdate(uint32_t maxMillis /*= kINFINITE*/)
 	m_ActiveQueue = (m_ActiveQueue + 1) % EVENTMANAGER_NUM_QUEUES;
 	m_EventQueues[m_ActiveQueue].clear();
 
-// 	DEBUG_LOG("EventLoop", "Processing Event Queue " + boost::lexical_cast<std::string>(queueToProcess) + "; " + boost::lexical_cast<std::string>(m_EventQueues[queueToProcess].size()) + " events to process");
+// 	DEBUG_LOG("EventLoop", "Processing Event Queue " + std::to_string(queueToProcess) + "; " + std::to_string(m_EventQueues[queueToProcess].size()) + " events to process");
 
 	while (!m_EventQueues[queueToProcess].empty())
 	{

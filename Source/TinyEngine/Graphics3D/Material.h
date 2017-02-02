@@ -21,8 +21,8 @@ public:
 	const std::vector<Variable*>& GetVariables() const;
 	const std::map<std::string, Variable*>& GetVariablesByName() const;
 
-	char* GenerateXml(const std::string& effectObjectPath, const std::string& effectSourcePath, const std::string& effectName);
-	const char* GetEffectXmlString() { return m_pEffectXmlString; }
+	const std::string& GenerateXml(const std::string& effectObjectPath, const std::string& effectSourcePath, const std::string& effectName);
+	const std::string& GetEffectXmlString() { return m_pEffectXmlString; }
 	const tinyxml2::XMLDocument* GetEffectXmlDoc() { return m_pEffectXmlDoc.get(); }
 	void SetEffectXmlString(const char* effectXmlStr, int size);
 
@@ -33,7 +33,7 @@ private:
 	std::map<std::string, Variable*> m_VariablesByName;
 
 	unique_ptr<tinyxml2::XMLDocument> m_pEffectXmlDoc;
-	char* m_pEffectXmlString;
+	std::string m_pEffectXmlString;
 };
 
 class Technique : public boost::noncopyable

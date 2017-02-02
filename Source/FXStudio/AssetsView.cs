@@ -87,11 +87,15 @@ namespace FXStudio
 
             m_OuputDeleagate?.Invoke(compileInfo, errorInfo);
 
-            IntPtr effectXml = IntPtr.Zero;
             if (!string.IsNullOrEmpty(compileInfo))
             {
-                RenderMethods.AddEffect(@"Effects\" + Path.GetFileName(destOjbect), sourceFileName, effectName, ref effectXml);
-                AddEffect(Marshal.PtrToStringAnsi(effectXml));
+                uint size = RenderMethods.AddEffect(@"Effects\" + Path.GetFileName(destOjbect), sourceFileName, effectName);
+                if (size > 0)
+                {
+                    StringBuilder effectXml = new StringBuilder((int)size);
+                    RenderMethods.GetEffectXml(@"Effects\" + Path.GetFileName(destOjbect), effectXml, size);
+                    AddEffect(effectXml.ToString());
+                }
             }       
         }
 

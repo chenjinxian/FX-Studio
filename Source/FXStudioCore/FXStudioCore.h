@@ -35,7 +35,6 @@ extern "C" {
 	FXSTUDIOCORE_API bool IsGameRunning();
 
 	FXSTUDIOCORE_API void OpenProject(BSTR lFileName);
-
 	FXSTUDIOCORE_API void CreateNewProject(BSTR lFileName);
 
 	FXSTUDIOCORE_API void SetTransformType(int type);
@@ -46,7 +45,9 @@ extern "C" {
 	FXSTUDIOCORE_API bool ModifyActor(BSTR modificationXml);
 	FXSTUDIOCORE_API bool RemoveActor(unsigned int actorId);
 
-	FXSTUDIOCORE_API void AddEffect(BSTR effectObjectPath, BSTR effectSourcePath, BSTR effectName, int** effectXmlPtr);
+	FXSTUDIOCORE_API int ImportModel(BSTR modelPath);
+	FXSTUDIOCORE_API unsigned int AddEffect(BSTR effectObjectPath, BSTR effectSourcePath, BSTR effectName);
+	FXSTUDIOCORE_API void GetEffectXml(BSTR effectObjectPath, char* effectXmlPtr, unsigned int size);
 
 #ifdef __cplusplus
 }

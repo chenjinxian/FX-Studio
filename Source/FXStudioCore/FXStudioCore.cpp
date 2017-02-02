@@ -5,6 +5,11 @@
 #include "FXStudioCore.h"
 #include "FXStudioApp.h"
 #include "FXStudioView.h"
+#include "assimp/Importer.hpp"
+#include "assimp/scene.h"
+#include "assimp/postprocess.h"
+
+#pragma comment(lib, "assimp-vc140-mt.lib")
 
 FXSTUDIOCORE_API int CreateInstance(
 	int *instancePtrAddress,
@@ -209,11 +214,35 @@ FXSTUDIOCORE_API bool RemoveActor(unsigned int actorId)
 	return true;
 }
 
-FXSTUDIOCORE_API void AddEffect(BSTR effectObjectPath, BSTR effectSourcePath, BSTR effectName, int** effectXmlPtr)
+FXSTUDIOCORE_API int ImportModel(BSTR modelPath)
+{
+	std::string model = Utility::WS2S(std::wstring(modelPath, SysStringLen(modelPath)));
+	uint32_t flags = aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_FlipUVs | aiProcess_FlipWindingOrder;
+	Assimp::Importer importer;
+	const aiScene* scene = importer.ReadFile(model, flags);
+	if (scene == nullptr)
+	{
+		importer.GetErrorString();
+		return 1;	//error code 1: 
+	}
+
+	return 0;
+}
+
+FXSTUDIOCORE_API unsigned int AddEffect(BSTR effectObjectPath, BSTR effectSourcePath, BSTR effectName)
 {
 	std::string objectPath = Utility::WS2S(std::wstring(effectObjectPath, SysStringLen(effectObjectPath)));
 	std::string sourcePath = Utility::WS2S(std::wstring(effectSourcePath, SysStringLen(effectSourcePath)));
 	std::string name = Utility::WS2S(std::wstring(effectName, SysStringLen(effectName)));
-	*effectXmlPtr = reinterpret_cast<int*>(g_pApp->AddEffect(objectPath, sourcePath, name));
+
+	return g_pApp->AddEffect(objectPath, sourcePath, name);
+}
+
+FXSTUDIOCORE_API void GetEffectXml(BSTR effectObjectPath, char* effectXmlPtr, unsigned int size)
+{
+	std::string objectPath = Utility::WS2S(std::wstring(effectObjectPath, SysStringLen(effectObjectPath)));
+
+	const std::string& effectXml = g_pApp->GetEffectXml(objectPath);
+	strncpy_s(effectXmlPtr, size, effectXml.c_str(), size);
 }
 

@@ -60,10 +60,13 @@ namespace FXStudio
         public static extern bool RemoveActor(uint actorId);
 
         [DllImport(editorDllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void AddEffect(
+        public static extern uint AddEffect(
             [MarshalAs(UnmanagedType.BStr)] string effectObjectPath,
             [MarshalAs(UnmanagedType.BStr)] string effectSourcePath,
-            [MarshalAs(UnmanagedType.BStr)] string effectName,
-            ref IntPtr effectXmlPtr);
+            [MarshalAs(UnmanagedType.BStr)] string effectName);
+
+        [DllImport(editorDllName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern void GetEffectXml(
+            [MarshalAs(UnmanagedType.BStr)] string effectObjectPath, StringBuilder effectXmlPtr, uint size);
     }
 }

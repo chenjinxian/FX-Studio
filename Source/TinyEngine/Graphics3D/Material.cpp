@@ -11,7 +11,7 @@ Effect::Effect(ID3D11Device1* pDevice, ID3DX11Effect* pD3DX11Effect)
 	m_Variables(),
 	m_VariablesByName(),
 	m_pEffectXmlDoc(nullptr),
-	m_pEffectXmlString(nullptr)
+	m_pEffectXmlString()
 {
 	DEBUG_ASSERT(pDevice != nullptr);
 	DEBUG_ASSERT(pD3DX11Effect != nullptr);
@@ -51,8 +51,6 @@ Effect::~Effect()
 		delete variable;
 	}
 	m_Variables.clear();
-
-	SAFE_DELETE_ARRAY(m_pEffectXmlString);
 }
 
 const std::vector<Technique*>& Effect::GetTechniques() const
@@ -75,9 +73,9 @@ const std::map<std::string, Variable*>& Effect::GetVariablesByName() const
 	return m_VariablesByName;
 }
 
-char* Effect::GenerateXml(const std::string& effectObjectPath, const std::string& effectSourcePath, const std::string& effectName)
+const std::string& Effect::GenerateXml(const std::string& effectObjectPath, const std::string& effectSourcePath, const std::string& effectName)
 {
-	if (m_pEffectXmlString == nullptr)
+	if (m_pEffectXmlString.empty())
 	{
 		m_pEffectXmlDoc = std::unique_ptr<tinyxml2::XMLDocument>(DEBUG_NEW tinyxml2::XMLDocument());
 
@@ -135,8 +133,7 @@ char* Effect::GenerateXml(const std::string& effectObjectPath, const std::string
 
 		tinyxml2::XMLPrinter printer;
 		m_pEffectXmlDoc->Accept(&printer);
-		m_pEffectXmlString = new char[printer.CStrSize()];
-		strncpy_s(m_pEffectXmlString, printer.CStrSize(), printer.CStr(), printer.CStrSize());
+		m_pEffectXmlString = std::string(printer.CStr(), printer.CStrSize());
 	}
 	
 	return m_pEffectXmlString;
@@ -144,10 +141,7 @@ char* Effect::GenerateXml(const std::string& effectObjectPath, const std::string
 
 void Effect::SetEffectXmlString(const char* effectXmlStr, int effectXmlSize)
 {
-	SAFE_DELETE_ARRAY(m_pEffectXmlString);
-
-	m_pEffectXmlString = new char[effectXmlSize];
-	strncpy_s(m_pEffectXmlString, effectXmlSize, effectXmlStr, effectXmlSize);
+	m_pEffectXmlString = std::string(effectXmlStr, effectXmlSize);
 
 	if (m_pEffectXmlDoc == nullptr)
 	{

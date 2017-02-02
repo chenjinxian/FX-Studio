@@ -533,7 +533,7 @@ void BaseGameApp::OnRenderFrame()
 	OnUpdate(m_GameTime);
 }
 
-char* BaseGameApp::AddEffect(const std::string& effectObjectPath, const std::string& effectSourcePath, const std::string& effectName)
+uint32_t BaseGameApp::AddEffect(const std::string& effectObjectPath, const std::string& effectSourcePath, const std::string& effectName)
 {
 	Resource effectRes(effectObjectPath);
 	shared_ptr<ResHandle> pEffectResHandle = g_pApp->GetResCache()->GetHandle(&effectRes);
@@ -543,7 +543,24 @@ char* BaseGameApp::AddEffect(const std::string& effectObjectPath, const std::str
 		if (extra != nullptr)
 		{
 			Effect* pEffect = extra->GetEffect();
-			return pEffect->GenerateXml(effectObjectPath, effectSourcePath, effectName);
+			return pEffect->GenerateXml(effectObjectPath, effectSourcePath, effectName).length();
+		}
+	}
+
+	return 0;
+}
+
+const std::string& BaseGameApp::GetEffectXml(const std::string& effectObjectPath)
+{
+	Resource effectRes(effectObjectPath);
+	shared_ptr<ResHandle> pEffectResHandle = g_pApp->GetResCache()->GetHandle(&effectRes);
+	if (pEffectResHandle != nullptr)
+	{
+		shared_ptr<HlslResourceExtraData> extra = static_pointer_cast<HlslResourceExtraData>(pEffectResHandle->GetExtraData());
+		if (extra != nullptr)
+		{
+			Effect* pEffect = extra->GetEffect();
+			return pEffect->GetEffectXmlString();
 		}
 	}
 

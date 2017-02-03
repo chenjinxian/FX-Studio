@@ -2,6 +2,7 @@
 #include "ModelImporter.h"
 #include "assimp/scene.h"
 #include "assimp/postprocess.h"
+#include <thread>
 
 #pragma comment(lib, "assimp-vc140-mt.lib")
 
@@ -51,16 +52,21 @@ void ModelImporter::LoadModer(const std::string& filePath, ProgressCallback call
 {
 	m_Callback = callback;
 
-	uint32_t flags = aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_FlipUVs | aiProcess_FlipWindingOrder;
-	const aiScene* scene = m_AssimpImporter->ReadFile(filePath, flags);
-	
-	if (scene == nullptr)
-	{
-		if (callback != nullptr)
+// 	std::thread loadThread([=]()
+// 	{
+		uint32_t flags = aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_FlipUVs | aiProcess_FlipWindingOrder;
+		const aiScene* scene = m_AssimpImporter->ReadFile(filePath, flags);
+
+		if (scene == nullptr)
 		{
-			callback(-1.f, m_AssimpImporter->GetErrorString());
+			if (callback != nullptr)
+			{
+				callback(-1.f, m_AssimpImporter->GetErrorString());
+			}
+			return;
 		}
-		return;
-	}
-	m_AssimpImporter->FreeScene();
+		m_AssimpImporter->FreeScene();
+// 	});
+// 
+// 	loadThread.join();
 }

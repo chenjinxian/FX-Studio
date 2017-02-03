@@ -14,7 +14,6 @@ namespace FXStudio
     public partial class LoadingProgressDialog : Form
     {
         private string m_SourceFileName;
-        private bool m_Cancel = true;
 
         public LoadingProgressDialog()
         {
@@ -25,22 +24,57 @@ namespace FXStudio
 
         private void LoadingProgressDialog_Load(object sender, EventArgs e)
         {
-            RenderMethods.ImportModel(m_SourceFileName, (percent, error) =>
+            if (!backgroundWorkerLoading.IsBusy)
             {
-                Debug.WriteLine("percent: " + percent);
-                progressBarLoading.Value = (int)percent  * 100;
-//                 if (percent >= 1.0f)
-//                 {
-//                     this.DialogResult = DialogResult.OK;
-//                     this.Close();
-//                 }
-                return m_Cancel;
-            });
+                backgroundWorkerLoading.RunWorkerAsync(m_SourceFileName);
+            }
         }
 
         private void buttonCancel_Click(object sender, EventArgs e)
         {
-            m_Cancel = false;
+            if (backgroundWorkerLoading.WorkerSupportsCancellation)
+            {
+                backgroundWorkerLoading.CancelAsync();
+            }
+        }
+
+        private void backgroundWorkerLoading_DoWork(object sender, DoWorkEventArgs e)
+        {
+            BackgroundWorker worker = sender as BackgroundWorker;
+            RenderMethods.ImportModel(e.Argument as string, (percent, error) =>
+            {
+                try
+                {
+                    worker.ReportProgress((int)(percent * 100));
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+                return !worker.CancellationPending;
+            });
+        }
+
+        private void backgroundWorkerLoading_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            progressBarLoading.Value = e.ProgressPercentage;
+            labelProgress.Text = e.ProgressPercentage.ToString() + " %";
+        }
+
+        private void backgroundWorkerLoading_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            if (e.Cancelled)
+            {
+
+            }
+            else if (e.Error != null)
+            {
+
+            }
+            else
+            {
+
+            }
         }
     }
 }

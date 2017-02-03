@@ -31,6 +31,7 @@
             this.progressBarLoading = new System.Windows.Forms.ProgressBar();
             this.labelProgress = new System.Windows.Forms.Label();
             this.buttonCancel = new System.Windows.Forms.Button();
+            this.backgroundWorkerLoading = new System.ComponentModel.BackgroundWorker();
             this.SuspendLayout();
             // 
             // progressBarLoading
@@ -61,6 +62,14 @@
             this.buttonCancel.UseVisualStyleBackColor = true;
             this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
             // 
+            // backgroundWorkerLoading
+            // 
+            this.backgroundWorkerLoading.WorkerReportsProgress = true;
+            this.backgroundWorkerLoading.WorkerSupportsCancellation = true;
+            this.backgroundWorkerLoading.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorkerLoading_DoWork);
+            this.backgroundWorkerLoading.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.backgroundWorkerLoading_ProgressChanged);
+            this.backgroundWorkerLoading.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorkerLoading_RunWorkerCompleted);
+            // 
             // LoadingProgressDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -88,5 +97,6 @@
         private System.Windows.Forms.ProgressBar progressBarLoading;
         private System.Windows.Forms.Label labelProgress;
         private System.Windows.Forms.Button buttonCancel;
+        private System.ComponentModel.BackgroundWorker backgroundWorkerLoading;
     }
 }

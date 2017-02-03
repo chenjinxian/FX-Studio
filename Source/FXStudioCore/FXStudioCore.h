@@ -5,6 +5,7 @@
 // FXSTUDIOCORE_API functions as being imported from a DLL, whereas this DLL sees symbols
 // defined with this macro as being exported.
 
+#include "ModelImporter.h"
 #include <wtypes.h>
 
 #ifdef FXSTUDIOCORE_EXPORTS
@@ -45,7 +46,7 @@ extern "C" {
 	FXSTUDIOCORE_API bool ModifyActor(BSTR modificationXml);
 	FXSTUDIOCORE_API bool RemoveActor(unsigned int actorId);
 
-	FXSTUDIOCORE_API int ImportModel(BSTR modelPath);
+	FXSTUDIOCORE_API int ImportModel(BSTR modelPath, ProgressCallback progressCallback);
 	FXSTUDIOCORE_API unsigned int AddEffect(BSTR effectObjectPath, BSTR effectSourcePath, BSTR effectName);
 	FXSTUDIOCORE_API void GetEffectXml(BSTR effectObjectPath, char* effectXmlPtr, unsigned int size);
 

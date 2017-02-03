@@ -26,7 +26,7 @@ public:
 	virtual bool VLoadGame(const std::string& projectXml) override;
 	const std::string &GetProjectDirectory(void) { return m_ProjectDirectory; }
 
-	uint32_t GetNumActors() { return m_Actors.size(); }
+	uint32_t GetNumActors() { return (uint32_t)m_Actors.size(); }
 
 	const ActorMap& GetActorMap() { return m_Actors; }
 

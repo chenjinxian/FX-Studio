@@ -5,11 +5,7 @@
 #include "FXStudioCore.h"
 #include "FXStudioApp.h"
 #include "FXStudioView.h"
-#include "assimp/Importer.hpp"
-#include "assimp/scene.h"
-#include "assimp/postprocess.h"
-
-#pragma comment(lib, "assimp-vc140-mt.lib")
+#include "ModelImporter.h"
 
 FXSTUDIOCORE_API int CreateInstance(
 	int *instancePtrAddress,
@@ -52,6 +48,7 @@ FXSTUDIOCORE_API int DestroyInstance()
 {
 	g_pApp->OnClose();
 	Logger::Destroy();
+	ModelImporter::DeleteImporter();
 	return 0;
 }
 
@@ -214,17 +211,10 @@ FXSTUDIOCORE_API bool RemoveActor(unsigned int actorId)
 	return true;
 }
 
-FXSTUDIOCORE_API int ImportModel(BSTR modelPath)
+FXSTUDIOCORE_API int ImportModel(BSTR modelPath, ProgressCallback progressCallback)
 {
 	std::string model = Utility::WS2S(std::wstring(modelPath, SysStringLen(modelPath)));
-	uint32_t flags = aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_FlipUVs | aiProcess_FlipWindingOrder;
-	Assimp::Importer importer;
-	const aiScene* scene = importer.ReadFile(model, flags);
-	if (scene == nullptr)
-	{
-		importer.GetErrorString();
-		return 1;	//error code 1: 
-	}
+	ModelImporter::GetImporter()->LoadModer(model, progressCallback);
 
 	return 0;
 }

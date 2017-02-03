@@ -21,6 +21,8 @@ namespace FXStudio
     public delegate void ModifyActorDelegate(XmlNode actorNode);
     public delegate void UpdateOutputDelegate(string output, string error);
 
+    public delegate bool ProgressCallback(Single percent, string error);
+
     public partial class FXStudioForm : Form
     {
         private MessageHandler m_messageHandler;
@@ -441,6 +443,13 @@ namespace FXStudio
             if (dialog.ShowDialog() == DialogResult.OK)
             {
                 string destFileName = m_ProjectLocation + @"\Models\" + Path.GetFileName(dialog.FileName);
+//                 LoadingProgressDialog loadDlg = new LoadingProgressDialog();
+//                 loadDlg.SourceFileName = dialog.FileName;
+//                 if (loadDlg.ShowDialog() == DialogResult.OK)
+//                 {
+// 
+//                 }
+
                 if (destFileName != dialog.FileName)
                     File.Copy(dialog.FileName, destFileName, true);
 

@@ -6,36 +6,22 @@
 
 #pragma comment(lib, "assimp-vc140-mt.lib")
 
-ModelImporter* ModelImporter::g_Importer = new ModelImporter();
-
-ModelImporter* ModelImporter::GetImporter()
+ModelImporter& ModelImporter::GetImporter()
 {
+	static ModelImporter g_Importer;
 	return g_Importer;
 }
 
-void ModelImporter::DeleteImporter()
-{
-	if (g_Importer != nullptr)
-	{
-		delete g_Importer;
-		g_Importer = nullptr;
-	}
-}
-
 ModelImporter::ModelImporter()
-	: m_Callback(nullptr)
+	: m_Callback(nullptr),
+	m_AssimpImporter()
 {
-	m_AssimpImporter = new Assimp::Importer();
-	m_AssimpImporter->SetProgressHandler(this);
+	m_AssimpImporter.SetProgressHandler(this);
 }
 
 ModelImporter::~ModelImporter()
 {
-// 	if (m_AssimpImporter != nullptr)
-// 	{
-// 		delete m_AssimpImporter;
-// 		m_AssimpImporter = nullptr;
-// 	}
+	m_AssimpImporter.SetProgressHandler(nullptr);
 }
 
 bool ModelImporter::Update(float percentage /*= -1.f*/)
@@ -52,21 +38,17 @@ void ModelImporter::LoadModer(const std::string& filePath, ProgressCallback call
 {
 	m_Callback = callback;
 
-// 	std::thread loadThread([=]()
-// 	{
-		uint32_t flags = aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_FlipUVs | aiProcess_FlipWindingOrder;
-		const aiScene* scene = m_AssimpImporter->ReadFile(filePath, flags);
+	uint32_t flags = aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_FlipUVs | aiProcess_FlipWindingOrder;
+	const aiScene* scene = m_AssimpImporter.ReadFile(filePath, flags);
 
-		if (scene == nullptr)
+	if (scene == nullptr)
+	{
+		if (callback != nullptr)
 		{
-			if (callback != nullptr)
-			{
-				callback(-1.f, m_AssimpImporter->GetErrorString());
-			}
-			return;
+			callback(-1.f, m_AssimpImporter.GetErrorString());
 		}
-		m_AssimpImporter->FreeScene();
-// 	});
-// 
-// 	loadThread.join();
+		return;
+	}
+
+	m_AssimpImporter.FreeScene();
 }

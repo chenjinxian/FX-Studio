@@ -59,6 +59,7 @@ namespace FXStudio
         {
             progressBarLoading.Value = e.ProgressPercentage;
             labelProgress.Text = e.ProgressPercentage.ToString() + " %";
+            Debug.WriteLine(labelProgress.Text);
         }
 
         private void backgroundWorkerLoading_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)

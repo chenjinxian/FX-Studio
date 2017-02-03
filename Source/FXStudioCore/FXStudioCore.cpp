@@ -48,7 +48,6 @@ FXSTUDIOCORE_API int DestroyInstance()
 {
 	g_pApp->OnClose();
 	Logger::Destroy();
-	ModelImporter::DeleteImporter();
 	return 0;
 }
 
@@ -214,7 +213,7 @@ FXSTUDIOCORE_API bool RemoveActor(unsigned int actorId)
 FXSTUDIOCORE_API int ImportModel(BSTR modelPath, ProgressCallback progressCallback)
 {
 	std::string model = Utility::WS2S(std::wstring(modelPath, SysStringLen(modelPath)));
-	ModelImporter::GetImporter()->LoadModer(model, progressCallback);
+	ModelImporter::GetImporter().LoadModer(model, progressCallback);
 
 	return 0;
 }

@@ -36,6 +36,11 @@ namespace FXStudio
             {
                 backgroundWorkerLoading.CancelAsync();
             }
+            if (!backgroundWorkerLoading.IsBusy)
+            {
+                this.DialogResult = DialogResult.Cancel;
+                this.Close();
+            }
         }
 
         private void backgroundWorkerLoading_DoWork(object sender, DoWorkEventArgs e)
@@ -45,7 +50,8 @@ namespace FXStudio
             {
                 try
                 {
-                    worker.ReportProgress((int)(percent * 100));
+                    worker.ReportProgress((int)(percent * 100), error);
+                    e.Result = error;
                 }
                 catch (Exception ex)
                 {
@@ -57,16 +63,25 @@ namespace FXStudio
 
         private void backgroundWorkerLoading_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            progressBarLoading.Value = e.ProgressPercentage;
-            labelProgress.Text = e.ProgressPercentage.ToString() + " %";
-            Debug.WriteLine(labelProgress.Text);
+            string errorInfo = e.UserState as string;
+            if (string.IsNullOrEmpty(errorInfo))
+            {
+                progressBarLoading.Value = e.ProgressPercentage;
+                labelProgress.Text = e.ProgressPercentage.ToString() + " %";
+            }
+            else
+            {
+                progressBarLoading.Value = 0;
+                labelProgress.Text = errorInfo;
+            }
         }
 
         private void backgroundWorkerLoading_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             if (e.Cancelled)
             {
-
+                this.DialogResult = DialogResult.Cancel;
+                this.Close();
             }
             else if (e.Error != null)
             {
@@ -74,7 +89,17 @@ namespace FXStudio
             }
             else
             {
-
+                string errorInfo = e.Result as string;
+                if (string.IsNullOrEmpty(errorInfo))
+                {
+                    this.DialogResult = DialogResult.OK;
+                    this.Close();
+                }
+                else
+                {
+                    progressBarLoading.Value = 0;
+                    labelProgress.Text = errorInfo;
+                }
             }
         }
     }

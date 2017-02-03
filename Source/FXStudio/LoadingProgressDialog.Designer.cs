@@ -38,7 +38,7 @@
             // 
             this.progressBarLoading.Location = new System.Drawing.Point(12, 12);
             this.progressBarLoading.Name = "progressBarLoading";
-            this.progressBarLoading.Size = new System.Drawing.Size(387, 23);
+            this.progressBarLoading.Size = new System.Drawing.Size(412, 23);
             this.progressBarLoading.Step = 1;
             this.progressBarLoading.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.progressBarLoading.TabIndex = 0;
@@ -47,6 +47,7 @@
             // 
             this.labelProgress.AutoSize = true;
             this.labelProgress.Location = new System.Drawing.Point(12, 42);
+            this.labelProgress.MaximumSize = new System.Drawing.Size(320, 0);
             this.labelProgress.Name = "labelProgress";
             this.labelProgress.Size = new System.Drawing.Size(24, 13);
             this.labelProgress.TabIndex = 1;
@@ -54,7 +55,7 @@
             // 
             // buttonCancel
             // 
-            this.buttonCancel.Location = new System.Drawing.Point(324, 41);
+            this.buttonCancel.Location = new System.Drawing.Point(349, 42);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(75, 23);
             this.buttonCancel.TabIndex = 2;
@@ -74,7 +75,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(411, 73);
+            this.ClientSize = new System.Drawing.Size(436, 99);
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.labelProgress);
             this.Controls.Add(this.progressBarLoading);

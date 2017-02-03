@@ -14,14 +14,14 @@ ModelImporter& ModelImporter::GetImporter()
 
 ModelImporter::ModelImporter()
 	: m_Callback(nullptr),
-	m_AssimpImporter()
+	m_AssimpImporter(new Assimp::Importer())
 {
-	m_AssimpImporter.SetProgressHandler(this);
+	m_AssimpImporter->SetProgressHandler(this);
 }
 
 ModelImporter::~ModelImporter()
 {
-	m_AssimpImporter.SetProgressHandler(nullptr);
+	m_AssimpImporter->SetProgressHandler(nullptr);
 }
 
 bool ModelImporter::Update(float percentage /*= -1.f*/)
@@ -38,17 +38,22 @@ void ModelImporter::LoadModer(const std::string& filePath, ProgressCallback call
 {
 	m_Callback = callback;
 
+// 	std::thread workThread([=]() {
+// 	});
+// 
+// 	workThread.join();
+
 	uint32_t flags = aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_FlipUVs | aiProcess_FlipWindingOrder;
-	const aiScene* scene = m_AssimpImporter.ReadFile(filePath, flags);
+	const aiScene* scene = m_AssimpImporter->ReadFile(filePath, flags);
 
 	if (scene == nullptr)
 	{
 		if (callback != nullptr)
 		{
-			callback(-1.f, m_AssimpImporter.GetErrorString());
+			callback(-1.f, m_AssimpImporter->GetErrorString());
 		}
 		return;
 	}
 
-	m_AssimpImporter.FreeScene();
+	m_AssimpImporter->FreeScene();
 }

@@ -20,7 +20,7 @@ protected:
 	virtual bool Update(float percentage = -1.f) override;
 
 private:
-	Assimp::Importer m_AssimpImporter;
+	std::unique_ptr<Assimp::Importer> m_AssimpImporter;
 	ProgressCallback m_Callback;
 };
 

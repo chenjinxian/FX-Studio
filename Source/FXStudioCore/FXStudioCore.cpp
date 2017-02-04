@@ -214,7 +214,7 @@ FXSTUDIOCORE_API int ImportModel(BSTR modelImportPath, BSTR modelExportPath, Pro
 {
 	std::string importPath = Utility::WS2S(std::wstring(modelImportPath, SysStringLen(modelImportPath)));
 	std::string exportPath = Utility::WS2S(std::wstring(modelExportPath, SysStringLen(modelExportPath)));
-	ModelImporter::GetImporter().LoadModer(importPath, exportPath, progressCallback);
+	ModelImporter::GetImporter().LoadModel(importPath, exportPath, progressCallback);
 
 	return 0;
 }

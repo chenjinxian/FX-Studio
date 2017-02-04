@@ -3,6 +3,7 @@
 #include "../TinyEngine/TinyEngine.h"
 #include "assimp/scene.h"
 #include "assimp/postprocess.h"
+#include <fstream>
 #include <thread>
 
 #pragma comment(lib, "assimp-vc140-mt.lib")
@@ -29,13 +30,13 @@ bool ModelImporter::Update(float percentage /*= -1.f*/)
 {
 	if (m_Callback != nullptr)
 	{
-		return m_Callback(percentage * 0.6f, nullptr);
+		return m_Callback(percentage * 0.2f, nullptr);
 	}
 
 	return true;
 }
 
-void ModelImporter::LoadModer(const std::string& importPath, const std::string& exportPath, ProgressCallback callback)
+void ModelImporter::LoadModel(const std::string& importPath, const std::string& exportPath, ProgressCallback callback)
 {
 	m_Callback = callback;
 
@@ -56,336 +57,380 @@ void ModelImporter::LoadModer(const std::string& importPath, const std::string& 
 		return;
 	}
 
-	tinyxml2::XMLDocument xmlDoc;
-
-	tinyxml2::XMLElement* pRoot = xmlDoc.NewElement("Model");
-	xmlDoc.InsertEndChild(pRoot);
-	WriteNode(scene->mRootNode, &xmlDoc, pRoot, 0);
-
-	if (scene->HasAnimations())
-	{
-		WriteAnimation(scene, &xmlDoc, pRoot);
-	}
-
-	m_Callback(0.6f + 0.1f, nullptr);
-
-	if (scene->HasMeshes())
-	{
-		WriteMesh(scene, &xmlDoc, pRoot);
-	}
-
-	m_AssimpImporter->FreeScene();
-
-	xmlDoc.SaveFile(exportPath.c_str());
+	ExportModel(exportPath, scene);
 }
 
-void ModelImporter::WriteNode(const aiNode* pSceneNode, tinyxml2::XMLDocument* pXmlDoc, tinyxml2::XMLElement* pXmlNode, uint32_t depth)
+void ModelImporter::ExportModel(const std::string& exportPath, const aiScene* pScene)
 {
-	tinyxml2::XMLElement* pRoot = pXmlDoc->NewElement("Node");
-	pXmlNode->InsertEndChild(pRoot);
-	tinyxml2::XMLElement* pMatrix = pXmlDoc->NewElement("Matrix");
-	pRoot->InsertEndChild(pMatrix);
-
-	const aiMatrix4x4& mat = pSceneNode->mTransformation;
-	char buffer[1024];
-	sprintf_s(buffer, "%f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f",
-		mat.a1, mat.a2, mat.a3, mat.a4, mat.b1, mat.b2, mat.b3, mat.b4, mat.c1, mat.c2, mat.c3, mat.c4, mat.d1, mat.d2, mat.d3, mat.d4);
-	pMatrix->SetText(buffer);
-
-	if (pSceneNode->mNumMeshes)
-	{
-
-	}
+	std::ofstream fs(exportPath.c_str(), std::ofstream::out | std::ofstream::trunc);
+	if (fs.bad())
+		return;
 	
-	if (pSceneNode->mNumChildren)
-	{
-		tinyxml2::XMLElement* pList = pXmlDoc->NewElement("NodeList");
-		pRoot->InsertEndChild(pList);
+	// write header
+	std::string header(
+		"<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
+		"<!-- XML Model dump produced by assimp dump\n"
+		"\t%s"
+		"-->"
+		"\n\n"
+		"<Model flags=\"%d\">\n"
+	);
 
-		for (uint32_t i = 0; i < pSceneNode->mNumChildren; i++)
-		{
-			WriteNode(pSceneNode->mChildren[i], pXmlDoc, pList, depth + 2);
-		}
+	time_t tt = ::time(NULL);
+	tm buf;
+	localtime_s(&buf, &tt);
+	char curtime[26];
+	asctime_s(curtime, &buf);
+	FStreamPrintf(fs, header.c_str(), curtime, pScene->mFlags);
+
+	WriteNode(pScene->mRootNode, fs, 1);
+	if (pScene->HasAnimations())
+	{
+		WriteAnimation(pScene, fs);
 	}
+	if (pScene->HasMeshes())
+	{
+		WriteMesh(pScene, fs);
+	}
+
+	FStreamPrintf(fs, "</Model>");
+	fs.close();
 }
 
-void ModelImporter::WriteAnimation(const aiScene* pScene, tinyxml2::XMLDocument* pXmlDoc, tinyxml2::XMLElement* pXmlNode)
+void ModelImporter::WriteNode(const aiNode* node, std::ofstream& fs, uint32_t depth)
 {
-	tinyxml2::XMLElement* pAnimationList = pXmlDoc->NewElement("AnimationList");
-	pXmlNode->InsertEndChild(pAnimationList);
+	char prefix[512];
+	for (unsigned int i = 0; i < depth; ++i)
+		prefix[i] = '\t';
+	prefix[depth] = '\0';
 
-	for (uint32_t i = 0; i < pScene->mNumAnimations; i++)
+	const aiMatrix4x4& m = node->mTransformation;
+
+	aiString name;
+	ConvertName(name, node->mName);
+	FStreamPrintf(fs, "%s<Node name=\"%s\">\n"
+		"%s\t<Matrix4>"
+		"%f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f"
+		"</Matrix4>\n",
+		prefix, name.data, prefix,
+		m.a1, m.a2, m.a3, m.a4, m.b1, m.b2, m.b3, m.b4, m.c1, m.c2, m.c3, m.c4, m.d1, m.d2, m.d3, m.d4);
+
+	if (node->mNumMeshes)
 	{
-		aiAnimation* animation = pScene->mAnimations[i];
-		tinyxml2::XMLElement* pChildAnimation = pXmlDoc->NewElement("Animation");
-		pChildAnimation->SetAttribute("name", animation->mName.C_Str());
-		pChildAnimation->SetAttribute("duration", animation->mDuration);
-		pChildAnimation->SetAttribute("ticks", animation->mTicksPerSecond);
-		pAnimationList->InsertEndChild(pChildAnimation);
+		FStreamPrintf(fs, "%s\t<MeshRefs num=\"%i\">", prefix, node->mNumMeshes);
 
-		if (animation->mNumChannels > 0)
+		for (unsigned int i = 0; i < node->mNumMeshes; ++i)
 		{
-			tinyxml2::XMLElement* pNodeList = pXmlDoc->NewElement("NodeList");
-			pChildAnimation->InsertEndChild(pNodeList);
+			FStreamPrintf(fs, "%i ", node->mMeshes[i]);
+		}
 
-			for (uint32_t j = 0; j < animation->mNumChannels; j++)
+		FStreamPrintf(fs, "</MeshRefs>\n");
+	}
+
+	if (node->mNumChildren)
+	{
+		FStreamPrintf(fs, "%s\t<NodeList num=\"%i\">\n", prefix, node->mNumChildren);
+
+		for (unsigned int i = 0; i < node->mNumChildren; ++i)
+		{
+			WriteNode(node->mChildren[i], fs, depth + 2);
+		}
+
+		FStreamPrintf(fs, "%s\t</NodeList>\n", prefix);
+	}
+
+	FStreamPrintf(fs, "%s</Node>\n", prefix);
+}
+
+void ModelImporter::WriteAnimation(const aiScene* pScene, std::ofstream& fs)
+{
+	FStreamPrintf(fs, "\t<AnimationList num=\"%i\">\n", pScene->mNumAnimations);
+
+	aiString name;
+	for (unsigned int i = 0; i < pScene->mNumAnimations; ++i)
+	{
+		aiAnimation* anim = pScene->mAnimations[i];
+
+		// anim header
+		ConvertName(name, anim->mName);
+		FStreamPrintf(fs, "\t\t<Animation name=\"%s\" duration=\"%f\" ticks=\"%f\">\n",
+			name.data, anim->mDuration, anim->mTicksPerSecond);
+
+		// write bone animation channels
+		if (anim->mNumChannels)
+		{
+			FStreamPrintf(fs, "\t\t\t<NodeAnimList num=\"%i\">\n", anim->mNumChannels);
+			for (unsigned int n = 0; n < anim->mNumChannels; ++n)
 			{
-				aiNodeAnim* node = animation->mChannels[j];
-				tinyxml2::XMLElement* pNodeAnim = pXmlDoc->NewElement("Node");
-				pNodeAnim->SetAttribute("name", node->mNodeName.C_Str());
-				pNodeList->InsertEndChild(pNodeAnim);
+				aiNodeAnim* nd = anim->mChannels[n];
 
-				if (node->mNumPositionKeys > 0)
+				// node anim header
+				ConvertName(name, nd->mNodeName);
+				FStreamPrintf(fs, "\t\t\t\t<NodeAnim node=\"%s\">\n", name.data);
+
+				// write position keys
+				if (nd->mNumPositionKeys)
 				{
-					tinyxml2::XMLElement* pPositionKeys = pXmlDoc->NewElement("PositionKeyList");
-					pNodeAnim->InsertEndChild(pPositionKeys);
-
-					for (uint32_t k = 0; k < node->mNumPositionKeys; k++)
-					{
-						aiVectorKey* vectorKey = node->mPositionKeys + k;
-						tinyxml2::XMLElement* pKey = pXmlDoc->NewElement("PositionKey");
-						pKey->SetAttribute("time", vectorKey->mTime);
-						char buffer[256];
-						sprintf_s(buffer, "%f %f %f", vectorKey->mValue.x, vectorKey->mValue.y, vectorKey->mValue.z);
-						pKey->SetText(buffer);
+					FStreamPrintf(fs, "\t\t\t\t\t<PositionKeyList num=\"%i\">\n", nd->mNumPositionKeys);
+					for (unsigned int a = 0; a < nd->mNumPositionKeys; ++a) {
+						aiVectorKey* vc = nd->mPositionKeys + a;
+						FStreamPrintf(fs, "\t\t\t\t\t\t<PositionKey time=\"%f\">%f %f %f</PositionKey>\n",
+							vc->mTime, vc->mValue.x, vc->mValue.y, vc->mValue.z);
 					}
+					FStreamPrintf(fs, "\t\t\t\t\t</PositionKeyList>\n");
 				}
 
-				if (node->mNumScalingKeys > 0)
+				// write scaling keys
+				if (nd->mNumScalingKeys)
 				{
-					tinyxml2::XMLElement* pScalingKeys = pXmlDoc->NewElement("ScalingKeyList");
-					pNodeAnim->InsertEndChild(pScalingKeys);
-
-					for (uint32_t k = 0; k < node->mNumScalingKeys; k++)
-					{
-						aiVectorKey* vectorKey = node->mScalingKeys + k;
-						tinyxml2::XMLElement* pKey = pXmlDoc->NewElement("ScalingKey");
-						pKey->SetAttribute("time", vectorKey->mTime);
-						char buffer[256];
-						sprintf_s(buffer, "%f %f %f", vectorKey->mValue.x, vectorKey->mValue.y, vectorKey->mValue.z);
-						pKey->SetText(buffer);
+					FStreamPrintf(fs, "\t\t\t\t\t<ScalingKeyList num=\"%i\">\n", nd->mNumScalingKeys);
+					for (unsigned int a = 0; a < nd->mNumScalingKeys; ++a) {
+						aiVectorKey* vc = nd->mScalingKeys + a;
+						FStreamPrintf(fs, "\t\t\t\t\t\t<ScalingKey time=\"%f\">%f %f %f</ScalingKey>\n",
+							vc->mTime, vc->mValue.x, vc->mValue.y, vc->mValue.z);
 					}
+					FStreamPrintf(fs, "\t\t\t\t\t</ScalingKeyList>\n");
 				}
 
-				if (node->mNumRotationKeys > 0)
+				// write rotation keys
+				if (nd->mNumRotationKeys)
 				{
-					tinyxml2::XMLElement* pRotationKeys = pXmlDoc->NewElement("RotationKeyList");
-					pNodeAnim->InsertEndChild(pRotationKeys);
-
-					for (uint32_t k = 0; k < node->mNumRotationKeys; k++)
-					{
-						aiQuatKey* quatKey = node->mRotationKeys + k;
-						tinyxml2::XMLElement* pKey = pXmlDoc->NewElement("RotationKey");
-						pKey->SetAttribute("time", quatKey->mTime);
-						char buffer[256];
-						sprintf_s(buffer, "%f %f %f %f", quatKey->mValue.x, quatKey->mValue.y, quatKey->mValue.z, quatKey->mValue.w);
-						pKey->SetText(buffer);
+					FStreamPrintf(fs, "\t\t\t\t\t<RotationKeyList num=\"%i\">\n", nd->mNumRotationKeys);
+					for (unsigned int a = 0; a < nd->mNumRotationKeys; ++a) {
+						aiQuatKey* vc = nd->mRotationKeys + a;
+						FStreamPrintf(fs, "\t\t\t\t\t\t<RotationKey time=\"%f\">%f %f %f</RotationKey>\n",
+							vc->mTime, vc->mValue.x, vc->mValue.y, vc->mValue.z, vc->mValue.w);
 					}
+					FStreamPrintf(fs, "\t\t\t\t\t</RotationKeyList>\n");
 				}
+
+				FStreamPrintf(fs, "\t\t\t\t</NodeAnim>\n");
 			}
+			FStreamPrintf(fs, "\t\t\t</NodeAnimList>\n");
 		}
+		FStreamPrintf(fs, "\t\t</Animation>\n");
 	}
+	FStreamPrintf(fs, "\t</AnimationList>\n");
 }
 
-void ModelImporter::WriteMesh(const aiScene* pScene, tinyxml2::XMLDocument* pXmlDoc, tinyxml2::XMLElement* pXmlNode)
+void ModelImporter::WriteMesh(const aiScene* pScene, std::ofstream& fs)
 {
-	tinyxml2::XMLElement* pMeshList = pXmlDoc->NewElement("MeshList");
-	pXmlNode->InsertEndChild(pMeshList);
-
-	for (uint32_t i = 0; i < pScene->mNumMeshes; i++)
+	FStreamPrintf(fs, "\t<MeshList num=\"%i\">\n", pScene->mNumMeshes);
+	for (unsigned int i = 0; i < pScene->mNumMeshes; ++i)
 	{
 		aiMesh* mesh = pScene->mMeshes[i];
 
-		std::string types;
-		if (mesh->mPrimitiveTypes & aiPrimitiveType_POINT)
-			types.append("point ");
-		if (mesh->mPrimitiveTypes & aiPrimitiveType_LINE)
-			types.append("line ");
-		if (mesh->mPrimitiveTypes & aiPrimitiveType_TRIANGLE)
-			types.append("triangle ");
-		if (mesh->mPrimitiveTypes & aiPrimitiveType_POLYGON)
-			types.append("polygon");
+		// mesh header
+		FStreamPrintf(fs, "\t\t<Mesh types=\"%s%s%s%s\" material_index=\"%i\">\n",
+			(mesh->mPrimitiveTypes & aiPrimitiveType_POINT ? "points " : ""),
+			(mesh->mPrimitiveTypes & aiPrimitiveType_LINE ? "lines " : ""),
+			(mesh->mPrimitiveTypes & aiPrimitiveType_TRIANGLE ? "triangles " : ""),
+			(mesh->mPrimitiveTypes & aiPrimitiveType_POLYGON ? "polygons" : ""),
+			mesh->mMaterialIndex);
 
-		tinyxml2::XMLElement* pMesh = pXmlDoc->NewElement("Mesh");
-		pMesh->SetAttribute("types", types.c_str());
-		pMeshList->InsertEndChild(pMesh);
-
-		if (mesh->HasBones())
+		// bones
+		if (mesh->mNumBones)
 		{
-			tinyxml2::XMLElement* pBoneList = pXmlDoc->NewElement("BoneList");
-			pMesh->InsertEndChild(pBoneList);
+			FStreamPrintf(fs, "\t\t\t<BoneList num=\"%i\">\n", mesh->mNumBones);
 
-			for (uint32_t j = 0; j < mesh->mNumBones; j++)
+			aiString name;
+			for (unsigned int n = 0; n < mesh->mNumBones; ++n)
 			{
-				aiBone* bone = mesh->mBones[j];
+				aiBone* bone = mesh->mBones[n];
 
-				tinyxml2::XMLElement* pChildBone = pXmlDoc->NewElement("Bone");
-				pChildBone->SetAttribute("name", bone->mName.C_Str());
+				ConvertName(name, bone->mName);
+				// bone header
+				FStreamPrintf(fs, "\t\t\t\t<Bone name=\"%s\">\n"
+					"\t\t\t\t<Matrix4>"
+					"%f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f"
+					"</Matrix4>\n",
+					name.data,
+					bone->mOffsetMatrix.a1, bone->mOffsetMatrix.a2, bone->mOffsetMatrix.a3, bone->mOffsetMatrix.a4,
+					bone->mOffsetMatrix.b1, bone->mOffsetMatrix.b2, bone->mOffsetMatrix.b3, bone->mOffsetMatrix.b4,
+					bone->mOffsetMatrix.c1, bone->mOffsetMatrix.c2, bone->mOffsetMatrix.c3, bone->mOffsetMatrix.c4,
+					bone->mOffsetMatrix.d1, bone->mOffsetMatrix.d2, bone->mOffsetMatrix.d3, bone->mOffsetMatrix.d4);
 
-				const aiMatrix4x4& mat = bone->mOffsetMatrix;
-				char buffer[1024];
-				sprintf_s(buffer, "%f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f",
-					mat.a1, mat.a2, mat.a3, mat.a4, mat.b1, mat.b2, mat.b3, mat.b4, mat.c1, mat.c2, mat.c3, mat.c4, mat.d1, mat.d2, mat.d3, mat.d4);
-				tinyxml2::XMLElement* pMatrix = pXmlDoc->NewElement("Matrix");
-				pMatrix->SetText(buffer);
-				pChildBone->InsertEndChild(pMatrix);
-
-				if (bone->mNumWeights > 0)
+				if (bone->mNumWeights)
 				{
-					tinyxml2::XMLElement* pWeightList = pXmlDoc->NewElement("WeightList");
-					pChildBone->InsertEndChild(pWeightList);
+					FStreamPrintf(fs, "\t\t\t\t\t<WeightList num=\"%i\">\n", bone->mNumWeights);
 
-					for (uint32_t k = 0; k < bone->mNumWeights; k++)
+					// bone weights
+					for (unsigned int a = 0; a < bone->mNumWeights; ++a)
 					{
-						aiVertexWeight* vertexWeight = bone->mWeights + k;
-						tinyxml2::XMLElement* pChildWeight = pXmlDoc->NewElement("Weight");
-						pChildWeight->SetAttribute("index", vertexWeight->mVertexId);
-						pChildWeight->SetText(vertexWeight->mWeight);
-						pWeightList->InsertEndChild(pChildWeight);
+						aiVertexWeight* wght = bone->mWeights + a;
+
+						FStreamPrintf(fs, "\t\t\t\t\t\t<Weight index=\"%i\">%f</Weight>\n",
+							wght->mVertexId, wght->mWeight);
 					}
+
+					FStreamPrintf(fs, "\t\t\t\t\t</WeightList>\n");
 				}
+				FStreamPrintf(fs, "\t\t\t\t</Bone>\n");
 			}
+			FStreamPrintf(fs, "\t\t\t</BoneList>\n");
 		}
 
-		if (mesh->HasFaces())
+		// faces
+		if (mesh->mNumFaces)
 		{
-			tinyxml2::XMLElement* pFaceList = pXmlDoc->NewElement("FaceList");
-			pMesh->InsertEndChild(pFaceList);
+			FStreamPrintf(fs, "\t\t\t<FaceList num=\"%i\">\n", mesh->mNumFaces);
+			for (unsigned int n = 0; n < mesh->mNumFaces; ++n) {
+				aiFace& f = mesh->mFaces[n];
+				FStreamPrintf(fs, "\t\t\t\t<Face num=\"%i\">", f.mNumIndices);
 
-			for (uint32_t j = 0; j < mesh->mNumFaces; j++)
-			{
-				const aiFace& face = mesh->mFaces[j];
-				std::string indices;
-				for (uint32_t k = 0; k < face.mNumIndices; k++)
-				{
-					char buffer[16];
-					sprintf_s(buffer, "%d ", face.mIndices[k]);
-					indices.append(buffer);
-				}
+				for (unsigned int j = 0; j < f.mNumIndices; ++j)
+					FStreamPrintf(fs, "%i ", f.mIndices[j]);
 
-				tinyxml2::XMLElement* pChildFace = pXmlDoc->NewElement("Face");
-				pChildFace->SetText(indices.c_str());
-				pFaceList->InsertEndChild(pChildFace);
+				FStreamPrintf(fs, "</Face>\n");
 			}
+			FStreamPrintf(fs, "\t\t\t</FaceList>\n");
 		}
 
+		// vertex positions
 		if (mesh->HasPositions())
 		{
-			tinyxml2::XMLElement* pVertices = pXmlDoc->NewElement("Vertices");
-			pMesh->InsertEndChild(pVertices);
-
-			std::string vertices;
-			for (uint32_t j = 0; j < mesh->mNumVertices; j++)
+			FStreamPrintf(fs, "\t\t\t<Positions num=\"%i\" set=\"0\" num_components=\"3\"> \n", mesh->mNumVertices);
+			for (unsigned int n = 0; n < mesh->mNumVertices; ++n)
 			{
-				char buffer[256];
-				sprintf_s(buffer, "%f %f %f ", mesh->mVertices[j].x, mesh->mVertices[j].y, mesh->mVertices[j].z);
-				vertices.append(buffer);
+				FStreamPrintf(fs, "\t\t\t\t<Position>%f %f %f</Position>\n",
+					mesh->mVertices[n].x,
+					mesh->mVertices[n].y,
+					mesh->mVertices[n].z);
 			}
-
-			pVertices->SetText(vertices.c_str());
+			FStreamPrintf(fs, "\t\t\t</Positions>\n");
 		}
 
+		// vertex normals
 		if (mesh->HasNormals())
 		{
-			tinyxml2::XMLElement* pNormals = pXmlDoc->NewElement("Normals");
-			pMesh->InsertEndChild(pNormals);
-
-			std::string normals;
-			for (uint32_t j = 0; j < mesh->mNumVertices; j++)
+			FStreamPrintf(fs, "\t\t\t<Normals num=\"%i\" set=\"0\" num_components=\"3\"> \n", mesh->mNumVertices);
+			for (unsigned int n = 0; n < mesh->mNumVertices; ++n)
 			{
-				char buffer[256];
-				sprintf_s(buffer, "%f %f %f ", mesh->mNormals[j].x, mesh->mNormals[j].y, mesh->mNormals[j].z);
-				normals.append(buffer);
+				FStreamPrintf(fs, "\t\t\t\t<Normal>%f %f %f</Normal>\n",
+					mesh->mNormals[n].x,
+					mesh->mNormals[n].y,
+					mesh->mNormals[n].z);
 			}
-
-			pNormals->SetText(normals.c_str());
+			FStreamPrintf(fs, "\t\t\t</Normals>\n");
 		}
 
+		// vertex tangents and bitangents
 		if (mesh->HasTangentsAndBitangents())
 		{
-			tinyxml2::XMLElement* pTangents = pXmlDoc->NewElement("Tangents");
-			pMesh->InsertEndChild(pTangents);
-
-			std::string tangents;
-			for (uint32_t j = 0; j < mesh->mNumVertices; j++)
+			FStreamPrintf(fs, "\t\t\t<Tangents num=\"%i\" set=\"0\" num_components=\"3\"> \n", mesh->mNumVertices);
+			for (unsigned int n = 0; n < mesh->mNumVertices; ++n)
 			{
-				char buffer[256];
-				sprintf_s(buffer, "%f %f %f ", mesh->mTangents[j].x, mesh->mTangents[j].y, mesh->mTangents[j].z);
-				tangents.append(buffer);
+				FStreamPrintf(fs, "\t\t\t\t<Tangent>%f %f %f</Tangent>\n",
+					mesh->mTangents[n].x,
+					mesh->mTangents[n].y,
+					mesh->mTangents[n].z);
 			}
+			FStreamPrintf(fs, "\t\t\t</Tangents>\n");
 
-			pTangents->SetText(tangents.c_str());
-
-			tinyxml2::XMLElement* pBinormals = pXmlDoc->NewElement("Binormals");
-			pMesh->InsertEndChild(pBinormals);
-
-			std::string binoramls;
-			for (uint32_t j = 0; j < mesh->mNumVertices; j++)
+			FStreamPrintf(fs, "\t\t\t<Bitangents num=\"%i\" set=\"0\" num_components=\"3\"> \n", mesh->mNumVertices);
+			for (unsigned int n = 0; n < mesh->mNumVertices; ++n)
 			{
-				char buffer[256];
-				sprintf_s(buffer, "%f %f %f ", mesh->mBitangents[j].x, mesh->mBitangents[j].y, mesh->mBitangents[j].z);
-				binoramls.append(buffer);
+				FStreamPrintf(fs, "\t\t\t\t<Bitangent>%f %f %f</Bitangent>\n",
+					mesh->mBitangents[n].x,
+					mesh->mBitangents[n].y,
+					mesh->mBitangents[n].z);
 			}
-
-			pBinormals->SetText(binoramls.c_str());
+			FStreamPrintf(fs, "\t\t\t</Bitangents>\n");
 		}
 
-		for (uint32_t j = 0; j < AI_MAX_NUMBER_OF_TEXTURECOORDS; j++)
+		// texture coordinates
+		for (unsigned int a = 0; a < AI_MAX_NUMBER_OF_TEXTURECOORDS; ++a)
 		{
-			if (mesh->HasTextureCoords(j))
-			{
-				tinyxml2::XMLElement* pTextureCoords = pXmlDoc->NewElement("TextureCoords");
-				pMesh->InsertEndChild(pTextureCoords);
-
-				std::string textureCoords;
-				if (mesh->mNumUVComponents[j] == 3)
-				{
-					for (uint32_t k = 0; k < mesh->mNumVertices; k++)
-					{
-						char buffer[256];
-						sprintf_s(buffer, "%f %f %f ", mesh->mTextureCoords[j][k].x, mesh->mTextureCoords[j][k].y, mesh->mTextureCoords[j][k].z);
-						textureCoords.append(buffer);
-					}
-				}
-				else
-				{
-					for (uint32_t k = 0; k < mesh->mNumVertices; k++)
-					{
-						char buffer[256];
-						sprintf_s(buffer, "%f %f ", mesh->mTextureCoords[j][k].x, mesh->mTextureCoords[j][k].y);
-						textureCoords.append(buffer);
-					}
-				}
-
-				pTextureCoords->SetText(textureCoords.c_str());
-
-				// need only one texture coordinates
+			if (!mesh->mTextureCoords[a])
 				break;
+
+			FStreamPrintf(fs, "\t\t\t<TextureCoords num=\"%i\" set=\"%i\" num_components=\"%i\"> \n", mesh->mNumVertices,
+				a, mesh->mNumUVComponents[a]);
+
+			if (mesh->mNumUVComponents[a] == 3)
+			{
+				for (unsigned int n = 0; n < mesh->mNumVertices; ++n)
+				{
+					FStreamPrintf(fs, "\t\t\t\t<UV>%f %f %f</UV>\n",
+						mesh->mTextureCoords[a][n].x,
+						mesh->mTextureCoords[a][n].y,
+						mesh->mTextureCoords[a][n].z);
+				}
 			}
+			else
+			{
+				for (unsigned int n = 0; n < mesh->mNumVertices; ++n)
+				{
+					FStreamPrintf(fs, "\t\t\t\t<UV>%f %f</UV>\n",
+						mesh->mTextureCoords[a][n].x,
+						mesh->mTextureCoords[a][n].y);
+				}
+			}
+			FStreamPrintf(fs, "\t\t\t</TextureCoords>\n");
 		}
 
-		for (uint32_t j = 0; j < AI_MAX_NUMBER_OF_COLOR_SETS; j++)
+		// vertex colors
+		for (unsigned int a = 0; a < AI_MAX_NUMBER_OF_COLOR_SETS; ++a)
 		{
-			if (mesh->HasVertexColors(j))
-			{
-				tinyxml2::XMLElement* pColors = pXmlDoc->NewElement("Colors");
-				pMesh->InsertEndChild(pColors);
-
-				std::string colors;
-				for (uint32_t k = 0; k < mesh->mNumVertices; k++)
-				{
-					char buffer[256];
-					sprintf_s(buffer, "%f %f %f %f ", mesh->mColors[j][k].r, mesh->mColors[j][k].g, mesh->mColors[j][k].b, mesh->mColors[j][k].a);
-					colors.append(buffer);
-				}
-
-				pColors->SetText(colors.c_str());
-
-				// need only one vertex colors
+			if (!mesh->mColors[a])
 				break;
+			FStreamPrintf(fs, "\t\t\t<Colors num=\"%i\" set=\"%i\" num_components=\"4\"> \n", mesh->mNumVertices, a);
+			for (unsigned int n = 0; n < mesh->mNumVertices; ++n)
+			{
+				FStreamPrintf(fs, "\t\t\t\t<Color>%f %f %f</Color>\n",
+					mesh->mColors[a][n].r,
+					mesh->mColors[a][n].g,
+					mesh->mColors[a][n].b,
+					mesh->mColors[a][n].a);
 			}
+			FStreamPrintf(fs, "\t\t\t</Colors>\n");
 		}
 
-		m_Callback(0.7 + 0.3 * (i + 1) / pScene->mNumMeshes, nullptr);
+		FStreamPrintf(fs, "\t\t</Mesh>\n");
+
+		m_Callback(0.3 + 0.7 * (i + 1) / pScene->mNumMeshes, nullptr);
 	}
+
+	FStreamPrintf(fs, "\t</MeshList>\n");
+}
+
+int ModelImporter::FStreamPrintf(std::ofstream& fs, const char* format, ...)
+{
+	if (fs.bad())
+		return -1;
+
+	char buffer[BufferSize];
+	size_t len(strlen(format));
+
+	va_list va;
+	va_start(va, format);
+	int size = vsnprintf(buffer, BufferSize - 1, format, va);
+	va_end(va);
+
+	fs.write(buffer, size);
+	return size;
+}
+
+void ModelImporter::ConvertName(aiString& out, const aiString& in)
+{
+	out.length = 0;
+	for (unsigned int i = 0; i < in.length; ++i)
+	{
+		switch (in.data[i])
+		{
+		case '<':
+			out.Append("&lt;"); break;
+		case '>':
+			out.Append("&gt;"); break;
+		case '&':
+			out.Append("&amp;"); break;
+		case '\"':
+			out.Append("&quot;"); break;
+		case '\'':
+			out.Append("&apos;"); break;
+		default:
+			out.data[out.length++] = in.data[i];
+		}
+	}
+	out.data[out.length] = 0;
 }

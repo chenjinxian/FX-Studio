@@ -61,7 +61,9 @@ namespace FXStudio
 
         [DllImport(editorDllName, CallingConvention = CallingConvention.Cdecl)]
         public unsafe static extern void ImportModel(
-            [MarshalAs(UnmanagedType.BStr)] string modelPath, [MarshalAs(UnmanagedType.FunctionPtr)] ProgressCallback callback);
+            [MarshalAs(UnmanagedType.BStr)] string modelImportPath,
+            [MarshalAs(UnmanagedType.BStr)] string modelExportPath,
+            [MarshalAs(UnmanagedType.FunctionPtr)] ProgressCallback callback);
 
         [DllImport(editorDllName, CallingConvention = CallingConvention.Cdecl)]
         public static extern uint AddEffect(

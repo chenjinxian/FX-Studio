@@ -14,6 +14,7 @@ namespace FXStudio
     public partial class LoadingProgressDialog : Form
     {
         private string m_SourceFileName;
+        private string m_DestFileName;
 
         public LoadingProgressDialog()
         {
@@ -21,12 +22,13 @@ namespace FXStudio
         }
 
         public string SourceFileName { set { m_SourceFileName = value; } }
+        public string DestFileName { set { m_DestFileName = value; } }
 
         private void LoadingProgressDialog_Load(object sender, EventArgs e)
         {
             if (!backgroundWorkerLoading.IsBusy)
             {
-                backgroundWorkerLoading.RunWorkerAsync(m_SourceFileName);
+                backgroundWorkerLoading.RunWorkerAsync();
             }
         }
 
@@ -46,19 +48,19 @@ namespace FXStudio
         private void backgroundWorkerLoading_DoWork(object sender, DoWorkEventArgs e)
         {
             BackgroundWorker worker = sender as BackgroundWorker;
-            RenderMethods.ImportModel(e.Argument as string, (percent, error) =>
-            {
-                try
-                {
-                    worker.ReportProgress((int)(percent * 100), error);
-                    e.Result = error;
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
-                }
-                return !worker.CancellationPending;
-            });
+            RenderMethods.ImportModel(m_SourceFileName, m_DestFileName, (percent, error) =>
+             {
+                 try
+                 {
+                     worker.ReportProgress((int)(percent * 100), error);
+                     e.Result = error;
+                 }
+                 catch (Exception ex)
+                 {
+                     MessageBox.Show(ex.Message);
+                 }
+                 return !worker.CancellationPending;
+             });
         }
 
         private void backgroundWorkerLoading_ProgressChanged(object sender, ProgressChangedEventArgs e)

@@ -442,30 +442,35 @@ namespace FXStudio
 
             if (dialog.ShowDialog() == DialogResult.OK)
             {
-                string destFileName = m_ProjectLocation + @"\Models\" + Path.GetFileName(dialog.FileName);
+                string destFileName = m_ProjectLocation + @"\Models\" + Path.GetFileNameWithoutExtension(dialog.FileName) + ".xml";
+                if (!Directory.Exists(Path.GetDirectoryName(destFileName)))
+                {
+                    Directory.CreateDirectory(Path.GetDirectoryName(destFileName));
+                }
                 LoadingProgressDialog loadDlg = new LoadingProgressDialog();
                 loadDlg.SourceFileName = dialog.FileName;
+                loadDlg.DestFileName = destFileName;
                 if (loadDlg.ShowDialog() == DialogResult.OK)
                 {
 
                 }
 
-//                 if (destFileName != dialog.FileName)
-//                     File.Copy(dialog.FileName, destFileName, true);
-// 
-//                 string fileName = Path.GetFileNameWithoutExtension(destFileName);
-//                 fileName = fileName.First().ToString().ToUpper() + fileName.Substring(1);
-//                 XmlDocument xmlDoc = new XmlDocument();
-//                 XmlElement modelElement = xmlDoc.CreateElement(fileName);
-// 
-//                 modelElement.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "type", "Model"));
-//                 modelElement.AppendChild(XmlUtility.CreateTransformComponent(xmlDoc));
-//                 modelElement.AppendChild(XmlUtility.CreateModelRenderComponent(xmlDoc, Path.GetFileName(destFileName)));
-// 
-//                 if (RenderMethods.AddActor(modelElement.OuterXml) > 0)
-//                 {
-//                     m_ProjectView.AddActorNode(modelElement);
-//                 }
+                //                 if (destFileName != dialog.FileName)
+                //                     File.Copy(dialog.FileName, destFileName, true);
+                // 
+                //                 string fileName = Path.GetFileNameWithoutExtension(destFileName);
+                //                 fileName = fileName.First().ToString().ToUpper() + fileName.Substring(1);
+                //                 XmlDocument xmlDoc = new XmlDocument();
+                //                 XmlElement modelElement = xmlDoc.CreateElement(fileName);
+                // 
+                //                 modelElement.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "type", "Model"));
+                //                 modelElement.AppendChild(XmlUtility.CreateTransformComponent(xmlDoc));
+                //                 modelElement.AppendChild(XmlUtility.CreateModelRenderComponent(xmlDoc, Path.GetFileName(destFileName)));
+                // 
+                //                 if (RenderMethods.AddActor(modelElement.OuterXml) > 0)
+                //                 {
+                //                     m_ProjectView.AddActorNode(modelElement);
+                //                 }
             }
         }
 

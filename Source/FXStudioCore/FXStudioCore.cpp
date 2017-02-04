@@ -210,10 +210,11 @@ FXSTUDIOCORE_API bool RemoveActor(unsigned int actorId)
 	return true;
 }
 
-FXSTUDIOCORE_API int ImportModel(BSTR modelPath, ProgressCallback progressCallback)
+FXSTUDIOCORE_API int ImportModel(BSTR modelImportPath, BSTR modelExportPath, ProgressCallback progressCallback)
 {
-	std::string model = Utility::WS2S(std::wstring(modelPath, SysStringLen(modelPath)));
-	ModelImporter::GetImporter().LoadModer(model, progressCallback);
+	std::string importPath = Utility::WS2S(std::wstring(modelImportPath, SysStringLen(modelImportPath)));
+	std::string exportPath = Utility::WS2S(std::wstring(modelExportPath, SysStringLen(modelExportPath)));
+	ModelImporter::GetImporter().LoadModer(importPath, exportPath, progressCallback);
 
 	return 0;
 }

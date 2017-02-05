@@ -175,6 +175,7 @@
             // panelRender
             // 
             this.panelRender.AllowDrop = true;
+            this.panelRender.BackColor = System.Drawing.SystemColors.ControlDark;
             this.panelRender.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelRender.Location = new System.Drawing.Point(0, 25);
             this.panelRender.Name = "panelRender";

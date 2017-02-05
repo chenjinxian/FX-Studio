@@ -1,5 +1,5 @@
 #include "Material.h"
-#include "ModelImporter.h"
+#include "Model.h"
 #include <d3dcompiler.h>
 #include <cctype>
 #include <iostream>
@@ -512,7 +512,7 @@ Variable::Variable(ID3D11Device1* pDevice, ID3DX11EffectVariable* pD3DX11EffectV
 		break;
 	}
 
-	for (int i = 0; i < variableDesc.Annotations; i++)
+	for (uint32_t i = 0; i < variableDesc.Annotations; i++)
 	{
 		Annotation* annotation = DEBUG_NEW Annotation(m_pD3DX11EffectVariable->GetAnnotationByIndex(i));
 		m_Annotations.push_back(annotation);

@@ -112,9 +112,6 @@
     <ClInclude Include="Graphics3D\SceneNode.h">
       <Filter>Graphics3D</Filter>
     </ClInclude>
-    <ClInclude Include="Graphics3D\ModelMaterial.h">
-      <Filter>Graphics3D</Filter>
-    </ClInclude>
     <ClInclude Include="Graphics3D\MovementController.h">
       <Filter>Graphics3D</Filter>
     </ClInclude>
@@ -125,9 +122,6 @@
       <Filter>Graphics3D</Filter>
     </ClInclude>
     <ClInclude Include="Graphics3D\LightNode.h">
-      <Filter>Graphics3D</Filter>
-    </ClInclude>
-    <ClInclude Include="Graphics3D\ModelImporter.h">
       <Filter>Graphics3D</Filter>
     </ClInclude>
     <ClInclude Include="UserInterface\HumanView.h">
@@ -153,6 +147,9 @@
     </ClInclude>
     <ClInclude Include="Utilities\SpatialSort.h">
       <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics3D\Model.h">
+      <Filter>Graphics3D</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -228,12 +225,6 @@
     <ClCompile Include="Graphics3D\LightNode.cpp">
       <Filter>Graphics3D</Filter>
     </ClCompile>
-    <ClCompile Include="Graphics3D\ModelImporter.cpp">
-      <Filter>Graphics3D</Filter>
-    </ClCompile>
-    <ClCompile Include="Graphics3D\ModelMaterial.cpp">
-      <Filter>Graphics3D</Filter>
-    </ClCompile>
     <ClCompile Include="UserInterface\HumanView.cpp">
       <Filter>UserInterface</Filter>
     </ClCompile>
@@ -251,6 +242,9 @@
     </ClCompile>
     <ClCompile Include="Utilities\SpatialSort.cpp">
       <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics3D\Model.cpp">
+      <Filter>Graphics3D</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

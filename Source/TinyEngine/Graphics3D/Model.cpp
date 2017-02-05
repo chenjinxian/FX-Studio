@@ -1,82 +1,47 @@
-#include "ModelImporter.h"
-#include "ModelMaterial.h"
+#include "Model.h"
 #include "../Utilities/SpatialSort.h"
-#include "assimp/Importer.hpp"
-#include "assimp/scene.h"
-#include "assimp/postprocess.h"
+#include <sstream>
 
-#pragma comment(lib, "assimp-vc140-mt.lib")
-
-Model::Model(const std::string& filename, bool flipUVs /*= false*/)
-	: m_Meshes(), m_Materials()
+Model::Model(const std::string& filename)
+	: m_Meshes()
 {
-	Assimp::Importer importer;
-
-	uint32_t flags = aiProcessPreset_TargetRealtime_Fast;
-
-	if (flipUVs)
+	unique_ptr<tinyxml2::XMLDocument> pDoc = unique_ptr<tinyxml2::XMLDocument>(DEBUG_NEW tinyxml2::XMLDocument());
+	if (pDoc != nullptr && (pDoc->LoadFile(filename.c_str()) == tinyxml2::XML_SUCCESS))
 	{
-		flags |= aiProcess_FlipUVs;
-	}
+		tinyxml2::XMLElement *pRoot = pDoc->RootElement();
+		if (pRoot == nullptr)
+			return;
 
-	const aiScene* scene = importer.ReadFile(filename, flags);
-	if (scene == nullptr)
-	{
-		DEBUG_ERROR(importer.GetErrorString());
-	}
-
-	if (scene->HasMaterials())
-	{
-		for (uint32_t i = 0; i < scene->mNumMaterials; i++)
+		tinyxml2::XMLElement* pNode = pRoot->FirstChildElement("MeshList");
+		if (pNode != nullptr)
 		{
-			m_Materials.push_back(DEBUG_NEW ModelMaterial(*this, scene->mMaterials[i]));
-		}
-	}
-
-	if (scene->HasMeshes())
-	{
-		for (uint32_t i = 0; i < scene->mNumMeshes; i++)
-		{
-			Mesh* mesh = DEBUG_NEW Mesh(this, (scene->mMeshes[i]));
-			m_Meshes.push_back(mesh);
+			for (tinyxml2::XMLElement* pMeshNode = pNode->FirstChildElement(); pMeshNode; pMeshNode = pMeshNode->NextSiblingElement())
+			{
+				Mesh* mesh = DEBUG_NEW Mesh(this, pMeshNode);
+				m_Meshes.push_back(mesh);
+			}
 		}
 	}
 }
 
-Model::Model(const void* pBuffer, uint32_t length, bool flipUVs /*= false*/)
-	: m_Meshes(), m_Materials()
+Model::Model(const char* pBuffer, uint32_t length)
+	: m_Meshes()
 {
-	Assimp::Importer importer;
-
-	uint32_t flags = aiProcessPreset_TargetRealtime_Fast;
-
-	if (flipUVs)
+	unique_ptr<tinyxml2::XMLDocument> pDoc = unique_ptr<tinyxml2::XMLDocument>(DEBUG_NEW tinyxml2::XMLDocument());
+	if (pDoc != nullptr && (pDoc->Parse(pBuffer, length) == tinyxml2::XML_SUCCESS))
 	{
-		flags |= aiProcess_FlipUVs;
-	}
+		tinyxml2::XMLElement *pRoot = pDoc->RootElement();
+		if (pRoot == nullptr)
+			return;
 
-	const aiScene* scene = importer.ReadFileFromMemory(pBuffer, length, flags);
-	if (scene == nullptr)
-	{
-		DEBUG_ERROR(importer.GetErrorString());
-	}
-
-	if (scene->HasMaterials())
-	{
-		m_Materials.reserve(scene->mNumMaterials);
-		for (uint32_t i = 0; i < scene->mNumMaterials; i++)
+		tinyxml2::XMLElement* pNode = pRoot->FirstChildElement("MeshList");
+		if (pNode != nullptr)
 		{
-			m_Materials.push_back(DEBUG_NEW ModelMaterial(*this, scene->mMaterials[i]));
-		}
-	}
-
-	if (scene->HasMeshes())
-	{
-		m_Meshes.reserve(scene->mNumMeshes);
-		for (uint32_t i = 0; i < scene->mNumMeshes; i++)
-		{
-			Mesh* mesh = DEBUG_NEW Mesh(this, (scene->mMeshes[i]));
-			m_Meshes.push_back(mesh);
+			for (tinyxml2::XMLElement* pMeshNode = pNode->FirstChildElement(); pMeshNode; pMeshNode = pMeshNode->NextSiblingElement())
+			{
+				Mesh* mesh = DEBUG_NEW Mesh(this, pMeshNode);
+				m_Meshes.push_back(mesh);
+			}
 		}
 	}
 }
@@ -88,22 +53,6 @@ Model::~Model()
 		SAFE_DELETE(mesh);
 	}
 	m_Meshes.clear();
-
-	for (auto material : m_Materials)
-	{
-		SAFE_DELETE(material);
-	}
-	m_Materials.clear();
-}
-
-bool Model::HasMeshes() const
-{
-	return m_Meshes.size() > 0;
-}
-
-bool Model::HasMaterials() const
-{
-	return m_Materials.size() > 0;
 }
 
 const std::vector<Mesh*>& Model::GetMeshes() const
@@ -111,14 +60,8 @@ const std::vector<Mesh*>& Model::GetMeshes() const
 	return m_Meshes;
 }
 
-const std::vector<ModelMaterial*>& Model::GetMaterials() const
-{
-	return m_Materials;
-}
-
-Mesh::Mesh(Model* pModel, aiMesh* mesh)
+Mesh::Mesh(Model* pModel, const tinyxml2::XMLElement* pMeshNode)
 	: m_pModel(pModel),
-	m_pModelMaterial(nullptr),
 	m_MeshName(),
 	m_Vertices(),
 	m_Normals(),
@@ -129,77 +72,104 @@ Mesh::Mesh(Model* pModel, aiMesh* mesh)
 	m_FaceCount(0),
 	m_Indices()
 {
-	DEBUG_ASSERT(mesh != nullptr);
-	m_pModelMaterial = m_pModel->GetMaterials().at(mesh->mMaterialIndex);
+	DEBUG_ASSERT(pMeshNode != nullptr);
 
-	m_Vertices.reserve(mesh->mNumVertices);
-	for (uint32_t i = 0; i < mesh->mNumVertices; i++)
+	std::string type = pMeshNode->Attribute("types");
+	if (type == "points")
+		m_PrimitiveType = PT_Point;
+	else if (type == "lines")
+		m_PrimitiveType = PT_Line;
+	else if (type == "triangle")
+		m_PrimitiveType = PT_Triangle;
+
+	for (const tinyxml2::XMLElement* pNode = pMeshNode->FirstChildElement(); pNode; pNode = pNode->NextSiblingElement())
 	{
-		m_Vertices.push_back(Vector3(reinterpret_cast<const float*>(&mesh->mVertices[i])));
-	}
-
-	BoundingBox::CreateFromPoints(m_AABox, m_Vertices.size(), &m_Vertices.front(), sizeof(Vector3));
-
-	if (mesh->HasFaces())
-	{
-		m_FaceCount = mesh->mNumFaces;
-		for (uint32_t i = 0; i < m_FaceCount; i++)
+		if (0 == strcmp(pNode->Name(), "FaceList"))
 		{
-			aiFace* face = &mesh->mFaces[i];
+			m_FaceCount = pNode->IntAttribute("num");
 
-			for (uint32_t j = 0; j < face->mNumIndices; j++)
+			for (const tinyxml2::XMLElement* pFace = pNode->FirstChildElement(); pFace; pFace = pFace->NextSiblingElement())
 			{
-				m_Indices.push_back(face->mIndices[j]);
+				std::stringstream ss(pFace->GetText());
+				int index = 0;
+				for (int i = 0, count = pFace->IntAttribute("num"); i < count; i++)
+				{
+					ss >> index;
+					m_Indices.push_back(index);
+				}
 			}
 		}
-	}
-
-	uint32_t colorChannelCount = mesh->GetNumColorChannels();
-	for (uint32_t i = 0; i < colorChannelCount; i++)
-	{
-		std::vector<Vector4> vertexColors(mesh->mNumVertices);
-
-		aiColor4D* aiVertexColors = mesh->mColors[i];
-		for (uint32_t j = 0; j < mesh->mNumVertices; j++)
+		else if (0 == strcmp(pNode->Name(), "Positions"))
 		{
-			vertexColors[j] = Vector4(reinterpret_cast<const float*>(&aiVertexColors[j]));
+			m_Vertices.resize(pNode->IntAttribute("num"));
+
+			uint32_t i = 0;
+			for (const tinyxml2::XMLElement* pPosition = pNode->FirstChildElement(); pPosition; pPosition = pPosition->NextSiblingElement())
+			{
+				sscanf_s(pPosition->GetText(), "%f %f %f", &m_Vertices[i].x, &m_Vertices[i].y, &m_Vertices[i].z);
+				i++;
+			}
+
+			BoundingBox::CreateFromPoints(m_AABox, m_Vertices.size(), &m_Vertices.front(), sizeof(Vector3));
 		}
-
-		m_VertexColors.push_back(vertexColors);
-	}
-
-	if (mesh->HasNormals())
-	{
-		m_Normals.reserve(mesh->mNumVertices);
-		for (uint32_t i = 0; i < mesh->mNumVertices; i++)
+		else if (0 == strcmp(pNode->Name(), "Normals"))
 		{
-			m_Normals.push_back(Vector3(reinterpret_cast<const float*>(&mesh->mNormals[i])));
+			m_Normals.resize(pNode->IntAttribute("num"));
+
+			uint32_t i = 0;
+			for (const tinyxml2::XMLElement* pNormal = pNode->FirstChildElement(); pNormal; pNormal = pNormal->NextSiblingElement())
+			{
+				sscanf_s(pNormal->GetText(), "%f %f %f", &m_Normals[i].x, &m_Normals[i].y, &m_Normals[i].z);
+				i++;
+			}
 		}
-	}
-
-	uint32_t uvChannelCount = mesh->GetNumUVChannels();
-	for (uint32_t i = 0; i < uvChannelCount; i++)
-	{
-		std::vector<Vector2> textureCoordinates(mesh->mNumVertices);
-
-		aiVector3D* aiTextureCoordinates = mesh->mTextureCoords[i];
-		for (uint32_t j = 0; j < mesh->mNumVertices; j++)
+		else if (0 == strcmp(pNode->Name(), "Tangents"))
 		{
-			Vector3 temp = Vector3(reinterpret_cast<const float*>(&aiTextureCoordinates[j]));
-			textureCoordinates[j] = Vector2(temp.x, temp.y);
+			m_Tangents.resize(pNode->IntAttribute("num"));
+
+			uint32_t i = 0;
+			for (const tinyxml2::XMLElement* pTangent = pNode->FirstChildElement(); pTangent; pTangent = pTangent->NextSiblingElement())
+			{
+				sscanf_s(pTangent->GetText(), "%f %f %f", &m_Tangents[i].x, &m_Tangents[i].y, &m_Tangents[i].z);
+				i++;
+			}
 		}
-
-		m_TextureCoordinates.push_back(textureCoordinates);
-	}
-
-	if (mesh->HasTangentsAndBitangents())
-	{
-		m_Tangents.reserve(mesh->mNumVertices);
-		m_BiNormals.reserve(mesh->mNumVertices);
-		for (uint32_t i = 0; i < mesh->mNumVertices; i++)
+		else if (0 == strcmp(pNode->Name(), "BiNormals"))
 		{
-			m_Tangents.push_back(Vector3(reinterpret_cast<const float*>(&mesh->mTangents[i])));
-			m_BiNormals.push_back(Vector3(reinterpret_cast<const float*>(&mesh->mBitangents[i])));
+			m_BiNormals.resize(pNode->IntAttribute("num"));
+
+			uint32_t i = 0;
+			for (const tinyxml2::XMLElement* pBiNormal = pNode->FirstChildElement(); pBiNormal; pBiNormal = pBiNormal->NextSiblingElement())
+			{
+				sscanf_s(pBiNormal->GetText(), "%f %f %f", &m_BiNormals[i].x, &m_BiNormals[i].y, &m_BiNormals[i].z);
+				i++;
+			}
+		}
+		else if (0 == strcmp(pNode->Name(), "TextureCoords"))
+		{
+			std::vector<Vector2> textureCoordinates(pNode->IntAttribute("num"));
+
+			uint32_t i = 0;
+			for (const tinyxml2::XMLElement* pUV = pNode->FirstChildElement(); pUV; pUV = pUV->NextSiblingElement())
+			{
+				sscanf_s(pUV->GetText(), "%f %f", &textureCoordinates[i].x, &textureCoordinates[i].y);
+				i++;
+			}
+
+			m_TextureCoordinates.push_back(textureCoordinates);
+		}
+		else if (0 == strcmp(pNode->Name(), "Colors"))
+		{
+			std::vector<Vector4> vertexColors(pNode->IntAttribute("num"));
+
+			uint32_t i = 0;
+			for (const tinyxml2::XMLElement* pColor = pNode->FirstChildElement(); pColor; pColor = pColor->NextSiblingElement())
+			{
+				sscanf_s(pColor->GetText(), "%f %f %f %f", &vertexColors[i].x, &vertexColors[i].y, &vertexColors[i].z, &vertexColors[i].z);
+				i++;
+			}
+
+			m_VertexColors.push_back(vertexColors);
 		}
 	}
 }
@@ -240,11 +210,6 @@ Mesh::~Mesh()
 Model* Mesh::GetModel()
 {
 	return m_pModel;
-}
-
-ModelMaterial* Mesh::GetMaterial()
-{
-	return m_pModelMaterial;
 }
 
 const std::string& Mesh::GetMeshName() const

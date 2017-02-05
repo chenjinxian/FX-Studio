@@ -3,42 +3,38 @@
 #include "../TinyEngineInterface.h"
 #include "VertexTypes.h"
 
-struct aiMesh;
 class Mesh;
 class Material;
-class ModelMaterial;
 
 class Model : public boost::noncopyable
 {
 	friend class Mesh;
 
 public:
-	Model(const std::string& filename, bool flipUVs = false);
-	Model(const void* pBuffer, uint32_t length, bool flipUVs = false);
+	Model(const std::string& filename);
+	Model(const char* pBuffer, uint32_t length);
 	~Model();
 
-	bool HasMeshes() const;
-	bool HasMaterials() const;
-
 	const std::vector<Mesh*>& GetMeshes() const;
-	const std::vector<ModelMaterial*>& GetMaterials() const;
 
 private:
 	std::vector<Mesh*> m_Meshes;
-	std::vector<ModelMaterial*> m_Materials;
 };
 
 class Mesh : public boost::noncopyable
 {
-	friend class Model;
-
 public:
-	Mesh(Model* pModel, aiMesh* mesh);
+	Mesh(Model* pModel, const tinyxml2::XMLElement* pMeshNode);
 	Mesh(std::vector<VertexPositionNormalTexture> vertices, std::vector<uint16_t> indices);
 	~Mesh();
 
+	enum PrimitiveType
+	{
+		PT_Point, PT_Line, PT_Triangle
+	};
+
+	PrimitiveType GetPrimitiveType() { return m_PrimitiveType; }
 	Model* GetModel();
-	ModelMaterial* GetMaterial();
 	const std::string& GetMeshName() const;
 
 	const std::vector<Vector3>& GetVertices() const;
@@ -53,8 +49,8 @@ public:
 private:
 	void CalculateTangentSpace();
 
+	PrimitiveType m_PrimitiveType;
 	Model* m_pModel;
-	ModelMaterial* m_pModelMaterial;
 	std::string m_MeshName;
 	std::vector<Vector3> m_Vertices;
 	std::vector<Vector3> m_Normals;

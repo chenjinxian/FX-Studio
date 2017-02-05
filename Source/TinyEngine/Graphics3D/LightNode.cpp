@@ -1,6 +1,6 @@
 #include "LightNode.h"
 #include "CameraNode.h"
-#include "ModelImporter.h"
+#include "Model.h"
 #include "../Actors/RenderComponent.h"
 #include "../ResourceCache/ResCache.h"
 #include "../AppFramework/BaseGameApp.h"

@@ -1,7 +1,7 @@
 #include "SceneNode.h"
 #include "CameraNode.h"
 #include "Scene.h"
-#include "ModelImporter.h"
+#include "Model.h"
 #include "Material.h"
 #include "../Actors/Actor.h"
 #include "../Actors/RenderComponent.h"
@@ -772,7 +772,7 @@ ModelNode::ModelNode(
 
 	Resource modelRes(m_ModelName);
 	shared_ptr<ResHandle> pModelResHandle = g_pApp->GetResCache()->GetHandle(&modelRes);
-	m_pModel = unique_ptr<Model>(DEBUG_NEW Model(pModelResHandle->Buffer(), pModelResHandle->Size(), true));
+	m_pModel = unique_ptr<Model>(DEBUG_NEW Model(pModelResHandle->Buffer(), pModelResHandle->Size()));
 }
 
 ModelNode::~ModelNode()

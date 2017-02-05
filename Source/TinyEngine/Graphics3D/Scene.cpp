@@ -133,8 +133,8 @@ void Scene::NewRenderComponentDelegate(IEventDataPtr pEventData)
 	{
 		if (FAILED(pSceneNode->VOnInitSceneNode(this)))
 		{
-// 			std::string error = "Failed to restore scene node to the scene for actorid " + boost::lex(actorId);
-// 			DEBUG_ERROR(error);
+			std::string error = "Failed to restore scene node to the scene for actorid " + std::to_string(actorId);
+			DEBUG_ERROR(error);
 			return;
 		}
 
@@ -186,4 +186,15 @@ ActorId Scene::PickActor(int cursorX, int cursorY)
 	m_PickDistance = FLT_MAX;
 	m_pRootNode->VPick(this, cursorX, cursorY);
 	return m_PickedActor;
+}
+
+void Scene::ResetActorTransform(ActorId actorId)
+{
+	shared_ptr<ISceneNode> pNode = FindActor(actorId);
+	if (pNode != nullptr)
+	{
+		const BoundingBox& aabb = pNode->VGet()->GetBoundingBox();
+		float scale = 1.0 / (aabb.Extents * 2.0f).Length();
+		pNode->VSetTransform(Matrix::CreateScale(scale));
+	}
 }

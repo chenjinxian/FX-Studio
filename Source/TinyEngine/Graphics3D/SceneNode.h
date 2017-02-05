@@ -81,8 +81,8 @@ public:
 	virtual void VPick(Scene* pScene, int cursorX, int cursorY) override;
 
 protected:
-	void SetBoundingBox(const std::vector<Vector3>& positions);
-	void SetBoundingSphere(const std::vector<Vector3>& positions);
+	void SetBoundingBox(const BoundingBox& aabb);
+	void SetBoundingSphere(const BoundingSphere& sphere);
 
 	SceneNodeList m_Children;
 	SceneNode* m_pParent;

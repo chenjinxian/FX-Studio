@@ -9,7 +9,7 @@ FXStudioView::FXStudioView(shared_ptr<IRenderer> pRenderer)
 	m_pModelController(nullptr)
 {
 	Frustum frustum;
-	frustum.Init(XM_PIDIV4, 1.0f, 0.1f, 5000.0f);
+	frustum.Init(XM_PIDIV4, 1.0f, 0.1f, 10000.0f);
 	m_pEditorCamera.reset(DEBUG_NEW CameraNode(frustum));
 	DEBUG_ASSERT(m_pEditorCamera && _T("Out of memory"));
 

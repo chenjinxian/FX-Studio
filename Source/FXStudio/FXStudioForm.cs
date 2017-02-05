@@ -28,6 +28,7 @@ namespace FXStudio
         private MessageHandler m_messageHandler;
         private string m_DefaultLocation;
         private string m_ProjectLocation;
+        private bool m_Loaded = false;
 
         private DeserializeDockContent m_dockContent;
         private AssetsView m_AssetsView;
@@ -77,6 +78,8 @@ namespace FXStudio
             uint actorId = RenderMethods.GetPickedActor(cursor.X, cursor.Y);
             m_ProjectView.SelectActorNode(actorId);
         }
+
+        public bool ProjectLoaded { get { return m_Loaded; } }
 
         private void OpenProject(string project)
         {
@@ -166,6 +169,8 @@ namespace FXStudio
             toolStripButtonSpot.Enabled = enable;
             toolStripButtonPlay.Enabled = enable;
             toolStripButtonStop.Enabled = enable;
+
+            m_Loaded = enable;
         }
 
         private void CreateStandardViews()

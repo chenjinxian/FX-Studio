@@ -447,10 +447,7 @@ bool BaseGameLogic::CreateDefaultProject(const std::string& project, const std::
 		pGridRenderComponent->InsertEndChild(pTicksInterval);
 	}
 
-	tinyxml2::XMLPrinter printer;
-	outDoc.Accept(&printer);
-
-	return Utility::WriteFileData(project, printer.CStr(), printer.CStrSize());
+	return outDoc.SaveFile(project.c_str()) == tinyxml2::XML_SUCCESS;
 }
 
 void BaseGameLogic::AddVariableElement(
@@ -611,10 +608,7 @@ bool BaseGameLogic::CreateDefaultAsset(const std::string& asset)
 	pChildTexture->InsertEndChild(outDoc.NewText("Textures\\DefaultColor.dds"));
 	pTextures->InsertEndChild(pChildTexture);
 
-	tinyxml2::XMLPrinter printer;
-	outDoc.Accept(&printer);
-
-	return Utility::WriteFileData(asset, printer.CStr(), printer.CStrSize());
+	return outDoc.SaveFile(asset.c_str()) == tinyxml2::XML_SUCCESS;
 }
 
 bool BaseGameLogic::LoadAssets(const std::string& asset)

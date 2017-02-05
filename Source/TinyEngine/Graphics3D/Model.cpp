@@ -19,9 +19,12 @@ Model::Model(const std::string& filename)
 			{
 				Mesh* mesh = DEBUG_NEW Mesh(this, pMeshNode);
 				m_Meshes.push_back(mesh);
+				BoundingBox::CreateMerged(m_AABox, mesh->GetBoundingBox(), m_AABox);
 			}
 		}
 	}
+
+	BoundingSphere::CreateFromBoundingBox(m_Sphere, m_AABox);
 }
 
 Model::Model(const char* pBuffer, uint32_t length)
@@ -41,9 +44,12 @@ Model::Model(const char* pBuffer, uint32_t length)
 			{
 				Mesh* mesh = DEBUG_NEW Mesh(this, pMeshNode);
 				m_Meshes.push_back(mesh);
+				BoundingBox::CreateMerged(m_AABox, mesh->GetBoundingBox(), m_AABox);
 			}
 		}
 	}
+
+	BoundingSphere::CreateFromBoundingBox(m_Sphere, m_AABox);
 }
 
 Model::~Model()
@@ -61,15 +67,12 @@ const std::vector<Mesh*>& Model::GetMeshes() const
 }
 
 Mesh::Mesh(Model* pModel, const tinyxml2::XMLElement* pMeshNode)
-	: m_pModel(pModel),
-	m_MeshName(),
-	m_Vertices(),
+	: m_Vertices(),
 	m_Normals(),
 	m_Tangents(),
 	m_BiNormals(),
 	m_TextureCoordinates(),
 	m_VertexColors(),
-	m_FaceCount(0),
 	m_Indices()
 {
 	DEBUG_ASSERT(pMeshNode != nullptr);
@@ -86,8 +89,6 @@ Mesh::Mesh(Model* pModel, const tinyxml2::XMLElement* pMeshNode)
 	{
 		if (0 == strcmp(pNode->Name(), "FaceList"))
 		{
-			m_FaceCount = pNode->IntAttribute("num");
-
 			for (const tinyxml2::XMLElement* pFace = pNode->FirstChildElement(); pFace; pFace = pFace->NextSiblingElement())
 			{
 				std::stringstream ss(pFace->GetText());
@@ -199,62 +200,13 @@ Mesh::Mesh(std::vector<VertexPositionNormalTexture> vertices, std::vector<uint16
 	}
 
 	BoundingBox::CreateFromPoints(m_AABox, m_Vertices.size(), &m_Vertices.front(), sizeof(Vector3));
+	BoundingSphere::CreateFromBoundingBox(m_Sphere, m_AABox);
 	CalculateTangentSpace();
 }
 
 Mesh::~Mesh()
 {
 
-}
-
-Model* Mesh::GetModel()
-{
-	return m_pModel;
-}
-
-const std::string& Mesh::GetMeshName() const
-{
-	return m_MeshName;
-}
-
-const std::vector<Vector3>& Mesh::GetVertices() const
-{
-	return m_Vertices;
-}
-
-const std::vector<Vector3>& Mesh::GetNormals() const
-{
-	return m_Normals;
-}
-
-const std::vector<Vector3>& Mesh::GetTangents() const
-{
-	return m_Tangents;
-}
-
-const std::vector<Vector3>& Mesh::GetBiNormals() const
-{
-	return m_BiNormals;
-}
-
-const std::vector<std::vector<Vector2> >& Mesh::GetTextureCoordinates() const
-{
-	return m_TextureCoordinates;
-}
-
-const std::vector<std::vector<Vector4> >& Mesh::GetVertexColors() const
-{
-	return m_VertexColors;
-}
-
-uint32_t Mesh::GetFaceCount() const
-{
-	return m_FaceCount;
-}
-
-const std::vector<uint32_t>& Mesh::GetIndices() const
-{
-	return m_Indices;
 }
 
 void Mesh::CalculateTangentSpace()

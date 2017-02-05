@@ -644,12 +644,16 @@ void DebugGizmosNode::CreateGeometryBuffers()
 	vertices.clear();
 	AddVertex(vertices, cylinderVertices);
 	AddVertex(vertices, cubeVertices);
-	SetBoundingBox(vertices);
+	BoundingBox aabb;
+	BoundingBox::CreateFromPoints(aabb, vertices.size(), &vertices.front(), sizeof(Vector3));
+	SetBoundingBox(aabb);
 
 	m_TorusVertices.clear();
 	GeometricPrimitive::CreateTorus(torusVertices, m_TorusIndices, 1.2f, 0.06f);
 	AddVertex(m_TorusVertices, torusVertices);
-	SetBoundingSphere(m_TorusVertices);
+	BoundingSphere sphere;
+	BoundingSphere::CreateFromPoints(sphere, m_TorusVertices.size(), &m_TorusVertices.front(), sizeof(Vector3));
+	SetBoundingSphere(sphere);
 }
 
 Ray DebugGizmosNode::CreateRay(Scene* pScene, const Matrix& world, bool inLocal)

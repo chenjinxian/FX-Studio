@@ -184,7 +184,17 @@ FXSTUDIOCORE_API unsigned int AddActor(BSTR actorResource)
 	if (!pActor)
 		return INVALID_ACTOR_ID;
 
-	SetPickedActor(pActor->GetActorId());
+	FXStudioLogic* pEditorLogic = dynamic_cast<FXStudioLogic*>(g_pApp->GetGameLogic());
+	if (pEditorLogic != nullptr)
+	{
+		shared_ptr<FXStudioView> pView = pEditorLogic->GetHumanView();
+		if (pView != nullptr)
+		{
+			pView->GetScene()->SetPickedActor(pActor->GetActorId());
+			pView->GetScene()->ResetActorTransform(pActor->GetActorId());
+		}
+	}
+
 	return pActor->GetActorId();
 }
 

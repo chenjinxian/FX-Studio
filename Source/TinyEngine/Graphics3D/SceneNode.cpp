@@ -167,14 +167,14 @@ void SceneNode::VPick(Scene* pScene, int cursorX, int cursorY)
 	}
 }
 
-void SceneNode::SetBoundingBox(const std::vector<Vector3>& positions)
+void SceneNode::SetBoundingBox(const BoundingBox& aabb)
 {
-	BoundingBox::CreateFromPoints(m_Properties.m_AABox, positions.size(), &positions.front(), sizeof(Vector3));
+	m_Properties.m_AABox = aabb;
 }
 
-void SceneNode::SetBoundingSphere(const std::vector<Vector3>& positions)
+void SceneNode::SetBoundingSphere(const BoundingSphere& sphere)
 {
-	BoundingSphere::CreateFromPoints(m_Properties.m_Sphere, positions.size(), &positions.front(), sizeof(Vector3));
+	m_Properties.m_Sphere = sphere;
 }
 
 RootNode::RootNode()
@@ -454,7 +454,7 @@ GeometryNode::GeometryNode(ActorType actorType, ActorId actorId, WeakBaseRenderC
 
 	}
 
-	SetBoundingBox(m_Mesh->GetVertices());
+	SetBoundingBox(m_Mesh->GetBoundingBox());
 }
 
 GeometryNode::~GeometryNode()
@@ -773,6 +773,7 @@ ModelNode::ModelNode(
 	Resource modelRes(m_ModelName);
 	shared_ptr<ResHandle> pModelResHandle = g_pApp->GetResCache()->GetHandle(&modelRes);
 	m_pModel = unique_ptr<Model>(DEBUG_NEW Model(pModelResHandle->Buffer(), pModelResHandle->Size()));
+	SetBoundingBox(m_pModel->GetBoundingBox());
 }
 
 ModelNode::~ModelNode()
@@ -841,7 +842,6 @@ HRESULT ModelNode::VOnInitSceneNode(Scene *pScene)
 				DEBUG_ERROR("technique is not exist: " + techniqueName);
 			}
 
-			std::vector<Vector3> totalVertices;
 			uint32_t meshSize = m_pModel->GetMeshes().size();
 			m_pVertexBuffers.resize(meshSize);
 			m_pIndexBuffers.resize(meshSize);
@@ -857,11 +857,7 @@ HRESULT ModelNode::VOnInitSceneNode(Scene *pScene)
 				m_pVertexBuffers[i] = pVertexBuffer;
 				m_pIndexBuffers[i] = pIndexBuffer;
 				m_IndexCounts[i] = mesh->GetIndices().size();
-
-				totalVertices.insert(totalVertices.end(), mesh->GetVertices().begin(), mesh->GetVertices().end());
-			}
-
-			SetBoundingBox(totalVertices);
+			}			
 
 			return S_OK;
 		}
@@ -1056,7 +1052,7 @@ SkyboxNode::SkyboxNode(ActorId actorId, WeakBaseRenderComponentPtr renderCompone
 	m_pVertexBuffer(nullptr),
 	m_pIndexBuffer(nullptr),
 	m_IndexCount(0),
-	m_ScaleMatrix(Matrix::CreateScale(500.0f))
+	m_ScaleMatrix(Matrix::CreateScale(10000.0f))
 {
 	SkyboxRenderComponent* pSkyboxRender = static_cast<SkyboxRenderComponent*>(m_pRenderComponent);
 	if (pSkyboxRender != nullptr)

@@ -17,8 +17,13 @@ public:
 
 	const std::vector<Mesh*>& GetMeshes() const;
 
+	const BoundingBox& GetBoundingBox() const { return m_AABox; }
+	const BoundingSphere& GetBoundingSphere() const { return m_Sphere; }
+
 private:
 	std::vector<Mesh*> m_Meshes;
+	BoundingBox m_AABox;
+	BoundingSphere m_Sphere;
 };
 
 class Mesh : public boost::noncopyable
@@ -34,24 +39,22 @@ public:
 	};
 
 	PrimitiveType GetPrimitiveType() { return m_PrimitiveType; }
-	Model* GetModel();
-	const std::string& GetMeshName() const;
 
-	const std::vector<Vector3>& GetVertices() const;
-	const std::vector<Vector3>& GetNormals() const;
-	const std::vector<Vector3>& GetTangents() const;
-	const std::vector<Vector3>& GetBiNormals() const;
-	const std::vector<std::vector<Vector2> >& GetTextureCoordinates() const;
-	const std::vector<std::vector<Vector4> >& GetVertexColors() const;
-	uint32_t GetFaceCount() const;
-	const std::vector<uint32_t>& GetIndices() const;
+	const std::vector<Vector3>& GetVertices() const { return m_Vertices; }
+	const std::vector<Vector3>& GetNormals() const { return m_Normals; }
+	const std::vector<Vector3>& GetTangents() const { return m_Tangents; }
+	const std::vector<Vector3>& GetBiNormals() const { return m_BiNormals; }
+	const std::vector<std::vector<Vector2> >& GetTextureCoordinates() const { return m_TextureCoordinates; }
+	const std::vector<std::vector<Vector4> >& GetVertexColors() const { return m_VertexColors; }
+	const std::vector<uint32_t>& GetIndices() const { return m_Indices; }
+
+	const BoundingBox& GetBoundingBox() const { return m_AABox; }
+	const BoundingSphere& GetBoundingSphere() const { return m_Sphere; }
 
 private:
 	void CalculateTangentSpace();
 
 	PrimitiveType m_PrimitiveType;
-	Model* m_pModel;
-	std::string m_MeshName;
 	std::vector<Vector3> m_Vertices;
 	std::vector<Vector3> m_Normals;
 	std::vector<Vector3> m_Tangents;
@@ -59,7 +62,6 @@ private:
 	std::vector<std::vector<Vector2> > m_TextureCoordinates;
 	std::vector<std::vector<Vector4> > m_VertexColors;
 	std::vector<uint32_t> m_Indices;
-	uint32_t m_FaceCount;
 
 	BoundingBox m_AABox;
 	BoundingSphere m_Sphere;

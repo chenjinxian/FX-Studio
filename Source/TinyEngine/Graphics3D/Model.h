@@ -35,7 +35,7 @@ public:
 
 	enum PrimitiveType
 	{
-		PT_Point, PT_Line, PT_Triangle
+		PT_Unknow, PT_Point, PT_Line, PT_Triangle
 	};
 
 	PrimitiveType GetPrimitiveType() { return m_PrimitiveType; }

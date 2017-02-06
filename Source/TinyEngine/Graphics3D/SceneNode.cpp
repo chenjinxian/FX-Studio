@@ -979,19 +979,24 @@ HRESULT ModelNode::VRender(Scene* pScene, const GameTime& gameTime)
 		}
 	}
 
-	pScene->GetRenderder()->VInputSetup(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, m_pCurrentPass->GetInputLayout());
-
-	for (uint32_t i = 0, count = m_IndexCounts.size(); i < count; i++)
+	for (uint32_t i = 0, count = m_pModel->GetMeshes().size(); i < count; i++)
 	{
-// 		for (auto variable : variables)
-// 		{
-// 			const std::string& type = variable->GetVariableType();
-// 			if (type == "Texture2D")
-// 			{
-// 				variable->SetResource(m_pTextures[i]);
-// 				break;
-// 			}
-// 		}
+		Mesh* mesh = m_pModel->GetMeshes().at(i);
+		switch (mesh->GetPrimitiveType())
+		{
+		case Mesh::PT_Point:
+			pScene->GetRenderder()->VInputSetup(D3D_PRIMITIVE_TOPOLOGY_POINTLIST, m_pCurrentPass->GetInputLayout());
+			break;
+		case Mesh::PT_Line:
+			pScene->GetRenderder()->VInputSetup(D3D_PRIMITIVE_TOPOLOGY_LINELIST, m_pCurrentPass->GetInputLayout());
+			break;
+		case Mesh::PT_Triangle:
+			pScene->GetRenderder()->VInputSetup(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, m_pCurrentPass->GetInputLayout());
+			break;
+		default:
+			DEBUG_ERROR("Unsupport primitive type!");
+			return S_FALSE;
+		}
 
 		uint32_t stride = m_pCurrentPass->GetVertexSize();
 		uint32_t offset = 0;
@@ -1025,20 +1030,40 @@ void ModelNode::VPick(Scene* pScene, int cursorX, int cursorY)
 			pScene->SetPickDistance(distance);
 			for (auto mesh : m_pModel->GetMeshes())
 			{
-				for (uint32_t i = 0, len = mesh->GetIndices().size(); i < len; i += 3)
+				switch (mesh->GetPrimitiveType())
 				{
-					const std::vector<Vector3>& vertices = mesh->GetVertices();
-					const std::vector<uint32_t>& indices = mesh->GetIndices();
-					Vector3 tri0 = vertices.at(indices[i]);
-					Vector3 tri1 = vertices.at(indices[i + 1]);
-					Vector3 tri2 = vertices.at(indices[i + 2]);
-
-					float distance = 0.0f;
-					if (ray.Intersects(tri0, tri1, tri2, distance))
+				case Mesh::PT_Point:
+				case Mesh::PT_Line:
+				{
+					distance = 0.0f;
+					if (ray.Intersects(mesh->GetBoundingBox(), distance))
 					{
 						pScene->SetPickedActor(m_Properties.GetActorId());
-						break;
+						return;
 					}
+					break;
+				}
+				case Mesh::PT_Triangle:
+				{
+					for (uint32_t i = 0, len = mesh->GetIndices().size(); i < len; i += 3)
+					{
+						const std::vector<Vector3>& vertices = mesh->GetVertices();
+						const std::vector<uint32_t>& indices = mesh->GetIndices();
+						Vector3 tri0 = vertices.at(indices[i]);
+						Vector3 tri1 = vertices.at(indices[i + 1]);
+						Vector3 tri2 = vertices.at(indices[i + 2]);
+
+						distance = 0.0f;
+						if (ray.Intersects(tri0, tri1, tri2, distance))
+						{
+							pScene->SetPickedActor(m_Properties.GetActorId());
+							return;
+						}
+					}
+					break;
+				}
+				default:
+					break;
 				}
 			}
 		}

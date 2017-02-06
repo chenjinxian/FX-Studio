@@ -41,7 +41,7 @@ namespace Logger
 	} \
 	while (0)\
 
-#if 1 //ndef NDEBUG
+#ifndef NDEBUG
 
 // Errors are bad and potentially fatal.  They are presented as a dialog with Abort, Retry, and Ignore.  Abort will
 // break into the debugger, retry will continue the game, and ignore will continue the game and ignore every subsequent 

@@ -67,7 +67,8 @@ const std::vector<Mesh*>& Model::GetMeshes() const
 }
 
 Mesh::Mesh(Model* pModel, const tinyxml2::XMLElement* pMeshNode)
-	: m_Vertices(),
+	: m_PrimitiveType(PT_Unknow),
+	m_Vertices(),
 	m_Normals(),
 	m_Tangents(),
 	m_BiNormals(),
@@ -82,7 +83,7 @@ Mesh::Mesh(Model* pModel, const tinyxml2::XMLElement* pMeshNode)
 		m_PrimitiveType = PT_Point;
 	else if (type == "lines")
 		m_PrimitiveType = PT_Line;
-	else if (type == "triangle")
+	else if (type == "triangles")
 		m_PrimitiveType = PT_Triangle;
 
 	for (const tinyxml2::XMLElement* pNode = pMeshNode->FirstChildElement(); pNode; pNode = pNode->NextSiblingElement())

@@ -35,16 +35,18 @@ namespace Inspector
         /// </summary>
         public DropDownItem()
         {
-            this.Name = "New drop down list item";
+            this.CategoryName = "Misc";
+            this.ItemName = "";
         }
 
         /// <summary>
         /// Constructor. The DefaultValue is the same as Value.
         /// The dropDownList string format is : "dropdownitem1|dropdownitem2|...|dropdownitemN" (the separator character is "|").
         /// </summary>
-        public DropDownItem(string text, string value, string dropDownList)
+        public DropDownItem(string categoryKey, string itemKey, string value, string dropDownList)
         {
-            this.Name = text;
+            this.CategoryName = categoryKey;
+            this.ItemName = itemKey;
             this.Value = value;
             mDropDownList = dropDownList.Split('|');
             mDropDownStyle = DropDownStyleType.DropDownList;

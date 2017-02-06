@@ -16,7 +16,7 @@ namespace FXStudio
 {
     public partial class RenderView : ViewWindow
     {
-        private ModifyEffectDelegate m_ModifyDelegate = null;
+        private ChangeEffectDelegate m_ChangeDelegate = null;
         private ToolStripButton[] m_TransformButtons;
 
         public RenderView()
@@ -24,9 +24,9 @@ namespace FXStudio
             InitializeComponent();
         }
 
-        public void SetModifyEffectDelegate(ModifyEffectDelegate modifyDelegate)
+        public void SetChangeEffectDelegate(ChangeEffectDelegate modifyDelegate)
         {
-            m_ModifyDelegate = modifyDelegate;
+            m_ChangeDelegate = modifyDelegate;
         }
 
         public Panel GetRenderPanel()
@@ -85,7 +85,7 @@ namespace FXStudio
                 {
                     Point targetPoint = panelRender.PointToClient(new Point(e.X, e.Y));
                     uint actorId = RenderMethods.GetPickedActor(targetPoint.X, targetPoint.Y);
-                    m_ModifyDelegate?.Invoke(element, actorId);
+                    m_ChangeDelegate?.Invoke(element, actorId);
                 }
             }
         }

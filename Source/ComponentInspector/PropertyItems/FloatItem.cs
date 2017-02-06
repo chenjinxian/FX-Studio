@@ -23,12 +23,14 @@ namespace Inspector
 
         public FloatItem()
         {
-            this.Name = "New double item";
+            this.CategoryName = "Misc";
+            this.ItemName = "";
         }
 
-        public FloatItem(string text, float value)
+        public FloatItem(string categoryKey, string itemKey, float value)
         {
-            this.Name = text;
+            this.CategoryName = categoryKey;
+            this.ItemName = itemKey;
             this.Value = value;
         }
 

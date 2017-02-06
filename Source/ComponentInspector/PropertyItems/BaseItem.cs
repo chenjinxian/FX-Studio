@@ -48,30 +48,18 @@ namespace Inspector
 
     #endregion
 
-    #region Generic Property Item (all items objects inherit from this object)
-
     public class BaseItem
     {
-
-        #region Private internal var./properties
-
         private bool m_Enabled = true;
         private bool m_Visible = true;
         private bool m_Changed = false;
         private bool m_ShowExpandButton = false;
-        private string m_Name = "New generic item";
-
-        System.Drawing.Rectangle m_Rect = new System.Drawing.Rectangle();
-
-        #endregion
+        private string m_ItemName = "";
+        private string m_CategoryName = "";
 
         public BaseItem()
         {
         }
-
-        #region Public properties
-
-        public System.Drawing.Rectangle Rect { get { return m_Rect; } set { m_Rect = value; } }
 
         public bool Enabled { get { return m_Enabled; } set { m_Enabled = value; } }
 
@@ -81,23 +69,10 @@ namespace Inspector
 
         public bool ShowExpandButton { get { return m_ShowExpandButton; } set { m_ShowExpandButton = value; } }
 
-        public string Name { get { return m_Name; } set { m_Name = value; } }
+        public string ItemName { get { return m_ItemName; } set { m_ItemName = value; } }
 
-        public virtual string ValueString
-        {
-            get
-            {
-                return "";
-            }
-            set
-            {
-            }
-        }
+        public string CategoryName { get { return m_CategoryName; } set { m_CategoryName = value; } }
 
-        #endregion
-
+        public virtual string ValueString { get { return ""; } set { } }
     }
-
-    #endregion
-
 }

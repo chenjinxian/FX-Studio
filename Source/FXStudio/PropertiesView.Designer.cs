@@ -33,11 +33,9 @@
             // 
             // inspectorComponent
             // 
-            this.inspectorComponent.ColumnWidth = 100;
             this.inspectorComponent.Dock = System.Windows.Forms.DockStyle.Fill;
             this.inspectorComponent.Location = new System.Drawing.Point(0, 0);
             this.inspectorComponent.Name = "inspectorComponent";
-            this.inspectorComponent.SelectedItem = null;
             this.inspectorComponent.Size = new System.Drawing.Size(424, 901);
             this.inspectorComponent.TabIndex = 0;
             this.inspectorComponent.Text = "PropertiesInspector";

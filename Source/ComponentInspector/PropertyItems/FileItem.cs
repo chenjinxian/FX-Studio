@@ -35,15 +35,17 @@ namespace Inspector
         /// </summary>
         public FileItem()
         {
-            this.Name = "New file item";
+            this.CategoryName = "Misc";
+            this.ItemName = "";
         }
 
         /// <summary>
         /// Constructor. The DefaultValue is the same as Value.
         /// </summary>
-        public FileItem(string text, string value)
+        public FileItem(string categoryKey, string itemKey, string value)
         {
-            this.Name = text;
+            this.CategoryName = categoryKey;
+            this.ItemName = itemKey;
             this.Value = value;
         }
 

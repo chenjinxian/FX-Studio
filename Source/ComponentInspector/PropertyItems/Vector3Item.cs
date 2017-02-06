@@ -49,9 +49,10 @@ namespace Inspector
 
         #region Constructors
 
-        public Vector3Item(string text, Vector3 value)
+        public Vector3Item(string categoryKey, string itemKey, Vector3 value)
         {
-            this.Name = text;
+            this.CategoryName = categoryKey;
+            this.ItemName = itemKey;
             this.Value = value;
         }
 
@@ -67,11 +68,8 @@ namespace Inspector
             }
             set
             {
-                Vector3 oldValue = m_Value;
                 m_Value = value;
-                this.Changed = (oldValue != null && !oldValue.Equals(m_Value));
-                if (this.Changed)
-                    RaiseValueChanged(m_Value);
+                RaiseValueChanged(m_Value);
             }
         }
 

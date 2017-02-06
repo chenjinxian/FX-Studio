@@ -20,12 +20,14 @@ namespace Inspector
 
         public ImageItem()
         {
-            this.Name = "New image item";
+            this.CategoryName = "Misc";
+            this.ItemName = "";
         }
 
-        public ImageItem(string text, string fileName)
+        public ImageItem(string categoryKey, string itemKey, string fileName)
         {
-            this.Name = text;
+            this.CategoryName = categoryKey;
+            this.ItemName = itemKey;
             this.FileName = fileName;
         }
 

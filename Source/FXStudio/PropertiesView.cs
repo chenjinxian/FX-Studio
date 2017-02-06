@@ -15,9 +15,16 @@ namespace FXStudio
 {
     public partial class PropertiesView : ViewWindow
     {
+        private MoveActorDelegate m_ModifyDelegate = null;
+
         public PropertiesView()
         {
             InitializeComponent();
+        }
+
+        public void SetMoveActorDelegate(MoveActorDelegate modifyDelegate)
+        {
+            m_ModifyDelegate = modifyDelegate;
         }
 
         public void UpdateAssetProperties(XmlNode selectedNode)
@@ -39,8 +46,7 @@ namespace FXStudio
                 inspectorComponent.CategoryAdd("ImageProperties", category);
 
                 string textureName = selectedNode.Attributes["name"].Value;
-                Inspector.StringItem nameItem = new Inspector.StringItem(textureName, selectedNode.InnerText);
-                inspectorComponent.ItemAdd("ImageProperties", textureName, nameItem);
+                inspectorComponent.ItemAdd(new Inspector.StringItem("ImageProperties", textureName, selectedNode.InnerText));
             }
 
             inspectorComponent.UpdateControl();
@@ -115,12 +121,10 @@ namespace FXStudio
             inspectorComponent.CategoryAdd(projectNode.Name, category);
 
             XmlNode nameNode = projectNode.SelectSingleNode("Name");
-            Inspector.StringItem nameItem = new Inspector.StringItem(nameNode.Name, nameNode.InnerText);
-            inspectorComponent.ItemAdd(projectNode.Name, nameNode.Name, nameItem);
+            inspectorComponent.ItemAdd(new Inspector.StringItem(projectNode.Name, nameNode.Name, nameNode.InnerText));
 
             XmlNode locationNode = projectNode.SelectSingleNode("Location");
-            Inspector.StringItem locationItem = new Inspector.StringItem(locationNode.Name, locationNode.InnerText);
-            inspectorComponent.ItemAdd(projectNode.Name, locationNode.Name, locationItem);
+            inspectorComponent.ItemAdd(new Inspector.StringItem(projectNode.Name, locationNode.Name, locationNode.InnerText));
         }
 
         private void AddSceneProperties(XmlNode sceneNode)
@@ -128,8 +132,7 @@ namespace FXStudio
             Inspector.CategoryItem category = new Inspector.CategoryItem("Scene");
             inspectorComponent.CategoryAdd("Scene", category);
 
-            Inspector.StringItem nameItem = new Inspector.StringItem("Name", sceneNode.Name);
-            inspectorComponent.ItemAdd("Scene", sceneNode.Name, nameItem);
+            inspectorComponent.ItemAdd(new Inspector.StringItem("Scene", "Name", sceneNode.Name));
         }
 
         private void AddEditorCameraProperties(XmlNode cameraNode)
@@ -214,9 +217,16 @@ namespace FXStudio
                 float y = Convert.ToSingle(vector3Node.Attributes["y"].Value);
                 float z = Convert.ToSingle(vector3Node.Attributes["z"].Value);
 
-                inspectorComponent.ItemAdd(transformNode.Name, vector3Node.Name,
-                    new Inspector.Vector3Item(vector3Node.Name, new Inspector.Vector3(x, y, z)));
+                Inspector.Vector3Item vector3Item = new Inspector.Vector3Item(
+                    transformNode.Name, vector3Node.Name, new Inspector.Vector3(x, y, z));
+                vector3Item.ValueChanged += Vector3Item_ValueChanged;
+                inspectorComponent.ItemAdd(vector3Item);
             }
+        }
+
+        private void Vector3Item_ValueChanged(object sender, Inspector.Vector3 value)
+        {
+            Inspector.Vector3Item vector3Item = sender as Inspector.Vector3Item;
         }
 
         private void AddColorItem(XmlNode actorNode)
@@ -228,7 +238,7 @@ namespace FXStudio
                 float g = Convert.ToSingle(colorNode.Attributes["g"].Value);
                 float b = Convert.ToSingle(colorNode.Attributes["b"].Value);
                 float a = Convert.ToSingle(colorNode.Attributes["a"].Value);
-                inspectorComponent.ItemAdd(actorNode.Name, colorNode.Name, new Inspector.ColorItem(colorNode.Name,
+                inspectorComponent.ItemAdd(new Inspector.ColorItem(actorNode.Name, colorNode.Name,
                     Color.FromArgb((int)(a * 255.0), (int)(r * 255.0), (int)(g * 255.0), (int)(b * 255.0))));
             }
         }
@@ -238,8 +248,7 @@ namespace FXStudio
             XmlNode textureNode = actorNode.SelectSingleNode("Texture");
             if (textureNode != null)
             {
-                Inspector.ImageItem textureItem = new Inspector.ImageItem(textureNode.Name, textureNode.InnerText);
-                inspectorComponent.ItemAdd(actorNode.Name, textureNode.Name, textureItem);
+                inspectorComponent.ItemAdd(new Inspector.ImageItem(actorNode.Name, textureNode.Name, textureNode.InnerText));
             }
         }
 
@@ -248,8 +257,7 @@ namespace FXStudio
             XmlNode effectNode = actorNode.SelectSingleNode("Effect");
             if (effectNode != null)
             {
-                Inspector.ImageItem effectItem = new Inspector.ImageItem(effectNode.Name, effectNode.InnerText);
-                inspectorComponent.ItemAdd(actorNode.Name, effectNode.Name, effectItem);
+                inspectorComponent.ItemAdd(new Inspector.ImageItem(actorNode.Name, effectNode.Name, effectNode.InnerText));
             }
         }
     }

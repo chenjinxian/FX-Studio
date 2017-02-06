@@ -16,58 +16,62 @@ bool TransformComponent::VInit(tinyxml2::XMLElement* pData)
 {
 	DEBUG_ASSERT(pData);
 
-	Vector3 position(0.0f, 0.0f, 0.0f);
-	Vector3 scales(1.0f, 1.0f, 1.0f);
-	Vector3 yawPitchRoll(0.0f, 0.0f, 0.0f);
+	Vector3 scale;
+	Quaternion rotation;
+	Vector3 translation;
+	m_Transform.Decompose(scale, rotation, translation);
 
 	float x = 0; float y = 0; float z = 0;
 	tinyxml2::XMLElement* pPositionElement = pData->FirstChildElement("Translation");
 	if (pPositionElement)
 	{
-		pPositionElement->QueryFloatAttribute("x", &x);
-		pPositionElement->QueryFloatAttribute("y", &y);
-		pPositionElement->QueryFloatAttribute("z", &z);
-		position = Vector3(x, y ,z);
+		translation.x = pPositionElement->FloatAttribute("x");
+		translation.y = pPositionElement->FloatAttribute("y");
+		translation.z = pPositionElement->FloatAttribute("z");
 	}
 
 	tinyxml2::XMLElement* pScaleElement = pData->FirstChildElement("Scale");
 	if (pScaleElement)
 	{
-		pScaleElement->QueryFloatAttribute("x", &x);
-		pScaleElement->QueryFloatAttribute("y", &y);
-		pScaleElement->QueryFloatAttribute("z", &z);
-		scales = Vector3(x, y, z);
+		scale.x = pScaleElement->FloatAttribute("x");
+		scale.y = pScaleElement->FloatAttribute("y");
+		scale.z = pScaleElement->FloatAttribute("z");
 	}
 
 	tinyxml2::XMLElement* pRotationElement = pData->FirstChildElement("Rotation");
 	if (pRotationElement)
 	{
-		pRotationElement->QueryFloatAttribute("x", &x);
-		pRotationElement->QueryFloatAttribute("y", &y);
-		pRotationElement->QueryFloatAttribute("z", &z);
-		yawPitchRoll = Vector3(x, y, z);
+		rotation.CreateFromYawPitchRoll(
+			XMConvertToRadians(pRotationElement->FloatAttribute("y")),
+			XMConvertToRadians(pRotationElement->FloatAttribute("x")),
+			XMConvertToRadians(pRotationElement->FloatAttribute("z")));
 	}
 
-	Matrix translation = Matrix::CreateTranslation(position);
-	Matrix scale = Matrix::CreateScale(scales);
-	Matrix rotation = Matrix::CreateFromYawPitchRoll(
-		XMConvertToRadians(yawPitchRoll.y), XMConvertToRadians(yawPitchRoll.x), XMConvertToRadians(yawPitchRoll.z));
-	
-	m_Transform = scale * rotation * translation;
+	m_Transform = Matrix::CreateScale(scale) * Matrix::CreateFromQuaternion(rotation) * Matrix::CreateTranslation(translation);
 
 	return true;
 }
 
 tinyxml2::XMLElement* TransformComponent::VGenerateXml(tinyxml2::XMLDocument* pDocument)
 {
+	Vector3 scale;
+	Quaternion rotation;
+	Vector3 translation;
+	m_Transform.Decompose(scale, rotation, translation);
+
 	tinyxml2::XMLElement* pBaseElement = pDocument->NewElement(VGetComponentName().c_str());
 
-	tinyxml2::XMLElement* pPosition = pDocument->NewElement("Position");
-	Vector3 pos = m_Transform.Translation();
-	pPosition->SetAttribute("x", pos.x);
-	pPosition->SetAttribute("y", pos.y);
-	pPosition->SetAttribute("z", pos.z);
-	pBaseElement->LinkEndChild(pPosition);
+	tinyxml2::XMLElement* pPositionElement = pDocument->NewElement("Translation");
+	pPositionElement->SetAttribute("x", translation.x);
+	pPositionElement->SetAttribute("y", translation.y);
+	pPositionElement->SetAttribute("z", translation.z);
+	pBaseElement->LinkEndChild(pPositionElement);
+
+	tinyxml2::XMLElement* pScaleElement = pDocument->NewElement("Scale");
+	pScaleElement->SetAttribute("x", scale.x);
+	pScaleElement->SetAttribute("y", scale.y);
+	pScaleElement->SetAttribute("z", scale.z);
+	pBaseElement->LinkEndChild(pScaleElement);
 
 	return pBaseElement;
 }

@@ -11,12 +11,12 @@ namespace Inspector
 
         public CategoryItem()
         {
-            this.Name = "Misc";
+            this.CategoryName = "Misc";
         }
 
         public CategoryItem(string text)
         {
-            this.Name = text;
+            this.CategoryName = text;
             m_PropertyByName = new Dictionary<string, BaseItem>();
         }
 

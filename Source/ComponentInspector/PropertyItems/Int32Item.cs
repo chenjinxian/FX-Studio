@@ -23,18 +23,14 @@ namespace Inspector
 
         public Int32Item()
         {
-            this.Name = "Misc";
+            this.CategoryName = "Misc";
+            this.ItemName = "";
         }
 
-        public Int32Item(string text, int value)
+        public Int32Item(string categoryKey, string itemKey, int value)
         {
-            this.Name = text;
-            this.Value = value;
-        }
-
-        public Int32Item(string text, int value, int defaultValue)
-        {
-            this.Name = text;
+            this.CategoryName = categoryKey;
+            this.ItemName = itemKey;
             this.Value = value;
         }
 

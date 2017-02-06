@@ -19,12 +19,14 @@ namespace Inspector
 
         public BooleanItem()
         {
-            this.Name = "New boolean item";
+            this.CategoryName = "Misc";
+            this.ItemName = "";
         }
 
-        public BooleanItem(string text, bool value)
+        public BooleanItem(string categoryKey, string itemKey, bool value)
         {
-            this.Name = text;
+            this.CategoryName = categoryKey;
+            this.ItemName = itemKey;
             this.Value = value;
         }
 

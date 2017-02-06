@@ -20,12 +20,14 @@ namespace Inspector
 
         public StringItem()
         {
-            this.Name = "Misc";
+            this.CategoryName = "Misc";
+            this.ItemName = "";
         }
 
-        public StringItem(string text, string value)
+        public StringItem(string categoryKey, string itemKey, string value)
         {
-            this.Name = text;
+            this.CategoryName = categoryKey;
+            this.ItemName = itemKey;
             this.Value = value;
         }
 

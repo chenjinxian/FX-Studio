@@ -17,8 +17,8 @@ using WeifenLuo.WinFormsUI.Docking;
 namespace FXStudio
 {
     public delegate void UpdatePropertiesDelegate(XmlNode selectedNode);
-    public delegate void ModifyEffectDelegate(XmlNode effectNode, uint actorId);
-    public delegate void ModifyActorDelegate(XmlNode actorNode);
+    public delegate void ChangeEffectDelegate(XmlNode effectNode, uint actorId);
+    public delegate void MoveActorDelegate(XmlNode actorNode);
     public delegate void UpdateOutputDelegate(string output, string error);
 
     public delegate bool ProgressCallback(Single percent, string error);
@@ -34,8 +34,8 @@ namespace FXStudio
         private AssetsView m_AssetsView;
         private ProjectView m_ProjectView;
         private EditorView m_editorView;
-        private RenderView m_renderView;
-        private PropertiesView m_propertiesView;
+        private RenderView m_RenderView;
+        private PropertiesView m_PropertiesView;
         private TaskListView m_taskView;
         private OutputView m_outputView;
 
@@ -56,10 +56,10 @@ namespace FXStudio
             toolStripEx.DefaultRenderer = renderEx;
             SetScheme();
 
-            var panel = m_renderView.GetRenderPanel();
+            var panel = m_RenderView.GetRenderPanel();
             if (panel != null)
             {
-                m_messageHandler = new MessageHandler(this, m_renderView.GetRenderPanel());
+                m_messageHandler = new MessageHandler(this, m_RenderView.GetRenderPanel());
             }
         }
 
@@ -89,7 +89,7 @@ namespace FXStudio
             string assetFile = string.Empty;
             m_ProjectView.UpdateProject(project, ref assetFile, selectedNode =>
             {
-                if (m_propertiesView.UpdateProjectProperties(selectedNode))
+                if (m_PropertiesView.UpdateProjectProperties(selectedNode))
                 {
                     int selectAcotrId = m_ProjectView.GetSelectActorId();
                     if (selectAcotrId > 2)
@@ -103,9 +103,14 @@ namespace FXStudio
 
             if (string.Empty != assetFile)
                 m_AssetsView.UpdateAssets(
-                    m_ProjectLocation + @"\" + assetFile, m_propertiesView.UpdateAssetProperties, m_outputView.UpdateCompileInfo);
+                    m_ProjectLocation + @"\" + assetFile, m_PropertiesView.UpdateAssetProperties, m_outputView.UpdateCompileInfo);
 
-            m_renderView.SetModifyEffectDelegate((effectNode, actorId) =>
+            m_PropertiesView.SetMoveActorDelegate(actorNode =>
+            {
+                float[] value;
+            });
+
+            m_RenderView.SetChangeEffectDelegate((effectNode, actorId) =>
             {
                 m_ProjectView.SelectActorNode(actorId);
                 XmlNode actorNode = m_ProjectView.GetSelectActorXml();
@@ -147,6 +152,8 @@ namespace FXStudio
 
                 RenderMethods.ModifyActor(xmlActor.OuterXml);
             });
+
+
             EnableControlView(true);
         }
 
@@ -177,19 +184,19 @@ namespace FXStudio
         {
             m_AssetsView = new AssetsView();
             m_ProjectView = new ProjectView();
-            m_propertiesView = new PropertiesView();
+            m_PropertiesView = new PropertiesView();
             m_outputView = new OutputView();
             m_taskView = new TaskListView();
             m_editorView = new EditorView();
-            m_renderView = new RenderView();
+            m_RenderView = new RenderView();
         }
 
         private void DestoryStandardViews()
         {
             m_AssetsView.DockPanel = null;
             m_ProjectView.DockPanel = null;
-            m_renderView.DockPanel = null;
-            m_propertiesView.DockPanel = null;
+            m_RenderView.DockPanel = null;
+            m_PropertiesView.DockPanel = null;
             m_outputView.DockPanel = null;
             m_taskView.DockPanel = null;
             m_editorView.DockPanel = null;
@@ -219,11 +226,11 @@ namespace FXStudio
             }
             else if (viewString == typeof(RenderView).ToString())
             {
-                return m_renderView;
+                return m_RenderView;
             }
             else if (viewString == typeof(PropertiesView).ToString())
             {
-                return m_propertiesView;
+                return m_PropertiesView;
             }
             else if (viewString == typeof(OutputView).ToString())
             {
@@ -256,10 +263,10 @@ namespace FXStudio
 
             m_AssetsView.Show(panelAllView, DockState.DockLeft);
             m_ProjectView.Show(panelAllView, DockState.DockLeft);
-            m_propertiesView.Show(panelAllView, DockState.DockRight);
+            m_PropertiesView.Show(panelAllView, DockState.DockRight);
             m_editorView.Show(panelAllView, DockState.Document);
-            m_renderView.Show(panelAllView, DockState.Document);
-            m_taskView.Show(m_renderView.Pane, DockAlignment.Bottom, 0.15);
+            m_RenderView.Show(panelAllView, DockState.Document);
+            m_taskView.Show(m_RenderView.Pane, DockAlignment.Bottom, 0.15);
             m_outputView.Show(m_taskView.Pane, null);
 
             panelAllView.ResumeLayout(true, true);
@@ -278,11 +285,11 @@ namespace FXStudio
                 ResetLayout();
             }
 
-            panelAllView.DockLeftPortion = panelAllView.Width * 0.18d;
+            panelAllView.DockLeftPortion = panelAllView.Width * 0.22d;
             panelAllView.DockRightPortion = panelAllView.DockLeftPortion;
 
             IntPtr hInstance = Marshal.GetHINSTANCE(this.GetType().Module);
-            var panel = m_renderView.GetRenderPanel();
+            var panel = m_RenderView.GetRenderPanel();
             m_messageHandler.ResetRenderPanel(panel);
             RenderMethods.CreateInstance(hInstance, IntPtr.Zero, panel.Handle, 1, panel.Width, panel.Height);
 
@@ -346,7 +353,7 @@ namespace FXStudio
         {
             if (panelAllView.Width != 0 && panelAllView.Height != 0)
             {
-                panelAllView.DockLeftPortion = panelAllView.Width * 0.18d;
+                panelAllView.DockLeftPortion = panelAllView.Width * 0.22d;
                 panelAllView.DockRightPortion = panelAllView.DockLeftPortion;
             }
         }

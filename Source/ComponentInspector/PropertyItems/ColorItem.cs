@@ -8,9 +8,10 @@ namespace Inspector
     {
         private System.Drawing.Color m_Value = System.Drawing.Color.Black;
 
-        public ColorItem(string text, System.Drawing.Color value)
+        public ColorItem(string categoryKey, string itemKey, System.Drawing.Color value)
         {
-            this.Name = text;
+            this.CategoryName = categoryKey;
+            this.ItemName = itemKey;
             this.Value = value;
         }
 

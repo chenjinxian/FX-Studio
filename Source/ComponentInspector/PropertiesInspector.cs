@@ -15,11 +15,8 @@ namespace Inspector
         private readonly int m_NameLocationX = 24;
         private readonly int m_ValueLocationX = 106;
         private readonly int m_ItemHeight = 26;
-        private BaseItem m_SelectItem = null;
-        private BaseItem PreviousItemSelected = null;
         private Color mTextForeColor = Color.White;
         private Dictionary<string, CategoryItem> m_CategoryByName = null;
-        private bool controlChangeEventLocked = true;
 
         private bool m_LButtonDown;
         private Point m_LastMousePos;

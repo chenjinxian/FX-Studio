@@ -59,11 +59,11 @@ bool BaseGameApp::InitEnvironment()
 	RegisterEngineEvents();
 	VRegisterGameEvents();
 
-// 	if (!LoadStrings("English"))
-// 	{
-// 		DEBUG_ERROR("Failed to load strings");
-// 		return false;
-// 	}
+	if (!LoadStrings("English"))
+	{
+		DEBUG_ERROR("Failed to load strings");
+		return false;
+	}
 
 	if (m_pEventManager == nullptr)
 	{

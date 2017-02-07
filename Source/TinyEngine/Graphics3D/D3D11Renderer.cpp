@@ -189,6 +189,8 @@ void D3D11Renderer::InitD3D11Device()
 		if (FAILED(hr))
 		{
 			MessageBox(nullptr, L"D3D11CreateDevice() failed, OS Version is too low! (must above Windows 7 SP1)", nullptr, MB_OK | MB_ICONERROR);
+			SAFE_RELEASE(m_pDeviceContext);
+			SAFE_RELEASE(m_pDevice);
 			return;
 		}
 	}
@@ -196,6 +198,8 @@ void D3D11Renderer::InitD3D11Device()
 	if (m_FeatureLevel < D3D_FEATURE_LEVEL_11_0)
 	{
 		MessageBox(nullptr, L"Direct3D Feature Level 11 unsupported!", nullptr, MB_OK | MB_ICONERROR);
+		SAFE_RELEASE(m_pDeviceContext);
+		SAFE_RELEASE(m_pDevice);
 		return;
 	}
 

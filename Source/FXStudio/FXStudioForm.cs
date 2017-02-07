@@ -306,11 +306,20 @@ namespace FXStudio
             IntPtr hInstance = Marshal.GetHINSTANCE(this.GetType().Module);
             var panel = m_RenderView.GetRenderPanel();
             m_messageHandler.ResetRenderPanel(panel);
-            if (!RenderMethods.CreateInstance(hInstance, IntPtr.Zero, panel.Handle, 1, panel.Width, panel.Height))
-                this.Close();
 
-            if (panel.Width != 0 && panel.Height != 0)
-                RenderMethods.ResizeWnd(panel.Width, panel.Height);
+            try
+            {
+                if (!RenderMethods.CreateInstance(hInstance, IntPtr.Zero, panel.Handle, 1, panel.Width, panel.Height))
+                    this.Close();
+
+                if (panel.Width != 0 && panel.Height != 0)
+                    RenderMethods.ResizeWnd(panel.Width, panel.Height);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                this.Close();
+            }
         }
 
         private void FXStudioForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -336,7 +345,14 @@ namespace FXStudio
 
         private void FXStudioForm_FormClosed(object sender, FormClosedEventArgs e)
         {
-            RenderMethods.DestroyInstance();
+            try
+            {
+                RenderMethods.DestroyInstance();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void FXStudioForm_Shown(object sender, EventArgs e)

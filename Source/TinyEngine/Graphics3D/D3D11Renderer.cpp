@@ -48,6 +48,9 @@ D3D11Renderer::~D3D11Renderer()
 
 bool D3D11Renderer::VInitRenderer(HWND hWnd)
 {
+	if (m_pDevice == nullptr || m_pDeviceContext == nullptr)
+		return false;
+
 	HRESULT hr;
 
 	DXGI_SWAP_CHAIN_DESC swapChainDesc;
@@ -70,6 +73,7 @@ bool D3D11Renderer::VInitRenderer(HWND hWnd)
 	if (FAILED(hr = m_pDevice->QueryInterface(__uuidof(IDXGIDevice), reinterpret_cast<void**>(&dxgiDevice))))
 	{
 		DEBUG_ERROR("ID3D11Device::QueryInterface() failed");
+		return false;
 	}
 
 	IDXGIAdapter *dxgiAdapter = nullptr;
@@ -77,6 +81,7 @@ bool D3D11Renderer::VInitRenderer(HWND hWnd)
 	{
 		SAFE_RELEASE(dxgiDevice);
 		DEBUG_ERROR("IDXGIDevice::GetParent() failed retrieving adapter.");
+		return false;
 	}
 
 	DXGI_ADAPTER_DESC desc;
@@ -89,6 +94,7 @@ bool D3D11Renderer::VInitRenderer(HWND hWnd)
 		SAFE_RELEASE(dxgiDevice);
 		SAFE_RELEASE(dxgiAdapter);
 		DEBUG_ERROR("IDXGIAdapter::GetParent() failed retrieving factory.");
+		return false;
 	}
 
 	if (FAILED(hr = dxgiFactory->CreateSwapChain(m_pDevice, &swapChainDesc, &m_pSwapChain)))
@@ -97,6 +103,7 @@ bool D3D11Renderer::VInitRenderer(HWND hWnd)
 		SAFE_RELEASE(dxgiAdapter);
 		SAFE_RELEASE(dxgiFactory);
 		DEBUG_ERROR("IDXGIDevice::CreateSwapChainForHwnd() failed.");
+		return false;
 	}
 
 	SAFE_RELEASE(dxgiDevice);
@@ -123,6 +130,9 @@ void D3D11Renderer::VDeleteRenderer()
 
 void D3D11Renderer::VResizeSwapChain()
 {
+	if (m_pDevice == nullptr || m_pDeviceContext == nullptr)
+		return;
+
 // 	DeleteImGuiBuffers();
 	DeleteBuffers();
 	m_pSwapChain->ResizeBuffers(0, g_pApp->GetGameConfig().m_ScreenWidth, g_pApp->GetGameConfig().m_ScreenHeight, DXGI_FORMAT_UNKNOWN, 0);
@@ -146,6 +156,9 @@ bool D3D11Renderer::VPreRender(const GameTime& gameTime)
 
 bool D3D11Renderer::VPostRender()
 {
+	if (m_pSwapChain == nullptr)
+		return false;
+
 // 	ImGui::Render();
 // 	RenderDrawLists();
 	m_pSwapChain->Present(g_pApp->GetGameConfig().m_IsVSync ? 1 : 0, 0);
@@ -735,7 +748,7 @@ void D3D11Renderer::VDrawMesh(uint32_t indexCount, uint32_t startIndex, int32_t 
 
 bool D3D11Renderer::VCompileShaderFromMemory(const void* pBuffer, uint32_t lenght, shared_ptr<IResourceExtraData> pExtraData)
 {
-	if (m_pDevice == nullptr && m_pDeviceContext == nullptr)
+	if (m_pDevice == nullptr || m_pDeviceContext == nullptr)
 	{
 		return false;
 	}
@@ -771,7 +784,7 @@ bool D3D11Renderer::VCompileShaderFromMemory(const void* pBuffer, uint32_t lengh
 
 bool D3D11Renderer::VCreateShaderFromMemory(const void* pBuffer, uint32_t length, shared_ptr<IResourceExtraData> pExtraData)
 {
-	if (m_pDevice == nullptr && m_pDeviceContext == nullptr)
+	if (m_pDevice == nullptr || m_pDeviceContext == nullptr)
 	{
 		return false;
 	}
@@ -796,7 +809,7 @@ bool D3D11Renderer::VCreateShaderFromMemory(const void* pBuffer, uint32_t length
 
 bool D3D11Renderer::VCreateDDSTextureResoure(char *rawBuffer, uint32_t rawSize, shared_ptr<IResourceExtraData> pExtraData)
 {
-	if (m_pDevice == nullptr && m_pDeviceContext == nullptr)
+	if (m_pDevice == nullptr || m_pDeviceContext == nullptr)
 	{
 		return false;
 	}
@@ -818,7 +831,7 @@ bool D3D11Renderer::VCreateDDSTextureResoure(char *rawBuffer, uint32_t rawSize, 
 
 bool D3D11Renderer::VCreateWICTextureResoure(char *rawBuffer, uint32_t rawSize, shared_ptr<IResourceExtraData> pExtraData)
 {
-	if (m_pDevice == nullptr && m_pDeviceContext == nullptr)
+	if (m_pDevice == nullptr || m_pDeviceContext == nullptr)
 	{
 		return false;
 	}

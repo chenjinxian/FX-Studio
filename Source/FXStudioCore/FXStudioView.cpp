@@ -36,6 +36,38 @@ void FXStudioView::VOnUpdate(const GameTime& gameTime)
 	}
 }
 
+void FXStudioView::MoveEditorCamera(tinyxml2::XMLElement* pCameraNode)
+{
+	Matrix transform = m_pEditorCamera->VGet()->GetWorldMatrix();
+	Vector3 scale;
+	Quaternion quat;
+	Vector3 translation;
+	transform.Decompose(scale, quat, translation);
+
+	if (pCameraNode != nullptr)
+	{
+		tinyxml2::XMLElement* pPositionElement = pCameraNode->FirstChildElement("Translation");
+		if (pPositionElement)
+		{
+			translation.x = pPositionElement->FloatAttribute("x");
+			translation.y = pPositionElement->FloatAttribute("y");
+			translation.z = pPositionElement->FloatAttribute("z");
+		}
+
+		tinyxml2::XMLElement* pRotationElement = pCameraNode->FirstChildElement("Rotation");
+		if (pRotationElement)
+		{
+			quat = Quaternion::CreateFromYawPitchRoll(
+				XMConvertToRadians(pRotationElement->FloatAttribute("y")),
+				XMConvertToRadians(pRotationElement->FloatAttribute("x")),
+				XMConvertToRadians(pRotationElement->FloatAttribute("z")));
+		}
+
+		m_pEditorCamera->VSetTransform(
+			Matrix::CreateScale(scale) * Matrix::CreateFromQuaternion(quat) * Matrix::CreateTranslation(translation));
+	}
+}
+
 bool FXStudioView::VLoadGameDelegate(tinyxml2::XMLElement* pCameraNode)
 {
 	if (!HumanView::VLoadGameDelegate(pCameraNode))

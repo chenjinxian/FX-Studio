@@ -17,9 +17,9 @@ bool TransformComponent::VInit(tinyxml2::XMLElement* pData)
 	DEBUG_ASSERT(pData);
 
 	Vector3 scale;
-	Quaternion rotation;
+	Quaternion quat;
 	Vector3 translation;
-	m_Transform.Decompose(scale, rotation, translation);
+	m_Transform.Decompose(scale, quat, translation);
 
 	float x = 0; float y = 0; float z = 0;
 	tinyxml2::XMLElement* pPositionElement = pData->FirstChildElement("Translation");
@@ -41,13 +41,13 @@ bool TransformComponent::VInit(tinyxml2::XMLElement* pData)
 	tinyxml2::XMLElement* pRotationElement = pData->FirstChildElement("Rotation");
 	if (pRotationElement)
 	{
-		rotation.CreateFromYawPitchRoll(
+		quat = Quaternion::CreateFromYawPitchRoll(
 			XMConvertToRadians(pRotationElement->FloatAttribute("y")),
 			XMConvertToRadians(pRotationElement->FloatAttribute("x")),
 			XMConvertToRadians(pRotationElement->FloatAttribute("z")));
 	}
 
-	m_Transform = Matrix::CreateScale(scale) * Matrix::CreateFromQuaternion(rotation) * Matrix::CreateTranslation(translation);
+	m_Transform = Matrix::CreateScale(scale) * Matrix::CreateFromQuaternion(quat) * Matrix::CreateTranslation(translation);
 
 	return true;
 }
@@ -55,9 +55,9 @@ bool TransformComponent::VInit(tinyxml2::XMLElement* pData)
 tinyxml2::XMLElement* TransformComponent::VGenerateXml(tinyxml2::XMLDocument* pDocument)
 {
 	Vector3 scale;
-	Quaternion rotation;
+	Quaternion quat;
 	Vector3 translation;
-	m_Transform.Decompose(scale, rotation, translation);
+	m_Transform.Decompose(scale, quat, translation);
 
 	tinyxml2::XMLElement* pBaseElement = pDocument->NewElement(VGetComponentName().c_str());
 
@@ -72,6 +72,30 @@ tinyxml2::XMLElement* TransformComponent::VGenerateXml(tinyxml2::XMLDocument* pD
 	pScaleElement->SetAttribute("y", scale.y);
 	pScaleElement->SetAttribute("z", scale.z);
 	pBaseElement->LinkEndChild(pScaleElement);
+
+	float x = 2.0f * (quat.w * quat.x - quat.y * quat.z);
+	if (x > 1.0f) x = 1.0f;
+	if (x < -1.0f) x = -1.0f;
+
+	float pitch = XMConvertToDegrees(std::asinf(x));
+	float yaw = 0.0f;
+	float roll = 0.0f;
+
+	if (fabsf(fabsf(x) - 1.0f) > FLT_EPSILON)
+	{
+		yaw = XMConvertToDegrees(std::atan2f(2.0f * (quat.x * quat.z + quat.w * quat.y), 1.0f - 2.0f * (quat.x * quat.x + quat.y * quat.y)));
+		roll = XMConvertToDegrees(std::atan2f(2.0f * (quat.x * quat.y + quat.w * quat.z), 1.0f - 2.0f * (quat.x * quat.x + quat.z * quat.z)));
+	}
+	else
+	{
+		roll = XMConvertToDegrees(std::atan2f(2.0f * (quat.x * quat.y - quat.w * quat.z), 1.0f - 2.0f * (quat.y * quat.y + quat.z * quat.z)));
+	}
+
+	tinyxml2::XMLElement* pRotationElement = pDocument->FirstChildElement("Rotation");
+	pRotationElement->SetAttribute("x", pitch);
+	pRotationElement->SetAttribute("y", yaw);
+	pRotationElement->SetAttribute("z", roll);
+	pBaseElement->LinkEndChild(pRotationElement);
 
 	return pBaseElement;
 }

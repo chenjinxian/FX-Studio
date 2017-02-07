@@ -80,12 +80,9 @@ bool BaseGameLogic::VLoadGame(const std::string& projectFile)
 		return false;
 	}
 
-	tinyxml2::XMLElement* pAsset = pRoot->FirstChildElement("AssetFile");
-	if (pAsset != nullptr)
-	{
-		std::string assetFile = Utility::GetDirectory(projectFile) + "\\" + pAsset->GetText();
-		LoadAssets(assetFile);
-	}
+	std::string assetFile = projectFile;
+	assetFile.replace(assetFile.find_last_of('.'), assetFile.length(), ".asset");
+	LoadAssets(assetFile);
 
 	tinyxml2::XMLElement* pEditorCamera = pRoot->FirstChildElement("EditorCamera");
 	if (pEditorCamera != nullptr)

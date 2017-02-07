@@ -81,7 +81,7 @@
             this.editToolStripMenuItem});
             this.menuStripMain.Location = new System.Drawing.Point(0, 0);
             this.menuStripMain.Name = "menuStripMain";
-            this.menuStripMain.Size = new System.Drawing.Size(1219, 25);
+            this.menuStripMain.Size = new System.Drawing.Size(1264, 25);
             this.menuStripMain.TabIndex = 0;
             this.menuStripMain.Text = "menuStripMain";
             // 
@@ -152,7 +152,7 @@
             this.toolStripButtonD3D});
             this.toolStripMain.Location = new System.Drawing.Point(0, 25);
             this.toolStripMain.Name = "toolStripMain";
-            this.toolStripMain.Size = new System.Drawing.Size(1219, 64);
+            this.toolStripMain.Size = new System.Drawing.Size(1264, 64);
             this.toolStripMain.TabIndex = 1;
             this.toolStripMain.Text = "toolStripMain";
             // 
@@ -400,9 +400,9 @@
             // 
             // statusStripMain
             // 
-            this.statusStripMain.Location = new System.Drawing.Point(0, 753);
+            this.statusStripMain.Location = new System.Drawing.Point(0, 739);
             this.statusStripMain.Name = "statusStripMain";
-            this.statusStripMain.Size = new System.Drawing.Size(1219, 22);
+            this.statusStripMain.Size = new System.Drawing.Size(1264, 22);
             this.statusStripMain.TabIndex = 2;
             this.statusStripMain.Text = "statusStripMain";
             // 
@@ -411,15 +411,15 @@
             this.panelTop.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelTop.Location = new System.Drawing.Point(0, 89);
             this.panelTop.Name = "panelTop";
-            this.panelTop.Size = new System.Drawing.Size(1219, 4);
+            this.panelTop.Size = new System.Drawing.Size(1264, 4);
             this.panelTop.TabIndex = 3;
             // 
             // panelBottom
             // 
             this.panelBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panelBottom.Location = new System.Drawing.Point(0, 749);
+            this.panelBottom.Location = new System.Drawing.Point(0, 735);
             this.panelBottom.Name = "panelBottom";
-            this.panelBottom.Size = new System.Drawing.Size(1219, 4);
+            this.panelBottom.Size = new System.Drawing.Size(1264, 4);
             this.panelBottom.TabIndex = 4;
             // 
             // panelAllView
@@ -433,7 +433,7 @@
             this.panelAllView.Location = new System.Drawing.Point(0, 93);
             this.panelAllView.Name = "panelAllView";
             this.panelAllView.RightToLeftLayout = true;
-            this.panelAllView.Size = new System.Drawing.Size(1219, 656);
+            this.panelAllView.Size = new System.Drawing.Size(1264, 642);
             this.panelAllView.TabIndex = 5;
             this.panelAllView.Theme = this.blueTheme;
             // 
@@ -445,7 +445,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1219, 775);
+            this.ClientSize = new System.Drawing.Size(1264, 761);
             this.Controls.Add(this.panelAllView);
             this.Controls.Add(this.panelBottom);
             this.Controls.Add(this.panelTop);

@@ -92,7 +92,10 @@ namespace FXStudio
 
         public int GetSelectActorId()
         {
-            return treeViewProject.SelectedNode.Index + 1;
+            if (treeViewProject.SelectedNode.Parent != m_SceneNode)
+                return 0;
+            else
+                return treeViewProject.SelectedNode.Index + 1;
         }
 
         public XmlNode GetSelectActorXml()

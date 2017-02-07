@@ -15,16 +15,16 @@ namespace FXStudio
 {
     public partial class PropertiesView : ViewWindow
     {
-        private MoveActorDelegate m_ModifyDelegate = null;
+        private MoveActorDelegate m_MoveDelegate = null;
 
         public PropertiesView()
         {
             InitializeComponent();
         }
 
-        public void SetMoveActorDelegate(MoveActorDelegate modifyDelegate)
+        public void SetMoveActorDelegate(MoveActorDelegate moveDelegate)
         {
-            m_ModifyDelegate = modifyDelegate;
+            m_MoveDelegate = moveDelegate;
         }
 
         public void UpdateAssetProperties(XmlNode selectedNode)
@@ -227,6 +227,7 @@ namespace FXStudio
         private void Vector3Item_ValueChanged(object sender, Inspector.Vector3 value)
         {
             Inspector.Vector3Item vector3Item = sender as Inspector.Vector3Item;
+            m_MoveDelegate?.Invoke(vector3Item.CategoryName, vector3Item.ItemName, value);
         }
 
         private void AddColorItem(XmlNode actorNode)

@@ -11,6 +11,7 @@ public:
 	virtual void VOnUpdate(const GameTime& gameTime) override;
 	shared_ptr<ScreenElementScene> GetScene() { return m_pScene; }
 	shared_ptr<DebugGizmosNode> GetGizmosNode() { return m_pGizmosNode; }
+	void MoveEditorCamera(tinyxml2::XMLElement* pCameraNode);
 
 protected:
 	virtual bool VLoadGameDelegate(tinyxml2::XMLElement* pCameraNode) override;

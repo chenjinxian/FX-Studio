@@ -15,11 +15,8 @@ namespace Inspector
         private readonly int m_NameLocationX = 24;
         private readonly int m_ValueLocationX = 106;
         private readonly int m_ItemHeight = 26;
-        private BaseItem m_SelectItem = null;
-        private BaseItem PreviousItemSelected = null;
         private Color mTextForeColor = Color.White;
         private Dictionary<string, CategoryItem> m_CategoryByName = null;
-        private bool controlChangeEventLocked = true;
 
         private bool m_LButtonDown;
         private Point m_LastMousePos;
@@ -107,14 +104,14 @@ namespace Inspector
                 labelName.AutoSize = true;
                 labelName.ForeColor = Color.Black;
                 labelName.Location = new Point(x1, 3);
-                labelName.Name = item.CategoryName + "_" + item.ItemName + "_" + "labelName" + name;
+                labelName.Name = item.CategoryName + "_" + item.ItemName + "_" + "labelName_" + name;
                 labelName.Text = name;
 
                 x1 += labelWidth;
                 Label labelValue = new Label();
                 labelValue.Location = new Point(x1, 1);
                 labelValue.Size = new Size(textWidth, m_ItemHeight - 4);
-                labelValue.Name = item.CategoryName + "_" + item.ItemName + "_" + "labelValue" + name;
+                labelValue.Name = item.CategoryName + "_" + item.ItemName + "_" + "labelValue_" + name;
                 labelValue.Text = elements[0];
                 labelValue.TextAlign = ContentAlignment.MiddleCenter;
                 labelValue.BorderStyle = BorderStyle.FixedSingle;
@@ -161,24 +158,30 @@ namespace Inspector
             {
                 if (m_LastMousePos != e.Location)
                 {
-                    Single value = Single.Parse(label.Text);
-                    label.Text = (value + (e.Location.X - m_LastMousePos.X) * 0.01).ToString("F");
+                    string[] names = label.Name.Split('_');
+                    if (names.Count() < 4)
+                        return;
+
+                    float delta = (float)(e.Location.X - m_LastMousePos.X);
+                    if (names[1] == "Translation")
+                        delta *= 0.01F;
+                    else if (names[1] == "Scale")
+                        delta *= 0.1F;
+                    else if (names[1] == "Rotation")
+                        delta *= 0.35F;
+
+                    Single value = Single.Parse(label.Text) + delta;
                     Vector3Item item = label.Tag as Vector3Item;
                     switch (label.Name.Last())
                     {
-                        case 'X':
-                            item.Value.X = Single.Parse(label.Text);
-                            break;
-                        case 'Y':
-                            item.Value.Y = Single.Parse(label.Text);
-                            break;
-                        case 'Z':
-                            item.Value.Z = Single.Parse(label.Text);
-                            break;
-                        default:
-                            break;
+                        case 'X': item.Value.X = value; break;
+                        case 'Y': item.Value.Y = value; break;
+                        case 'Z': item.Value.Z = value; break;
+                        default: break;
                     }
                     item.Value = item.Value;
+                    label.Text = value.ToString("F");
+
                     m_LastMousePos = e.Location;
                 }
             }

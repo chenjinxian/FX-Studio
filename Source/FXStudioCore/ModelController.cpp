@@ -25,6 +25,10 @@ ModelController::ModelController(shared_ptr<CameraNode> pEditorCamera, shared_pt
 
 void ModelController::OnUpdate(const GameTime& gameTime)
 {
+	float speed = m_Delta * 0.01f;
+	m_Position += Vector3::Forward * speed;
+	m_Delta = 0.0f;
+
 	m_Yaw += (m_TargetYaw - m_Yaw) * (.35f);
 	m_Pitch += (m_TargetPitch - m_Pitch) * (.35f);
 
@@ -32,10 +36,6 @@ void ModelController::OnUpdate(const GameTime& gameTime)
 	float radiansPitch = -XMConvertToRadians(m_Pitch);
 	Matrix rotation = Matrix::CreateFromYawPitchRoll(radiansYaw, radiansPitch, 0.0f);
 	rotation.Translation(Vector3::TransformNormal(m_Position, rotation));
-
-	float speed = m_Delta * 0.01f;
-	m_Position += Vector3::Forward * speed;
-	m_Delta = 0.0f;
 
 	if (m_pEditorCamera != nullptr)
 	{

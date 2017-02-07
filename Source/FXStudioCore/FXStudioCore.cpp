@@ -209,7 +209,24 @@ FXSTUDIOCORE_API bool ModifyActor(BSTR modificationXml)
 	if (pRoot == nullptr)
 		return false;
 
-	g_pApp->GetGameLogic()->VModifyActor(pRoot->IntAttribute("id"), pRoot);
+	ActorId actorId = pRoot->IntAttribute("id");
+	if (actorId != INVALID_ACTOR_ID)
+	{
+		g_pApp->GetGameLogic()->VModifyActor(pRoot->IntAttribute("id"), pRoot);
+	}
+	else
+	{
+		FXStudioLogic* pEditorLogic = dynamic_cast<FXStudioLogic*>(g_pApp->GetGameLogic());
+		if (pEditorLogic == nullptr)
+			return false;
+		
+		shared_ptr<FXStudioView> pView = pEditorLogic->GetHumanView();
+		if (pView == nullptr)
+			return false;
+
+		tinyxml2::XMLElement* pCameraNode = pRoot->FirstChildElement("EditorCamera");
+		pView->MoveEditorCamera(pCameraNode);
+	}
 
 	return true;
 }

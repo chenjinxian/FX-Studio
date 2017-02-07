@@ -222,5 +222,89 @@ namespace FXStudio
 
             return modelElement;
         }
+
+        public static readonly string DefaultProjectXml =
+            @"<?xml version=""1.0"" encoding=""UTF-8"" ?>
+<Project type = ""Project"">
+    <EditorCamera type = ""EditorCamera"" >
+        <Translation x = ""0"" y=""0"" z=""5"" />
+        <Rotation x = ""45"" y=""45"" z=""0"" />
+    </EditorCamera>
+    <DefaultScene type = ""Scene"">
+        <Skybox type = ""Skybox"">
+            <SkyboxRenderComponent>
+                <Color r = ""1"" g=""1"" b=""1"" a=""1"" />
+                <Texture>Textures\Skybox.dds</Texture>
+            </SkyboxRenderComponent>
+        </Skybox>
+        <Grid type = ""Grid"" >
+            <GridRenderComponent >
+                <Color r = ""1"" g=""1"" b=""1"" a=""1"" />
+                <Texture>Textures\Grid.dds</Texture>
+                <GridSize x = ""10"" y=""10"" />
+                <TicksInterval>1.0</TicksInterval>
+            </GridRenderComponent>
+        </Grid>
+    </DefaultScene>
+</Project>
+";
+
+        public static readonly string DefaultAssetXml =
+            @"<Assets>
+    <Effects>
+        <Effect name=""DefaultEffect"" object=""Effects\DefaultEffect.fx"" source=""Effects\DefaultEffect.fx"">
+            <Techniques>
+                <Technique name=""main11"" checked=""true"">
+                    <Pass>p0</Pass>
+                </Technique>
+            </Techniques>
+            <Variables>
+                <Variable name=""WorldITXf"" value=""0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"">
+                    <UIWidget>None</UIWidget>
+                </Variable>
+                <Variable name=""WvpXf"" value=""0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"">
+                    <UIWidget>None</UIWidget>
+                </Variable>
+                <Variable name=""WorldXf"" value=""0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"">
+                    <UIWidget>None</UIWidget>
+                </Variable>
+                <Variable name=""ViewIXf"" value=""0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"">
+                    <UIWidget>None</UIWidget>
+                </Variable>
+                <Variable name=""LightPos"" value=""10 10 -10"">
+                    <Object>PointLight0</Object>
+                    <Space>World</Space>
+                </Variable>
+                <Variable name=""AmbiColor"" value=""0.1 0.1 0.1"">
+                    <UIName>Ambient Lighting</UIName>
+                    <UIWidget>Color</UIWidget>
+                </Variable>
+                <Variable name=""SurfColor"" value=""0.8 0.8 1"">
+                    <UIName>Surface Color</UIName>
+                    <UIWidget>Color</UIWidget>
+                </Variable>
+                <Variable name=""Ks"" value=""0.5"">
+                    <UIName>Specular Intensity</UIName>
+                    <UIWidget>slider</UIWidget>
+                    <UIMin>0</UIMin>
+                    <UIMax>1</UIMax>
+                    <UIStep>0.01</UIStep>
+                </Variable>
+                <Variable name=""SpecExpon"" value=""30"">
+                    <UIName>Specular Power</UIName>
+                    <UIWidget>slider</UIWidget>
+                    <UIMin>1</UIMin>
+                    <UIMax>128</UIMax>
+                    <UIStep>1</UIStep>
+                </Variable>
+            </Variables>
+        </Effect>
+    </Effects>
+    <Models/>
+    <Textures>
+        <Texture name=""DefaultColor"">Textures\DefaultColor.dds</Texture>
+    </Textures>
+</Assets>
+";
     }
 }

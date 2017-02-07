@@ -18,7 +18,7 @@ namespace FXStudio
 {
     public delegate void UpdatePropertiesDelegate(XmlNode selectedNode);
     public delegate void ChangeEffectDelegate(XmlNode effectNode, uint actorId);
-    public delegate void MoveActorDelegate(XmlNode actorNode);
+    public delegate void MoveActorDelegate(string component, string attribute, Inspector.Vector3 value);
     public delegate void UpdateOutputDelegate(string output, string error);
 
     public delegate bool ProgressCallback(Single percent, string error);
@@ -105,9 +105,24 @@ namespace FXStudio
                 m_AssetsView.UpdateAssets(
                     m_ProjectLocation + @"\" + assetFile, m_PropertiesView.UpdateAssetProperties, m_outputView.UpdateCompileInfo);
 
-            m_PropertiesView.SetMoveActorDelegate(actorNode =>
+            m_PropertiesView.SetMoveActorDelegate((string component, string attribute, Inspector.Vector3 value) =>
             {
-                float[] value;
+                int actorId = m_ProjectView.GetSelectActorId();
+
+                XmlDocument xmlDoc = new XmlDocument();
+                XmlElement xmlActor = xmlDoc.CreateElement("Actor");
+
+                xmlActor.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "id", (actorId > 2 ? actorId : 0).ToString()));
+
+                XmlElement transformComponent = xmlDoc.CreateElement(component); ;
+                XmlElement transformType = xmlDoc.CreateElement(attribute);
+                transformComponent.AppendChild(transformType);
+                transformType.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "x", value.X.ToString()));
+                transformType.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "y", value.Y.ToString()));
+                transformType.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "z", value.Z.ToString()));
+                xmlActor.AppendChild(transformComponent);
+
+                RenderMethods.ModifyActor(xmlActor.OuterXml);
             });
 
             m_RenderView.SetChangeEffectDelegate((effectNode, actorId) =>
@@ -325,19 +340,20 @@ namespace FXStudio
 
         private void FXStudioForm_Shown(object sender, EventArgs e)
         {
+            MessageBox.Show("test");
             Configuration appConfig = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
 
             bool isShow = true;
-            if (appConfig.AppSettings.Settings["show"] != null)
-            {
-                isShow = bool.Parse(appConfig.AppSettings.Settings["show"].Value);
-            }
-            else
-            {
-                appConfig.AppSettings.Settings.Add("show", bool.TrueString);
-                appConfig.Save(ConfigurationSaveMode.Modified);
-                isShow = true;
-            }
+            //             if (appConfig.AppSettings.Settings["show"] != null)
+            //             {
+            //                 isShow = bool.Parse(appConfig.AppSettings.Settings["show"].Value);
+            //             }
+            //             else
+            //             {
+            //                 appConfig.AppSettings.Settings.Add("show", bool.TrueString);
+            //                 appConfig.Save(ConfigurationSaveMode.Modified);
+            //                 isShow = true;
+            //             }
 
             if (isShow)
             {
@@ -366,7 +382,10 @@ namespace FXStudio
                 string location = dialog.GetProjectLocation();
                 Directory.CreateDirectory(location);
                 string projectFile = location + @"\" + dialog.GetProjectName() + @".fxsproj";
-                RenderMethods.CreateNewProject(projectFile);
+                string assetFile = location + @"\" + dialog.GetProjectName() + @".asset";
+
+                File.WriteAllText(projectFile, XmlUtility.DefaultProjectXml);
+                File.WriteAllText(assetFile, XmlUtility.DefaultAssetXml);
 
                 string sourcePath = Directory.GetCurrentDirectory() + @"\Data";
                 StartPageDialog.CopyDefaultData(sourcePath, location);

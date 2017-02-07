@@ -13,7 +13,7 @@ class Annotation;
 class Effect : public boost::noncopyable
 {
 public:
-	Effect(ID3D11Device1* pDevice, ID3DX11Effect* pD3DX11Effect);
+	Effect(ID3D11Device* pDevice, ID3DX11Effect* pD3DX11Effect);
 	virtual ~Effect();
 
 	const std::vector<Technique*>& GetTechniques() const;
@@ -39,7 +39,7 @@ private:
 class Technique : public boost::noncopyable
 {
 public:
-	Technique(ID3D11Device1* pDevice, ID3DX11EffectTechnique* pD3DX11EffectTechnique);
+	Technique(ID3D11Device* pDevice, ID3DX11EffectTechnique* pD3DX11EffectTechnique);
 	~Technique();
 
 	const std::string& GetTechniqueName() const;
@@ -57,7 +57,7 @@ private:
 class Pass : public boost::noncopyable
 {
 public:
-	Pass(ID3D11Device1* pDevice, ID3DX11EffectPass* pD3DX11EffectPass);
+	Pass(ID3D11Device* pDevice, ID3DX11EffectPass* pD3DX11EffectPass);
 
 	const std::string& GetPassName() const { return m_PassName; }
 	ID3D11InputLayout* GetInputLayout() { return m_pInputLayouts; }
@@ -69,12 +69,12 @@ public:
 	void CreateVertexBuffer(const Mesh* mesh, ID3D11Buffer** ppVertexBuffer) const;
 	void CreateIndexBuffer(const Mesh* mesh, ID3D11Buffer** ppIndexBuffer) const;
 
-	void Apply(uint32_t flags, ID3D11DeviceContext1* pDeviceContext);
+	void Apply(uint32_t flags, ID3D11DeviceContext* pDeviceContext);
 
 private:
 	DXGI_FORMAT GetElementFormat(D3D_REGISTER_COMPONENT_TYPE compoentType, uint8_t mask);
 
-	ID3D11Device1* p_Device;
+	ID3D11Device* p_Device;
 	ID3DX11EffectPass* m_pD3DX11EffectPass;
 	std::string m_PassName;
 	ID3D11InputLayout* m_pInputLayouts;
@@ -85,7 +85,7 @@ private:
 class Variable : public boost::noncopyable
 {
 public:
-	Variable(ID3D11Device1* pDevice, ID3DX11EffectVariable* pD3DX11EffectVariable);
+	Variable(ID3D11Device* pDevice, ID3DX11EffectVariable* pD3DX11EffectVariable);
 
 	const std::string& GetVariableName() const { return m_VariableName; }
 	const std::string& GetVariableSemantic() const { return m_VariableSemantic; }

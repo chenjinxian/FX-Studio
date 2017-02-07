@@ -35,7 +35,7 @@ using std::dynamic_pointer_cast;
 #	define DEBUG_NEW new
 #endif
 
-#include <d3d11_1.h>
+#include <d3d11.h>
 #include "SimpleMath.h"
 #include "d3dx11effect.h"
 using namespace DirectX;

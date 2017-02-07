@@ -5,7 +5,7 @@
 #include <iostream>
 #include <sstream>
 
-Effect::Effect(ID3D11Device1* pDevice, ID3DX11Effect* pD3DX11Effect)
+Effect::Effect(ID3D11Device* pDevice, ID3DX11Effect* pD3DX11Effect)
 	: m_Techniques(),
 	m_TechniquesByName(),
 	m_Variables(),
@@ -151,7 +151,7 @@ void Effect::SetEffectXmlString(const char* effectXmlStr, int effectXmlSize)
 	m_pEffectXmlDoc->Parse(effectXmlStr, effectXmlSize);
 }
 
-Technique::Technique(ID3D11Device1* pDevice, ID3DX11EffectTechnique* pD3DX11EffectTechnique)
+Technique::Technique(ID3D11Device* pDevice, ID3DX11EffectTechnique* pD3DX11EffectTechnique)
 	: m_pD3DX11EffectTechnique(pD3DX11EffectTechnique),
 	m_D3DX11TechniqueDesc(),
 	m_TechniqueName(),
@@ -192,7 +192,7 @@ const std::map<std::string, Pass*>& Technique::GetPassesByName() const
 	return m_PassesByName;
 }
 
-Pass::Pass(ID3D11Device1* pDevice, ID3DX11EffectPass* pD3DX11EffectPass)
+Pass::Pass(ID3D11Device* pDevice, ID3DX11EffectPass* pD3DX11EffectPass)
 	: p_Device(pDevice),
 	m_pD3DX11EffectPass(pD3DX11EffectPass),
 	m_PassName(),
@@ -427,7 +427,7 @@ void Pass::CreateIndexBuffer(const Mesh* mesh, ID3D11Buffer** ppIndexBuffer) con
 	}
 }
 
-void Pass::Apply(uint32_t flags, ID3D11DeviceContext1* pDeviceContext)
+void Pass::Apply(uint32_t flags, ID3D11DeviceContext* pDeviceContext)
 {
 	m_pD3DX11EffectPass->Apply(flags, pDeviceContext);
 }
@@ -466,7 +466,7 @@ DXGI_FORMAT Pass::GetElementFormat(D3D_REGISTER_COMPONENT_TYPE compoentType, uin
 	}
 }
 
-Variable::Variable(ID3D11Device1* pDevice, ID3DX11EffectVariable* pD3DX11EffectVariable)
+Variable::Variable(ID3D11Device* pDevice, ID3DX11EffectVariable* pD3DX11EffectVariable)
 	: m_pD3DX11EffectVariable(pD3DX11EffectVariable),
 	m_pD3DX11EffectType(nullptr),
 	m_VariableName()

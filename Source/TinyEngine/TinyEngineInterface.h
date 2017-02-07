@@ -174,7 +174,7 @@ typedef std::list<shared_ptr<LightNode> > Lights;
 class IRenderState : public boost::noncopyable
 {
 public:
-	IRenderState(ID3D11Device1* pDevice, ID3D11DeviceContext1* pContext)
+	IRenderState(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 		: m_pDevice(pDevice), m_pDeviceContext(pContext)
 	{
 
@@ -182,8 +182,8 @@ public:
 	virtual std::string VToString() = 0;
 
 protected:
-	ID3D11Device1* m_pDevice;
-	ID3D11DeviceContext1* m_pDeviceContext;
+	ID3D11Device* m_pDevice;
+	ID3D11DeviceContext* m_pDeviceContext;
 };
 
 class IResourceExtraData;

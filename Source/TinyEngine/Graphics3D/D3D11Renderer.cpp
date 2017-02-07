@@ -50,16 +50,21 @@ bool D3D11Renderer::VInitRenderer(HWND hWnd)
 {
 	HRESULT hr;
 
-	DXGI_SWAP_CHAIN_DESC1 swapChainDesc;
+	DXGI_SWAP_CHAIN_DESC swapChainDesc;
 	ZeroMemory(&swapChainDesc, sizeof(swapChainDesc));
-	swapChainDesc.Width = g_pApp->GetGameConfig().m_ScreenWidth;
-	swapChainDesc.Height = g_pApp->GetGameConfig().m_ScreenHeight;
-	swapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	swapChainDesc.BufferDesc.Width = g_pApp->GetGameConfig().m_ScreenWidth;
+	swapChainDesc.BufferDesc.Height = g_pApp->GetGameConfig().m_ScreenHeight;
+	swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	swapChainDesc.BufferDesc.RefreshRate.Numerator = 60;
+	swapChainDesc.BufferDesc.RefreshRate.Denominator = 1;
 	swapChainDesc.SampleDesc.Count = g_pApp->GetGameConfig().m_AntiAliasingSample;
 	swapChainDesc.SampleDesc.Quality = 0;
 	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	swapChainDesc.BufferCount = 1;
+	swapChainDesc.OutputWindow = hWnd;
+	swapChainDesc.Windowed = !g_pApp->GetGameConfig().m_IsFullScreen;
 	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
+	swapChainDesc.Flags = 0;
 
 	IDXGIDevice* dxgiDevice = nullptr;
 	if (FAILED(hr = m_pDevice->QueryInterface(__uuidof(IDXGIDevice), reinterpret_cast<void**>(&dxgiDevice))))
@@ -78,21 +83,15 @@ bool D3D11Renderer::VInitRenderer(HWND hWnd)
 	dxgiAdapter->GetDesc(&desc);
 	m_DeviceName = Utility::WS2S(desc.Description);
 
-	IDXGIFactory2* dxgiFactory = nullptr;
-	if (FAILED(hr = dxgiAdapter->GetParent(__uuidof(IDXGIFactory2), reinterpret_cast<void**>(&dxgiFactory))))
+	IDXGIFactory* dxgiFactory = nullptr;
+	if (FAILED(hr = dxgiAdapter->GetParent(__uuidof(IDXGIFactory), reinterpret_cast<void**>(&dxgiFactory))))
 	{
 		SAFE_RELEASE(dxgiDevice);
 		SAFE_RELEASE(dxgiAdapter);
 		DEBUG_ERROR("IDXGIAdapter::GetParent() failed retrieving factory.");
 	}
 
-	DXGI_SWAP_CHAIN_FULLSCREEN_DESC fullScreenDesc;
-	ZeroMemory(&fullScreenDesc, sizeof(fullScreenDesc));
-	fullScreenDesc.RefreshRate.Numerator = 60;
-	fullScreenDesc.RefreshRate.Denominator = 1;
-	fullScreenDesc.Windowed = !g_pApp->GetGameConfig().m_IsFullScreen;
-
-	if (FAILED(hr = dxgiFactory->CreateSwapChainForHwnd(dxgiDevice, hWnd, &swapChainDesc, &fullScreenDesc, nullptr, &m_pSwapChain)))
+	if (FAILED(hr = dxgiFactory->CreateSwapChain(m_pDevice, &swapChainDesc, &m_pSwapChain)))
 	{
 		SAFE_RELEASE(dxgiDevice);
 		SAFE_RELEASE(dxgiAdapter);
@@ -158,26 +157,22 @@ void D3D11Renderer::InitD3D11Device()
 	HRESULT hr;
 	UINT createDeviceFlags = 0;
 
-#if defined(DEBUG) || defined(_DEBUG)  
-	createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
-#endif
+// #if defined(DEBUG) || defined(_DEBUG)  
+// 	createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
+// #endif
 
 	D3D_FEATURE_LEVEL featureLevels[] = {
-		D3D_FEATURE_LEVEL_11_1,
 		D3D_FEATURE_LEVEL_11_0,
 		D3D_FEATURE_LEVEL_10_1,
 		D3D_FEATURE_LEVEL_10_0
 	};
 
-	ID3D11Device* direct3DDevice = nullptr;
-	ID3D11DeviceContext* direct3DDeviceContext = nullptr;
-
 	hr = D3D11CreateDevice(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, createDeviceFlags,
-		featureLevels, ARRAYSIZE(featureLevels), D3D11_SDK_VERSION, &direct3DDevice, &m_FeatureLevel, &direct3DDeviceContext);
+		featureLevels, ARRAYSIZE(featureLevels), D3D11_SDK_VERSION, &m_pDevice, &m_FeatureLevel, &m_pDeviceContext);
 	if (FAILED(hr))
 	{
 		hr = D3D11CreateDevice(NULL, D3D_DRIVER_TYPE_WARP, NULL, createDeviceFlags,
-			&featureLevels[1], ARRAYSIZE(featureLevels) - 1, D3D11_SDK_VERSION, &direct3DDevice, &m_FeatureLevel, &direct3DDeviceContext);
+			featureLevels, ARRAYSIZE(featureLevels), D3D11_SDK_VERSION, &m_pDevice, &m_FeatureLevel, &m_pDeviceContext);
 		if (FAILED(hr))
 		{
 			MessageBox(nullptr, L"D3D11CreateDevice() failed, OS Version is too low! (must above Windows 7 SP1)", nullptr, MB_OK | MB_ICONERROR);
@@ -190,19 +185,6 @@ void D3D11Renderer::InitD3D11Device()
 		MessageBox(nullptr, L"Direct3D Feature Level 11 unsupported!", nullptr, MB_OK | MB_ICONERROR);
 		return;
 	}
-
-	if (FAILED(hr = direct3DDevice->QueryInterface(__uuidof(ID3D11Device1), reinterpret_cast<void**>(&m_pDevice))))
-	{
-		DEBUG_ERROR("ID3D11Device::QueryInterface() failed");
-	}
-
-	if (FAILED(hr = direct3DDeviceContext->QueryInterface(__uuidof(ID3D11DeviceContext1), reinterpret_cast<void**>(&m_pDeviceContext))))
-	{
-		DEBUG_ERROR("ID3D11Device::QueryInterface() failed");
-	}
-
-	SAFE_RELEASE(direct3DDevice);
-	SAFE_RELEASE(direct3DDeviceContext);
 
 	while (g_pApp->GetGameConfig().m_AntiAliasingSample > 0)
 	{

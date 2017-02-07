@@ -40,9 +40,9 @@ private:
 	void RenderDrawLists();
 
 	D3D_FEATURE_LEVEL m_FeatureLevel;
-	ID3D11Device1* m_pDevice;
-	ID3D11DeviceContext1* m_pDeviceContext;
-	IDXGISwapChain1* m_pSwapChain;
+	ID3D11Device* m_pDevice;
+	ID3D11DeviceContext* m_pDeviceContext;
+	IDXGISwapChain* m_pSwapChain;
 
 	ID3D11Texture2D* m_pDepthStencilBuffer;
 	D3D11_TEXTURE2D_DESC m_BackBufferDesc;

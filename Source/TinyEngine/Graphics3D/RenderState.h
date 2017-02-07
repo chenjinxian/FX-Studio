@@ -5,7 +5,7 @@
 class D3D11RendererAlphaPass : public IRenderState
 {
 public:
-	D3D11RendererAlphaPass(ID3D11Device1* pDevice, ID3D11DeviceContext1* pContext)
+	D3D11RendererAlphaPass(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 		: IRenderState(pDevice, pContext)
 	{
 		m_pDeviceContext->OMGetBlendState(&m_pOldBlendState, m_OldBlendFactor, &m_OldSampleMask);
@@ -47,7 +47,7 @@ protected:
 class D3D11RendererSkyBoxPass : public IRenderState
 {
 public:
-	D3D11RendererSkyBoxPass(ID3D11Device1* pDevice, ID3D11DeviceContext1* pContext)
+	D3D11RendererSkyBoxPass(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 		: IRenderState(pDevice, pContext)
 	{
 		D3D11_DEPTH_STENCIL_DESC desc;
@@ -80,7 +80,7 @@ protected:
 class D3D11RendererDebugPass : public IRenderState
 {
 public:
-	D3D11RendererDebugPass(ID3D11Device1* pDevice, ID3D11DeviceContext1* pContext)
+	D3D11RendererDebugPass(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 		: IRenderState(pDevice, pContext)
 	{
 		D3D11_DEPTH_STENCIL_DESC desc;

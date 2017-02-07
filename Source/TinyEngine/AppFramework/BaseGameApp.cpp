@@ -201,30 +201,22 @@ bool BaseGameApp::InitRenderer()
 
 // 	m_IsRunning = true;
 
-	if (m_pRenderer != nullptr)
+	if (m_pRenderer != nullptr && m_pRenderer->VInitRenderer(m_hWindow))
 	{
-		if (m_pRenderer->VInitRenderer(m_hWindow))
-		{
-			m_pRenderer->VSetBackgroundColor(Color(0.1f, 0.1f, 0.1f, 1.0f));
+		m_pRenderer->VSetBackgroundColor(Color(0.1f, 0.1f, 0.1f, 1.0f));
 
+		if (m_pGameLogic == nullptr)
+		{
+			m_pGameLogic = VCreateGameAndView();
 			if (m_pGameLogic == nullptr)
-			{
-				m_pGameLogic = VCreateGameAndView();
-				if (m_pGameLogic == nullptr)
-					return false;
-			}
+				return false;
+		}
 
-			return true;
-		}
-		else
-		{
-			DEBUG_ERROR("Renderer init failed.");
-			return false;
-		}
+		return true;
 	}
 	else
 	{
-		DEBUG_ERROR("out of memory.");
+		DEBUG_ERROR("Renderer init failed.");
 		return false;
 	}
 }

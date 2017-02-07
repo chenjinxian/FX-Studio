@@ -16,7 +16,7 @@ namespace FXStudio
 #endif
 
         [DllImport(editorDllName, CallingConvention = CallingConvention.Cdecl)]
-        public unsafe static extern int CreateInstance(
+        public unsafe static extern bool CreateInstance(
             IntPtr instancePtrAddress,
             IntPtr hPrevInstancePtrAddress,
             IntPtr hWndPtrAddress,

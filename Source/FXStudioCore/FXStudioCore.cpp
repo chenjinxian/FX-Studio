@@ -7,7 +7,7 @@
 #include "FXStudioView.h"
 #include "ModelImporter.h"
 
-FXSTUDIOCORE_API int CreateInstance(
+FXSTUDIOCORE_API bool CreateInstance(
 	int *instancePtrAddress,
 	int *hPrevInstancePtrAddress,
 	int *hWndPtrAddress,
@@ -26,20 +26,19 @@ FXSTUDIOCORE_API int CreateInstance(
 	SetCurrentDirectory(Utility::GetExecutableDirectory().c_str());
 	Logger::Init("logging.xml");
 
-	if (g_pApp != nullptr)
-	{
-		g_pApp->GetGameConfig().InitConfig("EditorOptions.xml", nullptr);
-		if (g_pApp->InitEnvironment())
-		{
-			g_pApp->GetGameConfig().m_ScreenWidth = screenWidth;
-			g_pApp->GetGameConfig().m_ScreenWidth = screenHeight;
-			g_pApp->SetupWindow(hInstance, hWnd);
-			if (g_pApp->InitRenderer())
-			{
-				g_pApp->OnStartRender();
-			}
-		}
-	}
+	if (g_pApp == nullptr)
+		return false;
+
+	g_pApp->GetGameConfig().InitConfig("EditorOptions.xml", nullptr);
+	if (!g_pApp->InitEnvironment())
+		return false;
+
+	g_pApp->GetGameConfig().m_ScreenWidth = screenWidth;
+	g_pApp->GetGameConfig().m_ScreenWidth = screenHeight;
+	g_pApp->SetupWindow(hInstance, hWnd);
+	if (!g_pApp->InitRenderer())
+		return false;
+	g_pApp->OnStartRender();
 
 	return true;
 }

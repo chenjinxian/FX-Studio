@@ -18,7 +18,7 @@
 extern "C" {
 #endif //__cplusplus
 
-	FXSTUDIOCORE_API int CreateInstance(
+	FXSTUDIOCORE_API bool CreateInstance(
 		int *instancePtrAddress,
 		int *hPrevInstancePtrAddress,
 		int *hWndPtrAddress,

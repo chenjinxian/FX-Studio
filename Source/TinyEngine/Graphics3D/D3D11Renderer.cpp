@@ -105,16 +105,16 @@ bool D3D11Renderer::VInitRenderer(HWND hWnd)
 	SAFE_RELEASE(dxgiFactory);
 
 	CreateBuffers();
-	InitImGui(hWnd);
-	CreateImGuiBuffers();
+// 	InitImGui(hWnd);
+// 	CreateImGuiBuffers();
 
 	return true;
 }
 
 void D3D11Renderer::VDeleteRenderer()
 {
-	DeleteImGuiBuffers();
-	ImGui::Shutdown();
+// 	DeleteImGuiBuffers();
+// 	ImGui::Shutdown();
 	DeleteBuffers();
 
 	SAFE_RELEASE(m_pSwapChain);
@@ -124,20 +124,20 @@ void D3D11Renderer::VDeleteRenderer()
 
 void D3D11Renderer::VResizeSwapChain()
 {
-	DeleteImGuiBuffers();
+// 	DeleteImGuiBuffers();
 	DeleteBuffers();
 	m_pSwapChain->ResizeBuffers(0, g_pApp->GetGameConfig().m_ScreenWidth, g_pApp->GetGameConfig().m_ScreenHeight, DXGI_FORMAT_UNKNOWN, 0);
 	CreateBuffers();
-	CreateImGuiBuffers();
+// 	CreateImGuiBuffers();
 }
 
 bool D3D11Renderer::VPreRender(const GameTime& gameTime)
 {
 	if (m_pDeviceContext != nullptr && m_pRenderTargetView != nullptr)
 	{
-		ImGuiIO& io = ImGui::GetIO();
-		io.DeltaTime = gameTime.GetElapsedTime();
-		ImGui::NewFrame();
+// 		ImGuiIO& io = ImGui::GetIO();
+// 		io.DeltaTime = gameTime.GetElapsedTime();
+// 		ImGui::NewFrame();
 
 		m_pDeviceContext->ClearRenderTargetView(m_pRenderTargetView, m_BackgroundColor);
 		m_pDeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
@@ -147,8 +147,8 @@ bool D3D11Renderer::VPreRender(const GameTime& gameTime)
 
 bool D3D11Renderer::VPostRender()
 {
-	ImGui::Render();
-	RenderDrawLists();
+// 	ImGui::Render();
+// 	RenderDrawLists();
 	m_pSwapChain->Present(g_pApp->GetGameConfig().m_IsVSync ? 1 : 0, 0);
 	return true;
 }
@@ -171,9 +171,24 @@ void D3D11Renderer::InitD3D11Device()
 
 	ID3D11Device* direct3DDevice = nullptr;
 	ID3D11DeviceContext* direct3DDeviceContext = nullptr;
-	if (FAILED(hr = D3D11CreateDevice(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, createDeviceFlags, featureLevels, ARRAYSIZE(featureLevels), D3D11_SDK_VERSION, &direct3DDevice, &m_FeatureLevel, &direct3DDeviceContext)))
+
+	hr = D3D11CreateDevice(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, createDeviceFlags,
+		featureLevels, ARRAYSIZE(featureLevels), D3D11_SDK_VERSION, &direct3DDevice, &m_FeatureLevel, &direct3DDeviceContext);
+	if (FAILED(hr))
 	{
-		DEBUG_ERROR("D3D11CreateDevice() failed");
+		hr = D3D11CreateDevice(NULL, D3D_DRIVER_TYPE_WARP, NULL, createDeviceFlags,
+			&featureLevels[1], ARRAYSIZE(featureLevels) - 1, D3D11_SDK_VERSION, &direct3DDevice, &m_FeatureLevel, &direct3DDeviceContext);
+		if (FAILED(hr))
+		{
+			MessageBox(nullptr, L"D3D11CreateDevice() failed, OS Version is too low! (must above Windows 7 SP1)", nullptr, MB_OK | MB_ICONERROR);
+			return;
+		}
+	}
+
+	if (m_FeatureLevel < D3D_FEATURE_LEVEL_11_0)
+	{
+		MessageBox(nullptr, L"Direct3D Feature Level 11 unsupported!", nullptr, MB_OK | MB_ICONERROR);
+		return;
 	}
 
 	if (FAILED(hr = direct3DDevice->QueryInterface(__uuidof(ID3D11Device1), reinterpret_cast<void**>(&m_pDevice))))

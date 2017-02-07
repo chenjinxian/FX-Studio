@@ -21,7 +21,7 @@ namespace FXStudio
         const int WM_MBUTTONDBLCLK = 0x0209;
 
         const int WM_MOUSEMOVE = 0x0200;
-        const int WM_MOUSEHWHEEL = 0x020A;
+        const int WM_MOUSEWHEEL = 0x020a;
 
         const int WM_CHAR = 0x0102;
         const int WM_KEYDOWN = 0x0100;
@@ -68,6 +68,11 @@ namespace FXStudio
                 if (m.Msg == WM_LBUTTONDOWN || m.Msg == WM_RBUTTONDOWN || m.Msg == WM_MBUTTONDOWN)
                     CheckFakeFocus();
 
+                if (m.Msg == WM_MOUSEWHEEL && m_fakeFocus)
+                {
+                    RenderMethods.WndProc(m_renderPanel.Handle, m.Msg, m.WParam, m.LParam);
+                    return true;
+                }
                 if (m.HWnd == m_renderPanel.Handle || (m_fakeFocus && (m.Msg == WM_KEYDOWN || m.Msg == WM_KEYUP)))
                 {
                     switch (m.Msg)
@@ -86,7 +91,7 @@ namespace FXStudio
                         case WM_MBUTTONUP:
                         case WM_MBUTTONDBLCLK:
                         case WM_MOUSEMOVE:
-                        case WM_MOUSEHWHEEL:
+                        case WM_MOUSEWHEEL:
                         case WM_CHAR:
                         case WM_CLOSE:
                             {

@@ -306,7 +306,8 @@ namespace FXStudio
             IntPtr hInstance = Marshal.GetHINSTANCE(this.GetType().Module);
             var panel = m_RenderView.GetRenderPanel();
             m_messageHandler.ResetRenderPanel(panel);
-            RenderMethods.CreateInstance(hInstance, IntPtr.Zero, panel.Handle, 1, panel.Width, panel.Height);
+            if (!RenderMethods.CreateInstance(hInstance, IntPtr.Zero, panel.Handle, 1, panel.Width, panel.Height))
+                this.Close();
 
             if (panel.Width != 0 && panel.Height != 0)
                 RenderMethods.ResizeWnd(panel.Width, panel.Height);
@@ -340,20 +341,19 @@ namespace FXStudio
 
         private void FXStudioForm_Shown(object sender, EventArgs e)
         {
-            MessageBox.Show("test");
             Configuration appConfig = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
 
             bool isShow = true;
-            //             if (appConfig.AppSettings.Settings["show"] != null)
-            //             {
-            //                 isShow = bool.Parse(appConfig.AppSettings.Settings["show"].Value);
-            //             }
-            //             else
-            //             {
-            //                 appConfig.AppSettings.Settings.Add("show", bool.TrueString);
-            //                 appConfig.Save(ConfigurationSaveMode.Modified);
-            //                 isShow = true;
-            //             }
+            if (appConfig.AppSettings.Settings["show"] != null)
+            {
+                isShow = bool.Parse(appConfig.AppSettings.Settings["show"].Value);
+            }
+            else
+            {
+                appConfig.AppSettings.Settings.Add("show", bool.TrueString);
+                appConfig.Save(ConfigurationSaveMode.Modified);
+                isShow = true;
+            }
 
             if (isShow)
             {

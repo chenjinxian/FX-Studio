@@ -23,7 +23,6 @@ public:
 	void NewRenderComponentDelegate(IEventDataPtr pEventData);
 	void ModifiedRenderComponentDelegate(IEventDataPtr pEventData);
 	void DestroyActorDelegate(IEventDataPtr pEventData);
-	void MoveActorDelegate(IEventDataPtr pEventData);
 
 	void SetCamera(shared_ptr<CameraNode> pCamera) { m_pCamera = pCamera; }
 	const shared_ptr<CameraNode> GetCamera() const { return m_pCamera; }

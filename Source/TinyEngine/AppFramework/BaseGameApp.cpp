@@ -192,7 +192,15 @@ bool BaseGameApp::InitRenderer()
 {
 	if (GetRendererType() == Renderer_D3D11)
 	{
-		m_pRenderer = shared_ptr<IRenderer>(DEBUG_NEW D3D11Renderer());
+		try
+		{
+			m_pRenderer = shared_ptr<IRenderer>(DEBUG_NEW D3D11Renderer());
+		}
+		catch (std::invalid_argument e)
+		{
+			MessageBoxA(nullptr, e.what(), nullptr, MB_OK | MB_ICONERROR);
+			return false;
+		}
 	}
 	else if (GetRendererType() == Renderer_Vulkan)
 	{

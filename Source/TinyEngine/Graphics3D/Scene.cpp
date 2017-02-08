@@ -22,8 +22,6 @@ Scene::Scene(shared_ptr<IRenderer> pRenderer)
 	pEventMgr->VAddListener(
 		boost::bind(&Scene::DestroyActorDelegate, this, _1), EvtData_Destroy_Actor::sk_EventType);
 	pEventMgr->VAddListener(
-		boost::bind(&Scene::MoveActorDelegate, this, _1), EvtData_Move_Actor::sk_EventType);
-	pEventMgr->VAddListener(
 		boost::bind(&Scene::ModifiedRenderComponentDelegate, this, _1), EvtData_Modified_Render_Component::sk_EventType);
 }
 
@@ -34,8 +32,6 @@ Scene::~Scene()
 		boost::bind(&Scene::NewRenderComponentDelegate, this, _1), EvtData_New_Render_Component::sk_EventType);
 	pEventMgr->VRemoveListener(
 		boost::bind(&Scene::DestroyActorDelegate, this, _1), EvtData_Destroy_Actor::sk_EventType);
-	pEventMgr->VRemoveListener(
-		boost::bind(&Scene::MoveActorDelegate, this, _1), EvtData_Move_Actor::sk_EventType);
 	pEventMgr->VRemoveListener(
 		boost::bind(&Scene::ModifiedRenderComponentDelegate, this, _1), EvtData_Modified_Render_Component::sk_EventType);
 }
@@ -166,19 +162,19 @@ void Scene::DestroyActorDelegate(IEventDataPtr pEventData)
 	RemoveChild(pCastEventData->GetActorId());
 }
 
-void Scene::MoveActorDelegate(IEventDataPtr pEventData)
-{
-	shared_ptr<EvtData_Move_Actor> pCastEventData = static_pointer_cast<EvtData_Move_Actor>(pEventData);
-
-	ActorId id = pCastEventData->GetActorId();
-	const Matrix& transform = pCastEventData->GetMatrix();
-
-	shared_ptr<ISceneNode> pNode = FindActor(id);
-	if (pNode != nullptr)
-	{
-		pNode->VSetTransform(transform);
-	}
-}
+// void Scene::MoveActorDelegate(IEventDataPtr pEventData)
+// {
+// 	shared_ptr<EvtData_Move_Actor> pCastEventData = static_pointer_cast<EvtData_Move_Actor>(pEventData);
+// 
+// 	ActorId id = pCastEventData->GetActorId();
+// 	const Matrix& transform = pCastEventData->GetMatrix();
+// 
+// 	shared_ptr<ISceneNode> pNode = FindActor(id);
+// 	if (pNode != nullptr)
+// 	{
+// 		pNode->VSetTransform(transform);
+// 	}
+// }
 
 ActorId Scene::PickActor(int cursorX, int cursorY)
 {

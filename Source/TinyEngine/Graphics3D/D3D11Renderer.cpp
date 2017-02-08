@@ -170,9 +170,9 @@ void D3D11Renderer::InitD3D11Device()
 	HRESULT hr;
 	UINT createDeviceFlags = 0;
 
-// #if defined(DEBUG) || defined(_DEBUG)  
-// 	createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
-// #endif
+#if defined(DEBUG) || defined(_DEBUG)  
+	createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
+#endif
 
 	D3D_FEATURE_LEVEL featureLevels[] = {
 		D3D_FEATURE_LEVEL_11_0,
@@ -188,14 +188,14 @@ void D3D11Renderer::InitD3D11Device()
 			featureLevels, ARRAYSIZE(featureLevels), D3D11_SDK_VERSION, &m_pDevice, &m_FeatureLevel, &m_pDeviceContext);
 		if (FAILED(hr))
 		{
-			MessageBox(nullptr, L"D3D11CreateDevice() failed, OS Version is too low! (must above Windows 7 SP1)", nullptr, MB_OK | MB_ICONERROR);
+			throw std::invalid_argument("D3D11CreateDevice() failed, OS Version is too low! (must above Windows 7 SP1)");
 			return;
 		}
 	}
 
 	if (m_FeatureLevel < D3D_FEATURE_LEVEL_11_0)
 	{
-		MessageBox(nullptr, L"Direct3D Feature Level 11 unsupported!", nullptr, MB_OK | MB_ICONERROR);
+		throw std::invalid_argument("Direct3D Feature Level 11 unsupported!");
 		return;
 	}
 

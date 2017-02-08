@@ -105,8 +105,8 @@ class EvtData_Move_Actor : public BaseEventData
 {
 public:
 	EvtData_Move_Actor() : m_ActorId(INVALID_ACTOR_ID) {}
-	explicit EvtData_Move_Actor(ActorId actorId, const Matrix& matrix)
-		: m_ActorId(actorId), m_Matrix(matrix)
+	explicit EvtData_Move_Actor(ActorId actorId)
+		: m_ActorId(actorId)
 	{
 
 	}
@@ -114,25 +114,11 @@ public:
 	virtual void VDeserialize(std::istrstream& in)
 	{
 		in >> m_ActorId;
-		for (int i = 0; i < 4; i++)
-		{
-			for (int j = 0; j < 4; j++)
-			{
-				in >> m_Matrix.m[i][j];
-			}
-		}
 	}
 
 	virtual void VSerialize(std::ostrstream& out)
 	{
 		out << m_ActorId << " ";
-		for (int i = 0; i < 4; i++)
-		{
-			for (int j = 0; j < 4; j++)
-			{
-				out << m_Matrix.m[i][j] << " ";
-			}
-		}
 	}
 
 	virtual EventType VGetEventType() const override
@@ -142,7 +128,7 @@ public:
 
 	virtual IEventDataPtr VCopy() const
 	{
-		return IEventDataPtr(DEBUG_NEW EvtData_Move_Actor(m_ActorId, m_Matrix));
+		return IEventDataPtr(DEBUG_NEW EvtData_Move_Actor(m_ActorId));
 	}
 
 	virtual const char* VGetName() const
@@ -155,16 +141,10 @@ public:
 		return m_ActorId;
 	}
 
-	const Matrix& GetMatrix() const
-	{
-		return m_Matrix;
-	}
-
 	static const EventType sk_EventType;
 
 private:
 	ActorId m_ActorId;
-	Matrix m_Matrix;
 };
 
 class EvtData_New_Render_Component : public BaseEventData

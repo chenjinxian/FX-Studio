@@ -3,7 +3,6 @@
 
 #include "stdafx.h"
 #include "FXStudioCore.h"
-#include "FXStudioApp.h"
 #include "FXStudioView.h"
 #include "ModelImporter.h"
 
@@ -260,5 +259,14 @@ FXSTUDIOCORE_API void GetEffectXml(BSTR effectObjectPath, char* effectXmlPtr, un
 
 	const std::string& effectXml = g_pApp->GetEffectXml(objectPath);
 	strncpy_s(effectXmlPtr, size, effectXml.c_str(), size);
+}
+
+FXSTUDIOCORE_API void SetMoveDelegate(MoveDelegate delegate)
+{
+	FXStudioLogic* pEditorLogic = dynamic_cast<FXStudioLogic*>(g_pApp->GetGameLogic());
+	if (pEditorLogic != nullptr)
+	{
+		pEditorLogic->SetMoveDelegate(delegate);
+	}
 }
 

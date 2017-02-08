@@ -10,6 +10,7 @@
 #include "../ResourceCache/ShaderResource.h"
 #include "../AppFramework/BaseGameApp.h"
 #include "../AppFramework/BaseGameLogic.h"
+#include "../EventManager/Events.h"
 #include "boost/algorithm/clamp.hpp"
 
 DebugGizmosNode::DebugGizmosNode()
@@ -794,6 +795,9 @@ void DebugGizmosNode::TranslatePicked(Scene* pScene)
 
 		Vector3 newOffset = nodePos + axis * distance;
 		pPickedNode->VSetTransform(world * Matrix::CreateTranslation(newOffset - m_LastOffset));
+		shared_ptr<EvtData_Move_Actor> pEvent(DEBUG_NEW EvtData_Move_Actor(pScene->GetPickedActor()));
+		IEventManager::Get()->VQueueEvent(pEvent);
+		
 		m_LastOffset = newOffset;
 	}
 }
@@ -866,6 +870,8 @@ void DebugGizmosNode::ScalePicked(Scene* pScene)
 		{
 			pPickedNode->VSetTransform(
 				Matrix::CreateScale(scale) * Matrix::Transform(Matrix::Identity, rotation) * Matrix::CreateTranslation(translation));
+			shared_ptr<EvtData_Move_Actor> pEvent(DEBUG_NEW EvtData_Move_Actor(pScene->GetPickedActor()));
+			IEventManager::Get()->VQueueEvent(pEvent);
 		}
 
 		m_LastOffset = newOffset;
@@ -914,6 +920,8 @@ void DebugGizmosNode::RotatePicked(Scene* pScene)
 		newRot.Normalize();
 		pPickedNode->VSetTransform(
 			Matrix::CreateScale(scale) * Matrix::Transform(Matrix::Identity, rotation * newRot) * Matrix::CreateTranslation(translation));
+		shared_ptr<EvtData_Move_Actor> pEvent(DEBUG_NEW EvtData_Move_Actor(pScene->GetPickedActor()));
+		IEventManager::Get()->VQueueEvent(pEvent);
 
 		m_LastOffset = newOffset;
 	}

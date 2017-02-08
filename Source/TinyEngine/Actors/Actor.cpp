@@ -53,10 +53,10 @@ std::string Actor::ToXml()
 	for (auto& component : m_ActorComponents)
 	{
 		tinyxml2::XMLElement* pComponentElement = component.second->VGenerateXml(&outDoc);
-		pActorElement->LinkEndChild(pComponentElement);
+		pActorElement->InsertEndChild(pComponentElement);
 	}
 
-	outDoc.LinkEndChild(pActorElement);
+	outDoc.InsertEndChild(pActorElement);
 	tinyxml2::XMLPrinter printer;
 	outDoc.Accept(&printer);
 

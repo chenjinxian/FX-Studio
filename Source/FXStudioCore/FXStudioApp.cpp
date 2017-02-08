@@ -39,16 +39,50 @@ BaseGameLogic* FXStudioApp::VCreateGameAndView()
 	return pGameLogic;
 }
 
-FXStudioLogic::FXStudioLogic() : BaseGameLogic()
+FXStudioLogic::FXStudioLogic()
+	: BaseGameLogic(),
+	m_MoveDelegate(nullptr)
 {
 	m_ProjectDirectory = _getcwd(NULL, 0);
 	int slashGamePos = m_ProjectDirectory.rfind("\\Bin");
 	m_ProjectDirectory = m_ProjectDirectory.substr(0, slashGamePos);
+
+	IEventManager* pEventMgr = IEventManager::Get();
+	pEventMgr->VAddListener(
+		boost::bind(&FXStudioLogic::MoveActorDelegate, this, _1), EvtData_Move_Actor::sk_EventType);
 }
 
 FXStudioLogic::~FXStudioLogic()
 {
+	IEventManager* pEventMgr = IEventManager::Get();
+	pEventMgr->VRemoveListener(
+		boost::bind(&FXStudioLogic::MoveActorDelegate, this, _1), EvtData_Move_Actor::sk_EventType);
+}
 
+void FXStudioLogic::VMoveActor(ActorId actorId)
+{
+	if (m_MoveDelegate != nullptr)
+	{
+		tinyxml2::XMLDocument outDoc;
+
+		tinyxml2::XMLElement* pRoot = outDoc.NewElement("Actor");
+		outDoc.InsertEndChild(pRoot);
+		pRoot->SetAttribute("id", actorId);
+
+		StrongActorPtr pActor = MakeStrongPtr(VGetActor(actorId));
+		if (pActor != nullptr)
+		{
+			shared_ptr<TransformComponent> pTransformComponent = MakeStrongPtr(pActor->GetComponent<TransformComponent>(TransformComponent::m_Name));
+			if (pTransformComponent != nullptr)
+			{
+				pRoot->InsertEndChild(pTransformComponent->VGenerateXml(&outDoc));
+
+				tinyxml2::XMLPrinter printer;
+				outDoc.Accept(&printer);
+				m_MoveDelegate(printer.CStr());
+			}
+		}
+	}
 }
 
 bool FXStudioLogic::VLoadGame(const std::string& projectXml)

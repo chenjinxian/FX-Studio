@@ -17,22 +17,25 @@ protected:
 	BaseGameLogic* VCreateGameAndView() override;
 };
 
+typedef void(*MoveDelegate)(const char*);
+
 class FXStudioLogic : public BaseGameLogic
 {
 public:
 	FXStudioLogic();
 	~FXStudioLogic();
 
+	virtual void VMoveActor(ActorId actorId) override;
 	virtual bool VLoadGame(const std::string& projectXml) override;
+
+	void SetMoveDelegate(MoveDelegate delegate) { m_MoveDelegate = delegate; }
 	const std::string &GetProjectDirectory(void) { return m_ProjectDirectory; }
-
 	uint32_t GetNumActors() { return (uint32_t)m_Actors.size(); }
-
 	const ActorMap& GetActorMap() { return m_Actors; }
-
 	bool IsRunning() { return (BGS_Running == m_GameState); }
 	shared_ptr<FXStudioView> GetHumanView();
 
 protected:
 	std::string m_ProjectDirectory;
+	MoveDelegate m_MoveDelegate;
 };

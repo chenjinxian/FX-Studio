@@ -6,6 +6,7 @@
 // defined with this macro as being exported.
 
 #include "ModelImporter.h"
+#include "FXStudioApp.h"
 #include <wtypes.h>
 
 #ifdef FXSTUDIOCORE_EXPORTS
@@ -24,13 +25,10 @@ extern "C" {
 		int *hWndPtrAddress,
 		int nCmdShow,
 		int screenWidth, int screenHeight);
-
 	FXSTUDIOCORE_API int DestroyInstance();
 
 	FXSTUDIOCORE_API void ResizeWnd(int screenWidth, int screenHeight);
-
 	FXSTUDIOCORE_API void WndProc(int *hWndPtrAddress, int msg, int* wParam, int* lParam);
-
 	FXSTUDIOCORE_API void RenderFrame();
 
 	FXSTUDIOCORE_API bool IsGameRunning();
@@ -49,6 +47,8 @@ extern "C" {
 	FXSTUDIOCORE_API int ImportModel(BSTR modelImportPath, BSTR modelExportPath, ProgressCallback progressCallback);
 	FXSTUDIOCORE_API unsigned int AddEffect(BSTR effectObjectPath, BSTR effectSourcePath, BSTR effectName);
 	FXSTUDIOCORE_API void GetEffectXml(BSTR effectObjectPath, char* effectXmlPtr, unsigned int size);
+
+	FXSTUDIOCORE_API void SetMoveDelegate(MoveDelegate delegate);
 
 #ifdef __cplusplus
 }

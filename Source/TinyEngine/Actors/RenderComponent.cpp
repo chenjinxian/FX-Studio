@@ -56,7 +56,7 @@ tinyxml2::XMLElement* BaseRenderComponent::VGenerateXml(tinyxml2::XMLDocument* p
 	pColor->SetAttribute("g", m_Color.y);
 	pColor->SetAttribute("b", m_Color.z);
 	pColor->SetAttribute("a", m_Color.w);
-	pBaseElement->LinkEndChild(pColor);
+	pBaseElement->InsertEndChild(pColor);
 
 	VCreateInheritedXmlElement(pBaseElement, pDocument);
 	return pBaseElement;
@@ -413,18 +413,18 @@ void ModelRenderComponent::VCreateInheritedXmlElement(tinyxml2::XMLElement* pBas
 {
 // 	tinyxml2::XMLElement* pSdkMesh = pDocument->NewElement("Model");
 // 	tinyxml2::XMLText* pSdkMeshName = pDocument->NewText(m_ModelName.c_str());
-// 	pSdkMesh->LinkEndChild(pSdkMeshName);
-// 	pBaseElement->LinkEndChild(pSdkMesh);
+// 	pSdkMesh->InsertEndChild(pSdkMeshName);
+// 	pBaseElement->InsertEndChild(pSdkMesh);
 // 
 // 	tinyxml2::XMLElement* pTexture = pDocument->NewElement("Texture");
 // 	tinyxml2::XMLText* pTextureName = pDocument->NewText(m_TextureName.c_str());
-// 	pTexture->LinkEndChild(pTextureName);
-// 	pBaseElement->LinkEndChild(pTexture);
+// 	pTexture->InsertEndChild(pTextureName);
+// 	pBaseElement->InsertEndChild(pTexture);
 // 
 // 	tinyxml2::XMLElement* pEffect = pDocument->NewElement("Effect");
 // 	tinyxml2::XMLText* pEffectName = pDocument->NewText(m_EffectName.c_str());
-// 	pEffect->LinkEndChild(pEffectName);
-// 	pBaseElement->LinkEndChild(pEffect);
+// 	pEffect->InsertEndChild(pEffectName);
+// 	pBaseElement->InsertEndChild(pEffect);
 }
 
 SkyboxRenderComponent::SkyboxRenderComponent()
@@ -471,8 +471,8 @@ void SkyboxRenderComponent::VCreateInheritedXmlElement(tinyxml2::XMLElement* pBa
 {
 // 	tinyxml2::XMLElement* pTextureNode = pDocument->NewElement("Texture");
 // 	tinyxml2::XMLText* pTextureText = pDocument->NewText(m_textureResource.c_str());
-// 	pTextureNode->LinkEndChild(pTextureText);
-// 	pBaseElement->LinkEndChild(pTextureNode);
+// 	pTextureNode->InsertEndChild(pTextureText);
+// 	pBaseElement->InsertEndChild(pTextureNode);
 }
 
 LightRenderComponent::LightRenderComponent()
@@ -506,8 +506,8 @@ void LightRenderComponent::VCreateInheritedXmlElement(tinyxml2::XMLElement* pBas
 
 	tinyxml2::XMLElement* pModelNode = pDocument->NewElement("Model");
 	tinyxml2::XMLText* pModelName = pDocument->NewText(m_ModelName.c_str());
-	pModelNode->LinkEndChild(pModelName);
-	pBaseElement->LinkEndChild(pModelNode);
+	pModelNode->InsertEndChild(pModelName);
+	pBaseElement->InsertEndChild(pModelNode);
 }
 
 DirectionalLightComponent::DirectionalLightComponent()
@@ -592,21 +592,21 @@ void DirectionalLightComponent::VCreateInheritedXmlElement(tinyxml2::XMLElement*
 	pDirectionNode->SetAttribute("x", m_Direction.x);
 	pDirectionNode->SetAttribute("y", m_Direction.y);
 	pDirectionNode->SetAttribute("z", m_Direction.z);
-	pSceneNode->LinkEndChild(pDirectionNode);
+	pSceneNode->InsertEndChild(pDirectionNode);
 
 	tinyxml2::XMLElement* pUpNode = pDocument->NewElement("Up");
 	pUpNode->SetAttribute("x", m_Up.x);
 	pUpNode->SetAttribute("y", m_Up.y);
 	pUpNode->SetAttribute("z", m_Up.z);
-	pSceneNode->LinkEndChild(pUpNode);
+	pSceneNode->InsertEndChild(pUpNode);
 
 	tinyxml2::XMLElement* pRightNode = pDocument->NewElement("Right");
 	pRightNode->SetAttribute("x", m_Right.x);
 	pRightNode->SetAttribute("y", m_Right.y);
 	pRightNode->SetAttribute("z", m_Right.z);
-	pSceneNode->LinkEndChild(pRightNode);
+	pSceneNode->InsertEndChild(pRightNode);
 
-	pBaseElement->LinkEndChild(pSceneNode);
+	pBaseElement->InsertEndChild(pSceneNode);
 }
 
 PointLightComponent::PointLightComponent()
@@ -664,9 +664,9 @@ void PointLightComponent::VCreateInheritedXmlElement(tinyxml2::XMLElement* pBase
 	tinyxml2::XMLElement* pSceneNode = pDocument->NewElement("Light");
 	tinyxml2::XMLElement* pShapeNode = pDocument->NewElement("Shape");
 	pShapeNode->SetAttribute("Radius", m_Radius);
-	pSceneNode->LinkEndChild(pShapeNode);
+	pSceneNode->InsertEndChild(pShapeNode);
 
-	pBaseElement->LinkEndChild(pSceneNode);
+	pBaseElement->InsertEndChild(pSceneNode);
 }
 
 SpotLightComponent::SpotLightComponent()
@@ -759,25 +759,25 @@ void SpotLightComponent::VCreateInheritedXmlElement(tinyxml2::XMLElement* pBaseE
 	pDirectionNode->SetAttribute("x", m_Direction.x);
 	pDirectionNode->SetAttribute("y", m_Direction.y);
 	pDirectionNode->SetAttribute("z", m_Direction.z);
-	pSceneNode->LinkEndChild(pDirectionNode);
+	pSceneNode->InsertEndChild(pDirectionNode);
 
 	tinyxml2::XMLElement* pUpNode = pDocument->NewElement("Up");
 	pUpNode->SetAttribute("x", m_Up.x);
 	pUpNode->SetAttribute("y", m_Up.y);
 	pUpNode->SetAttribute("z", m_Up.z);
-	pSceneNode->LinkEndChild(pUpNode);
+	pSceneNode->InsertEndChild(pUpNode);
 
 	tinyxml2::XMLElement* pRightNode = pDocument->NewElement("Right");
 	pRightNode->SetAttribute("x", m_Right.x);
 	pRightNode->SetAttribute("y", m_Right.y);
 	pRightNode->SetAttribute("z", m_Right.z);
-	pSceneNode->LinkEndChild(pRightNode);
+	pSceneNode->InsertEndChild(pRightNode);
 
 	tinyxml2::XMLElement* pShapeNode = pDocument->NewElement("Shape");
 	pShapeNode->SetAttribute("Radius", m_Radius);
 	pShapeNode->SetAttribute("InnerAngle", m_InnerAngle);
 	pShapeNode->SetAttribute("OuterAngle", m_OuterAngle);
-	pSceneNode->LinkEndChild(pShapeNode);
+	pSceneNode->InsertEndChild(pShapeNode);
 
-	pBaseElement->LinkEndChild(pSceneNode);
+	pBaseElement->InsertEndChild(pSceneNode);
 }

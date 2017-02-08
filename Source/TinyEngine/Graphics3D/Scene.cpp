@@ -192,5 +192,8 @@ void Scene::ResetActorTransform(ActorId actorId)
 		const BoundingBox& aabb = pNode->VGet()->GetBoundingBox();
 		float scale = 1.0 / Vector3(aabb.Extents).Length();
 		pNode->VSetTransform(Matrix::CreateScale(scale));
+
+		shared_ptr<EvtData_Move_Actor> pEvent(DEBUG_NEW EvtData_Move_Actor(actorId));
+		IEventManager::Get()->VQueueEvent(pEvent);
 	}
 }

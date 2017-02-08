@@ -111,16 +111,16 @@ bool D3D11Renderer::VInitRenderer(HWND hWnd)
 	SAFE_RELEASE(dxgiFactory);
 
 	CreateBuffers();
-// 	InitImGui(hWnd);
-// 	CreateImGuiBuffers();
+	// 	InitImGui(hWnd);
+	// 	CreateImGuiBuffers();
 
 	return true;
 }
 
 void D3D11Renderer::VDeleteRenderer()
 {
-// 	DeleteImGuiBuffers();
-// 	ImGui::Shutdown();
+	// 	DeleteImGuiBuffers();
+	// 	ImGui::Shutdown();
 	DeleteBuffers();
 
 	SAFE_RELEASE(m_pSwapChain);
@@ -133,20 +133,20 @@ void D3D11Renderer::VResizeSwapChain()
 	if (m_pDevice == nullptr || m_pDeviceContext == nullptr)
 		return;
 
-// 	DeleteImGuiBuffers();
+	// 	DeleteImGuiBuffers();
 	DeleteBuffers();
 	m_pSwapChain->ResizeBuffers(0, g_pApp->GetGameConfig().m_ScreenWidth, g_pApp->GetGameConfig().m_ScreenHeight, DXGI_FORMAT_UNKNOWN, 0);
 	CreateBuffers();
-// 	CreateImGuiBuffers();
+	// 	CreateImGuiBuffers();
 }
 
 bool D3D11Renderer::VPreRender(const GameTime& gameTime)
 {
 	if (m_pDeviceContext != nullptr && m_pRenderTargetView != nullptr)
 	{
-// 		ImGuiIO& io = ImGui::GetIO();
-// 		io.DeltaTime = gameTime.GetElapsedTime();
-// 		ImGui::NewFrame();
+		// 		ImGuiIO& io = ImGui::GetIO();
+		// 		io.DeltaTime = gameTime.GetElapsedTime();
+		// 		ImGui::NewFrame();
 
 		m_pDeviceContext->ClearRenderTargetView(m_pRenderTargetView, m_BackgroundColor);
 		m_pDeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
@@ -159,8 +159,8 @@ bool D3D11Renderer::VPostRender()
 	if (m_pSwapChain == nullptr)
 		return false;
 
-// 	ImGui::Render();
-// 	RenderDrawLists();
+	// 	ImGui::Render();
+	// 	RenderDrawLists();
 	m_pSwapChain->Present(g_pApp->GetGameConfig().m_IsVSync ? 1 : 0, 0);
 	return true;
 }
@@ -170,9 +170,9 @@ void D3D11Renderer::InitD3D11Device()
 	HRESULT hr;
 	UINT createDeviceFlags = 0;
 
-// #if defined(DEBUG) || defined(_DEBUG)  
-// 	createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
-// #endif
+#if defined(DEBUG) || defined(_DEBUG)  
+	createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
+#endif
 
 	D3D_FEATURE_LEVEL featureLevels[] = {
 		D3D_FEATURE_LEVEL_11_0,
@@ -188,18 +188,14 @@ void D3D11Renderer::InitD3D11Device()
 			featureLevels, ARRAYSIZE(featureLevels), D3D11_SDK_VERSION, &m_pDevice, &m_FeatureLevel, &m_pDeviceContext);
 		if (FAILED(hr))
 		{
-			MessageBox(nullptr, L"D3D11CreateDevice() failed, OS Version is too low! (must above Windows 7 SP1)", nullptr, MB_OK | MB_ICONERROR);
-			SAFE_RELEASE(m_pDeviceContext);
-			SAFE_RELEASE(m_pDevice);
+			throw std::invalid_argument("D3D11CreateDevice() failed, OS Version is too low! (must above Windows 7 SP1)");
 			return;
 		}
 	}
 
 	if (m_FeatureLevel < D3D_FEATURE_LEVEL_11_0)
 	{
-		MessageBox(nullptr, L"Direct3D Feature Level 11 unsupported!", nullptr, MB_OK | MB_ICONERROR);
-		SAFE_RELEASE(m_pDeviceContext);
-		SAFE_RELEASE(m_pDevice);
+		throw std::invalid_argument("Direct3D Feature Level 11 unsupported!");
 		return;
 	}
 
@@ -460,7 +456,7 @@ bool D3D11Renderer::CreateImGuiBuffers()
 		desc.MaxLOD = 0.f;
 		m_pDevice->CreateSamplerState(&desc, &g_pFontSampler);
 	}
-	
+
 	io.DisplaySize = ImVec2((float)g_pApp->GetGameConfig().m_ScreenWidth, (float)g_pApp->GetGameConfig().m_ScreenHeight);
 	return true;
 }
@@ -770,7 +766,7 @@ bool D3D11Renderer::VCompileShaderFromMemory(const void* pBuffer, uint32_t lengh
 #endif
 
 	ID3D10Blob* errorMessages = nullptr;
-	HRESULT hr = D3DX11CompileEffectFromMemory( pBuffer, lenght, nullptr, nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE,
+	HRESULT hr = D3DX11CompileEffectFromMemory(pBuffer, lenght, nullptr, nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE,
 		shaderFlags, 0, m_pDevice, &pShaderExtra->m_pD3DX11Effect, &errorMessages);
 
 	if (FAILED(hr))

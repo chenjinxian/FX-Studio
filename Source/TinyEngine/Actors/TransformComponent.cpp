@@ -65,13 +65,13 @@ tinyxml2::XMLElement* TransformComponent::VGenerateXml(tinyxml2::XMLDocument* pD
 	pPositionElement->SetAttribute("x", translation.x);
 	pPositionElement->SetAttribute("y", translation.y);
 	pPositionElement->SetAttribute("z", translation.z);
-	pBaseElement->LinkEndChild(pPositionElement);
+	pBaseElement->InsertEndChild(pPositionElement);
 
 	tinyxml2::XMLElement* pScaleElement = pDocument->NewElement("Scale");
 	pScaleElement->SetAttribute("x", scale.x);
 	pScaleElement->SetAttribute("y", scale.y);
 	pScaleElement->SetAttribute("z", scale.z);
-	pBaseElement->LinkEndChild(pScaleElement);
+	pBaseElement->InsertEndChild(pScaleElement);
 
 	float x = 2.0f * (quat.w * quat.x - quat.y * quat.z);
 	if (x > 1.0f) x = 1.0f;
@@ -91,11 +91,11 @@ tinyxml2::XMLElement* TransformComponent::VGenerateXml(tinyxml2::XMLDocument* pD
 		roll = XMConvertToDegrees(std::atan2f(2.0f * (quat.x * quat.y - quat.w * quat.z), 1.0f - 2.0f * (quat.y * quat.y + quat.z * quat.z)));
 	}
 
-	tinyxml2::XMLElement* pRotationElement = pDocument->FirstChildElement("Rotation");
+	tinyxml2::XMLElement* pRotationElement = pDocument->NewElement("Rotation");
 	pRotationElement->SetAttribute("x", pitch);
 	pRotationElement->SetAttribute("y", yaw);
 	pRotationElement->SetAttribute("z", roll);
-	pBaseElement->LinkEndChild(pRotationElement);
+	pBaseElement->InsertEndChild(pRotationElement);
 
 	return pBaseElement;
 }

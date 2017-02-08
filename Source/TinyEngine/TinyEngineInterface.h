@@ -68,7 +68,7 @@ public:
 	virtual StrongActorPtr VCreateActor(
 		tinyxml2::XMLElement *pActorRoot, const Matrix& initialTransform = Matrix::Identity, ActorId serversActorId = INVALID_ACTOR_ID) = 0;
 	virtual void VDestroyActor(ActorId actorId) = 0;
-	virtual void VMoveActor(ActorId actorId, const Matrix& mat) = 0;
+	virtual void VMoveActor(ActorId actorId) = 0;
 
 	virtual void VOnUpdate(const GameTime& gameTime) = 0;
 	virtual bool VLoadGame(const std::string& projectXml) = 0;

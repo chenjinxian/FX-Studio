@@ -40,6 +40,16 @@
             System.Windows.Forms.ListViewItem listViewItem9 = new System.Windows.Forms.ListViewItem("Phong bump reflect", 8);
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EffectWizardDialog));
             this.wizardForm = new CristiPotlog.WizardControl.Wizard();
+            this.wizardPageSelect = new CristiPotlog.WizardControl.WizardPage();
+            this.groupBoxSelect = new System.Windows.Forms.GroupBox();
+            this.labelHlslInfo = new System.Windows.Forms.Label();
+            this.labelFileInfo = new System.Windows.Forms.Label();
+            this.radioButtonHlsl = new System.Windows.Forms.RadioButton();
+            this.radioButtonFile = new System.Windows.Forms.RadioButton();
+            this.wizardPageFile = new CristiPotlog.WizardControl.WizardPage();
+            this.buttonFile = new System.Windows.Forms.Button();
+            this.textBoxFile = new System.Windows.Forms.TextBox();
+            this.labelFile = new System.Windows.Forms.Label();
             this.wizardPageTemplate = new CristiPotlog.WizardControl.WizardPage();
             this.buttonLocation = new System.Windows.Forms.Button();
             this.textBoxLocation = new System.Windows.Forms.TextBox();
@@ -51,30 +61,20 @@
             this.wizardPageName = new CristiPotlog.WizardControl.WizardPage();
             this.textBoxEffect = new System.Windows.Forms.TextBox();
             this.labelEffect = new System.Windows.Forms.Label();
-            this.wizardPageFile = new CristiPotlog.WizardControl.WizardPage();
-            this.buttonFile = new System.Windows.Forms.Button();
-            this.textBoxFile = new System.Windows.Forms.TextBox();
-            this.labelFile = new System.Windows.Forms.Label();
-            this.wizardPageSelect = new CristiPotlog.WizardControl.WizardPage();
-            this.groupBoxSelect = new System.Windows.Forms.GroupBox();
-            this.labelHlslInfo = new System.Windows.Forms.Label();
-            this.labelFileInfo = new System.Windows.Forms.Label();
-            this.radioButtonHlsl = new System.Windows.Forms.RadioButton();
-            this.radioButtonFile = new System.Windows.Forms.RadioButton();
             this.wizardForm.SuspendLayout();
-            this.wizardPageTemplate.SuspendLayout();
-            this.wizardPageName.SuspendLayout();
-            this.wizardPageFile.SuspendLayout();
             this.wizardPageSelect.SuspendLayout();
             this.groupBoxSelect.SuspendLayout();
+            this.wizardPageFile.SuspendLayout();
+            this.wizardPageTemplate.SuspendLayout();
+            this.wizardPageName.SuspendLayout();
             this.SuspendLayout();
             // 
             // wizardForm
             // 
-            this.wizardForm.Controls.Add(this.wizardPageSelect);
-            this.wizardForm.Controls.Add(this.wizardPageFile);
-            this.wizardForm.Controls.Add(this.wizardPageTemplate);
             this.wizardForm.Controls.Add(this.wizardPageName);
+            this.wizardForm.Controls.Add(this.wizardPageTemplate);
+            this.wizardForm.Controls.Add(this.wizardPageFile);
+            this.wizardForm.Controls.Add(this.wizardPageSelect);
             this.wizardForm.HeaderFont = new System.Drawing.Font("Microsoft YaHei UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.wizardForm.HeaderImage = ((System.Drawing.Image)(resources.GetObject("wizardForm.HeaderImage")));
             this.wizardForm.HeaderTitleFont = new System.Drawing.Font("Microsoft YaHei UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
@@ -85,12 +85,126 @@
             this.wizardPageFile,
             this.wizardPageTemplate,
             this.wizardPageName});
-            this.wizardForm.Size = new System.Drawing.Size(496, 361);
+            this.wizardForm.Size = new System.Drawing.Size(496, 340);
             this.wizardForm.TabIndex = 0;
             this.wizardForm.BeforeSwitchPages += new CristiPotlog.WizardControl.Wizard.BeforeSwitchPagesEventHandler(this.wizardForm_BeforeSwitchPages);
             this.wizardForm.AfterSwitchPages += new CristiPotlog.WizardControl.Wizard.AfterSwitchPagesEventHandler(this.wizardForm_AfterSwitchPages);
             this.wizardForm.Finish += new System.EventHandler(this.wizardForm_Finish);
             this.wizardForm.Load += new System.EventHandler(this.wizardForm_Load);
+            // 
+            // wizardPageSelect
+            // 
+            this.wizardPageSelect.Controls.Add(this.groupBoxSelect);
+            this.wizardPageSelect.Description = "Add a new effect to the project";
+            this.wizardPageSelect.Dock = System.Windows.Forms.DockStyle.Top;
+            this.wizardPageSelect.Font = new System.Drawing.Font("Microsoft YaHei UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.wizardPageSelect.Location = new System.Drawing.Point(0, 0);
+            this.wizardPageSelect.Name = "wizardPageSelect";
+            this.wizardPageSelect.Size = new System.Drawing.Size(420, 186);
+            this.wizardPageSelect.TabIndex = 10;
+            this.wizardPageSelect.Title = "Add Effect";
+            // 
+            // groupBoxSelect
+            // 
+            this.groupBoxSelect.Controls.Add(this.labelHlslInfo);
+            this.groupBoxSelect.Controls.Add(this.labelFileInfo);
+            this.groupBoxSelect.Controls.Add(this.radioButtonHlsl);
+            this.groupBoxSelect.Controls.Add(this.radioButtonFile);
+            this.groupBoxSelect.Location = new System.Drawing.Point(12, 73);
+            this.groupBoxSelect.Name = "groupBoxSelect";
+            this.groupBoxSelect.Size = new System.Drawing.Size(472, 193);
+            this.groupBoxSelect.TabIndex = 1;
+            this.groupBoxSelect.TabStop = false;
+            this.groupBoxSelect.Text = "Profiles to create";
+            // 
+            // labelHlslInfo
+            // 
+            this.labelHlslInfo.AutoSize = true;
+            this.labelHlslInfo.ForeColor = System.Drawing.SystemColors.GrayText;
+            this.labelHlslInfo.Location = new System.Drawing.Point(23, 87);
+            this.labelHlslInfo.MaximumSize = new System.Drawing.Size(430, 0);
+            this.labelHlslInfo.Name = "labelHlslInfo";
+            this.labelHlslInfo.Size = new System.Drawing.Size(426, 51);
+            this.labelHlslInfo.TabIndex = 5;
+            this.labelHlslInfo.Text = "High Level Shading Language (HLSL) is a shading language developed by Microsoft f" +
+    "or use with the Direct3D API. Use this profile to create an effect that referenc" +
+    "e a Microsoft Direct3D 11 FX file.";
+            // 
+            // labelFileInfo
+            // 
+            this.labelFileInfo.AutoSize = true;
+            this.labelFileInfo.ForeColor = System.Drawing.SystemColors.GrayText;
+            this.labelFileInfo.Location = new System.Drawing.Point(23, 44);
+            this.labelFileInfo.Name = "labelFileInfo";
+            this.labelFileInfo.Size = new System.Drawing.Size(159, 17);
+            this.labelFileInfo.TabIndex = 4;
+            this.labelFileInfo.Text = "Adds an effect from a file.";
+            // 
+            // radioButtonHlsl
+            // 
+            this.radioButtonHlsl.AutoSize = true;
+            this.radioButtonHlsl.Font = new System.Drawing.Font("Microsoft YaHei UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.radioButtonHlsl.Location = new System.Drawing.Point(6, 65);
+            this.radioButtonHlsl.Name = "radioButtonHlsl";
+            this.radioButtonHlsl.Size = new System.Drawing.Size(78, 23);
+            this.radioButtonHlsl.TabIndex = 2;
+            this.radioButtonHlsl.TabStop = true;
+            this.radioButtonHlsl.Text = "HLSL FX";
+            this.radioButtonHlsl.UseVisualStyleBackColor = true;
+            this.radioButtonHlsl.CheckedChanged += new System.EventHandler(this.radioButton_CheckedChanged);
+            // 
+            // radioButtonFile
+            // 
+            this.radioButtonFile.AutoSize = true;
+            this.radioButtonFile.Font = new System.Drawing.Font("Microsoft YaHei UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.radioButtonFile.Location = new System.Drawing.Point(6, 22);
+            this.radioButtonFile.Name = "radioButtonFile";
+            this.radioButtonFile.Size = new System.Drawing.Size(121, 23);
+            this.radioButtonFile.TabIndex = 1;
+            this.radioButtonFile.TabStop = true;
+            this.radioButtonFile.Text = "Effect from File";
+            this.radioButtonFile.UseVisualStyleBackColor = true;
+            this.radioButtonFile.CheckedChanged += new System.EventHandler(this.radioButton_CheckedChanged);
+            // 
+            // wizardPageFile
+            // 
+            this.wizardPageFile.Controls.Add(this.buttonFile);
+            this.wizardPageFile.Controls.Add(this.textBoxFile);
+            this.wizardPageFile.Controls.Add(this.labelFile);
+            this.wizardPageFile.Description = "Use this page to import an existing effect";
+            this.wizardPageFile.Location = new System.Drawing.Point(0, 0);
+            this.wizardPageFile.Name = "wizardPageFile";
+            this.wizardPageFile.Size = new System.Drawing.Size(420, 186);
+            this.wizardPageFile.TabIndex = 13;
+            this.wizardPageFile.Title = "New Effect from File";
+            // 
+            // buttonFile
+            // 
+            this.buttonFile.Location = new System.Drawing.Point(409, 74);
+            this.buttonFile.Name = "buttonFile";
+            this.buttonFile.Size = new System.Drawing.Size(75, 23);
+            this.buttonFile.TabIndex = 2;
+            this.buttonFile.Text = "Browse...";
+            this.buttonFile.UseVisualStyleBackColor = true;
+            this.buttonFile.Click += new System.EventHandler(this.buttonFile_Click);
+            // 
+            // textBoxFile
+            // 
+            this.textBoxFile.Location = new System.Drawing.Point(80, 75);
+            this.textBoxFile.Name = "textBoxFile";
+            this.textBoxFile.Size = new System.Drawing.Size(322, 21);
+            this.textBoxFile.TabIndex = 1;
+            this.textBoxFile.TextChanged += new System.EventHandler(this.textBoxFile_TextChanged);
+            // 
+            // labelFile
+            // 
+            this.labelFile.AutoSize = true;
+            this.labelFile.Font = new System.Drawing.Font("Microsoft YaHei UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.labelFile.Location = new System.Drawing.Point(12, 77);
+            this.labelFile.Name = "labelFile";
+            this.labelFile.Size = new System.Drawing.Size(66, 17);
+            this.labelFile.TabIndex = 0;
+            this.labelFile.Text = "Effect File:";
             // 
             // wizardPageTemplate
             // 
@@ -104,15 +218,15 @@
             this.wizardPageTemplate.Description = "The imported effect will be saved with the specified  filename and location";
             this.wizardPageTemplate.Location = new System.Drawing.Point(0, 0);
             this.wizardPageTemplate.Name = "wizardPageTemplate";
-            this.wizardPageTemplate.Size = new System.Drawing.Size(496, 313);
+            this.wizardPageTemplate.Size = new System.Drawing.Size(420, 186);
             this.wizardPageTemplate.TabIndex = 11;
             this.wizardPageTemplate.Title = "Select a HLSL FX Template";
             // 
             // buttonLocation
             // 
-            this.buttonLocation.Location = new System.Drawing.Point(412, 279);
+            this.buttonLocation.Location = new System.Drawing.Point(412, 258);
             this.buttonLocation.Name = "buttonLocation";
-            this.buttonLocation.Size = new System.Drawing.Size(75, 25);
+            this.buttonLocation.Size = new System.Drawing.Size(75, 23);
             this.buttonLocation.TabIndex = 8;
             this.buttonLocation.Text = "Browse...";
             this.buttonLocation.UseVisualStyleBackColor = true;
@@ -120,16 +234,16 @@
             // 
             // textBoxLocation
             // 
-            this.textBoxLocation.Location = new System.Drawing.Point(78, 282);
+            this.textBoxLocation.Location = new System.Drawing.Point(78, 260);
             this.textBoxLocation.Name = "textBoxLocation";
-            this.textBoxLocation.Size = new System.Drawing.Size(328, 20);
+            this.textBoxLocation.Size = new System.Drawing.Size(328, 21);
             this.textBoxLocation.TabIndex = 7;
             // 
             // labelLocation
             // 
             this.labelLocation.AutoSize = true;
             this.labelLocation.Font = new System.Drawing.Font("Microsoft YaHei UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.labelLocation.Location = new System.Drawing.Point(12, 285);
+            this.labelLocation.Location = new System.Drawing.Point(12, 263);
             this.labelLocation.Name = "labelLocation";
             this.labelLocation.Size = new System.Drawing.Size(60, 17);
             this.labelLocation.TabIndex = 6;
@@ -137,9 +251,9 @@
             // 
             // textBoxName
             // 
-            this.textBoxName.Location = new System.Drawing.Point(78, 256);
+            this.textBoxName.Location = new System.Drawing.Point(78, 236);
             this.textBoxName.Name = "textBoxName";
-            this.textBoxName.Size = new System.Drawing.Size(328, 20);
+            this.textBoxName.Size = new System.Drawing.Size(328, 21);
             this.textBoxName.TabIndex = 4;
             this.textBoxName.TextChanged += new System.EventHandler(this.textBoxName_TextChanged);
             // 
@@ -147,7 +261,7 @@
             // 
             this.labelName.AutoSize = true;
             this.labelName.Font = new System.Drawing.Font("Microsoft YaHei UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.labelName.Location = new System.Drawing.Point(12, 259);
+            this.labelName.Location = new System.Drawing.Point(12, 239);
             this.labelName.Name = "labelName";
             this.labelName.Size = new System.Drawing.Size(46, 17);
             this.labelName.TabIndex = 3;
@@ -175,10 +289,10 @@
             listViewItem8,
             listViewItem9});
             this.listViewEffect.LargeImageList = this.imageListEffect;
-            this.listViewEffect.Location = new System.Drawing.Point(12, 75);
+            this.listViewEffect.Location = new System.Drawing.Point(12, 69);
             this.listViewEffect.MultiSelect = false;
             this.listViewEffect.Name = "listViewEffect";
-            this.listViewEffect.Size = new System.Drawing.Size(472, 171);
+            this.listViewEffect.Size = new System.Drawing.Size(472, 158);
             this.listViewEffect.TabIndex = 0;
             this.listViewEffect.TileSize = new System.Drawing.Size(128, 32);
             this.listViewEffect.UseCompatibleStateImageBehavior = false;
@@ -206,15 +320,15 @@
     "rd is complete";
             this.wizardPageName.Location = new System.Drawing.Point(0, 0);
             this.wizardPageName.Name = "wizardPageName";
-            this.wizardPageName.Size = new System.Drawing.Size(496, 335);
+            this.wizardPageName.Size = new System.Drawing.Size(496, 292);
             this.wizardPageName.TabIndex = 12;
             this.wizardPageName.Title = "New Effect Name";
             // 
             // textBoxEffect
             // 
-            this.textBoxEffect.Location = new System.Drawing.Point(115, 90);
+            this.textBoxEffect.Location = new System.Drawing.Point(115, 83);
             this.textBoxEffect.Name = "textBoxEffect";
-            this.textBoxEffect.Size = new System.Drawing.Size(369, 20);
+            this.textBoxEffect.Size = new System.Drawing.Size(369, 21);
             this.textBoxEffect.TabIndex = 6;
             this.textBoxEffect.TextChanged += new System.EventHandler(this.textBoxEffect_TextChanged);
             // 
@@ -222,131 +336,17 @@
             // 
             this.labelEffect.AutoSize = true;
             this.labelEffect.Font = new System.Drawing.Font("Microsoft YaHei UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.labelEffect.Location = new System.Drawing.Point(12, 92);
+            this.labelEffect.Location = new System.Drawing.Point(12, 85);
             this.labelEffect.Name = "labelEffect";
             this.labelEffect.Size = new System.Drawing.Size(82, 17);
             this.labelEffect.TabIndex = 5;
             this.labelEffect.Text = "Effect Name:";
             // 
-            // wizardPageFile
-            // 
-            this.wizardPageFile.Controls.Add(this.buttonFile);
-            this.wizardPageFile.Controls.Add(this.textBoxFile);
-            this.wizardPageFile.Controls.Add(this.labelFile);
-            this.wizardPageFile.Description = "Use this page to import an existing effect";
-            this.wizardPageFile.Location = new System.Drawing.Point(0, 0);
-            this.wizardPageFile.Name = "wizardPageFile";
-            this.wizardPageFile.Size = new System.Drawing.Size(496, 313);
-            this.wizardPageFile.TabIndex = 13;
-            this.wizardPageFile.Title = "New Effect from File";
-            // 
-            // buttonFile
-            // 
-            this.buttonFile.Location = new System.Drawing.Point(409, 80);
-            this.buttonFile.Name = "buttonFile";
-            this.buttonFile.Size = new System.Drawing.Size(75, 25);
-            this.buttonFile.TabIndex = 2;
-            this.buttonFile.Text = "Browse...";
-            this.buttonFile.UseVisualStyleBackColor = true;
-            this.buttonFile.Click += new System.EventHandler(this.buttonFile_Click);
-            // 
-            // textBoxFile
-            // 
-            this.textBoxFile.Location = new System.Drawing.Point(80, 81);
-            this.textBoxFile.Name = "textBoxFile";
-            this.textBoxFile.Size = new System.Drawing.Size(322, 20);
-            this.textBoxFile.TabIndex = 1;
-            this.textBoxFile.TextChanged += new System.EventHandler(this.textBoxFile_TextChanged);
-            // 
-            // labelFile
-            // 
-            this.labelFile.AutoSize = true;
-            this.labelFile.Font = new System.Drawing.Font("Microsoft YaHei UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.labelFile.Location = new System.Drawing.Point(12, 83);
-            this.labelFile.Name = "labelFile";
-            this.labelFile.Size = new System.Drawing.Size(66, 17);
-            this.labelFile.TabIndex = 0;
-            this.labelFile.Text = "Effect File:";
-            // 
-            // wizardPageSelect
-            // 
-            this.wizardPageSelect.Controls.Add(this.groupBoxSelect);
-            this.wizardPageSelect.Description = "Add a new effect to the project";
-            this.wizardPageSelect.Dock = System.Windows.Forms.DockStyle.Top;
-            this.wizardPageSelect.Font = new System.Drawing.Font("Microsoft YaHei UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.wizardPageSelect.Location = new System.Drawing.Point(0, 0);
-            this.wizardPageSelect.Name = "wizardPageSelect";
-            this.wizardPageSelect.Size = new System.Drawing.Size(496, 313);
-            this.wizardPageSelect.TabIndex = 10;
-            this.wizardPageSelect.Title = "Add Effect";
-            // 
-            // groupBoxSelect
-            // 
-            this.groupBoxSelect.Controls.Add(this.labelHlslInfo);
-            this.groupBoxSelect.Controls.Add(this.labelFileInfo);
-            this.groupBoxSelect.Controls.Add(this.radioButtonHlsl);
-            this.groupBoxSelect.Controls.Add(this.radioButtonFile);
-            this.groupBoxSelect.Location = new System.Drawing.Point(12, 79);
-            this.groupBoxSelect.Name = "groupBoxSelect";
-            this.groupBoxSelect.Size = new System.Drawing.Size(472, 209);
-            this.groupBoxSelect.TabIndex = 1;
-            this.groupBoxSelect.TabStop = false;
-            this.groupBoxSelect.Text = "Profiles to create";
-            // 
-            // labelHlslInfo
-            // 
-            this.labelHlslInfo.AutoSize = true;
-            this.labelHlslInfo.ForeColor = System.Drawing.SystemColors.GrayText;
-            this.labelHlslInfo.Location = new System.Drawing.Point(23, 94);
-            this.labelHlslInfo.MaximumSize = new System.Drawing.Size(430, 0);
-            this.labelHlslInfo.Name = "labelHlslInfo";
-            this.labelHlslInfo.Size = new System.Drawing.Size(426, 51);
-            this.labelHlslInfo.TabIndex = 5;
-            this.labelHlslInfo.Text = "High Level Shading Language (HLSL) is a shading language developed by Microsoft f" +
-    "or use with the Direct3D API. Use this profile to create an effect that referenc" +
-    "e a Microsoft Direct3D 11 FX file.";
-            // 
-            // labelFileInfo
-            // 
-            this.labelFileInfo.AutoSize = true;
-            this.labelFileInfo.ForeColor = System.Drawing.SystemColors.GrayText;
-            this.labelFileInfo.Location = new System.Drawing.Point(23, 48);
-            this.labelFileInfo.Name = "labelFileInfo";
-            this.labelFileInfo.Size = new System.Drawing.Size(159, 17);
-            this.labelFileInfo.TabIndex = 4;
-            this.labelFileInfo.Text = "Adds an effect from a file.";
-            // 
-            // radioButtonHlsl
-            // 
-            this.radioButtonHlsl.AutoSize = true;
-            this.radioButtonHlsl.Font = new System.Drawing.Font("Microsoft YaHei UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.radioButtonHlsl.Location = new System.Drawing.Point(6, 70);
-            this.radioButtonHlsl.Name = "radioButtonHlsl";
-            this.radioButtonHlsl.Size = new System.Drawing.Size(78, 23);
-            this.radioButtonHlsl.TabIndex = 2;
-            this.radioButtonHlsl.TabStop = true;
-            this.radioButtonHlsl.Text = "HLSL FX";
-            this.radioButtonHlsl.UseVisualStyleBackColor = true;
-            this.radioButtonHlsl.CheckedChanged += new System.EventHandler(this.radioButton_CheckedChanged);
-            // 
-            // radioButtonFile
-            // 
-            this.radioButtonFile.AutoSize = true;
-            this.radioButtonFile.Font = new System.Drawing.Font("Microsoft YaHei UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.radioButtonFile.Location = new System.Drawing.Point(6, 24);
-            this.radioButtonFile.Name = "radioButtonFile";
-            this.radioButtonFile.Size = new System.Drawing.Size(121, 23);
-            this.radioButtonFile.TabIndex = 1;
-            this.radioButtonFile.TabStop = true;
-            this.radioButtonFile.Text = "Effect from File";
-            this.radioButtonFile.UseVisualStyleBackColor = true;
-            this.radioButtonFile.CheckedChanged += new System.EventHandler(this.radioButton_CheckedChanged);
-            // 
             // EffectWizardDialog
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(496, 361);
+            this.ClientSize = new System.Drawing.Size(496, 340);
             this.Controls.Add(this.wizardForm);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
@@ -357,15 +357,15 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "EffectWizardDialog";
             this.wizardForm.ResumeLayout(false);
+            this.wizardPageSelect.ResumeLayout(false);
+            this.groupBoxSelect.ResumeLayout(false);
+            this.groupBoxSelect.PerformLayout();
+            this.wizardPageFile.ResumeLayout(false);
+            this.wizardPageFile.PerformLayout();
             this.wizardPageTemplate.ResumeLayout(false);
             this.wizardPageTemplate.PerformLayout();
             this.wizardPageName.ResumeLayout(false);
             this.wizardPageName.PerformLayout();
-            this.wizardPageFile.ResumeLayout(false);
-            this.wizardPageFile.PerformLayout();
-            this.wizardPageSelect.ResumeLayout(false);
-            this.groupBoxSelect.ResumeLayout(false);
-            this.groupBoxSelect.PerformLayout();
             this.ResumeLayout(false);
 
         }

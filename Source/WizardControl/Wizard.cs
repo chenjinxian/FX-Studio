@@ -123,7 +123,7 @@ namespace CristiPotlog.WizardControl
             this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.buttonCancel.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.buttonCancel.Location = new System.Drawing.Point(344, 224);
+            this.buttonCancel.Location = new System.Drawing.Point(336, 238);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(75, 23);
             this.buttonCancel.TabIndex = 8;
@@ -134,7 +134,7 @@ namespace CristiPotlog.WizardControl
             // 
             this.buttonNext.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonNext.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.buttonNext.Location = new System.Drawing.Point(192, 224);
+            this.buttonNext.Location = new System.Drawing.Point(184, 238);
             this.buttonNext.Name = "buttonNext";
             this.buttonNext.Size = new System.Drawing.Size(75, 23);
             this.buttonNext.TabIndex = 7;
@@ -145,7 +145,7 @@ namespace CristiPotlog.WizardControl
             // 
             this.buttonBack.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonBack.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.buttonBack.Location = new System.Drawing.Point(116, 224);
+            this.buttonBack.Location = new System.Drawing.Point(108, 238);
             this.buttonBack.Name = "buttonBack";
             this.buttonBack.Size = new System.Drawing.Size(75, 23);
             this.buttonBack.TabIndex = 6;
@@ -156,7 +156,7 @@ namespace CristiPotlog.WizardControl
             // 
             this.buttonHelp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.buttonHelp.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.buttonHelp.Location = new System.Drawing.Point(8, 224);
+            this.buttonHelp.Location = new System.Drawing.Point(8, 238);
             this.buttonHelp.Name = "buttonHelp";
             this.buttonHelp.Size = new System.Drawing.Size(75, 23);
             this.buttonHelp.TabIndex = 9;
@@ -169,7 +169,7 @@ namespace CristiPotlog.WizardControl
             this.buttonFinish.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonFinish.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.buttonFinish.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.buttonFinish.Location = new System.Drawing.Point(268, 224);
+            this.buttonFinish.Location = new System.Drawing.Point(260, 238);
             this.buttonFinish.Name = "buttonFinish";
             this.buttonFinish.Size = new System.Drawing.Size(75, 23);
             this.buttonFinish.TabIndex = 10;
@@ -184,7 +184,7 @@ namespace CristiPotlog.WizardControl
             this.Controls.Add(this.buttonNext);
             this.Controls.Add(this.buttonBack);
             this.Name = "Wizard";
-            this.Size = new System.Drawing.Size(428, 256);
+            this.Size = new System.Drawing.Size(420, 270);
             this.ResumeLayout(false);
 
         }

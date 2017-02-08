@@ -103,6 +103,24 @@ namespace FXStudio
             return (XmlNode)treeViewProject.SelectedNode.Tag;
         }
 
+        public void ModifyTransformXml(string actorXml)
+        {
+            XmlDocument doc = new XmlDocument();
+            doc.LoadXml(actorXml);
+
+            XmlElement root = doc.DocumentElement;
+            int actorId = int.Parse(root.Attributes["id"].Value);
+            if (actorId == treeViewProject.SelectedNode.Index + 1)
+            {
+                XmlNode selectNode = (XmlNode)treeViewProject.SelectedNode.Tag;
+                XmlNode oldNode = selectNode.SelectSingleNode(root.FirstChild.Name);
+                oldNode.InnerXml = root.FirstChild.InnerXml;
+                treeViewProject.SelectedNode.Tag = selectNode;
+
+                m_NodeDelegate?.Invoke((XmlNode)treeViewProject.SelectedNode.Tag);
+            }
+        }
+
         private XmlNode CreateProjectXmlNode(XmlNode node, string projectLocation)
         {
             XmlDocument xmlDoc = new XmlDocument();

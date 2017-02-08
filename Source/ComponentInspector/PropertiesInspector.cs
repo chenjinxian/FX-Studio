@@ -25,6 +25,10 @@ namespace Inspector
         {
             m_CategoryByName = new Dictionary<string, CategoryItem>();
 
+            base.SetStyle(ControlStyles.AllPaintingInWmPaint, true);
+            base.SetStyle(ControlStyles.DoubleBuffer, true);
+            base.SetStyle(ControlStyles.ResizeRedraw, true);
+            base.SetStyle(ControlStyles.UserPaint, true);
             InitializeComponent();
         }
 
@@ -56,6 +60,168 @@ namespace Inspector
                 return m_CategoryByName.Count;
             }
         }
+
+        private void ResetControl()
+        {
+            panelProperties.Controls.Clear();
+
+            int x1 = 0;
+            int x2 = this.Width;
+            if (x2 < 32) x2 = 32;
+            int y1 = 0;
+            int y2 = y1 + m_ItemHeight;
+
+            foreach (var category in m_CategoryByName)
+            {
+                Button btnExpand = new Button();
+                btnExpand.Image = this.imageListExpand.Images[0];
+                btnExpand.ImageAlign = ContentAlignment.MiddleCenter;
+                btnExpand.Name = "button" + category.Key + "Expand";
+                btnExpand.Text = "";
+                btnExpand.Location = new Point(2, 2);
+                btnExpand.Size = new Size(20, 20);
+                if (category.Value.Expanded)
+                    btnExpand.Image = this.imageListExpand.Images[1];
+                else
+                    btnExpand.Image = this.imageListExpand.Images[0];
+
+                Label labelCategory = new Label();
+                labelCategory.AutoSize = true;
+                labelCategory.ForeColor = Color.Black;
+                labelCategory.Location = new Point(24, 3);
+                labelCategory.Name = "label" + category.Key;
+                labelCategory.AutoSize = true;
+                labelCategory.Text = category.Key;
+
+                Panel panelCategory = new Panel();
+                panelCategory.BackColor = Color.FromArgb(240, 240, 240);
+                panelCategory.Dock = DockStyle.None;
+                panelCategory.Location = new Point(0, y1);
+                panelCategory.Name = "panel" + category.Key;
+                panelCategory.Size = new Size(this.Width, m_ItemHeight);
+                panelCategory.Controls.Add(btnExpand);
+                panelCategory.Controls.Add(labelCategory);
+
+                this.panelProperties.Controls.Add(panelCategory);
+
+                y1 = y2;
+                y2 += m_ItemHeight;
+
+                if (category.Value.Expanded)
+                {
+                    foreach (var item in category.Value.ItemList)
+                    {
+                        PaintItem(item.Value, x1, x2, ref y1, ref y2);
+                    }
+                }
+            }
+        }
+
+        private void UpdateValue()
+        {
+            foreach (var category in m_CategoryByName)
+            {
+                if (category.Key != "TransformComponent")
+                    continue;
+
+                foreach (var item in category.Value.ItemList)
+                {
+                    BaseItem child = item.Value;
+                    if (child is Vector3Item)
+                    {
+                        ControlCollection controls = panelProperties.Controls[child.CategoryName + "_" + child.ItemName + "_" + "panel"].Controls;
+                        string[] elements = child.ValueString.Split(',');
+                        if (elements.Length != 3)
+                            return;
+                        for (int i = 0; i < 3; i++)
+                        {
+                            string name = i == 0 ? "X" : (i == 1 ? "Y" : "Z");
+                            string controlName = child.CategoryName + "_" + child.ItemName + "_" + "labelValue_" + name;
+                            Label labelValue = controls[controlName] as Label;
+                            if (labelValue != null)
+                                labelValue.Text = elements[i];
+                        }
+                    }
+                }
+            }
+        }
+
+        public void UpdateControl(bool reset = true)
+        {
+            if (reset)
+            {
+                ResetControl();
+            }
+            else
+            {
+                UpdateValue();
+            }
+        }
+
+        public void ItemsClear()
+        {
+            if (m_CategoryByName != null)
+            {
+                foreach (var category in m_CategoryByName)
+                {
+                    if (category.Value.ItemList != null)
+                    {
+                        category.Value.ItemList.Clear();
+                        category.Value.ItemList = null;
+                    }
+                }
+                m_CategoryByName.Clear();
+            }
+
+            UpdateControl();
+        }
+
+        public void ItemAdd(BaseItem baseItem)
+        {
+            if (m_CategoryByName.ContainsKey(baseItem.CategoryName))
+            {
+                if (m_CategoryByName[baseItem.CategoryName].ItemList.ContainsKey(baseItem.ItemName))
+                    m_CategoryByName[baseItem.CategoryName].ItemList[baseItem.ItemName] = baseItem;
+                else
+                    m_CategoryByName[baseItem.CategoryName].ItemList.Add(baseItem.ItemName, baseItem);
+            }
+        }
+
+        public void CategoryAdd(string categoryKey, CategoryItem catItem)
+        {
+            if (m_CategoryByName.ContainsKey(categoryKey))
+                m_CategoryByName[categoryKey] = catItem;
+            else
+                m_CategoryByName.Add(categoryKey, catItem);
+        }
+
+        public CategoryItem GetCategory(string key)
+        {
+            if (m_CategoryByName.ContainsKey(key))
+                return m_CategoryByName[key];
+            else
+                return null;
+        }
+
+        public void SetCategoryText(string key, string text)
+        {
+            if (m_CategoryByName.ContainsKey(key))
+                m_CategoryByName[key].CategoryName = text;
+        }
+
+        public delegate void ExpandButtonPressedHandle(object sender, StringItem item);
+
+        public event ExpandButtonPressedHandle ExpandButtonPressed;
+
+        private void RaiseExpandButtonPressed(StringItem item)
+        {
+            if (ExpandButtonPressed != null)
+                ExpandButtonPressed(this, item);
+        }
+
+        public delegate void ApplyButtonPressedHandle(object sender, ref bool cancel);
+
+        public event ApplyButtonPressedHandle ApplyButtonPressed;
 
         private void AddStringItemControl(BaseItem item, Panel panelItem)
         {
@@ -112,7 +278,7 @@ namespace Inspector
                 labelValue.Location = new Point(x1, 1);
                 labelValue.Size = new Size(textWidth, m_ItemHeight - 4);
                 labelValue.Name = item.CategoryName + "_" + item.ItemName + "_" + "labelValue_" + name;
-                labelValue.Text = elements[0];
+                labelValue.Text = elements[i];
                 labelValue.TextAlign = ContentAlignment.MiddleCenter;
                 labelValue.BorderStyle = BorderStyle.FixedSingle;
                 labelValue.BackColor = Color.CornflowerBlue;
@@ -280,121 +446,6 @@ namespace Inspector
             y1 = y2;
             y2 += m_ItemHeight;
         }
-
-        public void UpdateControl()
-        {
-            panelProperties.Controls.Clear();
-
-            int x1 = 0;
-            int x2 = this.Width;
-            if (x2 < 32) x2 = 32;
-            int y1 = 0;
-            int y2 = y1 + m_ItemHeight;
-
-            foreach (var category in m_CategoryByName)
-            {
-                Button btnExpand = new Button();
-                btnExpand.Image = this.imageListExpand.Images[0];
-                btnExpand.ImageAlign = ContentAlignment.MiddleCenter;
-                btnExpand.Name = "button" + category.Key + "Expand";
-                btnExpand.Text = "";
-                btnExpand.Location = new Point(2, 2);
-                btnExpand.Size = new Size(20, 20);
-                if (category.Value.Expanded)
-                    btnExpand.Image = this.imageListExpand.Images[1];
-                else
-                    btnExpand.Image = this.imageListExpand.Images[0];
-
-                Label labelCategory = new Label();
-                labelCategory.AutoSize = true;
-                labelCategory.ForeColor = Color.Black;
-                labelCategory.Location = new Point(24, 3);
-                labelCategory.Name = "label" + category.Key;
-                labelCategory.AutoSize = true;
-                labelCategory.Text = category.Key;
-
-                Panel panelCategory = new Panel();
-                panelCategory.BackColor = Color.FromArgb(240, 240, 240);
-                panelCategory.Dock = DockStyle.None;
-                panelCategory.Location = new Point(0, y1);
-                panelCategory.Name = "panel" + category.Key;
-                panelCategory.Size = new Size(this.Width, m_ItemHeight);
-                panelCategory.Controls.Add(btnExpand);
-                panelCategory.Controls.Add(labelCategory);
-
-                this.panelProperties.Controls.Add(panelCategory);
-
-                y1 = y2;
-                y2 += m_ItemHeight;
-
-                if (category.Value.Expanded)
-                {
-                    foreach (var item in category.Value.ItemList)
-                    {
-                        PaintItem(item.Value, x1, x2, ref y1, ref y2);
-                    }
-                }
-            }
-        }
-
-        public void ItemsClear()
-        {
-            if (m_CategoryByName != null)
-            {
-                foreach (var category in m_CategoryByName)
-                {
-                    if (category.Value.ItemList != null)
-                    {
-                        category.Value.ItemList.Clear();
-                        category.Value.ItemList = null;
-                    }
-                }
-                m_CategoryByName.Clear();
-            }
-
-            UpdateControl();
-        }
-
-        public void ItemAdd(BaseItem baseItem)
-        {
-            if (m_CategoryByName.ContainsKey(baseItem.CategoryName))
-            {
-                m_CategoryByName[baseItem.CategoryName].ItemList.Add(baseItem.ItemName, baseItem);
-            }
-        }
-
-        public void CategoryAdd(string categoryKey, CategoryItem catItem)
-        {
-            m_CategoryByName.Add(categoryKey, catItem);
-        }
-
-        public CategoryItem GetCategory(string key)
-        {
-            if (m_CategoryByName.ContainsKey(key))
-                return m_CategoryByName[key];
-            else
-                return null;
-        }
-
-        public void SetCategoryText(string key, string text)
-        {
-            if (m_CategoryByName.ContainsKey(key))
-                m_CategoryByName[key].CategoryName = text;
-        }
-
-        public delegate void ExpandButtonPressedHandle(object sender, StringItem item);
-
-        public event ExpandButtonPressedHandle ExpandButtonPressed;
-
-        private void RaiseExpandButtonPressed(StringItem item)
-        {
-            if (ExpandButtonPressed != null)
-                ExpandButtonPressed(this, item);
-        }
-
-        public delegate void ApplyButtonPressedHandle(object sender, ref bool cancel);
-
-        public event ApplyButtonPressedHandle ApplyButtonPressed;
 
         private void RaiseApplyButtonPressed()
         {

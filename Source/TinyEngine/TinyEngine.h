@@ -9,3 +9,4 @@
 #include "Graphics3D/CameraNode.h"
 #include "Graphics3D/DebugGizmosNode.h"
 #include "Actors/Actor.h"
+#include "Actors/TransformComponent.h"

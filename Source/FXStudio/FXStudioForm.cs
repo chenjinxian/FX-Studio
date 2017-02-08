@@ -21,7 +21,8 @@ namespace FXStudio
     public delegate void MoveActorDelegate(string component, string attribute, Inspector.Vector3 value);
     public delegate void UpdateOutputDelegate(string output, string error);
 
-    public delegate bool ProgressCallback(Single percent, string error);
+    public delegate bool DllProgressCallback(Single percent, string error);
+    public delegate void DllMoveDelegate(string actorXml);
 
     public partial class FXStudioForm : Form
     {
@@ -29,6 +30,8 @@ namespace FXStudio
         private string m_DefaultLocation;
         private string m_ProjectLocation;
         private bool m_Loaded = false;
+
+        private DllMoveDelegate m_DllMoveDelegate;
 
         private DeserializeDockContent m_dockContent;
         private AssetsView m_AssetsView;
@@ -48,6 +51,7 @@ namespace FXStudio
             {
                 Directory.CreateDirectory(m_DefaultLocation);
             }
+            m_DllMoveDelegate = new DllMoveDelegate(ModifyTransformXml);
 
             InitializeComponent();
 
@@ -168,8 +172,14 @@ namespace FXStudio
                 RenderMethods.ModifyActor(xmlActor.OuterXml);
             });
 
+            RenderMethods.SetMoveDelegate(m_DllMoveDelegate);
 
             EnableControlView(true);
+        }
+
+        private void ModifyTransformXml(string actorXml)
+        {
+            m_ProjectView.ModifyTransformXml(actorXml);
         }
 
         private void EnableControlView(bool enable)

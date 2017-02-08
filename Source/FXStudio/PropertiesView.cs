@@ -16,6 +16,7 @@ namespace FXStudio
     public partial class PropertiesView : ViewWindow
     {
         private MoveActorDelegate m_MoveDelegate = null;
+        private XmlNode m_LastSelectedNode = null;
 
         public PropertiesView()
         {
@@ -29,7 +30,9 @@ namespace FXStudio
 
         public void UpdateAssetProperties(XmlNode selectedNode)
         {
-            inspectorComponent.ItemsClear();
+            bool reset = (m_LastSelectedNode != selectedNode);
+            if (reset)
+                inspectorComponent.ItemsClear();
 
             string nodeName = selectedNode.Name;
             if (nodeName == "Effect")
@@ -49,12 +52,15 @@ namespace FXStudio
                 inspectorComponent.ItemAdd(new Inspector.StringItem("ImageProperties", textureName, selectedNode.InnerText));
             }
 
-            inspectorComponent.UpdateControl();
+            inspectorComponent.UpdateControl(reset);
+            m_LastSelectedNode = selectedNode;
         }
 
         public bool UpdateProjectProperties(XmlNode selectedNode)
         {
-            inspectorComponent.ItemsClear();
+            bool reset = (m_LastSelectedNode != selectedNode);
+            if (reset)
+                inspectorComponent.ItemsClear();
 
             bool isActorNode = false;
 
@@ -111,7 +117,8 @@ namespace FXStudio
                 }
             }
 
-            inspectorComponent.UpdateControl();
+            inspectorComponent.UpdateControl(reset);
+            m_LastSelectedNode = selectedNode;
             return isActorNode;
         }
 

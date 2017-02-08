@@ -96,7 +96,7 @@ namespace FXStudio
                     RenderMethods.GetEffectXml(@"Effects\" + Path.GetFileName(destOjbect), effectXml, size);
                     AddEffect(effectXml.ToString());
                 }
-            }       
+            }
         }
 
         private void AddEffect(string effectXmlString)
@@ -164,14 +164,14 @@ namespace FXStudio
 
         private void treeViewAssets_VisibleChanged(object sender, EventArgs e)
         {
-            if (treeViewAssets.SelectedNode != null)
-            {
-                XmlNode element = (XmlNode)treeViewAssets.SelectedNode.Tag;
-                if (element != null)
-                {
-                    m_NodeDelegate?.Invoke(element);
-                }
-            }
+            //             if (treeViewAssets.SelectedNode != null)
+            //             {
+            //                 XmlNode element = (XmlNode)treeViewAssets.SelectedNode.Tag;
+            //                 if (element != null)
+            //                 {
+            //                     m_NodeDelegate?.Invoke(element);
+            //                 }
+            //             }
         }
 
         private void treeViewAssets_DragEnter(object sender, DragEventArgs e)

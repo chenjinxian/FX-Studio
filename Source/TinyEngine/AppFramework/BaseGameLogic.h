@@ -85,7 +85,7 @@ public:
 		tinyxml2::XMLElement *pActorRoot, const Matrix& initialTransform = Matrix::Identity, ActorId serversActorId = INVALID_ACTOR_ID) override;
 	virtual void VDestroyActor(ActorId actorId) override;
 	virtual WeakActorPtr VGetActor(ActorId actorId) override;
-	virtual void VMoveActor(ActorId actorId, const Matrix& mat) override;
+	virtual void VMoveActor(ActorId actorId) override;
 	virtual void VModifyActor(ActorId actorId, tinyxml2::XMLElement *overrides);
 
 	virtual void VChangeState(BaseGameState gameState);

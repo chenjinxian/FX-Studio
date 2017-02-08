@@ -92,7 +92,8 @@ bool BaseGameLogic::VLoadGame(const std::string& projectFile)
 			if (gameView->VGetType() == GameView_Human)
 			{
 				shared_ptr<HumanView> pHumanView = static_pointer_cast<HumanView, IGameView>(gameView);
-				pHumanView->LoadGame(pEditorCamera);
+				if (!pHumanView->LoadGame(pEditorCamera))
+					return false;
 			}
 		}
 	}
@@ -223,7 +224,7 @@ WeakActorPtr BaseGameLogic::VGetActor(ActorId actorId)
 	return WeakActorPtr();
 }
 
-void BaseGameLogic::VMoveActor(ActorId actorId, const Matrix& mat)
+void BaseGameLogic::VMoveActor(ActorId actorId)
 {
 	 
 }
@@ -350,7 +351,7 @@ void BaseGameLogic::RequestDestroyActorDelegate(IEventDataPtr pEventData)
 void BaseGameLogic::MoveActorDelegate(IEventDataPtr pEventData)
 {
 	shared_ptr<EvtData_Move_Actor> pCastEventData = static_pointer_cast<EvtData_Move_Actor>(pEventData);
-	VMoveActor(pCastEventData->GetActorId(), pCastEventData->GetMatrix());
+	VMoveActor(pCastEventData->GetActorId());
 }
 
 void BaseGameLogic::RequestNewActorDelegate(IEventDataPtr pEventData)

@@ -113,16 +113,6 @@ FXSTUDIOCORE_API void OpenProject(BSTR lFileName)
 	}
 }
 
-FXSTUDIOCORE_API void CreateNewProject(BSTR lFileName)
-{
-	std::string project = Utility::WS2S(std::wstring(lFileName, SysStringLen(lFileName)));
-	FXStudioLogic* pEditorLogic = dynamic_cast<FXStudioLogic*>(g_pApp->GetGameLogic());
-	if (pEditorLogic != nullptr)
-	{
-		pEditorLogic->VCreateNewProject(project);
-	}
-}
-
 FXSTUDIOCORE_API void SetTransformType(int type)
 {
 	FXStudioLogic* pEditorLogic = dynamic_cast<FXStudioLogic*>(g_pApp->GetGameLogic());

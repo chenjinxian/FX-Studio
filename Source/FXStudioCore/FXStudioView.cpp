@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "FXStudioView.h"
 #include "FXStudioApp.h"
+#include "FXStudioEvent.h"
 
 extern FXStudioApp globalApp;
 
@@ -147,11 +148,15 @@ bool FXStudioView::VLoadGameDelegate(tinyxml2::XMLElement* pCameraNode)
 		{
 			yaw = pRotationElement->FloatAttribute("y");
 			pitch = pRotationElement->FloatAttribute("x");
-// 			roll = pRotationElement->FloatAttribute("z");
+			roll = pRotationElement->FloatAttribute("z");
 		}
 	}
 
-	m_pEditorCamera->VSetTransform(Matrix::CreateFromYawPitchRoll(yaw, pitch, roll) * Matrix::CreateTranslation(position));
+	Matrix rotation = Matrix::CreateFromYawPitchRoll(XMConvertToRadians(yaw), -XMConvertToRadians(pitch), 0.0f);
+	Matrix translation = Matrix::CreateTranslation(position);
+	m_pEditorCamera->VSetTransform(translation * rotation);
+	shared_ptr<EvtData_Move_Camera> pEvent(DEBUG_NEW EvtData_Move_Camera());
+	IEventManager::Get()->VQueueEvent(pEvent);
 
 	m_pModelController.reset(DEBUG_NEW ModelController(m_pEditorCamera, m_pGizmosNode, position, yaw, pitch));
 	m_pCamera->ClearTarget();

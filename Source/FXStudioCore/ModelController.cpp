@@ -6,7 +6,7 @@ ModelController::ModelController(shared_ptr<CameraNode> pEditorCamera, shared_pt
 	const Vector3& cameraPos, float cameraYaw, float cameraPitch)
 	: m_pEditorCamera(pEditorCamera),
 	m_pGizmosNode(pGizmosNode),
-	m_CameraType(CT_FirstPerson),
+	m_CameraType(CT_OrbitView),
 	m_Position(cameraPos),
 	m_Yaw(-cameraYaw),
 	m_Pitch(cameraPitch),
@@ -33,7 +33,6 @@ void ModelController::OnUpdate(const GameTime& gameTime)
 	{
 	case CT_FirstPerson:
 	{
-		bool isTranslating = false;
 		Vector3 forward = Vector3::Zero;
 		Vector3 strafe = Vector3::Zero;
 
@@ -41,26 +40,26 @@ void ModelController::OnUpdate(const GameTime& gameTime)
 		if (m_Keys['W'] || m_Keys[VK_UP])
 		{
 			forward = Vector3::TransformNormal(Vector3::Forward, worldMatrix);
-			isTranslating = true;
+			m_IsChanged = true;
 		}
 		else if (m_Keys['S'] || m_Keys[VK_DOWN])
 		{
 			forward = Vector3::TransformNormal(Vector3::Backward, worldMatrix);
-			isTranslating = true;
+			m_IsChanged = true;
 		}
 
 		if (m_Keys['A'] || m_Keys[VK_LEFT])
 		{
-			strafe = Vector3::TransformNormal(Vector3::Right, worldMatrix);
-			isTranslating = true;
+			strafe = Vector3::TransformNormal(Vector3::Left, worldMatrix);
+			m_IsChanged = true;
 		}
 		else if (m_Keys['D'] || m_Keys[VK_RIGHT])
 		{
-			strafe = Vector3::TransformNormal(Vector3::Left, worldMatrix);
-			isTranslating = true;
+			strafe = Vector3::TransformNormal(Vector3::Right, worldMatrix);
+			m_IsChanged = true;
 		}
 
-		if (isTranslating)
+		if (m_IsChanged)
 		{
 			float numberOfSeconds = 5.0f;
 			m_CurrentSpeed += m_MaxSpeed * ((gameTime.GetElapsedTime() * gameTime.GetElapsedTime()) / numberOfSeconds);
@@ -78,16 +77,18 @@ void ModelController::OnUpdate(const GameTime& gameTime)
 		}
 
 		{
-			m_Yaw += (m_TargetYaw - m_Yaw) * (.35f);
+			m_Yaw += (m_TargetYaw - m_Yaw) * (.25f);
 			m_TargetPitch = std::max<float>(-90.0f, std::min<float>(90.0f, m_TargetPitch));
-			m_Pitch += (m_TargetPitch - m_Pitch) * (.35f);
+			m_Pitch += (m_TargetPitch - m_Pitch) * (.25f);
 
-			Matrix rotation = Matrix::CreateFromYawPitchRoll(XMConvertToRadians(m_Yaw), XMConvertToRadians(m_Pitch), 0.0f);
-			rotation.Translation(m_Position);
+			float radiansYaw = XMConvertToRadians(m_Yaw);
+			float radiansPitch = XMConvertToRadians(m_Pitch);
+			Matrix rotation = Matrix::CreateFromYawPitchRoll(radiansYaw, -radiansPitch, 0.0f);
+			Matrix translation = Matrix::CreateTranslation(m_Position);
 
-			if (m_pEditorCamera != nullptr)
+			if (m_IsChanged && m_pEditorCamera != nullptr)
 			{
-				m_pEditorCamera->VSetTransform(rotation);
+				m_pEditorCamera->VSetTransform(rotation * translation);
 			}
 		}
 
@@ -99,17 +100,17 @@ void ModelController::OnUpdate(const GameTime& gameTime)
 		m_Position += Vector3::Forward * speed;
 		m_Delta = 0.0f;
 
-		m_Yaw += (m_TargetYaw - m_Yaw) * (.35f);
-		m_Pitch += (m_TargetPitch - m_Pitch) * (.35f);
+		m_Yaw += (m_TargetYaw - m_Yaw) * (.25f);
+		m_Pitch += (m_TargetPitch - m_Pitch) * (.25f);
 
 		float radiansYaw = XMConvertToRadians(m_Yaw);
-		float radiansPitch = -XMConvertToRadians(m_Pitch);
-		Matrix rotation = Matrix::CreateFromYawPitchRoll(radiansYaw, radiansPitch, 0.0f);
-		rotation.Translation(Vector3::TransformNormal(m_Position, rotation));
+		float radiansPitch = XMConvertToRadians(m_Pitch);
+		Matrix rotation = Matrix::CreateFromYawPitchRoll(radiansYaw, -radiansPitch, 0.0f);
+		Matrix translation = Matrix::CreateTranslation(m_Position);
 
-		if (m_pEditorCamera != nullptr)
+		if (m_IsChanged && m_pEditorCamera != nullptr)
 		{
-			m_pEditorCamera->VSetTransform(rotation);
+			m_pEditorCamera->VSetTransform(translation * rotation);
 		}
 		break;
 	}
@@ -117,8 +118,12 @@ void ModelController::OnUpdate(const GameTime& gameTime)
 		break;
 	}
 
-	shared_ptr<EvtData_Move_Camera> pEvent(DEBUG_NEW EvtData_Move_Camera());
-	IEventManager::Get()->VQueueEvent(pEvent);
+	if (m_IsChanged)
+	{
+		shared_ptr<EvtData_Move_Camera> pEvent(DEBUG_NEW EvtData_Move_Camera());
+		IEventManager::Get()->VQueueEvent(pEvent);
+	}
+	m_IsChanged = false;
 }
 
 bool ModelController::VOnPointerLeftButtonDown(const Vector2 &pos, int radius)
@@ -167,6 +172,7 @@ bool ModelController::VOnPointerMove(const Vector2 &pos, int radius)
 			{
 				m_TargetYaw += (m_LastMousePos.x - pos.x);
 				m_TargetPitch += (pos.y - m_LastMousePos.y);
+				m_IsChanged = true;
 			}
 
 			break;
@@ -191,6 +197,7 @@ bool ModelController::VOnPointerMove(const Vector2 &pos, int radius)
 						m_pGizmosNode->PointerMove(pos, m_IsLButtonDown);
 					}
 				}
+				m_IsChanged = true;
 			}
 			else
 			{
@@ -208,6 +215,10 @@ bool ModelController::VOnPointerMove(const Vector2 &pos, int radius)
 
 		m_LastMousePos = pos;
 	}
+	else
+	{
+		m_IsChanged = false;
+	}
 
 	return true;
 }
@@ -215,7 +226,7 @@ bool ModelController::VOnPointerMove(const Vector2 &pos, int radius)
 bool ModelController::VOnPointerWheel(int16_t delta)
 {
 	m_Delta = static_cast<float>(delta);
-
+	m_IsChanged = true;
 	return true;
 }
 

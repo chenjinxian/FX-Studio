@@ -34,7 +34,6 @@ extern "C" {
 	FXSTUDIOCORE_API bool IsGameRunning();
 
 	FXSTUDIOCORE_API void OpenProject(BSTR lFileName);
-	FXSTUDIOCORE_API void CreateNewProject(BSTR lFileName);
 
 	FXSTUDIOCORE_API void SetTransformType(int type);
 	FXSTUDIOCORE_API unsigned int GetPickedActor(int cursorX, int cursorY);

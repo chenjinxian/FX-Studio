@@ -335,7 +335,7 @@ namespace Inspector
                     else if (names[1] == "Scale")
                         delta *= 0.1F;
                     else if (names[1] == "Rotation")
-                        delta *= 0.35F;
+                        delta *= 0.25F;
 
                     Single value = Single.Parse(label.Text) + delta;
                     Vector3Item item = label.Tag as Vector3Item;

@@ -48,8 +48,11 @@ namespace FXStudio
             {
                 string location = dialog.GetProjectLocation();
                 Directory.CreateDirectory(location);
+
                 m_ProjectPath = location + @"\" + dialog.GetProjectName() + @".fxsproj";
-                RenderMethods.CreateNewProject(m_ProjectPath);
+                string assetFile = location + @"\" + dialog.GetProjectName() + @".asset";
+                File.WriteAllText(m_ProjectPath, XmlUtility.DefaultProjectXml);
+                File.WriteAllText(assetFile, XmlUtility.DefaultAssetXml);
 
                 string sourcePath = Directory.GetCurrentDirectory() + @"\Data";
                 CopyDefaultData(sourcePath, location);

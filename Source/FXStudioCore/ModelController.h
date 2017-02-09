@@ -43,6 +43,7 @@ protected:
 	float m_MaxSpeed;
 	float m_CurrentSpeed;
 
+	bool m_IsChanged;
 	bool m_IsLButtonDown;
 	Vector2 m_LastMousePos;
 	bool m_Keys[256];

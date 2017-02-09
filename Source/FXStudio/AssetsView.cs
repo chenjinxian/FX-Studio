@@ -19,9 +19,12 @@ namespace FXStudio
         private string m_ProjectLocation;
         private UpdatePropertiesDelegate m_NodeDelegate = null;
         private UpdateOutputDelegate m_OuputDeleagate = null;
+        private string m_AssetPath;
+        private XmlDocument m_XmlDoc;
 
         public AssetsView()
         {
+            m_XmlDoc = new XmlDocument();
             InitializeComponent();
         }
 
@@ -32,13 +35,15 @@ namespace FXStudio
                 return;
             }
 
+            m_AssetPath = assetFile;
             m_ProjectLocation = Path.GetDirectoryName(assetFile);
             m_NodeDelegate = updateProps;
             m_OuputDeleagate = updateOutput;
 
-            XmlDocument doc = new XmlDocument();
-            doc.Load(assetFile);
-            XmlElement rootXml = doc.DocumentElement;
+            m_XmlDoc.Load(assetFile);
+            XmlElement rootXml = m_XmlDoc.DocumentElement;
+
+            treeViewAssets.BeginUpdate();
 
             foreach (XmlNode node in rootXml.ChildNodes)
             {
@@ -46,6 +51,7 @@ namespace FXStudio
                 if (treeNode != null)
                 {
                     treeNode.Tag = node;
+                    treeNode.Nodes.Clear();
                     foreach (XmlNode child in node.ChildNodes)
                     {
                         if (node.Name == "Effects")
@@ -61,6 +67,19 @@ namespace FXStudio
                     }
                 }
             }
+
+            treeViewAssets.EndUpdate();
+            treeViewAssets.ExpandAll();
+        }
+
+        public void SaveAssetsFile()
+        {
+            m_XmlDoc.Save(XmlWriter.Create(m_AssetPath, new XmlWriterSettings()
+            {
+                Indent = true,
+                IndentChars = "\t",
+                OmitXmlDeclaration = false
+            }));
         }
 
         public void AddEffect(string sourceFileName, string effectName, bool fromExist)
@@ -94,24 +113,22 @@ namespace FXStudio
                 {
                     StringBuilder effectXml = new StringBuilder((int)size);
                     RenderMethods.GetEffectXml(@"Effects\" + Path.GetFileName(destOjbect), effectXml, size);
-                    AddEffect(effectXml.ToString());
+
+                    XmlDocument effectDoc = new XmlDocument();
+                    effectDoc.LoadXml(effectXml.ToString());
+                    XmlElement effectXmlNode = effectDoc.DocumentElement;
+
+                    XmlNode effectRoot = m_XmlDoc.DocumentElement.SelectSingleNode("Effects");
+                    if (effectRoot != null)
+                    {
+                        effectRoot.AppendChild(m_XmlDoc.ImportNode(effectXmlNode, true));
+                        TreeNode effectsTreeNode = treeViewAssets.Nodes["Effects"];
+                        if (effectsTreeNode != null)
+                        {
+                            AddEffect(effectsTreeNode, effectRoot.LastChild);
+                        }
+                    }
                 }
-            }
-        }
-
-        private void AddEffect(string effectXmlString)
-        {
-            if (string.IsNullOrEmpty(effectXmlString))
-                return;
-
-            XmlDocument effectDoc = new XmlDocument();
-            effectDoc.LoadXml(effectXmlString);
-            XmlElement effectXmlNode = effectDoc.DocumentElement;
-
-            TreeNode effectsTreeNode = treeViewAssets.Nodes["Effects"];
-            if (effectsTreeNode != null)
-            {
-                AddEffect(effectsTreeNode, effectXmlNode);
             }
         }
 

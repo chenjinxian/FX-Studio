@@ -212,19 +212,19 @@ FXSTUDIOCORE_API bool ModifyActor(BSTR modificationXml)
 	{
 		g_pApp->GetGameLogic()->VModifyActor(pRoot->IntAttribute("id"), pRoot);
 	}
-	else
-	{
-		FXStudioLogic* pEditorLogic = dynamic_cast<FXStudioLogic*>(g_pApp->GetGameLogic());
-		if (pEditorLogic == nullptr)
-			return false;
-		
-		shared_ptr<FXStudioView> pView = pEditorLogic->GetHumanView();
-		if (pView == nullptr)
-			return false;
-
-		tinyxml2::XMLElement* pCameraNode = pRoot->FirstChildElement("EditorCamera");
-		pView->MoveEditorCamera(pCameraNode);
-	}
+// 	else
+// 	{
+// 		FXStudioLogic* pEditorLogic = dynamic_cast<FXStudioLogic*>(g_pApp->GetGameLogic());
+// 		if (pEditorLogic == nullptr)
+// 			return false;
+// 		
+// 		shared_ptr<FXStudioView> pView = pEditorLogic->GetHumanView();
+// 		if (pView == nullptr)
+// 			return false;
+// 
+// 		tinyxml2::XMLElement* pCameraNode = pRoot->FirstChildElement("EditorCamera");
+// 		pView->MoveEditorCamera(pCameraNode);
+// 	}
 
 	return true;
 }

@@ -77,23 +77,29 @@ void HumanView::VOnRender(const GameTime& gameTime)
 
 HRESULT HumanView::VOnInitGameViews()
 {
-	HRESULT hr = S_OK;
-	for (ScreenElementList::iterator i = m_ScreenElements.begin(); i != m_ScreenElements.end(); ++i)
-	{
-		(*i)->VOnInitScreenElements();
-	}
+// 	HRESULT hr = S_OK;
+// 	for (ScreenElementList::iterator i = m_ScreenElements.begin(); i != m_ScreenElements.end(); ++i)
+// 	{
+// 		(*i)->VOnInitScreenElements();
+// 	}
 
-	return hr;
+	if (m_pCamera != nullptr)
+		m_pCamera->VOnInitSceneNode(m_pScene.get());
+
+	return S_OK;
 }
 
 HRESULT HumanView::VOnDeleteGameViews()
 {
 // 	HRESULT hr;
 
-	for (ScreenElementList::iterator i = m_ScreenElements.begin(); i != m_ScreenElements.end(); ++i)
-	{
-		(*i)->VOnDeleteScreenElements();
-	}
+// 	for (ScreenElementList::iterator i = m_ScreenElements.begin(); i != m_ScreenElements.end(); ++i)
+// 	{
+// 		(*i)->VOnDeleteScreenElements();
+// 	}
+
+	if (m_pCamera != nullptr)
+		m_pCamera->VOnDeleteSceneNode(m_pScene.get());
 
 	return S_OK;
 }

@@ -147,7 +147,7 @@ namespace FXStudio
             Inspector.CategoryItem category = new Inspector.CategoryItem(cameraNode.Name);
             inspectorComponent.CategoryAdd(cameraNode.Name, category);
 
-            AddTransformItem(cameraNode);
+            AddTransformItem(cameraNode, false);
         }
 
         private void AddSkyboxProperties(XmlNode skyboxNode)
@@ -216,7 +216,7 @@ namespace FXStudio
             AddEffectItem(teapotNode);
         }
 
-        private void AddTransformItem(XmlNode transformNode)
+        private void AddTransformItem(XmlNode transformNode, bool enable = true)
         {
             foreach (XmlNode vector3Node in transformNode)
             {
@@ -226,6 +226,7 @@ namespace FXStudio
 
                 Inspector.Vector3Item vector3Item = new Inspector.Vector3Item(
                     transformNode.Name, vector3Node.Name, new Inspector.Vector3(x, y, z));
+                vector3Item.Enabled = enable;
                 vector3Item.ValueChanged += Vector3Item_ValueChanged;
                 inspectorComponent.ItemAdd(vector3Item);
             }

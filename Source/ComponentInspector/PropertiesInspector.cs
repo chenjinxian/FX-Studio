@@ -121,7 +121,7 @@ namespace Inspector
         {
             foreach (var category in m_CategoryByName)
             {
-                if (category.Key != "TransformComponent")
+                if (category.Key != "TransformComponent" && category.Key != "EditorCamera")
                     continue;
 
                 foreach (var item in category.Value.ItemList)
@@ -275,15 +275,16 @@ namespace Inspector
 
                 x1 += labelWidth;
                 Label labelValue = new Label();
+                labelValue.BackColor = Color.CornflowerBlue;
+                labelValue.BorderStyle = BorderStyle.FixedSingle;
+                labelValue.Enabled = item.Enabled;
+                labelValue.ForeColor = Color.White;
                 labelValue.Location = new Point(x1, 1);
-                labelValue.Size = new Size(textWidth, m_ItemHeight - 4);
                 labelValue.Name = item.CategoryName + "_" + item.ItemName + "_" + "labelValue_" + name;
+                labelValue.Size = new Size(textWidth, m_ItemHeight - 4);
+                labelValue.Tag = item;
                 labelValue.Text = elements[i];
                 labelValue.TextAlign = ContentAlignment.MiddleCenter;
-                labelValue.BorderStyle = BorderStyle.FixedSingle;
-                labelValue.BackColor = Color.CornflowerBlue;
-                labelValue.ForeColor = Color.White;
-                labelValue.Tag = item;
                 labelValue.MouseDown += LabelValue_MouseDown;
                 labelValue.MouseUp += LabelValue_MouseUp;
                 labelValue.MouseMove += LabelValue_MouseMove;

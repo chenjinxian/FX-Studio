@@ -16,24 +16,22 @@ namespace FXStudio
     {
         private UpdatePropertiesDelegate m_NodeDelegate = null;
         private TreeNode m_SceneNode = null;
+        private string m_ProjectPath;
+        private XmlDocument m_XmlDoc;
 
         public ProjectView()
         {
             InitializeComponent();
+            m_XmlDoc = new XmlDocument();
         }
 
-        public void UpdateProject(string project, ref string assetFile, UpdatePropertiesDelegate updateProps)
+        public void UpdateProject(string project, UpdatePropertiesDelegate updateProps)
         {
+            m_ProjectPath = project;
             m_NodeDelegate = updateProps;
-            XmlDocument doc = new XmlDocument();
-            doc.Load(project);
-            XmlElement root = doc.DocumentElement;
 
-            XmlNode assetNode = root.SelectSingleNode("AssetFile");
-            if (assetNode != null)
-            {
-                assetFile = assetNode.FirstChild.Value;
-            }
+            m_XmlDoc.Load(project);
+            XmlElement root = m_XmlDoc.DocumentElement;
 
             treeViewProject.BeginUpdate();
             treeViewProject.Nodes.Clear();
@@ -64,9 +62,18 @@ namespace FXStudio
             }
 
             treeViewProject.Nodes.Add(rootTree);
-            treeViewProject.SelectedNode = m_SceneNode;
+            treeViewProject.SelectedNode = rootTree.FirstNode;
             treeViewProject.EndUpdate();
             treeViewProject.ExpandAll();
+        }
+
+        public void SaveProjectFile()
+        {
+            m_XmlDoc.Save(XmlWriter.Create(m_ProjectPath, new XmlWriterSettings()
+            {
+                Indent = true,
+                IndentChars = "\t"
+            }));
         }
 
         public void AddActorNode(XmlNode node)
@@ -75,6 +82,14 @@ namespace FXStudio
             {
                 m_SceneNode.Nodes.Add(new TreeNode(node.Name) { Tag = node });
                 treeViewProject.SelectedNode = m_SceneNode.Nodes[m_SceneNode.Nodes.Count - 1];
+                try
+                {
+                    m_XmlDoc.DocumentElement.SelectSingleNode("DefaultScene").AppendChild(m_XmlDoc.ImportNode(node, true));
+                }
+                catch (Exception)
+                {
+
+                }
             }
         }
 
@@ -86,7 +101,7 @@ namespace FXStudio
             }
             else
             {
-                treeViewProject.SelectedNode = m_SceneNode;
+                treeViewProject.SelectedNode = treeViewProject.Nodes[0].FirstNode;
             }
         }
 
@@ -112,11 +127,37 @@ namespace FXStudio
             int actorId = int.Parse(root.Attributes["id"].Value);
             if (actorId == treeViewProject.SelectedNode.Index + 1)
             {
+                // Actor node, child of DefaultScene
                 XmlNode selectNode = (XmlNode)treeViewProject.SelectedNode.Tag;
                 XmlNode oldNode = selectNode.SelectSingleNode(root.FirstChild.Name);
                 oldNode.InnerXml = root.FirstChild.InnerXml;
                 treeViewProject.SelectedNode.Tag = selectNode;
 
+                try
+                {
+                    m_XmlDoc.DocumentElement.SelectSingleNode("DefaultScene").ChildNodes[actorId - 1].InnerXml = selectNode.InnerXml;
+                }
+                catch (Exception)
+                {
+
+                }
+                m_NodeDelegate?.Invoke((XmlNode)treeViewProject.SelectedNode.Tag);
+            }
+            else
+            {
+                // Editor camera node
+                XmlNode selectNode = (XmlNode)treeViewProject.SelectedNode.Tag;
+                selectNode.InnerXml = root.FirstChild.InnerXml;
+                treeViewProject.SelectedNode.Tag = selectNode;
+
+                try
+                {
+                    m_XmlDoc.DocumentElement.SelectSingleNode("EditorCamera").InnerXml = selectNode.InnerXml;
+                }
+                catch (Exception)
+                {
+
+                }
                 m_NodeDelegate?.Invoke((XmlNode)treeViewProject.SelectedNode.Tag);
             }
         }

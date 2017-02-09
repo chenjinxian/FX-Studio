@@ -30,12 +30,12 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RenderView));
             this.toolStripRender = new System.Windows.Forms.ToolStrip();
-            this.toolStripButtonInstance = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButtonNavigation = new System.Windows.Forms.ToolStripButton();
+            this.toolStripDropDownButtonNavigation = new System.Windows.Forms.ToolStripDropDownButton();
+            this.toolStripMenuItemOrbit = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItemFp = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripButtonZoomObjects = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonReset = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButtonZoomScene = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripButtonSelect = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonTranslate = new System.Windows.Forms.ToolStripButton();
@@ -50,12 +50,10 @@
             // 
             this.toolStripRender.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolStripRender.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripButtonInstance,
-            this.toolStripButtonNavigation,
+            this.toolStripDropDownButtonNavigation,
             this.toolStripSeparator1,
             this.toolStripButtonZoomObjects,
             this.toolStripButtonReset,
-            this.toolStripButtonZoomScene,
             this.toolStripSeparator2,
             this.toolStripButtonSelect,
             this.toolStripButtonTranslate,
@@ -68,23 +66,31 @@
             this.toolStripRender.TabIndex = 0;
             this.toolStripRender.Text = "toolStripRender";
             // 
-            // toolStripButtonInstance
+            // toolStripDropDownButtonNavigation
             // 
-            this.toolStripButtonInstance.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButtonInstance.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonInstance.Image")));
-            this.toolStripButtonInstance.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButtonInstance.Name = "toolStripButtonInstance";
-            this.toolStripButtonInstance.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButtonInstance.Text = "Instance Cameras";
+            this.toolStripDropDownButtonNavigation.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripDropDownButtonNavigation.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuItemOrbit,
+            this.toolStripMenuItemFp});
+            this.toolStripDropDownButtonNavigation.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButtonNavigation.Image")));
+            this.toolStripDropDownButtonNavigation.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripDropDownButtonNavigation.Name = "toolStripDropDownButtonNavigation";
+            this.toolStripDropDownButtonNavigation.Size = new System.Drawing.Size(29, 22);
+            this.toolStripDropDownButtonNavigation.Text = "Navigation Mode";
             // 
-            // toolStripButtonNavigation
+            // toolStripMenuItemOrbit
             // 
-            this.toolStripButtonNavigation.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButtonNavigation.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonNavigation.Image")));
-            this.toolStripButtonNavigation.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButtonNavigation.Name = "toolStripButtonNavigation";
-            this.toolStripButtonNavigation.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButtonNavigation.Text = "Navigation Mode";
+            this.toolStripMenuItemOrbit.Name = "toolStripMenuItemOrbit";
+            this.toolStripMenuItemOrbit.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItemOrbit.Text = "Orbit";
+            this.toolStripMenuItemOrbit.Click += new System.EventHandler(this.toolStripMenuItemOrbit_Click);
+            // 
+            // toolStripMenuItemFp
+            // 
+            this.toolStripMenuItemFp.Name = "toolStripMenuItemFp";
+            this.toolStripMenuItemFp.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItemFp.Text = "First Person";
+            this.toolStripMenuItemFp.Click += new System.EventHandler(this.toolStripMenuItemFp_Click);
             // 
             // toolStripSeparator1
             // 
@@ -108,15 +114,6 @@
             this.toolStripButtonReset.Name = "toolStripButtonReset";
             this.toolStripButtonReset.Size = new System.Drawing.Size(23, 22);
             this.toolStripButtonReset.Text = "Reset Camera Rotation";
-            // 
-            // toolStripButtonZoomScene
-            // 
-            this.toolStripButtonZoomScene.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButtonZoomScene.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonZoomScene.Image")));
-            this.toolStripButtonZoomScene.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButtonZoomScene.Name = "toolStripButtonZoomScene";
-            this.toolStripButtonZoomScene.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButtonZoomScene.Text = "Zoom Scene Extents";
             // 
             // toolStripSeparator2
             // 
@@ -179,7 +176,7 @@
             this.panelRender.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelRender.Location = new System.Drawing.Point(0, 25);
             this.panelRender.Name = "panelRender";
-            this.panelRender.Size = new System.Drawing.Size(756, 569);
+            this.panelRender.Size = new System.Drawing.Size(756, 523);
             this.panelRender.TabIndex = 1;
             this.panelRender.DragDrop += new System.Windows.Forms.DragEventHandler(this.panelRender_DragDrop);
             this.panelRender.DragEnter += new System.Windows.Forms.DragEventHandler(this.panelRender_DragEnter);
@@ -187,9 +184,9 @@
             // 
             // RenderView
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(756, 594);
+            this.ClientSize = new System.Drawing.Size(756, 548);
             this.Controls.Add(this.panelRender);
             this.Controls.Add(this.toolStripRender);
             this.Name = "RenderView";
@@ -208,17 +205,17 @@
 
         private System.Windows.Forms.ToolStrip toolStripRender;
         private System.Windows.Forms.Panel panelRender;
-        private System.Windows.Forms.ToolStripButton toolStripButtonInstance;
-        private System.Windows.Forms.ToolStripButton toolStripButtonNavigation;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripButton toolStripButtonZoomObjects;
         private System.Windows.Forms.ToolStripButton toolStripButtonReset;
-        private System.Windows.Forms.ToolStripButton toolStripButtonZoomScene;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripButton toolStripButtonSelect;
         private System.Windows.Forms.ToolStripButton toolStripButtonTranslate;
         private System.Windows.Forms.ToolStripButton toolStripButtonRotate;
         private System.Windows.Forms.ToolStripButton toolStripButtonScale;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
+        private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButtonNavigation;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemOrbit;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemFp;
     }
 }

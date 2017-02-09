@@ -90,8 +90,7 @@ namespace FXStudio
             RenderMethods.OpenProject(project);
             m_ProjectLocation = Path.GetDirectoryName(project);
 
-            string assetFile = string.Empty;
-            m_ProjectView.UpdateProject(project, ref assetFile, selectedNode =>
+            m_ProjectView.UpdateProject(project, selectedNode =>
             {
                 if (m_PropertiesView.UpdateProjectProperties(selectedNode))
                 {
@@ -105,9 +104,8 @@ namespace FXStudio
                     RenderMethods.SetPickedActor(0);
             });
 
-            if (string.Empty != assetFile)
-                m_AssetsView.UpdateAssets(
-                    m_ProjectLocation + @"\" + assetFile, m_PropertiesView.UpdateAssetProperties, m_outputView.UpdateCompileInfo);
+            string assetFile = m_ProjectLocation + @"\" + Path.GetFileNameWithoutExtension(project) + ".asset";
+            m_AssetsView.UpdateAssets(assetFile, m_PropertiesView.UpdateAssetProperties, m_outputView.UpdateCompileInfo);
 
             m_PropertiesView.SetMoveActorDelegate((string component, string attribute, Inspector.Vector3 value) =>
             {
@@ -534,6 +532,12 @@ namespace FXStudio
             {
                 m_AssetsView.AddEffect(dialog.FileName, dialog.EffectName, dialog.IsEffectFromExist());
             }
+        }
+
+        private void toolStripButtonSaveAll_Click(object sender, EventArgs e)
+        {
+            m_ProjectView.SaveProjectFile();
+            m_AssetsView.SaveAssetsFile();
         }
     }
 }

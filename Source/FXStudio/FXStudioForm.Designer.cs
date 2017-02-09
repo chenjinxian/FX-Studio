@@ -202,6 +202,7 @@
             this.toolStripButtonSaveAll.Size = new System.Drawing.Size(57, 61);
             this.toolStripButtonSaveAll.Text = "Save All";
             this.toolStripButtonSaveAll.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.toolStripButtonSaveAll.Click += new System.EventHandler(this.toolStripButtonSaveAll_Click);
             // 
             // toolStripSeparator2
             // 

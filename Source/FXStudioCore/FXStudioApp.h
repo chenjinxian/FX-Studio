@@ -34,8 +34,10 @@ public:
 	const ActorMap& GetActorMap() { return m_Actors; }
 	bool IsRunning() { return (BGS_Running == m_GameState); }
 	shared_ptr<FXStudioView> GetHumanView();
+	
+private:
+	void MoveCameraDelegate(IEventDataPtr pEventData);
 
-protected:
 	std::string m_ProjectDirectory;
 	MoveDelegate m_MoveDelegate;
 };

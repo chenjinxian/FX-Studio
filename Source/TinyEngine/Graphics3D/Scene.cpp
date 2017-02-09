@@ -17,23 +17,17 @@ Scene::Scene(shared_ptr<IRenderer> pRenderer)
 	m_pRootNode.reset(DEBUG_NEW RootNode());
 
 	IEventManager* pEventMgr = IEventManager::Get();
-	pEventMgr->VAddListener(
-		boost::bind(&Scene::NewRenderComponentDelegate, this, _1), EvtData_New_Render_Component::sk_EventType);
-	pEventMgr->VAddListener(
-		boost::bind(&Scene::DestroyActorDelegate, this, _1), EvtData_Destroy_Actor::sk_EventType);
-	pEventMgr->VAddListener(
-		boost::bind(&Scene::ModifiedRenderComponentDelegate, this, _1), EvtData_Modified_Render_Component::sk_EventType);
+	pEventMgr->VAddListener(boost::bind(&Scene::NewRenderComponentDelegate, this, _1), EvtData_New_Render_Component::sk_EventType);
+	pEventMgr->VAddListener(boost::bind(&Scene::DestroyActorDelegate, this, _1), EvtData_Destroy_Actor::sk_EventType);
+	pEventMgr->VAddListener(boost::bind(&Scene::ModifiedRenderComponentDelegate, this, _1), EvtData_Modified_Render_Component::sk_EventType);
 }
 
 Scene::~Scene()
 {
 	IEventManager* pEventMgr = IEventManager::Get();
-	pEventMgr->VRemoveListener(
-		boost::bind(&Scene::NewRenderComponentDelegate, this, _1), EvtData_New_Render_Component::sk_EventType);
-	pEventMgr->VRemoveListener(
-		boost::bind(&Scene::DestroyActorDelegate, this, _1), EvtData_Destroy_Actor::sk_EventType);
-	pEventMgr->VRemoveListener(
-		boost::bind(&Scene::ModifiedRenderComponentDelegate, this, _1), EvtData_Modified_Render_Component::sk_EventType);
+	pEventMgr->VRemoveListener(boost::bind(&Scene::NewRenderComponentDelegate, this, _1), EvtData_New_Render_Component::sk_EventType);
+	pEventMgr->VRemoveListener(boost::bind(&Scene::DestroyActorDelegate, this, _1), EvtData_Destroy_Actor::sk_EventType);
+	pEventMgr->VRemoveListener(boost::bind(&Scene::ModifiedRenderComponentDelegate, this, _1), EvtData_Modified_Render_Component::sk_EventType);
 }
 
 HRESULT Scene::OnUpdate(const GameTime& gameTime)

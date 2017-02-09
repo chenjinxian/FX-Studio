@@ -100,11 +100,10 @@ bool BaseGameLogic::VLoadGame(const std::string& projectFile)
 
 	for (tinyxml2::XMLElement* pSceneNode = pEditorCamera->NextSiblingElement(); pSceneNode != nullptr; pSceneNode = pSceneNode->NextSiblingElement())
 	{
-		tinyxml2::XMLElement* pSkybox = pSceneNode->FirstChildElement("Skybox");
-		VCreateActor(pSkybox);
-
-		tinyxml2::XMLElement* pGrid = pSceneNode->FirstChildElement("Grid");
-		VCreateActor(pGrid);
+		for (tinyxml2::XMLElement* pChild = pSceneNode->FirstChildElement(); pChild != nullptr; pChild = pChild->NextSiblingElement())
+		{
+			VCreateActor(pChild);
+		}
 	}
 
 	if (!VLoadGameDelegate())

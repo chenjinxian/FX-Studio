@@ -103,5 +103,15 @@ namespace FXStudio
                     e.Effect = DragDropEffects.None;
             }
         }
+
+        private void toolStripMenuItemOrbit_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void toolStripMenuItemFp_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

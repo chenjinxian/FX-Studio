@@ -279,8 +279,7 @@ void BaseGameApp::OnRender(const GameTime& gameTime)
 {
 	BaseGameLogic *pGame = g_pApp->m_pGameLogic;
 
-	for (GameViewList::iterator i = pGame->m_GameViews.begin(),
-		end = pGame->m_GameViews.end(); i != end; ++i)
+	for (GameViewList::iterator i = pGame->m_GameViews.begin(), end = pGame->m_GameViews.end(); i != end; ++i)
 	{
 		(*i)->VOnRender(gameTime);
 	}
@@ -495,18 +494,18 @@ void BaseGameApp::OnResize(int screenWidth, int screenHeight)
 {
 	if (g_pApp->m_pGameLogic != nullptr && g_pApp->m_pRenderer != nullptr)
 	{
-		for (auto gameView : g_pApp->m_pGameLogic->m_GameViews)
+		for (auto view : g_pApp->m_pGameLogic->m_GameViews)
 		{
-			gameView->VOnDeleteGameViews();
+			view->VOnDeleteGameViews();
 		}
 
 		g_pApp->m_Config.m_ScreenWidth = screenWidth;
 		g_pApp->m_Config.m_ScreenHeight = screenHeight;
 		g_pApp->m_pRenderer->VResizeSwapChain();
 
-		for (auto gameView : g_pApp->m_pGameLogic->m_GameViews)
+		for (auto view : g_pApp->m_pGameLogic->m_GameViews)
 		{
-			gameView->VOnInitGameViews();
+			view->VOnInitGameViews();
 		}
 	}
 }

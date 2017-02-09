@@ -68,6 +68,60 @@ void FXStudioView::MoveEditorCamera(tinyxml2::XMLElement* pCameraNode)
 	}
 }
 
+tinyxml2::XMLElement* FXStudioView::GenerateCameraXml(tinyxml2::XMLDocument* pDocument)
+{
+	Vector3 scale;
+	Quaternion quat;
+	Vector3 translation;
+	Matrix world = m_pEditorCamera->VGet()->GetWorldMatrix();
+	world.Decompose(scale, quat, translation);
+
+	tinyxml2::XMLElement* pBaseElement = pDocument->NewElement("EditorCamera");
+	pBaseElement->SetAttribute("type", "EditorCamera");
+
+	tinyxml2::XMLElement* pPositionElement = pDocument->NewElement("Translation");
+	pPositionElement->SetAttribute("x", translation.x);
+	pPositionElement->SetAttribute("y", translation.y);
+	pPositionElement->SetAttribute("z", translation.z);
+	pBaseElement->InsertEndChild(pPositionElement);
+
+	float x = 2.0f * (quat.w * quat.x - quat.y * quat.z);
+	if (x > 1.0f) x = 1.0f;
+	if (x < -1.0f) x = -1.0f;
+
+	float pitch = XMConvertToDegrees(std::asinf(x));
+	float yaw = 0.0f;
+	float roll = 0.0f;
+
+	if (fabsf(fabsf(x) - 1.0f) > FLT_EPSILON)
+	{
+		yaw = XMConvertToDegrees(std::atan2f(2.0f * (quat.x * quat.z + quat.w * quat.y), 1.0f - 2.0f * (quat.x * quat.x + quat.y * quat.y)));
+		roll = XMConvertToDegrees(std::atan2f(2.0f * (quat.x * quat.y + quat.w * quat.z), 1.0f - 2.0f * (quat.x * quat.x + quat.z * quat.z)));
+	}
+	else
+	{
+		roll = XMConvertToDegrees(std::atan2f(2.0f * (quat.x * quat.y - quat.w * quat.z), 1.0f - 2.0f * (quat.y * quat.y + quat.z * quat.z)));
+	}
+
+	tinyxml2::XMLElement* pRotationElement = pDocument->NewElement("Rotation");
+	pRotationElement->SetAttribute("x", pitch);
+	pRotationElement->SetAttribute("y", yaw);
+	pRotationElement->SetAttribute("z", roll);
+	pBaseElement->InsertEndChild(pRotationElement);
+
+	return pBaseElement;
+}
+
+HRESULT FXStudioView::VOnInitGameViews()
+{
+	return S_OK;
+}
+
+HRESULT FXStudioView::VOnDeleteGameViews()
+{
+	return S_OK;
+}
+
 bool FXStudioView::VLoadGameDelegate(tinyxml2::XMLElement* pCameraNode)
 {
 	if (!HumanView::VLoadGameDelegate(pCameraNode))
@@ -93,9 +147,11 @@ bool FXStudioView::VLoadGameDelegate(tinyxml2::XMLElement* pCameraNode)
 		{
 			yaw = pRotationElement->FloatAttribute("y");
 			pitch = pRotationElement->FloatAttribute("x");
-			roll = pRotationElement->FloatAttribute("z");
+// 			roll = pRotationElement->FloatAttribute("z");
 		}
 	}
+
+	m_pEditorCamera->VSetTransform(Matrix::CreateFromYawPitchRoll(yaw, pitch, roll) * Matrix::CreateTranslation(position));
 
 	m_pModelController.reset(DEBUG_NEW ModelController(m_pEditorCamera, m_pGizmosNode, position, yaw, pitch));
 	m_pCamera->ClearTarget();

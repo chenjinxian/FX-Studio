@@ -95,8 +95,6 @@ namespace FXStudio
                         case WM_CHAR:
                         case WM_CLOSE:
                             {
-                                RenderMethods.WndProc(m_renderPanel.Handle, m.Msg, m.WParam, m.LParam);
-
                                 if (m_fakeFocus && m.Msg == WM_LBUTTONDOWN)
                                 {
                                     System.Drawing.Point position = Cursor.Position;
@@ -109,6 +107,8 @@ namespace FXStudio
                                         m_formMain.PickActor(relativeToForm);
                                     }
                                 }
+                                RenderMethods.WndProc(m_renderPanel.Handle, m.Msg, m.WParam, m.LParam);
+
                                 return true;
                             }
                     }

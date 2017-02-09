@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "FXStudioApp.h"
 #include "FXStudioView.h"
+#include "FXStudioEvent.h"
 #include <direct.h>
 
 #ifdef _DEBUG
@@ -15,11 +16,8 @@
 #pragma comment(lib, "zlibstatic.lib")
 #endif
 
-// #ifdef _DEBUG
-// #pragma comment(lib, "RenderEngined.lib")
-// #else
-// #pragma comment(lib, "RenderEngine.lib")
-// #endif
+
+const EventType EvtData_Move_Camera::sk_EventType(0xc8146af);
 
 FXStudioApp globalApp;
 
@@ -48,15 +46,15 @@ FXStudioLogic::FXStudioLogic()
 	m_ProjectDirectory = m_ProjectDirectory.substr(0, slashGamePos);
 
 	IEventManager* pEventMgr = IEventManager::Get();
-	pEventMgr->VAddListener(
-		boost::bind(&FXStudioLogic::MoveActorDelegate, this, _1), EvtData_Move_Actor::sk_EventType);
+	pEventMgr->VAddListener(boost::bind(&FXStudioLogic::MoveActorDelegate, this, _1), EvtData_Move_Actor::sk_EventType);
+	pEventMgr->VAddListener(boost::bind(&FXStudioLogic::MoveCameraDelegate, this, _1), EvtData_Move_Camera::sk_EventType);
 }
 
 FXStudioLogic::~FXStudioLogic()
 {
 	IEventManager* pEventMgr = IEventManager::Get();
-	pEventMgr->VRemoveListener(
-		boost::bind(&FXStudioLogic::MoveActorDelegate, this, _1), EvtData_Move_Actor::sk_EventType);
+	pEventMgr->VRemoveListener(boost::bind(&FXStudioLogic::MoveActorDelegate, this, _1), EvtData_Move_Actor::sk_EventType);
+	pEventMgr->VRemoveListener(boost::bind(&FXStudioLogic::MoveCameraDelegate, this, _1), EvtData_Move_Camera::sk_EventType);
 }
 
 void FXStudioLogic::VMoveActor(ActorId actorId)
@@ -108,4 +106,23 @@ shared_ptr<FXStudioView> FXStudioLogic::GetHumanView()
 	shared_ptr<IGameView> pGameView = *m_GameViews.begin();
 	shared_ptr<FXStudioView> editorHumanView = static_pointer_cast<FXStudioView>(pGameView);
 	return editorHumanView;
+}
+
+void FXStudioLogic::MoveCameraDelegate(IEventDataPtr pEventData)
+{
+	shared_ptr<EvtData_Move_Camera> pCastEventData = static_pointer_cast<EvtData_Move_Camera>(pEventData);
+	if (pCastEventData != nullptr && m_MoveDelegate != nullptr)
+	{
+		tinyxml2::XMLDocument outDoc;
+
+		tinyxml2::XMLElement* pRoot = outDoc.NewElement("Actor");
+		outDoc.InsertEndChild(pRoot);
+		pRoot->SetAttribute("id", 0);
+
+		pRoot->InsertEndChild(GetHumanView()->GenerateCameraXml(&outDoc));
+
+		tinyxml2::XMLPrinter printer;
+		outDoc.Accept(&printer);
+		m_MoveDelegate(printer.CStr());
+	}
 }

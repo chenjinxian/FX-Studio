@@ -169,6 +169,7 @@
   <ItemGroup>
     <ClInclude Include="FXStudioApp.h" />
     <ClInclude Include="FXStudioCore.h" />
+    <ClInclude Include="FXStudioEvent.h" />
     <ClInclude Include="FXStudioView.h" />
     <ClInclude Include="ModelController.h" />
     <ClInclude Include="ModelImporter.h" />

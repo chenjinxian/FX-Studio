@@ -5,7 +5,7 @@ class SceneNode;
 
 enum CameraType
 {
-	CT_FirstPerson, CT_OrbitView
+	CT_OrbitView = 0, CT_FirstPerson = 1
 };
 
 class ModelController : public IPointerHandler, public IKeyboardHandler
@@ -14,7 +14,7 @@ public:
 	ModelController(shared_ptr<CameraNode> pEditorCamera, shared_ptr<DebugGizmosNode> pGizmosNode,
 		const Vector3& cameraPos, float cameraYaw, float cameraPitch);
 
-	void SetCameraType(CameraType type) { m_CameraType = type; }
+	void SetCameraType(CameraType type);
 	void OnUpdate(const GameTime& gameTime);
 
 	virtual bool VOnPointerLeftButtonDown(const Vector2 &pos, int radius) override;

@@ -106,12 +106,16 @@ namespace FXStudio
 
         private void toolStripMenuItemOrbit_Click(object sender, EventArgs e)
         {
-
+            toolStripMenuItemOrbit.Checked = true;
+            toolStripMenuItemFp.Checked = false;
+            RenderMethods.SetCameraType(0);
         }
 
         private void toolStripMenuItemFp_Click(object sender, EventArgs e)
         {
-
+            toolStripMenuItemOrbit.Checked = false;
+            toolStripMenuItemFp.Checked = true;
+            RenderMethods.SetCameraType(1);
         }
     }
 }

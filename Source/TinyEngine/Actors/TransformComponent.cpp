@@ -73,23 +73,10 @@ tinyxml2::XMLElement* TransformComponent::VGenerateXml(tinyxml2::XMLDocument* pD
 	pScaleElement->SetAttribute("z", scale.z);
 	pBaseElement->InsertEndChild(pScaleElement);
 
-	float x = 2.0f * (quat.w * quat.x - quat.y * quat.z);
-	if (x > 1.0f) x = 1.0f;
-	if (x < -1.0f) x = -1.0f;
-
-	float pitch = XMConvertToDegrees(std::asinf(x));
+	float pitch = 0.0f;
 	float yaw = 0.0f;
 	float roll = 0.0f;
-
-	if (fabsf(fabsf(x) - 1.0f) > FLT_EPSILON)
-	{
-		yaw = XMConvertToDegrees(std::atan2f(2.0f * (quat.x * quat.z + quat.w * quat.y), 1.0f - 2.0f * (quat.x * quat.x + quat.y * quat.y)));
-		roll = XMConvertToDegrees(std::atan2f(2.0f * (quat.x * quat.y + quat.w * quat.z), 1.0f - 2.0f * (quat.x * quat.x + quat.z * quat.z)));
-	}
-	else
-	{
-		roll = XMConvertToDegrees(std::atan2f(2.0f * (quat.x * quat.y - quat.w * quat.z), 1.0f - 2.0f * (quat.y * quat.y + quat.z * quat.z)));
-	}
+	Utility::QuaternionToAngle(quat, yaw, pitch, roll);
 
 	tinyxml2::XMLElement* pRotationElement = pDocument->NewElement("Rotation");
 	pRotationElement->SetAttribute("x", pitch);

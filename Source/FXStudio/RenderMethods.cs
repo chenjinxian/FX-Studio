@@ -39,6 +39,9 @@ namespace FXStudio
         public static extern void OpenProject([MarshalAs(UnmanagedType.BStr)] string lFileName);
 
         [DllImport(editorDllName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetCameraType(int type);
+
+        [DllImport(editorDllName, CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetTransformType(int type);
 
         [DllImport(editorDllName, CallingConvention = CallingConvention.Cdecl)]

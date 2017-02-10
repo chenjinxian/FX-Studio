@@ -80,6 +80,8 @@
             // 
             // toolStripMenuItemOrbit
             // 
+            this.toolStripMenuItemOrbit.Checked = true;
+            this.toolStripMenuItemOrbit.CheckState = System.Windows.Forms.CheckState.Checked;
             this.toolStripMenuItemOrbit.Name = "toolStripMenuItemOrbit";
             this.toolStripMenuItemOrbit.Size = new System.Drawing.Size(152, 22);
             this.toolStripMenuItemOrbit.Text = "Orbit";

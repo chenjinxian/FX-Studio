@@ -113,6 +113,19 @@ FXSTUDIOCORE_API void OpenProject(BSTR lFileName)
 	}
 }
 
+FXSTUDIOCORE_API void SetCameraType(int type)
+{
+	FXStudioLogic* pEditorLogic = dynamic_cast<FXStudioLogic*>(g_pApp->GetGameLogic());
+	if (pEditorLogic != nullptr)
+	{
+		shared_ptr<FXStudioView> pView = pEditorLogic->GetHumanView();
+		if (pView != nullptr)
+		{
+			pView->SetCameraType(type);
+		}
+	}
+}
+
 FXSTUDIOCORE_API void SetTransformType(int type)
 {
 	FXStudioLogic* pEditorLogic = dynamic_cast<FXStudioLogic*>(g_pApp->GetGameLogic());

@@ -13,6 +13,7 @@ public:
 	shared_ptr<DebugGizmosNode> GetGizmosNode() { return m_pGizmosNode; }
 	void MoveEditorCamera(tinyxml2::XMLElement* pCameraNode);
 	tinyxml2::XMLElement* GenerateCameraXml(tinyxml2::XMLDocument* pDocument);
+	void SetCameraType(int type);
 
 protected:
 	virtual HRESULT VOnInitGameViews() override;

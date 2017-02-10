@@ -6,9 +6,8 @@ ModelController::ModelController(shared_ptr<CameraNode> pEditorCamera, shared_pt
 	const Vector3& cameraPos, float cameraYaw, float cameraPitch)
 	: m_pEditorCamera(pEditorCamera),
 	m_pGizmosNode(pGizmosNode),
-	m_CameraType(CT_OrbitView),
 	m_Position(cameraPos),
-	m_Yaw(-cameraYaw),
+	m_Yaw(cameraYaw),
 	m_Pitch(cameraPitch),
 	m_TargetYaw(m_Yaw),
 	m_TargetPitch(m_Pitch),
@@ -19,12 +18,52 @@ ModelController::ModelController(shared_ptr<CameraNode> pEditorCamera, shared_pt
 	m_MaxSpeed(50.0f),
 	m_IsLButtonDown(false)
 {
+	Matrix rotation = Matrix::CreateFromYawPitchRoll(-XMConvertToRadians(m_Yaw), -XMConvertToRadians(m_Pitch), 0.0f);
+	Matrix translation = Matrix::CreateTranslation(m_Position);
+	m_pEditorCamera->VSetTransform(translation * rotation);
+	shared_ptr<EvtData_Move_Camera> pEvent(DEBUG_NEW EvtData_Move_Camera());
+	IEventManager::Get()->VQueueEvent(pEvent);
+
+	SetCameraType(CT_OrbitView);
+
 	POINT ptCursor;
 	GetCursorPos(&ptCursor);
 	m_LastMousePos.x = static_cast<float>(ptCursor.x);
 	m_LastMousePos.y = static_cast<float>(ptCursor.y);
 
 	memset(m_Keys, 0x00, sizeof(m_Keys));
+}
+
+void ModelController::SetCameraType(CameraType type)
+{
+	m_CameraType = type;
+
+	switch (m_CameraType)
+	{
+	case CT_FirstPerson:
+	{
+		Vector3 scale;
+		Quaternion quat;
+		Vector3 postion;
+		Matrix world = m_pEditorCamera->VGet()->GetWorldMatrix();
+		world.Decompose(scale, quat, postion);
+		float pitch = 0.0f;
+		float yaw = 0.0f;
+		float roll = 0.0f;
+		Utility::QuaternionToAngle(quat, yaw, pitch, roll);
+
+		m_TargetYaw = m_Yaw = yaw;
+		m_TargetPitch = m_Pitch = pitch;
+
+		break;
+	}
+	case CT_OrbitView:
+	{
+		break;
+	}
+	default:
+		break;
+	}
 }
 
 void ModelController::OnUpdate(const GameTime& gameTime)
@@ -59,6 +98,7 @@ void ModelController::OnUpdate(const GameTime& gameTime)
 			m_IsChanged = true;
 		}
 
+		Vector3 position = worldMatrix.Translation();
 		if (m_IsChanged)
 		{
 			float numberOfSeconds = 5.0f;
@@ -69,7 +109,7 @@ void ModelController::OnUpdate(const GameTime& gameTime)
 			Vector3 direction = forward + strafe;
 			direction.Normalize();
 			direction *= m_CurrentSpeed;
-			m_Position += direction;
+			position += direction;
 		}
 		else
 		{
@@ -84,7 +124,7 @@ void ModelController::OnUpdate(const GameTime& gameTime)
 			float radiansYaw = XMConvertToRadians(m_Yaw);
 			float radiansPitch = XMConvertToRadians(m_Pitch);
 			Matrix rotation = Matrix::CreateFromYawPitchRoll(radiansYaw, -radiansPitch, 0.0f);
-			Matrix translation = Matrix::CreateTranslation(m_Position);
+			Matrix translation = Matrix::CreateTranslation(position);
 
 			if (m_IsChanged && m_pEditorCamera != nullptr)
 			{

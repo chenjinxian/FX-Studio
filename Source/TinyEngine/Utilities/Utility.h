@@ -20,4 +20,6 @@ public:
 	static bool CheckMemory(DWORDLONG physicalRAMNeeded, DWORDLONG virtualRAMNeeded);
 	static bool IsOnlyInstance(LPCTSTR gameTitle);
 	static const TCHAR *GetSaveGameDirectory(HWND hWnd, const TCHAR *gameAppDirectory);
+
+	static void QuaternionToAngle(const Quaternion& quat, float& yaw, float& pitch, float& roll);
 };

@@ -20,10 +20,10 @@ namespace FXStudio
             panelTop.BackColor = dockPanelEdit.Theme.Skin.ColorPalette.MainWindowActive.Background;
             panelBottom.BackColor = dockPanelEdit.Theme.Skin.ColorPalette.MainWindowActive.Background;
 
-            DocumentView doc1 = CreateNewDocument("Document1");
-            DocumentView doc2 = CreateNewDocument("Document2");
-            doc1.Show(this.dockPanelEdit, DockState.Document);
-            doc2.Show(doc1.Pane, null);
+            //             DocumentView doc1 = CreateNewDocument("Document1");
+            //             DocumentView doc2 = CreateNewDocument("Document2");
+            //             doc1.Show(this.dockPanelEdit, DockState.Document);
+            //             doc2.Show(doc1.Pane, null);
         }
 
         private IDockContent FindDocument(string text)

@@ -203,5 +203,10 @@ namespace FXStudio
                 }
             }
         }
+
+        private void treeViewProject_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+
+        }
     }
 }

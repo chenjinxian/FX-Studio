@@ -16,6 +16,7 @@ namespace FXStudio
     {
         private UpdatePropertiesDelegate m_NodeDelegate = null;
         private TreeNode m_SceneNode = null;
+        private TreeNode m_EditorCameraNode = null;
         private string m_ProjectPath;
         private XmlDocument m_XmlDoc;
 
@@ -44,8 +45,8 @@ namespace FXStudio
                 {
                     if (typeNode.Value == "EditorCamera")
                     {
-                        var cameraTree = new TreeNode(child.Name) { Tag = child };
-                        rootTree.Nodes.Add(cameraTree);
+                        m_EditorCameraNode = new TreeNode(child.Name) { Tag = child };
+                        rootTree.Nodes.Add(m_EditorCameraNode);
                     }
                     else if (typeNode.Value == "Scene")
                     {
@@ -135,7 +136,8 @@ namespace FXStudio
 
                 try
                 {
-                    m_XmlDoc.DocumentElement.SelectSingleNode("DefaultScene").ChildNodes[actorId - 1].InnerXml = selectNode.InnerXml;
+                    XmlNode docNode = m_XmlDoc.DocumentElement.SelectSingleNode("DefaultScene").ChildNodes[actorId - 1];
+                    docNode.InnerXml = selectNode.InnerXml;
                 }
                 catch (Exception)
                 {
@@ -146,9 +148,9 @@ namespace FXStudio
             else
             {
                 // Editor camera node
-                XmlNode selectNode = (XmlNode)treeViewProject.SelectedNode.Tag;
+                XmlNode selectNode = (XmlNode)m_EditorCameraNode.Tag;
                 selectNode.InnerXml = root.FirstChild.InnerXml;
-                treeViewProject.SelectedNode.Tag = selectNode;
+                m_EditorCameraNode.Tag = selectNode;
 
                 try
                 {
@@ -158,7 +160,7 @@ namespace FXStudio
                 {
 
                 }
-                m_NodeDelegate?.Invoke((XmlNode)treeViewProject.SelectedNode.Tag);
+                m_NodeDelegate?.Invoke((XmlNode)m_EditorCameraNode.Tag);
             }
         }
 

@@ -225,10 +225,12 @@ bool ModelController::VOnPointerMove(const Vector2 &pos, int radius)
 				{
 					m_TargetYaw += (m_LastMousePos.x - pos.x);
 					m_TargetPitch += (pos.y - m_LastMousePos.y);
+					m_IsChanged = true;
 				}
 				else if (m_Keys[VK_SHIFT])
 				{
 					m_Delta = (m_LastMousePos.y - pos.y);
+					m_IsChanged = true;
 				}
 				else
 				{
@@ -237,7 +239,6 @@ bool ModelController::VOnPointerMove(const Vector2 &pos, int radius)
 						m_pGizmosNode->PointerMove(pos, m_IsLButtonDown);
 					}
 				}
-				m_IsChanged = true;
 			}
 			else
 			{

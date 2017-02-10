@@ -227,7 +227,7 @@ namespace FXStudio
             @"<?xml version=""1.0"" encoding=""UTF-8"" ?>
 <Project type = ""Project"">
     <EditorCamera type = ""EditorCamera"" >
-        <Translation x = ""0"" y=""0"" z=""5"" />
+        <Translation x = ""2.5"" y=""3.535533"" z=""2.5"" />
         <Rotation x = ""45"" y=""45"" z=""0"" />
     </EditorCamera>
     <DefaultScene type = ""Scene"">

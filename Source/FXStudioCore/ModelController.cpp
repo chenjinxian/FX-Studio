@@ -6,7 +6,6 @@ ModelController::ModelController(shared_ptr<CameraNode> pEditorCamera, shared_pt
 	const Vector3& cameraPos, float cameraYaw, float cameraPitch)
 	: m_pEditorCamera(pEditorCamera),
 	m_pGizmosNode(pGizmosNode),
-	m_Position(cameraPos),
 	m_Yaw(cameraYaw),
 	m_Pitch(cameraPitch),
 	m_TargetYaw(m_Yaw),
@@ -18,9 +17,9 @@ ModelController::ModelController(shared_ptr<CameraNode> pEditorCamera, shared_pt
 	m_MaxSpeed(50.0f),
 	m_IsLButtonDown(false)
 {
-	Matrix rotation = Matrix::CreateFromYawPitchRoll(-XMConvertToRadians(m_Yaw), -XMConvertToRadians(m_Pitch), 0.0f);
-	Matrix translation = Matrix::CreateTranslation(m_Position);
-	m_pEditorCamera->VSetTransform(translation * rotation);
+	Matrix rotation = Matrix::CreateFromYawPitchRoll(XMConvertToRadians(m_Yaw), -XMConvertToRadians(m_Pitch), 0.0f);
+	Matrix translation = Matrix::CreateTranslation(cameraPos);
+	m_pEditorCamera->VSetTransform(rotation * translation);
 	shared_ptr<EvtData_Move_Camera> pEvent(DEBUG_NEW EvtData_Move_Camera());
 	IEventManager::Get()->VQueueEvent(pEvent);
 
@@ -38,20 +37,20 @@ void ModelController::SetCameraType(CameraType type)
 {
 	m_CameraType = type;
 
+	Vector3 scale;
+	Quaternion quat;
+	Vector3 postion;
+	Matrix world = m_pEditorCamera->VGet()->GetWorldMatrix();
+	world.Decompose(scale, quat, postion);
+	float pitch = 0.0f;
+	float yaw = 0.0f;
+	float roll = 0.0f;
+	Utility::QuaternionToAngle(quat, yaw, pitch, roll);
+
 	switch (m_CameraType)
 	{
 	case CT_FirstPerson:
 	{
-		Vector3 scale;
-		Quaternion quat;
-		Vector3 postion;
-		Matrix world = m_pEditorCamera->VGet()->GetWorldMatrix();
-		world.Decompose(scale, quat, postion);
-		float pitch = 0.0f;
-		float yaw = 0.0f;
-		float roll = 0.0f;
-		Utility::QuaternionToAngle(quat, yaw, pitch, roll);
-
 		m_TargetYaw = m_Yaw = yaw;
 		m_TargetPitch = m_Pitch = pitch;
 
@@ -59,6 +58,8 @@ void ModelController::SetCameraType(CameraType type)
 	}
 	case CT_OrbitView:
 	{
+		Matrix translate = world * Matrix::CreateFromQuaternion(quat).Invert();
+		m_Position = translate.Translation();
 		break;
 	}
 	default:

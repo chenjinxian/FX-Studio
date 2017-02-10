@@ -1,5 +1,0 @@
-git submodule update --init
-cd Tools/JamPlus
-./bootstrap-linux64.sh
-cd ../..
-

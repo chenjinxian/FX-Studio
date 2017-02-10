@@ -271,3 +271,4 @@ Bin/FXStudioCore.dll
 Bin/FXStudio.exe
 Lib/x64/Effects11.lib
 Bin/FXStudio.vshost.exe
+Bin/ScintillaNET.dll

@@ -143,7 +143,7 @@ void BaseGameLogic::VSetProxy()
 
 void BaseGameLogic::VAddView(shared_ptr<IGameView> pView, ActorId actorId)
 {
-	uint64_t viewId = m_GameViews.size();
+	uint32_t viewId = (uint32_t)m_GameViews.size();
 	m_GameViews.push_back(pView);
 	pView->VOnAttach(viewId, actorId);
 	pView->VOnInitGameViews();

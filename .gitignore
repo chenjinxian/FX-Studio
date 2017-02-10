@@ -272,3 +272,8 @@ Bin/FXStudio.exe
 Lib/x64/Effects11.lib
 Bin/FXStudio.vshost.exe
 Bin/ScintillaNET.dll
+ThirdParty/boost/boost/*
+Lib/x86/DirectXTK.lib
+Lib/x86/DirectXTKd.lib
+Lib/x86/Effects11.lib
+Lib/x86/Effects11d.lib

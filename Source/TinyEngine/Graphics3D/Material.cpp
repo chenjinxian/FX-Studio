@@ -559,7 +559,7 @@ Variable::Variable(ID3D11Device* pDevice, ID3DX11EffectVariable* pD3DX11EffectVa
 	}
 }
 
-void Variable::SetMatrix(XMMATRIX value)
+void Variable::SetMatrix(CXMMATRIX value)
 {
 	ID3DX11EffectMatrixVariable* variable = m_pD3DX11EffectVariable->AsMatrix();
 	if (!variable->IsValid())

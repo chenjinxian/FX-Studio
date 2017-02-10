@@ -1045,7 +1045,9 @@ void ModelNode::VPick(Scene* pScene, int cursorX, int cursorY)
 				}
 				case Mesh::PT_Triangle:
 				{
-					for (uint32_t i = 0, len = mesh->GetIndices().size(); i < len; i += 3)
+					uint32_t len = mesh->GetIndices().size();
+					len = len - len % 3;
+					for (uint32_t i = 0; i < len; i += 3)
 					{
 						const std::vector<Vector3>& vertices = mesh->GetVertices();
 						const std::vector<uint32_t>& indices = mesh->GetIndices();

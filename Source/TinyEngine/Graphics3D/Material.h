@@ -93,7 +93,7 @@ public:
 	const std::string& GetVariableValue() const { return m_VariableValue; }
 	const std::vector<Annotation*>& GetAnnotations() const { return m_Annotations; }
 
-	void SetMatrix(XMMATRIX value);
+	void SetMatrix(CXMMATRIX value);
 	void SetResource(ID3D11ShaderResourceView* value);
 	void SetVector(FXMVECTOR value);
 	void SetFloat(float value);

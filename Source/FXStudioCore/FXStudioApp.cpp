@@ -16,7 +16,6 @@
 #pragma comment(lib, "zlibstatic.lib")
 #endif
 
-
 const EventType EvtData_Move_Camera::sk_EventType(0xc8146af);
 
 FXStudioApp globalApp;

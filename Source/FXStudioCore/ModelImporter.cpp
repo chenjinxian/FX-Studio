@@ -6,7 +6,11 @@
 #include <fstream>
 #include <thread>
 
-#pragma comment(lib, "assimp-vc140-mt.lib")
+#ifdef _WIN64
+#pragma comment(lib, "assimp-vc140-mt-x64.lib")
+#else
+#pragma comment(lib, "assimp-vc140-mt-x86.lib")
+#endif
 
 ModelImporter& ModelImporter::GetImporter()
 {
@@ -383,7 +387,7 @@ void ModelImporter::WriteMesh(const aiScene* pScene, std::ofstream& fs)
 
 		FStreamPrintf(fs, "\t\t</Mesh>\n");
 
-		m_Callback(0.3 + 0.7 * (i + 1) / pScene->mNumMeshes, nullptr);
+		m_Callback(0.3f + 0.7f * (i + 1) / pScene->mNumMeshes, nullptr);
 	}
 
 	FStreamPrintf(fs, "\t</MeshList>\n");

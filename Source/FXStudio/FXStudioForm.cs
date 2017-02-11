@@ -20,6 +20,7 @@ namespace FXStudio
     public delegate void ChangeMaterialDelegate(string name, uint actorId);
     public delegate void MoveActorDelegate(string component, string attribute, Inspector.Vector3 value);
     public delegate void UpdateOutputDelegate(string output, string error);
+    public delegate void OpenEffectFile(string effectFile);
 
     public delegate bool DllProgressCallback(Single percent, string error);
     public delegate void DllMoveDelegate(string actorXml);
@@ -36,7 +37,7 @@ namespace FXStudio
         private DeserializeDockContent m_dockContent;
         private AssetsView m_AssetsView;
         private ProjectView m_ProjectView;
-        private EditorView m_editorView;
+        private EditorView m_EditorView;
         private RenderView m_RenderView;
         private PropertiesView m_PropertiesView;
         private TaskListView m_taskView;
@@ -105,7 +106,11 @@ namespace FXStudio
             });
 
             string assetFile = m_ProjectLocation + @"\" + Path.GetFileNameWithoutExtension(project) + ".asset";
-            m_AssetsView.UpdateAssets(assetFile, m_PropertiesView.UpdateAssetProperties, m_outputView.UpdateCompileInfo);
+            m_AssetsView.UpdateAssets(assetFile, m_PropertiesView.UpdateAssetProperties, m_outputView.UpdateCompileInfo,
+                effectPath => {
+                    panelAllView.ActiveDocumentPane.ActiveContent = m_EditorView;
+                    m_EditorView.ShowEffectDoc(effectPath);
+                });
 
             m_PropertiesView.SetMoveActorDelegate((string component, string attribute, Inspector.Vector3 value) =>
             {
@@ -208,7 +213,7 @@ namespace FXStudio
             m_PropertiesView = new PropertiesView();
             m_outputView = new OutputView();
             m_taskView = new TaskListView();
-            m_editorView = new EditorView();
+            m_EditorView = new EditorView();
             m_RenderView = new RenderView();
         }
 
@@ -220,7 +225,7 @@ namespace FXStudio
             m_PropertiesView.DockPanel = null;
             m_outputView.DockPanel = null;
             m_taskView.DockPanel = null;
-            m_editorView.DockPanel = null;
+            m_EditorView.DockPanel = null;
 
             foreach (IDockContent document in panelAllView.DocumentsToArray())
             {
@@ -243,7 +248,7 @@ namespace FXStudio
             }
             else if (viewString == typeof(EditorView).ToString())
             {
-                return m_editorView;
+                return m_EditorView;
             }
             else if (viewString == typeof(RenderView).ToString())
             {
@@ -285,7 +290,7 @@ namespace FXStudio
             m_AssetsView.Show(panelAllView, DockState.DockLeft);
             m_ProjectView.Show(panelAllView, DockState.DockLeft);
             m_PropertiesView.Show(panelAllView, DockState.DockRight);
-            m_editorView.Show(panelAllView, DockState.Document);
+            m_EditorView.Show(panelAllView, DockState.Document);
             m_RenderView.Show(panelAllView, DockState.Document);
             m_taskView.Show(m_RenderView.Pane, DockAlignment.Bottom, 0.15);
             m_outputView.Show(m_taskView.Pane, null);

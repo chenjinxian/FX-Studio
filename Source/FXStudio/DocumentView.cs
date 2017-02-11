@@ -17,6 +17,7 @@ namespace FXStudio
         public DocumentView()
         {
             InitializeComponent();
+            toolTipDoc.SetToolTip(this, "Test");
         }
     }
 }

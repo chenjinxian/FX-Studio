@@ -30,6 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             this.scintillaBox = new ScintillaNET.Scintilla();
+            this.toolTipDoc = new System.Windows.Forms.ToolTip(this.components);
             this.SuspendLayout();
             // 
             // scintillaBox
@@ -38,14 +39,14 @@
             this.scintillaBox.IndentationGuides = ScintillaNET.IndentView.LookBoth;
             this.scintillaBox.Location = new System.Drawing.Point(0, 4);
             this.scintillaBox.Name = "scintillaBox";
-            this.scintillaBox.Size = new System.Drawing.Size(448, 389);
+            this.scintillaBox.Size = new System.Drawing.Size(448, 422);
             this.scintillaBox.TabIndex = 3;
             // 
             // DocumentView
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(448, 393);
+            this.ClientSize = new System.Drawing.Size(448, 426);
             this.Controls.Add(this.scintillaBox);
             this.Name = "DocumentView";
             this.Padding = new System.Windows.Forms.Padding(0, 4, 0, 0);
@@ -56,5 +57,6 @@
 
         #endregion
         private ScintillaNET.Scintilla scintillaBox;
+        private System.Windows.Forms.ToolTip toolTipDoc;
     }
 }

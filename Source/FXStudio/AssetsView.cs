@@ -19,6 +19,7 @@ namespace FXStudio
         private string m_ProjectLocation;
         private UpdatePropertiesDelegate m_NodeDelegate = null;
         private UpdateOutputDelegate m_OuputDeleagate = null;
+        private OpenEffectFile m_OpenEffect = null;
         private string m_AssetPath;
         private XmlDocument m_XmlDoc;
 
@@ -28,7 +29,8 @@ namespace FXStudio
             InitializeComponent();
         }
 
-        public void UpdateAssets(string assetFile, UpdatePropertiesDelegate updateProps, UpdateOutputDelegate updateOutput)
+        public void UpdateAssets(string assetFile,
+            UpdatePropertiesDelegate updateProps, UpdateOutputDelegate updateOutput, OpenEffectFile openEffect)
         {
             if (!File.Exists(assetFile))
             {
@@ -39,6 +41,7 @@ namespace FXStudio
             m_ProjectLocation = Path.GetDirectoryName(assetFile);
             m_NodeDelegate = updateProps;
             m_OuputDeleagate = updateOutput;
+            m_OpenEffect = openEffect;
 
             m_XmlDoc.Load(assetFile);
             XmlElement rootXml = m_XmlDoc.DocumentElement;
@@ -262,13 +265,30 @@ namespace FXStudio
         private void treeViewAssets_ItemDrag(object sender, ItemDragEventArgs e)
         {
             TreeNode node = (TreeNode)e.Item;
-            if (node.Parent != null && node.Parent.Name == "Materials")
+            if (node.Parent != null && node.Parent.Text == "Materials")
                 DoDragDrop(e.Item, DragDropEffects.Copy);
         }
 
         private void treeViewAssets_DragOver(object sender, DragEventArgs e)
         {
 
+        }
+
+        private void treeViewAssets_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            TreeNode node = e.Node;
+            if (node.Parent != null && node.Parent.Text == "Effects")
+            {
+                XmlNode element = (XmlNode)e.Node.Tag;
+                if (element != null)
+                {
+                    string path = element.InnerText;
+                    if (File.Exists(path))
+                        m_OpenEffect?.Invoke(path);
+                    else if (File.Exists(m_ProjectLocation + @"\" + path))
+                        m_OpenEffect?.Invoke(m_ProjectLocation + @"\" + path);
+                }
+            }
         }
     }
 }

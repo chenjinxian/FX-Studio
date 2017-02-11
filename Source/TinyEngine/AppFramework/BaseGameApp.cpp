@@ -532,7 +532,7 @@ void BaseGameApp::OnRenderFrame()
 	OnUpdate(m_GameTime);
 }
 
-uint32_t BaseGameApp::AddEffect(const std::string& effectObjectPath, const std::string& effectSourcePath, const std::string& effectName)
+uint32_t BaseGameApp::AddEffect(const std::string& effectObjectPath, const std::string& effectName, const std::string& materialName)
 {
 	Resource effectRes(effectObjectPath);
 	shared_ptr<ResHandle> pEffectResHandle = g_pApp->GetResCache()->GetHandle(&effectRes);
@@ -542,7 +542,7 @@ uint32_t BaseGameApp::AddEffect(const std::string& effectObjectPath, const std::
 		if (extra != nullptr)
 		{
 			Effect* pEffect = extra->GetEffect();
-			return pEffect->GenerateXml(effectObjectPath, effectSourcePath, effectName).length();
+			return pEffect->GenerateXml(effectObjectPath, effectName, materialName).length();
 		}
 	}
 

@@ -613,7 +613,7 @@ bool BaseGameLogic::LoadAssets(const std::string& asset)
 	unique_ptr<tinyxml2::XMLDocument> pDoc = unique_ptr<tinyxml2::XMLDocument>(DEBUG_NEW tinyxml2::XMLDocument());
 	if (pDoc == nullptr || (pDoc->LoadFile(asset.c_str()) != tinyxml2::XML_SUCCESS))
 	{
-		DEBUG_ERROR("Failed to find level resource file: " + asset);
+		DEBUG_ERROR("Failed to parse asset file: " + asset);
 		return false;
 	}
 
@@ -623,22 +623,38 @@ bool BaseGameLogic::LoadAssets(const std::string& asset)
 		return false;
 	}
 
+	std::map<std::string, std::string> effects;
+
 	tinyxml2::XMLElement* pEffects = pRoot->FirstChildElement("Effects");
 	if (pEffects != nullptr)
 	{
 		for (tinyxml2::XMLElement* pNode = pEffects->FirstChildElement(); pNode; pNode = pNode->NextSiblingElement())
 		{
-			Resource effectRes(pNode->Attribute("object"));
-			shared_ptr<ResHandle> pEffectResHandle = g_pApp->GetResCache()->GetHandle(&effectRes);
-			if (pEffectResHandle != nullptr)
+			effects.insert(std::make_pair(pNode->Attribute("name"), pNode->Attribute("object")));
+		}
+	}
+
+	tinyxml2::XMLElement* pMaterials = pRoot->FirstChildElement("Materials");
+	if (pMaterials != nullptr)
+	{
+		for (tinyxml2::XMLElement* pNode = pMaterials->FirstChildElement(); pNode; pNode = pNode->NextSiblingElement())
+		{
+			std::string effectName = pNode->Attribute("effect");
+			auto find = effects.find(effectName);
+			if (find != effects.end())
 			{
-				shared_ptr<HlslResourceExtraData> extra = static_pointer_cast<HlslResourceExtraData>(pEffectResHandle->GetExtraData());
-				if (extra != nullptr)
+				Resource effectRes(find->second);
+				shared_ptr<ResHandle> pEffectResHandle = g_pApp->GetResCache()->GetHandle(&effectRes);
+				if (pEffectResHandle != nullptr)
 				{
-					Effect* pEffect = extra->GetEffect();
-					tinyxml2::XMLPrinter printer;
-					pNode->Accept(&printer);
-					pEffect->SetEffectXmlString(printer.CStr(), printer.CStrSize());
+					shared_ptr<HlslResourceExtraData> extra = static_pointer_cast<HlslResourceExtraData>(pEffectResHandle->GetExtraData());
+					if (extra != nullptr)
+					{
+						Effect* pEffect = extra->GetEffect();
+						tinyxml2::XMLPrinter printer;
+						pNode->Accept(&printer);
+						pEffect->SetEffectXmlString(printer.CStr(), printer.CStrSize());
+					}
 				}
 			}
 		}

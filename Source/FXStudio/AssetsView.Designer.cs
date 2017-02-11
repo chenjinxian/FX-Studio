@@ -31,8 +31,9 @@
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Animations");
             System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Effects");
-            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Models");
-            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Textures");
+            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Materials");
+            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Models");
+            System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("Textures");
             this.contextMenuStripAnimation = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.playToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.stopToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -161,17 +162,21 @@
             treeNode2.ContextMenuStrip = this.contextMenuStripEffect;
             treeNode2.Name = "Effects";
             treeNode2.Text = "Effects";
-            treeNode3.ContextMenuStrip = this.contextMenuStripModel;
-            treeNode3.Name = "Models";
-            treeNode3.Text = "Models";
-            treeNode4.ContextMenuStrip = this.contextMenuStripTexture;
-            treeNode4.Name = "Textures";
-            treeNode4.Text = "Textures";
+            treeNode3.ContextMenuStrip = this.contextMenuStripMaterial;
+            treeNode3.Name = "Materials";
+            treeNode3.Text = "Materials";
+            treeNode4.ContextMenuStrip = this.contextMenuStripModel;
+            treeNode4.Name = "Models";
+            treeNode4.Text = "Models";
+            treeNode5.ContextMenuStrip = this.contextMenuStripTexture;
+            treeNode5.Name = "Textures";
+            treeNode5.Text = "Textures";
             this.treeViewAssets.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
             treeNode1,
             treeNode2,
             treeNode3,
-            treeNode4});
+            treeNode4,
+            treeNode5});
             this.treeViewAssets.Size = new System.Drawing.Size(355, 765);
             this.treeViewAssets.TabIndex = 0;
             this.treeViewAssets.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.treeViewAssets_ItemDrag);

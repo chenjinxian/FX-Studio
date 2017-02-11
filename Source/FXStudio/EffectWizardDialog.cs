@@ -16,6 +16,7 @@ namespace FXStudio
     {
         private string m_FileName;
         private string m_EffectName;
+        private string m_MaterialName;
 
         private string m_EffectDir;
         private string m_TemplatePath;
@@ -30,7 +31,11 @@ namespace FXStudio
 
         public string FileName { get { return m_FileName; } set { m_FileName = value; } }
 
-        public string EffectName { get { return m_EffectName; } set { m_EffectName = value; } }
+        public string EffectName { get { return m_EffectName; } }
+
+        public string MaterialName { get { return m_MaterialName; } }
+
+        public bool CreateMaterial() { return checkBoxCreate.Checked; }
 
         public bool IsEffectFromExist() { return radioButtonFile.Checked; }
 
@@ -49,6 +54,7 @@ namespace FXStudio
             else if (newPage == wizardPageName)
             {
                 textBoxEffect.Text = m_EffectName;
+                textBoxMaterial.Text = m_MaterialName;
                 if (radioButtonFile.Checked)
                 {
                     m_FileName = textBoxFile.Text;
@@ -122,6 +128,7 @@ namespace FXStudio
             {
                 textBoxFile.Text = dialog.FileName;
                 m_EffectName = Path.GetFileNameWithoutExtension(dialog.FileName);
+                m_MaterialName = m_EffectName + "_Material";
             }
         }
 
@@ -160,6 +167,7 @@ namespace FXStudio
         {
             wizardForm.NextEnabled = !string.IsNullOrEmpty(textBoxName.Text) && (listViewEffect.SelectedIndices.Count > 0);
             m_EffectName = Path.GetFileNameWithoutExtension(textBoxName.Text);
+            m_MaterialName = m_EffectName + "_Material";
         }
 
         private void wizardForm_Finish(object sender, EventArgs e)

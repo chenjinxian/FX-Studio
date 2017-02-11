@@ -73,18 +73,18 @@ const std::map<std::string, Variable*>& Effect::GetVariablesByName() const
 	return m_VariablesByName;
 }
 
-const std::string& Effect::GenerateXml(const std::string& effectObjectPath, const std::string& effectSourcePath, const std::string& effectName)
+const std::string& Effect::GenerateXml(const std::string& effectObjectPath, const std::string& effectName, const std::string& materialName)
 {
 	if (m_pEffectXmlString.empty())
 	{
 		m_pEffectXmlDoc = std::unique_ptr<tinyxml2::XMLDocument>(DEBUG_NEW tinyxml2::XMLDocument());
 
-		tinyxml2::XMLElement* pRoot = m_pEffectXmlDoc->NewElement("Effect");
+		tinyxml2::XMLElement* pRoot = m_pEffectXmlDoc->NewElement("Material");
 		m_pEffectXmlDoc->InsertEndChild(pRoot);
 
-		pRoot->SetAttribute("name", effectName.c_str());
+		pRoot->SetAttribute("name", materialName.c_str());
+		pRoot->SetAttribute("effect", effectName.c_str());
 		pRoot->SetAttribute("object", effectObjectPath.c_str());
-		pRoot->SetAttribute("source", effectSourcePath.c_str());
 
 		tinyxml2::XMLElement* pTechniques = m_pEffectXmlDoc->NewElement("Techniques");
 		pRoot->InsertEndChild(pTechniques);

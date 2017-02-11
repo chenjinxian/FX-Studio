@@ -21,7 +21,7 @@ public:
 	const std::vector<Variable*>& GetVariables() const;
 	const std::map<std::string, Variable*>& GetVariablesByName() const;
 
-	const std::string& GenerateXml(const std::string& effectObjectPath, const std::string& effectSourcePath, const std::string& effectName);
+	const std::string& GenerateXml(const std::string& effectObjectPath, const std::string& effectName, const std::string& materialName);
 	const std::string& GetEffectXmlString() { return m_pEffectXmlString; }
 	const tinyxml2::XMLDocument* GetEffectXmlDoc() { return m_pEffectXmlDoc.get(); }
 	void SetEffectXmlString(const char* effectXmlStr, int size);

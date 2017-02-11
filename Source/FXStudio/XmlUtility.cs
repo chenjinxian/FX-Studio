@@ -252,7 +252,10 @@ namespace FXStudio
         public static readonly string DefaultAssetXml =
             @"<Assets>
     <Effects>
-        <Effect name=""DefaultEffect"" object=""Effects\DefaultEffect.fx"" source=""Effects\DefaultEffect.fx"">
+        <Effect name=""DefaultEffect"" object=""Effects\DefaultEffect.fx"">Effects\DefaultEffect.fx</Effect>
+    </Effects>
+    <Materials>
+        <Material name=""DefaultMaterial"" effect=""DefaultEffect"" object=""Effects\DefaultEffect.fx"">
             <Techniques>
                 <Technique name=""main11"" checked=""true"">
                     <Pass>p0</Pass>
@@ -298,8 +301,8 @@ namespace FXStudio
                     <UIStep>1</UIStep>
                 </Variable>
             </Variables>
-        </Effect>
-    </Effects>
+        </Material>
+    </Materials>
     <Models/>
     <Textures>
         <Texture name=""DefaultColor"">Textures\DefaultColor.dds</Texture>

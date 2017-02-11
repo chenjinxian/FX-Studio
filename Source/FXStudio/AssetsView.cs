@@ -58,6 +58,10 @@ namespace FXStudio
                         {
                             AddEffect(treeNode, child);
                         }
+                        else if (node.Name == "Materials")
+                        {
+                            AddMaterial(treeNode, child);
+                        }
                         else
                         {
                             XmlNode nameNode = child.Attributes["name"];
@@ -82,7 +86,7 @@ namespace FXStudio
             }));
         }
 
-        public void AddEffect(string sourceFileName, string effectName, bool fromExist)
+        public void AddEffect(string sourceFileName, string effectName, string materialName, bool fromExist)
         {
             string destOjbect = m_ProjectLocation + @"\Effects\" + Path.GetFileNameWithoutExtension(sourceFileName) + ".fxo";
             var processInfo = new ProcessStartInfo
@@ -106,26 +110,45 @@ namespace FXStudio
 
             m_OuputDeleagate?.Invoke(compileInfo, errorInfo);
 
-            if (!string.IsNullOrEmpty(compileInfo))
             {
-                uint size = RenderMethods.AddEffect(@"Effects\" + Path.GetFileName(destOjbect), sourceFileName, effectName);
+                string effectXml = string.Format(
+                    @"<Effect name=""{0}"" object=""{1}"">{2}</Effect>", effectName, @"Effects\" + Path.GetFileName(destOjbect), sourceFileName);
+                XmlDocument effectDoc = new XmlDocument();
+                effectDoc.LoadXml(effectXml);
+                XmlElement effectXmlNode = effectDoc.DocumentElement;
+
+                XmlNode effectRoot = m_XmlDoc.DocumentElement.SelectSingleNode("Effects");
+                if (effectRoot != null)
+                {
+                    effectRoot.AppendChild(m_XmlDoc.ImportNode(effectXmlNode, true));
+                    TreeNode effectsTreeNode = treeViewAssets.Nodes["Effects"];
+                    if (effectsTreeNode != null)
+                    {
+                        AddEffect(effectsTreeNode, effectRoot.LastChild);
+                    }
+                }
+            }
+
+            if (!string.IsNullOrEmpty(compileInfo) && !string.IsNullOrEmpty(materialName))
+            {
+                uint size = RenderMethods.AddMaterial(@"Effects\" + Path.GetFileName(destOjbect), effectName, materialName);
                 if (size > 0)
                 {
-                    StringBuilder effectXml = new StringBuilder((int)size);
-                    RenderMethods.GetEffectXml(@"Effects\" + Path.GetFileName(destOjbect), effectXml, size);
+                    StringBuilder materialtXml = new StringBuilder((int)size);
+                    RenderMethods.GetMaterialXml(@"Effects\" + Path.GetFileName(destOjbect), materialtXml, size);
 
-                    XmlDocument effectDoc = new XmlDocument();
-                    effectDoc.LoadXml(effectXml.ToString());
-                    XmlElement effectXmlNode = effectDoc.DocumentElement;
+                    XmlDocument materialDoc = new XmlDocument();
+                    materialDoc.LoadXml(materialtXml.ToString());
+                    XmlElement materialXmlNode = materialDoc.DocumentElement;
 
-                    XmlNode effectRoot = m_XmlDoc.DocumentElement.SelectSingleNode("Effects");
-                    if (effectRoot != null)
+                    XmlNode materialRoot = m_XmlDoc.DocumentElement.SelectSingleNode("Materials");
+                    if (materialRoot != null)
                     {
-                        effectRoot.AppendChild(m_XmlDoc.ImportNode(effectXmlNode, true));
-                        TreeNode effectsTreeNode = treeViewAssets.Nodes["Effects"];
-                        if (effectsTreeNode != null)
+                        materialRoot.AppendChild(m_XmlDoc.ImportNode(materialXmlNode, true));
+                        TreeNode materialsTreeNode = treeViewAssets.Nodes["Materials"];
+                        if (materialsTreeNode != null)
                         {
-                            AddEffect(effectsTreeNode, effectRoot.LastChild);
+                            AddMaterial(materialsTreeNode, materialRoot.LastChild);
                         }
                     }
                 }
@@ -137,13 +160,23 @@ namespace FXStudio
             XmlNode nameNode = effectNode.Attributes["name"];
             if (nameNode != null)
             {
-                TreeNode effectRoot = new TreeNode(nameNode.Value) { Tag = effectNode };
-                treeNode.Nodes.Add(effectRoot);
+                treeNode.Nodes.Add(new TreeNode(nameNode.Value) { Tag = effectNode });
+            }
+        }
 
-                XmlNode urlNode = effectNode.Attributes["source"];
-                effectRoot.Nodes.Add(new TreeNode(urlNode.Value) { Tag = urlNode });
+        private void AddMaterial(TreeNode treeNode, XmlNode materialNode)
+        {
+            XmlNode nameNode = materialNode.Attributes["name"];
+            if (nameNode != null)
+            {
+                TreeNode materialRoot = new TreeNode(nameNode.Value) { Tag = materialNode };
+                treeNode.Nodes.Add(materialRoot);
 
-                XmlNode techniqueRoot = effectNode.SelectSingleNode("Techniques");
+                XmlNode effectNode = materialNode.Attributes["effect"];
+                TreeNode effectRoot = new TreeNode(effectNode.Value) { Tag = effectNode };
+                materialRoot.Nodes.Add(effectRoot);
+
+                XmlNode techniqueRoot = materialNode.SelectSingleNode("Techniques");
                 TreeNode apiNode = new TreeNode("Direct3D11") { Tag = techniqueRoot };
                 effectRoot.Nodes.Add(apiNode);
 
@@ -207,7 +240,7 @@ namespace FXStudio
             {
                 if (Path.GetExtension(file) == ".fx")
                 {
-                    AddEffect(file, Path.GetFileNameWithoutExtension(file), true);
+                    AddEffect(file, Path.GetFileNameWithoutExtension(file), Path.GetFileNameWithoutExtension(file) + "_Material", true);
                 }
             }
         }
@@ -215,7 +248,7 @@ namespace FXStudio
         private void treeViewAssets_ItemDrag(object sender, ItemDragEventArgs e)
         {
             TreeNode node = (TreeNode)e.Item;
-            if (node.Parent != null && node.Parent.Name == "Effects")
+            if (node.Parent != null && node.Parent.Name == "Materials")
                 DoDragDrop(e.Item, DragDropEffects.Copy);
         }
 

@@ -530,7 +530,8 @@ namespace FXStudio
             EffectWizardDialog dialog = new EffectWizardDialog(m_ProjectLocation);
             if (dialog.ShowDialog() == DialogResult.OK)
             {
-                m_AssetsView.AddEffect(dialog.FileName, dialog.EffectName, dialog.IsEffectFromExist());
+                m_AssetsView.AddEffect(dialog.FileName, dialog.EffectName,
+                    dialog.CreateMaterial() ? dialog.MaterialName : string.Empty, dialog.IsEffectFromExist());
             }
         }
 

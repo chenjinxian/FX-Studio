@@ -3,7 +3,7 @@
 #include "RenderState.h"
 #include "../AppFramework/BaseGameApp.h"
 #include "../ResourceCache/TextureResource.h"
-#include "../ResourceCache/ShaderResource.h"
+#include "../ResourceCache/MaterialResource.h"
 #include "imgui.h"
 #include "DDSTextureLoader.h"
 #include "WICTextureLoader.h"

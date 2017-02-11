@@ -37,7 +37,7 @@ public:
 	void OnRenderFrame();
 	void OnClose();
 
-	uint32_t AddEffect(const std::string& effectObjectPath, const std::string& effectName, const std::string& materialName);
+	uint32_t AddEffect(const std::string& effectObjectPath, const std::string& effectName);
 	const std::string& GetEffectXml(const std::string& effectObjectPath);
 
 	BaseGameLogic* GetGameLogic(void) const { return m_pGameLogic; }

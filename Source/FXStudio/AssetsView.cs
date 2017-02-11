@@ -82,7 +82,7 @@ namespace FXStudio
             {
                 Indent = true,
                 IndentChars = "\t",
-                OmitXmlDeclaration = false
+                OmitXmlDeclaration = true
             }));
         }
 
@@ -131,12 +131,15 @@ namespace FXStudio
 
             if (!string.IsNullOrEmpty(compileInfo) && !string.IsNullOrEmpty(materialName))
             {
-                uint size = RenderMethods.AddMaterial(@"Effects\" + Path.GetFileName(destOjbect), effectName, materialName);
+                uint size = RenderMethods.AddMaterial(@"Effects\" + Path.GetFileName(destOjbect), effectName);
                 if (size > 0)
                 {
-                    StringBuilder materialtXml = new StringBuilder((int)size);
-                    RenderMethods.GetMaterialXml(@"Effects\" + Path.GetFileName(destOjbect), materialtXml, size);
+                    StringBuilder materialtString = new StringBuilder((int)size);
+                    RenderMethods.GetMaterialXml(@"Effects\" + Path.GetFileName(destOjbect), materialtString, size);
+                    File.WriteAllText(m_ProjectLocation + @"\Materials\" + materialName + ".mat", materialtString.ToString());
 
+                    string materialtXml = string.Format(
+                        @"<Material name=""{0}"">{1}</Material>", materialName, @"Materials\" + materialName + ".mat");
                     XmlDocument materialDoc = new XmlDocument();
                     materialDoc.LoadXml(materialtXml.ToString());
                     XmlElement materialXmlNode = materialDoc.DocumentElement;
@@ -169,14 +172,25 @@ namespace FXStudio
             XmlNode nameNode = materialNode.Attributes["name"];
             if (nameNode != null)
             {
-                TreeNode materialRoot = new TreeNode(nameNode.Value) { Tag = materialNode };
+                string materialFile = m_ProjectLocation + @"\" + materialNode.InnerText;
+                if (!File.Exists(materialFile))
+                {
+                    MessageBox.Show(materialFile + "not exist, the asset file may be some errors", "FXSTudio");
+                    return;
+                }
+
+                XmlDocument materialDoc = new XmlDocument();
+                materialDoc.Load(materialFile);
+                XmlElement materialXmlNode = materialDoc.DocumentElement;
+
+                TreeNode materialRoot = new TreeNode(nameNode.Value) { Tag = materialXmlNode };
                 treeNode.Nodes.Add(materialRoot);
 
-                XmlNode effectNode = materialNode.Attributes["effect"];
+                XmlNode effectNode = materialXmlNode.Attributes["effect"];
                 TreeNode effectRoot = new TreeNode(effectNode.Value) { Tag = effectNode };
                 materialRoot.Nodes.Add(effectRoot);
 
-                XmlNode techniqueRoot = materialNode.SelectSingleNode("Techniques");
+                XmlNode techniqueRoot = materialXmlNode.SelectSingleNode("Techniques");
                 TreeNode apiNode = new TreeNode("Direct3D11") { Tag = techniqueRoot };
                 effectRoot.Nodes.Add(apiNode);
 

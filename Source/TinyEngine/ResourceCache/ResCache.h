@@ -123,7 +123,7 @@ public:
 
 	shared_ptr<ResHandle> GetHandle(Resource * r);
 
-	int Preload(const std::string pattern, void(*progressCallback)(int, bool &));
+	int Preload(const std::string pattern, void(*progressCallback)(int, bool &) = nullptr);
 	std::vector<std::string> Match(const std::string pattern);
 
 	void Flush(void);
@@ -162,3 +162,4 @@ shared_ptr<IResourceLoader> CreateTiffResourceLoader();
 shared_ptr<IResourceLoader> CreateXmlResourceLoader();
 shared_ptr<IResourceLoader> CreateFxSourceEffectResourceLoader();
 shared_ptr<IResourceLoader> CreateFxObjectEffectResourceLoader();
+shared_ptr<IResourceLoader> CreateMaterialResourceLoader();

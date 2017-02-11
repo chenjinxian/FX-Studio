@@ -202,7 +202,7 @@
     <ClInclude Include="Graphics3D\RenderState.h" />
     <ClInclude Include="Graphics3D\Scene.h" />
     <ClInclude Include="Graphics3D\SceneNode.h" />
-    <ClInclude Include="ResourceCache\ShaderResource.h" />
+    <ClInclude Include="ResourceCache\MaterialResource.h" />
     <ClInclude Include="ResourceCache\TextureResource.h" />
     <ClInclude Include="TinyEngine.h" />
     <ClInclude Include="TinyEngineBase.h" />
@@ -242,7 +242,7 @@
     <ClCompile Include="Graphics3D\Scene.cpp" />
     <ClCompile Include="Graphics3D\SceneNode.cpp" />
     <ClCompile Include="ResourceCache\ResCache.cpp" />
-    <ClCompile Include="ResourceCache\ShaderResource.cpp" />
+    <ClCompile Include="ResourceCache\MaterialResource.cpp" />
     <ClCompile Include="ResourceCache\TextureResource.cpp" />
     <ClCompile Include="ResourceCache\XmlResource.cpp" />
     <ClCompile Include="ResourceCache\ZipFile.cpp" />

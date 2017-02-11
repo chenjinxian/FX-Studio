@@ -7,7 +7,7 @@
 #include "../Actors/TransformComponent.h"
 #include "../ResourceCache/ResCache.h"
 #include "../ResourceCache/TextureResource.h"
-#include "../ResourceCache/ShaderResource.h"
+#include "../ResourceCache/MaterialResource.h"
 #include "../AppFramework/BaseGameApp.h"
 #include "../AppFramework/BaseGameLogic.h"
 #include "../EventManager/Events.h"

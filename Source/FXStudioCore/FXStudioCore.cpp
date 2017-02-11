@@ -247,13 +247,12 @@ FXSTUDIOCORE_API int ImportModel(BSTR modelImportPath, BSTR modelExportPath, Pro
 	return 0;
 }
 
-FXSTUDIOCORE_API unsigned int AddMaterial(BSTR effectObjectPath, BSTR effectName, BSTR materialName)
+FXSTUDIOCORE_API unsigned int AddMaterial(BSTR effectObjectPath, BSTR effectName)
 {
 	std::string objectPath = Utility::WS2S(std::wstring(effectObjectPath, SysStringLen(effectObjectPath)));
 	std::string effect = Utility::WS2S(std::wstring(effectName, SysStringLen(effectName)));
-	std::string material = Utility::WS2S(std::wstring(materialName, SysStringLen(materialName)));
 
-	return g_pApp->AddEffect(objectPath, effect, material);
+	return g_pApp->AddEffect(objectPath, effect);
 }
 
 FXSTUDIOCORE_API void GetMaterialXml(BSTR effectObjectPath, char* effectXmlPtr, unsigned int size)

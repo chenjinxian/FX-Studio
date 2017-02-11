@@ -42,3 +42,15 @@ public:
 	virtual std::string VGetPattern() override { return "*.fxo"; }
 	virtual bool VLoadResource(char *rawBuffer, uint32_t rawSize, shared_ptr<ResHandle> handle) override;
 };
+
+class MaterialResourceLoader : public IResourceLoader
+{
+public:
+	virtual bool VUseRawFile() override { return false; }
+	virtual bool VDiscardRawBufferAfterLoad() override { return true; }
+	virtual uint32_t VGetLoadedResourceSize(char *rawBuffer, uint32_t rawSize) override { return 0; }
+	virtual bool VLoadResource(char *rawBuffer, uint32_t rawSize, shared_ptr<ResHandle> handle) override;
+	virtual std::string VGetPattern() { return "*.mat"; }
+
+	static tinyxml2::XMLElement* LoadAndReturnRootXmlElement(const std::string& resourceString);
+};

@@ -16,7 +16,7 @@ namespace FXStudio
 {
     public partial class RenderView : ViewWindow
     {
-        private ChangeEffectDelegate m_ChangeDelegate = null;
+        private ChangeMaterialDelegate m_ChangeDelegate = null;
         private ToolStripButton[] m_TransformButtons;
 
         public RenderView()
@@ -24,9 +24,9 @@ namespace FXStudio
             InitializeComponent();
         }
 
-        public void SetChangeEffectDelegate(ChangeEffectDelegate modifyDelegate)
+        public void SetChangeMaterialDelegate(ChangeMaterialDelegate changeDelegate)
         {
-            m_ChangeDelegate = modifyDelegate;
+            m_ChangeDelegate = changeDelegate;
         }
 
         public Panel GetRenderPanel()
@@ -80,13 +80,9 @@ namespace FXStudio
             TreeNode effectNode = (TreeNode)e.Data.GetData(typeof(TreeNode).ToString(), false);
             if (effectNode != null)
             {
-                XmlNode element = (XmlNode)effectNode.Tag;
-                if (element != null)
-                {
-                    Point targetPoint = panelRender.PointToClient(new Point(e.X, e.Y));
-                    uint actorId = RenderMethods.GetPickedActor(targetPoint.X, targetPoint.Y);
-                    m_ChangeDelegate?.Invoke(element, actorId);
-                }
+                Point targetPoint = panelRender.PointToClient(new Point(e.X, e.Y));
+                uint actorId = RenderMethods.GetPickedActor(targetPoint.X, targetPoint.Y);
+                m_ChangeDelegate?.Invoke(effectNode.Text, actorId);
             }
         }
 

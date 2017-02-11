@@ -145,10 +145,7 @@ void GridRenderComponent::VCreateInheritedXmlElement(tinyxml2::XMLElement* pBase
 
 GeometryRenderComponent::GeometryRenderComponent()
 	: BaseRenderComponent(),
-	m_EffectName(),
-	m_CurrentTechnique(),
-	m_CurrentPass(),
-	m_TextureName()
+	m_MaterialName()
 {
 
 }
@@ -160,18 +157,10 @@ GeometryRenderComponent::~GeometryRenderComponent()
 
 bool GeometryRenderComponent::VDelegateInit(tinyxml2::XMLElement* pData)
 {
-	tinyxml2::XMLElement* pTextures = pData->FirstChildElement("Texture");
-	if (pTextures != nullptr)
+	tinyxml2::XMLElement* pMaterial = pData->FirstChildElement("Material");
+	if (pMaterial != nullptr)
 	{
-		m_TextureName = pTextures->GetText();
-	}
-
-	tinyxml2::XMLElement* pEffect = pData->FirstChildElement("Effect");
-	if (pEffect != nullptr)
-	{
-		m_EffectName = pEffect->GetText();
-		m_CurrentTechnique = pEffect->Attribute("technique");
-		m_CurrentPass = pEffect->Attribute("pass");
+		m_MaterialName = pMaterial->GetText();
 	}
 
 	return true;
@@ -344,10 +333,7 @@ void TeapotRenderComponent::VCreateInheritedXmlElement(tinyxml2::XMLElement* pBa
 
 ModelRenderComponent::ModelRenderComponent()
 	: m_ModelName(),
-	m_EffectName(),
-	m_CurrentTechnique(),
-	m_CurrentPass(),
-	m_TextureNames()
+	m_MaterialName()
 {
 
 }
@@ -365,21 +351,10 @@ bool ModelRenderComponent::VDelegateInit(tinyxml2::XMLElement* pData)
 		m_ModelName = pModel->GetText();
 	}
 
-	tinyxml2::XMLElement* pTextures = pData->FirstChildElement("Textures");
-	if (pTextures != nullptr)
+	tinyxml2::XMLElement* pMaterial = pData->FirstChildElement("Material");
+	if (pMaterial != nullptr)
 	{
-		for (tinyxml2::XMLNode* pNode = pTextures->FirstChild(); pNode; pNode = pNode->NextSibling())
-		{
-			m_TextureNames.push_back(pNode->FirstChild()->Value());
-		}
-	}
-
-	tinyxml2::XMLElement* pEffect = pData->FirstChildElement("Effect");
-	if (pEffect != nullptr)
-	{
-		m_EffectName = pEffect->GetText();
-		m_CurrentTechnique = pEffect->Attribute("technique");
-		m_CurrentPass = pEffect->Attribute("pass");
+		m_MaterialName = pMaterial->GetText();
 	}
 
 	return true;

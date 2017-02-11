@@ -68,8 +68,7 @@ namespace FXStudio
         [DllImport(editorDllName, CallingConvention = CallingConvention.Cdecl)]
         public static extern uint AddMaterial(
             [MarshalAs(UnmanagedType.BStr)] string effectObjectPath,
-            [MarshalAs(UnmanagedType.BStr)] string effectName,
-            [MarshalAs(UnmanagedType.BStr)] string materialName);
+            [MarshalAs(UnmanagedType.BStr)] string effectName);
 
         [DllImport(editorDllName, CallingConvention = CallingConvention.Cdecl)]
         public unsafe static extern void GetMaterialXml(

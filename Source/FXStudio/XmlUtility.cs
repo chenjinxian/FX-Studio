@@ -98,19 +98,12 @@ namespace FXStudio
             XmlElement cubeElement = xmlDoc.CreateElement("CubeRenderComponent");
             cubeElement.AppendChild(CreateColorElement(xmlDoc));
 
-            XmlElement texture = xmlDoc.CreateElement("Texture");
-            XmlElement effect = xmlDoc.CreateElement("Effect");
             XmlElement cube = xmlDoc.CreateElement("Cube");
-            cubeElement.AppendChild(texture);
-            cubeElement.AppendChild(effect);
+            XmlElement effect = xmlDoc.CreateElement("Material");
             cubeElement.AppendChild(cube);
+            cubeElement.AppendChild(effect);
 
-
-            texture.InnerText = @"Textures\DefaultColor.dds";
-
-            effect.InnerText = @"Effects\DefaultEffect.fx";
-            effect.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "technique", "main11"));
-            effect.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "pass", "p0"));
+            effect.InnerText = @"Materials\DefaultMaterial.mat";
 
             cube.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "size", "1.0"));
             cube.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "rhcoords", "1"));
@@ -123,19 +116,12 @@ namespace FXStudio
             XmlElement sphereElement = xmlDoc.CreateElement("SphereRenderComponent");
             sphereElement.AppendChild(CreateColorElement(xmlDoc));
 
-            XmlElement texture = xmlDoc.CreateElement("Texture");
-            XmlElement effect = xmlDoc.CreateElement("Effect");
             XmlElement sphere = xmlDoc.CreateElement("Sphere");
-            sphereElement.AppendChild(texture);
-            sphereElement.AppendChild(effect);
+            XmlElement effect = xmlDoc.CreateElement("Material");
             sphereElement.AppendChild(sphere);
+            sphereElement.AppendChild(effect);
 
-
-            texture.InnerText = @"Textures\DefaultColor.dds";
-
-            effect.InnerText = @"Effects\DefaultEffect.fx";
-            effect.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "technique", "main11"));
-            effect.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "pass", "p0"));
+            effect.InnerText = @"Materials\DefaultMaterial.mat";
 
             sphere.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "diameter", "1.0"));
             sphere.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "tessellation", "4"));
@@ -149,19 +135,12 @@ namespace FXStudio
             XmlElement cylinderElement = xmlDoc.CreateElement("CylinderRenderComponent");
             cylinderElement.AppendChild(CreateColorElement(xmlDoc));
 
-            XmlElement texture = xmlDoc.CreateElement("Texture");
-            XmlElement effect = xmlDoc.CreateElement("Effect");
             XmlElement cylinder = xmlDoc.CreateElement("Cylinder");
-            cylinderElement.AppendChild(texture);
-            cylinderElement.AppendChild(effect);
+            XmlElement effect = xmlDoc.CreateElement("Material");
             cylinderElement.AppendChild(cylinder);
+            cylinderElement.AppendChild(effect);
 
-
-            texture.InnerText = @"Textures\DefaultColor.dds";
-
-            effect.InnerText = @"Effects\DefaultEffect.fx";
-            effect.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "technique", "main11"));
-            effect.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "pass", "p0"));
+            effect.InnerText = @"Materials\DefaultMaterial.mat";
 
             cylinder.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "height", "1.0"));
             cylinder.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "diameter", "1.0"));
@@ -176,19 +155,12 @@ namespace FXStudio
             XmlElement teapotElement = xmlDoc.CreateElement("TeapotRenderComponent");
             teapotElement.AppendChild(CreateColorElement(xmlDoc));
 
-            XmlElement texture = xmlDoc.CreateElement("Texture");
-            XmlElement effect = xmlDoc.CreateElement("Effect");
             XmlElement teapot = xmlDoc.CreateElement("Teapot");
-            teapotElement.AppendChild(texture);
-            teapotElement.AppendChild(effect);
+            XmlElement effect = xmlDoc.CreateElement("Material");
             teapotElement.AppendChild(teapot);
+            teapotElement.AppendChild(effect);
 
-
-            texture.InnerText = @"Textures\DefaultColor.dds";
-
-            effect.InnerText = @"Effects\DefaultEffect.fx";
-            effect.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "technique", "main11"));
-            effect.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "pass", "p0"));
+            effect.InnerText = @"Materials\DefaultMaterial.mat";
 
             teapot.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "size", "1.0"));
             teapot.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "tessellation", "8"));
@@ -203,22 +175,12 @@ namespace FXStudio
             modelElement.AppendChild(CreateColorElement(xmlDoc));
 
             XmlElement model = xmlDoc.CreateElement("Model");
-            XmlElement effect = xmlDoc.CreateElement("Effect");
-            XmlElement textures = xmlDoc.CreateElement("Textures");
+            XmlElement effect = xmlDoc.CreateElement("Material");
             modelElement.AppendChild(model);
             modelElement.AppendChild(effect);
-            modelElement.AppendChild(textures);
 
             model.InnerText = @"Models\" + fileName;
-
-            effect.InnerText = @"Effects\DefaultEffect.fx";
-            effect.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "technique", "main11"));
-            effect.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "pass", "p0"));
-
-            XmlElement textureChild = xmlDoc.CreateElement("Texture");
-            textureChild.InnerText = @"Textures\DefaultColor.dds";
-
-            textures.AppendChild(textureChild);
+            effect.InnerText = @"Materials\DefaultMaterial.mat";
 
             return modelElement;
         }
@@ -255,53 +217,7 @@ namespace FXStudio
         <Effect name=""DefaultEffect"" object=""Effects\DefaultEffect.fx"">Effects\DefaultEffect.fx</Effect>
     </Effects>
     <Materials>
-        <Material name=""DefaultMaterial"" effect=""DefaultEffect"" object=""Effects\DefaultEffect.fx"">
-            <Techniques>
-                <Technique name=""main11"" checked=""true"">
-                    <Pass>p0</Pass>
-                </Technique>
-            </Techniques>
-            <Variables>
-                <Variable name=""WorldITXf"" value=""0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"">
-                    <UIWidget>None</UIWidget>
-                </Variable>
-                <Variable name=""WvpXf"" value=""0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"">
-                    <UIWidget>None</UIWidget>
-                </Variable>
-                <Variable name=""WorldXf"" value=""0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"">
-                    <UIWidget>None</UIWidget>
-                </Variable>
-                <Variable name=""ViewIXf"" value=""0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"">
-                    <UIWidget>None</UIWidget>
-                </Variable>
-                <Variable name=""LightPos"" value=""10 10 -10"">
-                    <Object>PointLight0</Object>
-                    <Space>World</Space>
-                </Variable>
-                <Variable name=""AmbiColor"" value=""0.1 0.1 0.1"">
-                    <UIName>Ambient Lighting</UIName>
-                    <UIWidget>Color</UIWidget>
-                </Variable>
-                <Variable name=""SurfColor"" value=""0.8 0.8 1"">
-                    <UIName>Surface Color</UIName>
-                    <UIWidget>Color</UIWidget>
-                </Variable>
-                <Variable name=""Ks"" value=""0.5"">
-                    <UIName>Specular Intensity</UIName>
-                    <UIWidget>slider</UIWidget>
-                    <UIMin>0</UIMin>
-                    <UIMax>1</UIMax>
-                    <UIStep>0.01</UIStep>
-                </Variable>
-                <Variable name=""SpecExpon"" value=""30"">
-                    <UIName>Specular Power</UIName>
-                    <UIWidget>slider</UIWidget>
-                    <UIMin>1</UIMin>
-                    <UIMax>128</UIMax>
-                    <UIStep>1</UIStep>
-                </Variable>
-            </Variables>
-        </Material>
+        <Material name=""DefaultMaterial"">Materials\DefaultMaterial.mat</Material>
     </Materials>
     <Models/>
     <Textures>

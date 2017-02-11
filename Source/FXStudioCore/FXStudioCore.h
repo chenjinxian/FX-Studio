@@ -45,7 +45,7 @@ extern "C" {
 	FXSTUDIOCORE_API bool RemoveActor(unsigned int actorId);
 
 	FXSTUDIOCORE_API int ImportModel(BSTR modelImportPath, BSTR modelExportPath, ProgressCallback progressCallback);
-	FXSTUDIOCORE_API unsigned int AddMaterial(BSTR effectObjectPath, BSTR effectName, BSTR materialName);
+	FXSTUDIOCORE_API unsigned int AddMaterial(BSTR effectObjectPath, BSTR effectName);
 	FXSTUDIOCORE_API void GetMaterialXml(BSTR effectObjectPath, char* effectXmlPtr, unsigned int size);
 
 	FXSTUDIOCORE_API void SetMoveDelegate(MoveDelegate delegate);

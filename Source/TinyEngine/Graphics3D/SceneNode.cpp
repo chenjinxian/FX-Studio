@@ -8,7 +8,8 @@
 #include "../Actors/TransformComponent.h"
 #include "../ResourceCache/ResCache.h"
 #include "../ResourceCache/TextureResource.h"
-#include "../ResourceCache/ShaderResource.h"
+#include "../ResourceCache/MaterialResource.h"
+#include "../ResourceCache/XmlResource.h"
 #include "../AppFramework/BaseGameApp.h"
 #include "../AppFramework/BaseGameLogic.h"
 #include <DirectXColors.h>
@@ -469,10 +470,30 @@ HRESULT GeometryNode::VOnInitSceneNode(Scene* pScene)
 	GeometryRenderComponent* pGeometryRender = static_cast<GeometryRenderComponent*>(m_pRenderComponent);
 	if (pGeometryRender != nullptr)
 	{
-		m_EffectName = pGeometryRender->GetEffectName();
+		m_MaterialName = pGeometryRender->GetMaterialName();
 	}
 
-	Resource effectRes(m_EffectName);
+	const tinyxml2::XMLElement* rootNode = nullptr;
+
+	Resource materialRes(m_MaterialName);
+	shared_ptr<ResHandle> pMaterialResHandle = g_pApp->GetResCache()->GetHandle(&materialRes);
+	if (pMaterialResHandle != nullptr)
+	{
+		shared_ptr<XmlResourceExtraData> extra = static_pointer_cast<XmlResourceExtraData>(pMaterialResHandle->GetExtraData());
+		if (extra != nullptr)
+		{
+			rootNode = extra->GetRoot();
+		}
+	}
+
+	if (nullptr == rootNode)
+	{
+		DEBUG_ERROR("Material is not exist or valid: " + m_MaterialName);
+		return S_FALSE;
+	}
+
+	std::string effectName = rootNode->Attribute("object");
+	Resource effectRes(effectName);
 	shared_ptr<ResHandle> pEffectResHandle = g_pApp->GetResCache()->GetHandle(&effectRes);
 	if (pEffectResHandle != nullptr)
 	{
@@ -485,18 +506,8 @@ HRESULT GeometryNode::VOnInitSceneNode(Scene* pScene)
 
 	if (m_pEffect == nullptr)
 	{
-		DEBUG_ERROR("effect is not exist or valid: " + m_EffectName);
-	}
-
-	const tinyxml2::XMLDocument* pEffectXmlDoc = m_pEffect->GetEffectXmlDoc();
-	if (pEffectXmlDoc == nullptr)
-	{
-		DEBUG_ERROR("not generate effect xml string");
-	}
-	const tinyxml2::XMLElement* rootNode = pEffectXmlDoc->RootElement();
-	if (rootNode == nullptr)
-	{
-		DEBUG_ERROR("effect xml is invalid");
+		DEBUG_ERROR("effect is not exist or valid: " + effectName);
+		return S_FALSE;
 	}
 
 	const tinyxml2::XMLElement* pTechniques = rootNode->FirstChildElement("Techniques");
@@ -546,9 +557,22 @@ HRESULT GeometryNode::VOnUpdate(Scene* pScene, const GameTime& gameTime)
 
 HRESULT GeometryNode::VRender(Scene* pScene, const GameTime& gameTime)
 {
-	DEBUG_ASSERT(m_pEffect->GetEffectXmlDoc() != nullptr && m_pEffect->GetEffectXmlDoc()->RootElement() != nullptr);
+	const tinyxml2::XMLElement* rootNode = nullptr;
 
-	const tinyxml2::XMLElement* pVariables = m_pEffect->GetEffectXmlDoc()->RootElement()->FirstChildElement("Variables");
+	Resource materialRes(m_MaterialName);
+	shared_ptr<ResHandle> pMaterialResHandle = g_pApp->GetResCache()->GetHandle(&materialRes);
+	if (pMaterialResHandle != nullptr)
+	{
+		shared_ptr<XmlResourceExtraData> extra = static_pointer_cast<XmlResourceExtraData>(pMaterialResHandle->GetExtraData());
+		if (extra != nullptr)
+		{
+			rootNode = extra->GetRoot();
+		}
+	}
+	if (nullptr == rootNode)
+		return S_FALSE;
+
+	const tinyxml2::XMLElement* pVariables = rootNode->FirstChildElement("Variables");
 	DEBUG_ASSERT(pVariables != nullptr);
 
 	const std::map<std::string, Variable*>& variables = m_pEffect->GetVariablesByName();
@@ -788,10 +812,30 @@ HRESULT ModelNode::VOnInitSceneNode(Scene *pScene)
 	ModelRenderComponent* pMeshRender = static_cast<ModelRenderComponent*>(m_pRenderComponent);
 	if (pMeshRender != nullptr)
 	{
-		m_EffectName = pMeshRender->GetEffectName();
+		m_MaterialName = pMeshRender->GetMaterialName();
 	}
 
-	Resource effectRes(m_EffectName);
+	const tinyxml2::XMLElement* rootNode = nullptr;
+
+	Resource materialRes(m_MaterialName);
+	shared_ptr<ResHandle> pMaterialResHandle = g_pApp->GetResCache()->GetHandle(&materialRes);
+	if (pMaterialResHandle != nullptr)
+	{
+		shared_ptr<XmlResourceExtraData> extra = static_pointer_cast<XmlResourceExtraData>(pMaterialResHandle->GetExtraData());
+		if (extra != nullptr)
+		{
+			rootNode = extra->GetRoot();
+		}
+	}
+
+	if (nullptr == rootNode)
+	{
+		DEBUG_ERROR("Material is not exist or valid: " + m_MaterialName);
+		return S_FALSE;
+	}
+
+	std::string effectName = rootNode->Attribute("object");
+	Resource effectRes(effectName);
 	shared_ptr<ResHandle> pEffectResHandle = g_pApp->GetResCache()->GetHandle(&effectRes);
 	if (pEffectResHandle != nullptr)
 	{
@@ -804,19 +848,7 @@ HRESULT ModelNode::VOnInitSceneNode(Scene *pScene)
 
 	if (m_pEffect == nullptr)
 	{
-		DEBUG_ERROR("effect is not exist or valid: " + m_EffectName);
-	}
-
-	const tinyxml2::XMLDocument* pEffectXmlDoc = m_pEffect->GetEffectXmlDoc();
-	if (pEffectXmlDoc == nullptr)
-	{
-		DEBUG_ERROR("not generate effect xml string");
-		return S_FALSE;
-	}
-	const tinyxml2::XMLElement* rootNode = pEffectXmlDoc->RootElement();
-	if (rootNode == nullptr)
-	{
-		DEBUG_ERROR("effect xml is invalid");
+		DEBUG_ERROR("effect is not exist or valid: " + effectName);
 	}
 
 	const tinyxml2::XMLElement* pTechniques = rootNode->FirstChildElement("Techniques");
@@ -890,9 +922,22 @@ HRESULT ModelNode::VOnUpdate(Scene* pScene, const GameTime& gameTime)
 
 HRESULT ModelNode::VRender(Scene* pScene, const GameTime& gameTime)
 {
-	DEBUG_ASSERT(m_pEffect->GetEffectXmlDoc() != nullptr && m_pEffect->GetEffectXmlDoc()->RootElement() != nullptr);
+	const tinyxml2::XMLElement* rootNode = nullptr;
 
-	const tinyxml2::XMLElement* pVariables = m_pEffect->GetEffectXmlDoc()->RootElement()->FirstChildElement("Variables");
+	Resource materialRes(m_MaterialName);
+	shared_ptr<ResHandle> pMaterialResHandle = g_pApp->GetResCache()->GetHandle(&materialRes);
+	if (pMaterialResHandle != nullptr)
+	{
+		shared_ptr<XmlResourceExtraData> extra = static_pointer_cast<XmlResourceExtraData>(pMaterialResHandle->GetExtraData());
+		if (extra != nullptr)
+		{
+			rootNode = extra->GetRoot();
+		}
+	}
+	if (nullptr == rootNode)
+		return S_FALSE;
+
+	const tinyxml2::XMLElement* pVariables = rootNode->FirstChildElement("Variables");
 	DEBUG_ASSERT(pVariables != nullptr);
 
 	const std::map<std::string, Variable*>& variables = m_pEffect->GetVariablesByName();

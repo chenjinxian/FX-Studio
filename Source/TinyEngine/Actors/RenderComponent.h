@@ -60,20 +60,14 @@ public:
 	GeometryRenderComponent();
 	virtual ~GeometryRenderComponent();
 
-	const std::string& GetTextureName() { return m_TextureName; }
-	const std::string& GetEffectName() { return m_EffectName; }
-	const std::string& GetCurrentTechniqueName() { return m_CurrentTechnique; }
-	const std::string& GetCurrentPassName() { return m_CurrentPass; }
+	const std::string& GetMaterialName() { return m_MaterialName; }
 
 protected:
 	virtual bool VDelegateInit(tinyxml2::XMLElement* pData);
 	virtual shared_ptr<SceneNode> VCreateSceneNode();
 	virtual void VCreateInheritedXmlElement(tinyxml2::XMLElement* pBaseElement, tinyxml2::XMLDocument* pDocument);
 
-	std::string m_EffectName;
-	std::string m_CurrentTechnique;
-	std::string m_CurrentPass;
-	std::string m_TextureName;
+	std::string m_MaterialName;
 };
 
 class CubeRenderComponent : public GeometryRenderComponent
@@ -171,10 +165,7 @@ public:
 	virtual ~ModelRenderComponent();
 
 	const std::string& GetModelName() { return m_ModelName; }
-	const std::vector<std::string>& GetTextureName() { return m_TextureNames; }
-	const std::string& GetEffectName() { return m_EffectName; }
-	const std::string& GetCurrentTechniqueName() { return m_CurrentTechnique; }
-	const std::string& GetCurrentPassName() { return m_CurrentPass; }
+	const std::string& GetMaterialName() { return m_MaterialName; }
 
 	virtual const std::string& VGetComponentName() const override { return m_Name; }
 	static const std::string m_Name;
@@ -186,10 +177,7 @@ protected:
 
 private:
 	std::string m_ModelName;
-	std::string m_EffectName;
-	std::string m_CurrentTechnique;
-	std::string m_CurrentPass;
-	std::vector<std::string> m_TextureNames;
+	std::string m_MaterialName;
 };
 
 class SkyboxRenderComponent : public BaseRenderComponent

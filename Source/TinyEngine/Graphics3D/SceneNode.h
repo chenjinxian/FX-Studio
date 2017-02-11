@@ -166,7 +166,7 @@ private:
 	uint32_t m_IndexCount;
 	std::unique_ptr<Mesh> m_Mesh;
 
-	std::string m_EffectName;
+	std::string m_MaterialName;
 
 	static const std::string m_Cube;
 	static const std::string m_Sphere;
@@ -196,7 +196,7 @@ private:
 	std::unique_ptr<Model> m_pModel;
 
 	std::string m_ModelName;
-	std::string m_EffectName;
+	std::string m_MaterialName;
 };
 
 class SkyboxNode : public SceneNode

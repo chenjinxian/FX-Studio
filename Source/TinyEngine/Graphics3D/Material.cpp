@@ -9,9 +9,7 @@ Effect::Effect(ID3D11Device* pDevice, ID3DX11Effect* pD3DX11Effect)
 	: m_Techniques(),
 	m_TechniquesByName(),
 	m_Variables(),
-	m_VariablesByName(),
-	m_pEffectXmlDoc(nullptr),
-	m_pEffectXmlString()
+	m_VariablesByName()
 {
 	DEBUG_ASSERT(pDevice != nullptr);
 	DEBUG_ASSERT(pD3DX11Effect != nullptr);
@@ -73,26 +71,25 @@ const std::map<std::string, Variable*>& Effect::GetVariablesByName() const
 	return m_VariablesByName;
 }
 
-const std::string& Effect::GenerateXml(const std::string& effectObjectPath, const std::string& effectName, const std::string& materialName)
+const std::string& Effect::GenerateXml(const std::string& effectObjectPath, const std::string& effectName)
 {
-	if (m_pEffectXmlString.empty())
+	if (m_effectXmlString.empty())
 	{
-		m_pEffectXmlDoc = std::unique_ptr<tinyxml2::XMLDocument>(DEBUG_NEW tinyxml2::XMLDocument());
+		unique_ptr<tinyxml2::XMLDocument> pEffectXmlDoc = std::unique_ptr<tinyxml2::XMLDocument>(DEBUG_NEW tinyxml2::XMLDocument());
 
-		tinyxml2::XMLElement* pRoot = m_pEffectXmlDoc->NewElement("Material");
-		m_pEffectXmlDoc->InsertEndChild(pRoot);
+		tinyxml2::XMLElement* pRoot = pEffectXmlDoc->NewElement("Material");
+		pEffectXmlDoc->InsertEndChild(pRoot);
 
-		pRoot->SetAttribute("name", materialName.c_str());
 		pRoot->SetAttribute("effect", effectName.c_str());
 		pRoot->SetAttribute("object", effectObjectPath.c_str());
 
-		tinyxml2::XMLElement* pTechniques = m_pEffectXmlDoc->NewElement("Techniques");
+		tinyxml2::XMLElement* pTechniques = pEffectXmlDoc->NewElement("Techniques");
 		pRoot->InsertEndChild(pTechniques);
 
 		bool firstCheck = true;
 		for (auto technique : m_Techniques)
 		{
-			tinyxml2::XMLElement* pChildTechnique = m_pEffectXmlDoc->NewElement("Technique");
+			tinyxml2::XMLElement* pChildTechnique = pEffectXmlDoc->NewElement("Technique");
 			pChildTechnique->SetAttribute("name", technique->GetTechniqueName().c_str());
 			if (firstCheck)
 			{
@@ -104,26 +101,26 @@ const std::string& Effect::GenerateXml(const std::string& effectObjectPath, cons
 
 			for (auto pass : technique->GetPasses())
 			{
-				tinyxml2::XMLElement* pChildPass = m_pEffectXmlDoc->NewElement("Pass");
-				pChildPass->InsertEndChild(m_pEffectXmlDoc->NewText(pass->GetPassName().c_str()));
+				tinyxml2::XMLElement* pChildPass = pEffectXmlDoc->NewElement("Pass");
+				pChildPass->InsertEndChild(pEffectXmlDoc->NewText(pass->GetPassName().c_str()));
 				pChildTechnique->InsertEndChild(pChildPass);
 			}
 
 			pTechniques->InsertEndChild(pChildTechnique);
 		}
 
-		tinyxml2::XMLElement* pVariables = m_pEffectXmlDoc->NewElement("Variables");
+		tinyxml2::XMLElement* pVariables = pEffectXmlDoc->NewElement("Variables");
 		pRoot->InsertEndChild(pVariables);
 
 		for (auto variable : m_Variables)
 		{
-			tinyxml2::XMLElement* pChildVariable = m_pEffectXmlDoc->NewElement("Variable");
+			tinyxml2::XMLElement* pChildVariable = pEffectXmlDoc->NewElement("Variable");
 			pChildVariable->SetAttribute("name", variable->GetVariableName().c_str());
 			pChildVariable->SetAttribute("value", variable->GetVariableValue().c_str());
 
 			for (auto annotation : variable->GetAnnotations())
 			{
-				tinyxml2::XMLElement* pChildAnnotation = m_pEffectXmlDoc->NewElement(annotation->GetAnnotationName().c_str());
+				tinyxml2::XMLElement* pChildAnnotation = pEffectXmlDoc->NewElement(annotation->GetAnnotationName().c_str());
 				pChildAnnotation->SetText(annotation->GetAnnotationValue().c_str());
 				pChildVariable->InsertEndChild(pChildAnnotation);
 			}
@@ -132,23 +129,11 @@ const std::string& Effect::GenerateXml(const std::string& effectObjectPath, cons
 		}
 
 		tinyxml2::XMLPrinter printer;
-		m_pEffectXmlDoc->Accept(&printer);
-		m_pEffectXmlString = std::string(printer.CStr(), printer.CStrSize());
+		pEffectXmlDoc->Accept(&printer);
+		m_effectXmlString = std::string(printer.CStr(), printer.CStrSize());
 	}
 	
-	return m_pEffectXmlString;
-}
-
-void Effect::SetEffectXmlString(const char* effectXmlStr, int effectXmlSize)
-{
-	m_pEffectXmlString = std::string(effectXmlStr, effectXmlSize);
-
-	if (m_pEffectXmlDoc == nullptr)
-	{
-		m_pEffectXmlDoc = std::unique_ptr<tinyxml2::XMLDocument>(DEBUG_NEW tinyxml2::XMLDocument());
-	}
-
-	m_pEffectXmlDoc->Parse(effectXmlStr, effectXmlSize);
+	return m_effectXmlString;
 }
 
 Technique::Technique(ID3D11Device* pDevice, ID3DX11EffectTechnique* pD3DX11EffectTechnique)

@@ -3,7 +3,7 @@
 #include "../Actors/ActorFactory.h"
 #include "../Actors/Actor.h"
 #include "../ResourceCache/XmlResource.h"
-#include "../ResourceCache/ShaderResource.h"
+#include "../ResourceCache/MaterialResource.h"
 #include "../EventManager/Events.h"
 #include "../UserInterface/HumanView.h"
 
@@ -623,43 +623,16 @@ bool BaseGameLogic::LoadAssets(const std::string& asset)
 		return false;
 	}
 
-	std::map<std::string, std::string> effects;
-
-	tinyxml2::XMLElement* pEffects = pRoot->FirstChildElement("Effects");
-	if (pEffects != nullptr)
-	{
-		for (tinyxml2::XMLElement* pNode = pEffects->FirstChildElement(); pNode; pNode = pNode->NextSiblingElement())
-		{
-			effects.insert(std::make_pair(pNode->Attribute("name"), pNode->Attribute("object")));
-		}
-	}
-
-	tinyxml2::XMLElement* pMaterials = pRoot->FirstChildElement("Materials");
-	if (pMaterials != nullptr)
-	{
-		for (tinyxml2::XMLElement* pNode = pMaterials->FirstChildElement(); pNode; pNode = pNode->NextSiblingElement())
-		{
-			std::string effectName = pNode->Attribute("effect");
-			auto find = effects.find(effectName);
-			if (find != effects.end())
-			{
-				Resource effectRes(find->second);
-				shared_ptr<ResHandle> pEffectResHandle = g_pApp->GetResCache()->GetHandle(&effectRes);
-				if (pEffectResHandle != nullptr)
-				{
-					shared_ptr<HlslResourceExtraData> extra = static_pointer_cast<HlslResourceExtraData>(pEffectResHandle->GetExtraData());
-					if (extra != nullptr)
-					{
-						Effect* pEffect = extra->GetEffect();
-						tinyxml2::XMLPrinter printer;
-						pNode->Accept(&printer);
-						pEffect->SetEffectXmlString(printer.CStr(), printer.CStrSize());
-					}
-				}
-			}
-		}
-	}
-
+// 	tinyxml2::XMLElement* pEffects = pRoot->FirstChildElement("Effects");
+// 	if (pEffects != nullptr)
+// 	{
+// 	}
+// 
+// 	tinyxml2::XMLElement* pMaterials = pRoot->FirstChildElement("Materials");
+// 	if (pMaterials != nullptr)
+// 	{
+// 	}
+// 
 // 	tinyxml2::XMLElement* pModels = pRoot->FirstChildElement("Models");
 // 	if (pModels)
 // 	{

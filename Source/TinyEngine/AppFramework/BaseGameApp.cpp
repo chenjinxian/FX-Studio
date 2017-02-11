@@ -5,7 +5,7 @@
 #include "../ResourceCache/ResCache.h"
 #include "../ResourceCache/XmlResource.h"
 #include "../EventManager/EventManagerImpl.h"
-#include "../ResourceCache/ShaderResource.h"
+#include "../ResourceCache/MaterialResource.h"
 
 BaseGameApp* g_pApp = nullptr;
 const int BaseGameApp::MEGABYTE = 1024 * 1024;
@@ -478,15 +478,17 @@ bool BaseGameApp::InitResource()
 		m_pResCache->RegisterLoader(CreateXmlResourceLoader());
 		m_pResCache->RegisterLoader(CreateFxSourceEffectResourceLoader());
 		m_pResCache->RegisterLoader(CreateFxObjectEffectResourceLoader());
+		m_pResCache->RegisterLoader(CreateMaterialResourceLoader());
 	}
 
-	m_pResCache->Preload("*.dds", NULL);
-	m_pResCache->Preload("*.jpg", NULL);
-	m_pResCache->Preload("*.png", NULL);
-	m_pResCache->Preload("*.bmp", NULL);
-	m_pResCache->Preload("*.tiff", NULL);
-	m_pResCache->Preload("*.fx", NULL);
-	m_pResCache->Preload("*.fxo", NULL);
+	m_pResCache->Preload("*.dds");
+	m_pResCache->Preload("*.jpg");
+	m_pResCache->Preload("*.png");
+	m_pResCache->Preload("*.bmp");
+	m_pResCache->Preload("*.tiff");
+	m_pResCache->Preload("*.fx");
+	m_pResCache->Preload("*.fxo");
+	m_pResCache->Preload("*.mat");
 	return true;
 }
 
@@ -532,7 +534,7 @@ void BaseGameApp::OnRenderFrame()
 	OnUpdate(m_GameTime);
 }
 
-uint32_t BaseGameApp::AddEffect(const std::string& effectObjectPath, const std::string& effectName, const std::string& materialName)
+uint32_t BaseGameApp::AddEffect(const std::string& effectObjectPath, const std::string& effectName)
 {
 	Resource effectRes(effectObjectPath);
 	shared_ptr<ResHandle> pEffectResHandle = g_pApp->GetResCache()->GetHandle(&effectRes);
@@ -542,7 +544,7 @@ uint32_t BaseGameApp::AddEffect(const std::string& effectObjectPath, const std::
 		if (extra != nullptr)
 		{
 			Effect* pEffect = extra->GetEffect();
-			return pEffect->GenerateXml(effectObjectPath, effectName, materialName).length();
+			return pEffect->GenerateXml(effectObjectPath, effectName).length();
 		}
 	}
 

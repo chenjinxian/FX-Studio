@@ -133,9 +133,6 @@
     <ClInclude Include="ResourceCache\TextureResource.h">
       <Filter>ResourceCache</Filter>
     </ClInclude>
-    <ClInclude Include="ResourceCache\ShaderResource.h">
-      <Filter>ResourceCache</Filter>
-    </ClInclude>
     <ClInclude Include="Graphics3D\Material.h">
       <Filter>Graphics3D</Filter>
     </ClInclude>
@@ -150,6 +147,9 @@
     </ClInclude>
     <ClInclude Include="Graphics3D\Model.h">
       <Filter>Graphics3D</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceCache\MaterialResource.h">
+      <Filter>ResourceCache</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -231,9 +231,6 @@
     <ClCompile Include="ResourceCache\TextureResource.cpp">
       <Filter>ResourceCache</Filter>
     </ClCompile>
-    <ClCompile Include="ResourceCache\ShaderResource.cpp">
-      <Filter>ResourceCache</Filter>
-    </ClCompile>
     <ClCompile Include="Graphics3D\Material.cpp">
       <Filter>Graphics3D</Filter>
     </ClCompile>
@@ -245,6 +242,9 @@
     </ClCompile>
     <ClCompile Include="Graphics3D\Model.cpp">
       <Filter>Graphics3D</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceCache\MaterialResource.cpp">
+      <Filter>ResourceCache</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

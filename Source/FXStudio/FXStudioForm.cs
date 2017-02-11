@@ -17,7 +17,7 @@ using WeifenLuo.WinFormsUI.Docking;
 namespace FXStudio
 {
     public delegate void UpdatePropertiesDelegate(XmlNode selectedNode);
-    public delegate void ChangeEffectDelegate(XmlNode effectNode, uint actorId);
+    public delegate void ChangeMaterialDelegate(string name, uint actorId);
     public delegate void MoveActorDelegate(string component, string attribute, Inspector.Vector3 value);
     public delegate void UpdateOutputDelegate(string output, string error);
 
@@ -127,7 +127,7 @@ namespace FXStudio
                 RenderMethods.ModifyActor(xmlActor.OuterXml);
             });
 
-            m_RenderView.SetChangeEffectDelegate((effectNode, actorId) =>
+            m_RenderView.SetChangeMaterialDelegate((name, actorId) =>
             {
                 m_ProjectView.SelectActorNode(actorId);
                 XmlNode actorNode = m_ProjectView.GetSelectActorXml();
@@ -160,11 +160,9 @@ namespace FXStudio
                     renderComponent = xmlDoc.CreateElement("TeapotRenderComponent");
                 }
 
-                XmlElement effect = xmlDoc.CreateElement("Effect");
-                renderComponent.AppendChild(effect);
-                effect.InnerText = effectNode.Attributes["object"].Value;
-                effect.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "technique", "main11"));
-                effect.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "pass", "p0"));
+                XmlElement material = xmlDoc.CreateElement("Material");
+                renderComponent.AppendChild(material);
+                material.InnerText = @"Materials\" + name + ".mat";
                 xmlActor.AppendChild(renderComponent);
 
                 RenderMethods.ModifyActor(xmlActor.OuterXml);

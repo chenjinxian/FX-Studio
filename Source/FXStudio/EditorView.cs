@@ -18,8 +18,8 @@ namespace FXStudio
         {
             InitializeComponent();
 
-            panelTop.BackColor = dockPanelEdit.Theme.Skin.ColorPalette.MainWindowActive.Background;
-            panelBottom.BackColor = dockPanelEdit.Theme.Skin.ColorPalette.MainWindowActive.Background;
+            panelTop.BackColor = dockPanelEdit.Theme.ColorPalette.MainWindowActive.Background;
+            panelBottom.BackColor = dockPanelEdit.Theme.ColorPalette.MainWindowActive.Background;
         }
 
         public void ShowEffectDoc(string effectPath)
@@ -33,8 +33,7 @@ namespace FXStudio
             else
             {
                 DocumentView docView = new DocumentView();
-                docView.DockHandler.TabText = fileName;
-                docView.DockHandler.ToolTipText = effectPath;
+                docView.TabText = fileName;
                 docView.ToolTipText = effectPath;
                 docView.Show(this.dockPanelEdit);
             }

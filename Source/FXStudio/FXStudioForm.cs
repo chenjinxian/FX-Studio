@@ -276,9 +276,9 @@ namespace FXStudio
         {
             toolStripEx.SetStyle(this.menuStripMain);
             toolStripEx.SetStyle(this.toolStripMain);
-            panelTop.BackColor = panelAllView.Theme.Skin.ColorPalette.MainWindowActive.Background;
-            panelBottom.BackColor = panelAllView.Theme.Skin.ColorPalette.MainWindowActive.Background;
-            statusStripMain.BackColor = panelAllView.Theme.Skin.ColorPalette.MainWindowStatusBarDefault.Background;
+            panelTop.BackColor = panelAllView.Theme.ColorPalette.MainWindowActive.Background;
+            panelBottom.BackColor = panelAllView.Theme.ColorPalette.MainWindowActive.Background;
+            statusStripMain.BackColor = panelAllView.Theme.ColorPalette.MainWindowStatusBarDefault.Background;
         }
 
         private void ResetLayout()

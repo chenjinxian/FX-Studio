@@ -17,7 +17,11 @@ namespace FXStudio
         public DocumentView()
         {
             InitializeComponent();
-            toolTipDoc.SetToolTip(this, "Test");
+        }
+
+        private void DocumentView_Load(object sender, EventArgs e)
+        {
+            scintillaBox.Text = File.ReadAllText(this.ToolTipText);
         }
     }
 }

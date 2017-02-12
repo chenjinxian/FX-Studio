@@ -28,9 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             this.scintillaBox = new ScintillaNET.Scintilla();
-            this.toolTipDoc = new System.Windows.Forms.ToolTip(this.components);
             this.SuspendLayout();
             // 
             // scintillaBox
@@ -51,12 +49,12 @@
             this.Name = "DocumentView";
             this.Padding = new System.Windows.Forms.Padding(0, 4, 0, 0);
             this.Text = "DocumentView";
+            this.Load += new System.EventHandler(this.DocumentView_Load);
             this.ResumeLayout(false);
 
         }
 
         #endregion
         private ScintillaNET.Scintilla scintillaBox;
-        private System.Windows.Forms.ToolTip toolTipDoc;
     }
 }

@@ -23,7 +23,6 @@ namespace FXStudio
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-
             try
             {
                 FXStudioForm form = new FXStudioForm();

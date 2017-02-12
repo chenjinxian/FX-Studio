@@ -311,7 +311,7 @@ namespace FXStudio
                 ResetLayout();
             }
 
-            panelAllView.DockLeftPortion = panelAllView.Width * 0.22d;
+            panelAllView.DockLeftPortion = panelAllView.Width * 0.20d;
             panelAllView.DockRightPortion = panelAllView.DockLeftPortion;
 
             IntPtr hInstance = Marshal.GetHINSTANCE(this.GetType().Module);
@@ -396,7 +396,7 @@ namespace FXStudio
         {
             if (panelAllView.Width != 0 && panelAllView.Height != 0)
             {
-                panelAllView.DockLeftPortion = panelAllView.Width * 0.22d;
+                panelAllView.DockLeftPortion = panelAllView.Width * 0.20d;
                 panelAllView.DockRightPortion = panelAllView.DockLeftPortion;
             }
         }
@@ -542,6 +542,16 @@ namespace FXStudio
         {
             m_ProjectView.SaveProjectFile();
             m_AssetsView.SaveAssetsFile();
+        }
+
+        private void toolStripMenuItemUndo_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void toolStripMenuItemRedo_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

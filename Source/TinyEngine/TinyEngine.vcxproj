@@ -202,6 +202,7 @@
     <ClInclude Include="Graphics3D\RenderState.h" />
     <ClInclude Include="Graphics3D\Scene.h" />
     <ClInclude Include="Graphics3D\SceneNode.h" />
+    <ClInclude Include="Graphics3D\SkyboxNode.h" />
     <ClInclude Include="ResourceCache\MaterialResource.h" />
     <ClInclude Include="ResourceCache\TextureResource.h" />
     <ClInclude Include="TinyEngine.h" />
@@ -241,6 +242,7 @@
     <ClCompile Include="Graphics3D\MovementController.cpp" />
     <ClCompile Include="Graphics3D\Scene.cpp" />
     <ClCompile Include="Graphics3D\SceneNode.cpp" />
+    <ClCompile Include="Graphics3D\SkyboxNode.cpp" />
     <ClCompile Include="ResourceCache\ResCache.cpp" />
     <ClCompile Include="ResourceCache\MaterialResource.cpp" />
     <ClCompile Include="ResourceCache\TextureResource.cpp" />

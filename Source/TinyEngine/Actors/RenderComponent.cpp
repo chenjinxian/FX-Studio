@@ -3,6 +3,7 @@
 #include "TransformComponent.h"
 #include "../EventManager/Events.h"
 #include "../AppFramework/BaseGameApp.h"
+#include "../Graphics3D/SkyboxNode.h"
 
 const std::string GridRenderComponent::m_Name = "GridRenderComponent";
 const std::string ModelRenderComponent::m_Name = "ModelRenderComponent";

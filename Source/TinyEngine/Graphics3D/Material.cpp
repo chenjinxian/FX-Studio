@@ -183,17 +183,19 @@ Pass::Pass(ID3D11Device* pDevice, ID3DX11EffectPass* pD3DX11EffectPass)
 	m_PassName(),
 	m_pInputLayouts(nullptr),
 	m_VertexFormat(),
-	m_VertexSize(0)
+	m_VertexSize(0),
+	m_HasGeometryShader(false),
+	m_HasHullShader(false),
+	m_HasDomainShader(false)
 {
 	D3DX11_PASS_DESC passDesc;
 	m_pD3DX11EffectPass->GetDesc(&passDesc);
 	m_PassName = passDesc.Name;
 
-
 	D3DX11_PASS_SHADER_DESC vertexShaderDesc;
 	m_pD3DX11EffectPass->GetVertexShaderDesc(&vertexShaderDesc);
 	ID3DX11EffectShaderVariable* pShaderVariable = vertexShaderDesc.pShaderVariable;
-	if (pShaderVariable != nullptr)
+	if (pShaderVariable != nullptr && pShaderVariable->IsValid())
 	{
 		D3DX11_EFFECT_SHADER_DESC shaderDesc;
 		pShaderVariable->GetShaderDesc(vertexShaderDesc.ShaderIndex, &shaderDesc);
@@ -216,6 +218,56 @@ Pass::Pass(ID3D11Device* pDevice, ID3DX11EffectPass* pD3DX11EffectPass)
 	
 		pDevice->CreateInputLayout(
 			&inputElementDescs[0], inputElementDescs.size(), passDesc.pIAInputSignature, passDesc.IAInputSignatureSize, &m_pInputLayouts);
+	}
+
+	D3DX11_EFFECT_SHADER_DESC shaderDesc;
+	D3DX11_PASS_SHADER_DESC geometryShaderDesc;
+	m_pD3DX11EffectPass->GetGeometryShaderDesc(&geometryShaderDesc);
+	pShaderVariable = geometryShaderDesc.pShaderVariable;
+	if (pShaderVariable != nullptr && pShaderVariable->IsValid())
+	{
+		pShaderVariable->GetShaderDesc(geometryShaderDesc.ShaderIndex, &shaderDesc);
+		m_HasGeometryShader = true;
+	}
+	else
+	{
+		m_HasGeometryShader = false;
+	}
+
+	D3DX11_PASS_SHADER_DESC hullShaderDesc;
+	m_pD3DX11EffectPass->GetHullShaderDesc(&hullShaderDesc);
+	pShaderVariable = hullShaderDesc.pShaderVariable;
+	if (pShaderVariable != nullptr && pShaderVariable->IsValid())
+	{
+		pShaderVariable->GetShaderDesc(hullShaderDesc.ShaderIndex, &shaderDesc);
+		D3D11_SIGNATURE_PARAMETER_DESC parameterDesc;
+		for (uint32_t i = 0; i < shaderDesc.NumPatchConstantSignatureEntries; i++)
+		{
+			pShaderVariable->GetPatchConstantSignatureElementDesc(hullShaderDesc.ShaderIndex, i, &parameterDesc);
+		}
+		m_HasHullShader = true;
+	}
+	else
+	{
+		m_HasHullShader = false;
+	}
+
+	D3DX11_PASS_SHADER_DESC domainShaderDesc;
+	m_pD3DX11EffectPass->GetDomainShaderDesc(&domainShaderDesc);
+	pShaderVariable = domainShaderDesc.pShaderVariable;
+	if (pShaderVariable != nullptr && pShaderVariable->IsValid())
+	{
+		pShaderVariable->GetShaderDesc(domainShaderDesc.ShaderIndex, &shaderDesc);
+		D3D11_SIGNATURE_PARAMETER_DESC parameterDesc;
+		for (uint32_t i = 0; i < shaderDesc.NumPatchConstantSignatureEntries; i++)
+		{
+			pShaderVariable->GetPatchConstantSignatureElementDesc(domainShaderDesc.ShaderIndex, i, &parameterDesc);
+		}
+		m_HasDomainShader = true;
+	}
+	else
+	{
+		m_HasDomainShader = false;
 	}
 }
 

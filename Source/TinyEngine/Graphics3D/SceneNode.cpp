@@ -659,13 +659,22 @@ HRESULT GeometryNode::VRender(Scene* pScene, const GameTime& gameTime)
 		}
 	}
 
-	pScene->GetRenderder()->VInputSetup(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, m_pCurrentPass->GetInputLayout());
+	if (m_pCurrentPass->HasHullShader())
+	{
+		pScene->GetRenderder()->VInputSetup(D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST, m_pCurrentPass->GetInputLayout());
+	}
+	else
+	{
+		pScene->GetRenderder()->VInputSetup(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, m_pCurrentPass->GetInputLayout());
+	}
 	uint32_t stride = m_pCurrentPass->GetVertexSize();
 	uint32_t offset = 0;
 	pScene->GetRenderder()->VSetVertexBuffers(m_pVertexBuffer, &stride, &offset);
 	pScene->GetRenderder()->VSetIndexBuffer(m_pIndexBuffer, IRenderer::Format_uint32, 0);
 	pScene->GetRenderder()->VDrawMesh(m_IndexCount, 0, 0, m_pCurrentPass->GetEffectPass());
 
+	pScene->GetRenderder()->VResetShader(
+		m_pCurrentPass->HasGeometryShader(), m_pCurrentPass->HasHullShader(), m_pCurrentPass->HasDomainShader());
 	return S_OK;
 }
 

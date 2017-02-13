@@ -124,7 +124,7 @@ namespace FXStudio
             effect.InnerText = @"Materials\DefaultMaterial.mat";
 
             sphere.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "diameter", "1.0"));
-            sphere.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "tessellation", "4"));
+            sphere.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "tessellation", "3"));
             sphere.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "rhcoords", "1"));
 
             return sphereElement;

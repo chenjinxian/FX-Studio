@@ -66,6 +66,9 @@ public:
 	void CreateVertexBuffer(const Mesh* mesh, ID3D11Buffer** ppVertexBuffer) const;
 	void CreateIndexBuffer(const Mesh* mesh, ID3D11Buffer** ppIndexBuffer) const;
 
+	bool HasGeometryShader() { return m_HasGeometryShader; }
+	bool HasHullShader() { return m_HasHullShader; }
+	bool HasDomainShader() { return m_HasDomainShader; }
 	void Apply(uint32_t flags, ID3D11DeviceContext* pDeviceContext);
 
 private:
@@ -77,6 +80,10 @@ private:
 	ID3D11InputLayout* m_pInputLayouts;
 	uint32_t m_VertexSize;
 	std::vector<std::pair<std::string, int> > m_VertexFormat;
+
+	bool m_HasGeometryShader;
+	bool m_HasHullShader;
+	bool m_HasDomainShader;
 };
 
 class Variable : public boost::noncopyable

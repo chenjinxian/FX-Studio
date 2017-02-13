@@ -111,16 +111,16 @@ bool D3D11Renderer::VInitRenderer(HWND hWnd)
 	SAFE_RELEASE(dxgiFactory);
 
 	CreateBuffers();
-	// 	InitImGui(hWnd);
-	// 	CreateImGuiBuffers();
+	InitImGui(hWnd);
+	CreateImGuiBuffers();
 
 	return true;
 }
 
 void D3D11Renderer::VDeleteRenderer()
 {
-	// 	DeleteImGuiBuffers();
-	// 	ImGui::Shutdown();
+	DeleteImGuiBuffers();
+	ImGui::Shutdown();
 	DeleteBuffers();
 
 	SAFE_RELEASE(m_pSwapChain);
@@ -133,20 +133,20 @@ void D3D11Renderer::VResizeSwapChain()
 	if (m_pDevice == nullptr || m_pDeviceContext == nullptr)
 		return;
 
-	// 	DeleteImGuiBuffers();
+	DeleteImGuiBuffers();
 	DeleteBuffers();
 	m_pSwapChain->ResizeBuffers(0, g_pApp->GetGameConfig().m_ScreenWidth, g_pApp->GetGameConfig().m_ScreenHeight, DXGI_FORMAT_UNKNOWN, 0);
 	CreateBuffers();
-	// 	CreateImGuiBuffers();
+	CreateImGuiBuffers();
 }
 
 bool D3D11Renderer::VPreRender(const GameTime& gameTime)
 {
 	if (m_pDeviceContext != nullptr && m_pRenderTargetView != nullptr)
 	{
-		// 		ImGuiIO& io = ImGui::GetIO();
-		// 		io.DeltaTime = gameTime.GetElapsedTime();
-		// 		ImGui::NewFrame();
+		ImGuiIO& io = ImGui::GetIO();
+		io.DeltaTime = gameTime.GetElapsedTime();
+		ImGui::NewFrame();
 
 		m_pDeviceContext->ClearRenderTargetView(m_pRenderTargetView, m_BackgroundColor);
 		m_pDeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
@@ -159,8 +159,8 @@ bool D3D11Renderer::VPostRender()
 	if (m_pSwapChain == nullptr)
 		return false;
 
-	// 	ImGui::Render();
-	// 	RenderDrawLists();
+	ImGui::Render();
+	RenderDrawLists();
 	m_pSwapChain->Present(g_pApp->GetGameConfig().m_IsVSync ? 1 : 0, 0);
 	return true;
 }
@@ -743,6 +743,22 @@ void D3D11Renderer::VDrawMesh(uint32_t indexCount, uint32_t startIndex, int32_t 
 	if (indexCount > 0)
 	{
 		m_pDeviceContext->DrawIndexed(indexCount, startIndex, baseVertex);
+	}
+}
+
+void D3D11Renderer::VResetShader(bool geoemtryShader, bool hullShader, bool domainShader)
+{
+	if (geoemtryShader)
+	{
+		m_pDeviceContext->GSSetShader(nullptr, nullptr, 0);
+	}
+	if (hullShader)
+	{
+		m_pDeviceContext->HSSetShader(nullptr, nullptr, 0);
+	}
+	if (hullShader)
+	{
+		m_pDeviceContext->DSSetShader(nullptr, nullptr, 0);
 	}
 }
 

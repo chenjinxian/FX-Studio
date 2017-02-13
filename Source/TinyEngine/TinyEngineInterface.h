@@ -215,6 +215,7 @@ public:
 	virtual void VSetVertexBuffers(ID3D11Buffer* pVertexBuffer, uint32_t* stride, uint32_t* offset) = 0;
 	virtual void VSetIndexBuffer(ID3D11Buffer* pIndexBuffer, IndexFormat format, uint32_t offset) = 0;
 	virtual void VDrawMesh(uint32_t indexCount, uint32_t startIndex, int32_t baseVertex, ID3DX11EffectPass* pD3DX11EffectPass) = 0;
+	virtual void VResetShader(bool geoemtryShader, bool hullShader, bool domainShader) = 0;
 
 	virtual bool VCompileShaderFromMemory(const void* pBuffer, uint32_t lenght, shared_ptr<IResourceExtraData> pExtraData) = 0;
 	virtual bool VCreateShaderFromMemory(const void* pBuffer, uint32_t lenght, shared_ptr<IResourceExtraData> pExtraData) = 0;

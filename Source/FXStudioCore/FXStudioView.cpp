@@ -2,6 +2,8 @@
 #include "FXStudioView.h"
 #include "FXStudioApp.h"
 #include "FXStudioEvent.h"
+#include "imgui.h"
+#include "imgui_internal.h"
 
 extern FXStudioApp globalApp;
 
@@ -105,13 +107,35 @@ void FXStudioView::SetCameraType(int type)
 	m_pModelController->SetCameraType((CameraType)type);
 }
 
+void FXStudioView::VRenderText(const GameTime& gameTime)
+{
+	ImGui::SetNextWindowPos(ImVec2(0, 0));
+	ImGui::SetNextWindowSize(ImVec2(500, 100));
+
+	if (!ImGui::Begin("Device State", nullptr, ImVec2(0, 0), 0.0f,
+		ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings))
+	{
+		ImGui::End();
+		return;
+	}
+
+	ImGui::Text(g_pApp->GetRendererAPI()->VGetDeviceName().c_str());
+	ImGui::Text("%d (fps)", gameTime.GetFrameRate());
+
+	ImGui::End();
+}
+
 HRESULT FXStudioView::VOnInitGameViews()
 {
+	if (m_pEditorCamera != nullptr)
+		m_pEditorCamera->VOnInitSceneNode(m_pScene.get());
 	return S_OK;
 }
 
 HRESULT FXStudioView::VOnDeleteGameViews()
 {
+	if (m_pEditorCamera != nullptr)
+		m_pEditorCamera->VOnDeleteSceneNode(m_pScene.get());
 	return S_OK;
 }
 

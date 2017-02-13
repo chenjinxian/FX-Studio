@@ -16,6 +16,7 @@ public:
 	void SetCameraType(int type);
 
 protected:
+	virtual void VRenderText(const GameTime& gameTime) override;
 	virtual HRESULT VOnInitGameViews() override;
 	virtual HRESULT VOnDeleteGameViews() override;
 	virtual bool VLoadGameDelegate(tinyxml2::XMLElement* pCameraNode) override;

@@ -93,17 +93,18 @@ public:
 
 	const std::string& GetVariableName() const { return m_VariableName; }
 	const std::string& GetVariableSemantic() const { return m_VariableSemantic; }
-	const std::string& GetVariableType() const { return m_VariableType; }
+	const std::string& GetVariableType() const { return m_VariableTypeName; }
 	const std::string& GetVariableValue() const { return m_VariableValue; }
+	uint32_t GetElementsCount() const { return m_ElementsCount; }
 	const std::vector<Annotation*>& GetAnnotations() const { return m_Annotations; }
 
 	void SetMatrix(CXMMATRIX value);
 	void SetResource(ID3D11ShaderResourceView* value);
 	void SetVector(FXMVECTOR value);
 	void SetFloat(float value);
+	void SetFloatArray(const std::vector<float>& values);
+	void SetInt(int value);
 	Variable& operator<<(ID3D11UnorderedAccessView* value);
-	Variable& operator<<(int value);
-	Variable& operator<<(const std::vector<float>& values);
 	Variable& operator<<(const std::vector<XMFLOAT2>& values);
 	Variable& operator<<(const std::vector<XMFLOAT4X4>& values);
 
@@ -112,8 +113,9 @@ private:
 	ID3DX11EffectType* m_pD3DX11EffectType;
 	std::string m_VariableName;
 	std::string m_VariableSemantic;
-	std::string m_VariableType;
+	std::string m_VariableTypeName;
 	std::string m_VariableValue;
+	uint32_t m_ElementsCount;
 	std::vector<Annotation*> m_Annotations;
 };
 

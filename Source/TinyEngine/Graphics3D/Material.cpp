@@ -505,8 +505,7 @@ DXGI_FORMAT Pass::GetElementFormat(D3D_REGISTER_COMPONENT_TYPE compoentType, uin
 
 Variable::Variable(ID3D11Device* pDevice, ID3DX11EffectVariable* pD3DX11EffectVariable)
 	: m_pD3DX11EffectVariable(pD3DX11EffectVariable),
-	m_pD3DX11EffectType(nullptr),
-	m_VariableName()
+	m_pD3DX11EffectType(nullptr)
 {
 	D3DX11_EFFECT_VARIABLE_DESC variableDesc;
 	m_pD3DX11EffectVariable->GetDesc(&variableDesc);
@@ -520,16 +519,97 @@ Variable::Variable(ID3D11Device* pDevice, ID3DX11EffectVariable* pD3DX11EffectVa
 	m_pD3DX11EffectType = m_pD3DX11EffectVariable->GetType();
 	D3DX11_EFFECT_TYPE_DESC typeDesc;
 	m_pD3DX11EffectType->GetDesc(&typeDesc);
-	m_VariableType = typeDesc.TypeName;
+	m_VariableTypeName = typeDesc.TypeName; 
+	m_pD3DX11EffectType->GetDesc(&typeDesc);
 
 	switch (typeDesc.Class)
 	{
 	case D3D_SHADER_VARIABLE_CLASS::D3D_SVC_SCALAR:
 	{
 		ID3DX11EffectScalarVariable* scalarVal = m_pD3DX11EffectVariable->AsScalar();
-		float value;
-		scalarVal->GetFloat(&value);
-		m_VariableValue = std::to_string(value);
+		std::stringstream ss;
+
+		switch (typeDesc.Type)
+		{
+		case D3D_SHADER_VARIABLE_TYPE::D3D_SVT_INT:
+		{
+			switch (typeDesc.Elements)
+			{
+			case 0:
+			{
+				int value;
+				scalarVal->GetInt(&value);
+				ss << value;
+				break;
+			}
+			case 2:
+			{
+				int value[2];
+				scalarVal->GetIntArray(value, 0, typeDesc.Elements);
+				ss << value[0] << " " << value[1];
+				break;
+			}
+			case 3:
+			{
+				int value[3];
+				scalarVal->GetIntArray(value, 0, typeDesc.Elements);
+				ss << value[0] << " " << value[1] << " " << value[2];
+				break;
+			}
+			case 4:
+			{
+				int value[4];
+				scalarVal->GetIntArray(value, 0, typeDesc.Elements);
+				ss << value[0] << " " << value[1] << " " << value[2] << " " << value[3];
+				break;
+			}
+			default:
+				break;
+			}
+			break;
+		}
+		case D3D_SHADER_VARIABLE_TYPE::D3D_SVT_FLOAT:
+		{
+			switch (typeDesc.Elements)
+			{
+			case 0:
+			{
+				float value;
+				scalarVal->GetFloat(&value);
+				ss << value;
+				break;
+			}
+			case 2:
+			{
+				Vector2 value;
+				scalarVal->GetFloatArray(reinterpret_cast<float*>(&value), 0, typeDesc.Elements);
+				ss << value.x << " " << value.y;
+				break;
+			}
+			case 3:
+			{
+				Vector3 value;
+				scalarVal->GetFloatArray(reinterpret_cast<float*>(&value), 0, typeDesc.Elements);
+				ss << value.x << " " << value.y << " " << value.z;
+				break;
+			}
+			case 4:
+			{
+				Vector4 value;
+				scalarVal->GetFloatArray(reinterpret_cast<float*>(&value), 0, typeDesc.Elements);
+				ss << value.x << " " << value.y << " " << value.z << " " << value.w;
+				break;
+			}
+			default:
+				break;
+			}
+			break;
+		}
+		default:
+			break;
+		}
+
+		m_VariableValue = ss.str();
 		break;
 	}
 	case D3D_SHADER_VARIABLE_CLASS::D3D_SVC_VECTOR:
@@ -640,6 +720,28 @@ void Variable::SetFloat(float value)
 	variable->SetFloat(value);
 }
 
+void Variable::SetFloatArray(const std::vector<float>& values)
+{
+	ID3DX11EffectScalarVariable* variable = m_pD3DX11EffectVariable->AsScalar();
+	if (!variable->IsValid())
+	{
+		DEBUG_ERROR("Invalid effect variable cast.");
+	}
+
+	variable->SetFloatArray(&values[0], 0, (uint32_t)values.size());
+}
+
+void Variable::SetInt(int value)
+{
+	ID3DX11EffectScalarVariable* variable = m_pD3DX11EffectVariable->AsScalar();
+	if (!variable->IsValid())
+	{
+		DEBUG_ERROR("Invalid effect variable cast.");
+	}
+
+	variable->SetInt(value);
+}
+
 Variable& Variable::operator<<(ID3D11UnorderedAccessView* value)
 {
 	ID3DX11EffectUnorderedAccessViewVariable* variable = m_pD3DX11EffectVariable->AsUnorderedAccessView();
@@ -649,32 +751,6 @@ Variable& Variable::operator<<(ID3D11UnorderedAccessView* value)
 	}
 
 	variable->SetUnorderedAccessView(value);
-
-	return *this;
-}
-
-Variable& Variable::operator<<(int value)
-{
-	ID3DX11EffectScalarVariable* variable = m_pD3DX11EffectVariable->AsScalar();
-	if (!variable->IsValid())
-	{
-		DEBUG_ERROR("Invalid effect variable cast.");
-	}
-
-	variable->SetInt(value);
-
-	return *this;
-}
-
-Variable& Variable::operator<<(const std::vector<float>& values)
-{
-	ID3DX11EffectScalarVariable* variable = m_pD3DX11EffectVariable->AsScalar();
-	if (!variable->IsValid())
-	{
-		DEBUG_ERROR("Invalid effect variable cast.");
-	}
-
-	variable->SetFloatArray(&values[0], 0, (uint32_t)values.size());
 
 	return *this;
 }

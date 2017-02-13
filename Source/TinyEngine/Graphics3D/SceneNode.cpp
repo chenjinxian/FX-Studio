@@ -579,66 +579,105 @@ HRESULT GeometryNode::VRender(Scene* pScene, const GameTime& gameTime)
 	for (const tinyxml2::XMLElement* pNode = pVariables->FirstChildElement(); pNode; pNode = pNode->NextSiblingElement())
 	{
 		Variable* variable = variables.at(pNode->Attribute("name"));
+		std::string semantic = variable->GetVariableSemantic();
+		std::string type = variable->GetVariableType();
 
-		if (variable->GetVariableSemantic() == "worldviewprojection")
+		if (semantic == "worldviewprojection")
 		{
-			if (variable->GetVariableType() == "float4x4")
+			if (type == "float4x4")
 			{
 				const Matrix& wvp = pScene->GetCamera()->GetWorldViewProjection(pScene);
 				variable->SetMatrix(wvp);
 			}
 		}
-		else if (variable->GetVariableSemantic() == "worldinversetranspose")
+		else if (semantic == "worldinversetranspose")
 		{
-			if (variable->GetVariableType() == "float4x4")
+			if (type == "float4x4")
 			{
 				Matrix& worldIT = pScene->GetTopMatrix().Invert().Transpose();
 				variable->SetMatrix(worldIT);
 			}
 		}
-		else if (variable->GetVariableSemantic() == "world")
+		else if (semantic == "world")
 		{
-			if (variable->GetVariableType() == "float4x4")
+			if (type == "float4x4")
 			{
 				const Matrix& world = pScene->GetTopMatrix();
 				variable->SetMatrix(world);
 			}
 		}
-		else if (variable->GetVariableSemantic() == "viewinverse")
+		else if (semantic == "viewinverse")
 		{
-			if (variable->GetVariableType() == "float4x4")
+			if (type == "float4x4")
 			{
 				Matrix& viewI = pScene->GetCamera()->GetViewMatrix().Invert();
 				variable->SetMatrix(viewI);
 			}
 		}
-		else if (variable->GetVariableType() == "float4")
+		else if (type == "float4")
 		{
 			std::stringstream ss(pNode->Attribute("value"));
 			Vector4 value;
 			ss >> value.x >> value.y >> value.z >> value.w;
 			variable->SetVector(value);
 		}
-		else if (variable->GetVariableType() == "float3")
+		else if (type == "float3")
 		{
 			std::stringstream ss(pNode->Attribute("value"));
 			Vector3 value;
 			ss >> value.x >> value.y >> value.z;
 			variable->SetVector(value);
 		}
-		else if (variable->GetVariableType() == "float2")
+		else if (type == "float2")
 		{
 			std::stringstream ss(pNode->Attribute("value"));
 			Vector2 value;
 			ss >> value.x >> value.y;
 			variable->SetVector(value);
 		}
-		else if (variable->GetVariableType() == "float")
+		else if (type == "float")
 		{
-			variable->SetFloat(pNode->FloatAttribute("value"));
+			switch (variable->GetElementsCount())
+			{
+			case 0:
+			{
+				variable->SetFloat(pNode->FloatAttribute("value"));
+				break;
+			}
+			case 2:
+			{
+				std::stringstream ss(pNode->Attribute("value"));
+				std::vector<float> value(2);
+				ss >> value[0] >> value[1];
+				variable->SetFloatArray(value);
+				break;
+			}
+			case 3:
+			{
+				std::stringstream ss(pNode->Attribute("value"));
+				std::vector<float> value(3);
+				ss >> value[0] >> value[1] >> value[2];
+				variable->SetFloatArray(value);
+				break;
+			}
+			case 4:
+			{
+				std::stringstream ss(pNode->Attribute("value"));
+				std::vector<float> value(4);
+				ss >> value[0] >> value[1] >> value[2] >> value[3];
+				variable->SetFloatArray(value);
+				break;
+			}
+			default:
+				break;
+			}
 		}
-		else if (variable->GetVariableType() == "Texture1D" ||
-			variable->GetVariableType() == "Texture2D" || variable->GetVariableType() == "TextureCube")
+		else if (type == "int")
+		{
+			variable->SetInt(pNode->IntAttribute("value"));
+		}
+		else if (type == "Texture1D" ||
+			type == "Texture2D" || type == "TextureCube")
 		{
 			const tinyxml2::XMLElement* pResourceNode = pNode->FirstChildElement("ResourceName");
 			if (pResourceNode != nullptr)
@@ -953,66 +992,105 @@ HRESULT ModelNode::VRender(Scene* pScene, const GameTime& gameTime)
 	for (const tinyxml2::XMLElement* pNode = pVariables->FirstChildElement(); pNode; pNode = pNode->NextSiblingElement())
 	{
 		Variable* variable = variables.at(pNode->Attribute("name"));
+		std::string semantic = variable->GetVariableSemantic();
+		std::string type = variable->GetVariableType();
 
-		if (variable->GetVariableSemantic() == "worldviewprojection")
+		if (semantic == "worldviewprojection")
 		{
-			if (variable->GetVariableType() == "float4x4")
+			if (type == "float4x4")
 			{
 				const Matrix& wvp = pScene->GetCamera()->GetWorldViewProjection(pScene);
 				variable->SetMatrix(wvp);
 			}
 		}
-		else if (variable->GetVariableSemantic() == "worldinversetranspose")
+		else if (semantic == "worldinversetranspose")
 		{
-			if (variable->GetVariableType() == "float4x4")
+			if (type == "float4x4")
 			{
 				Matrix& worldIT = pScene->GetTopMatrix().Invert().Transpose();
 				variable->SetMatrix(worldIT);
 			}
 		}
-		else if (variable->GetVariableSemantic() == "world")
+		else if (semantic == "world")
 		{
-			if (variable->GetVariableType() == "float4x4")
+			if (type == "float4x4")
 			{
 				const Matrix& world = pScene->GetTopMatrix();
 				variable->SetMatrix(world);
 			}
 		}
-		else if (variable->GetVariableSemantic() == "viewinverse")
+		else if (semantic == "viewinverse")
 		{
-			if (variable->GetVariableType() == "float4x4")
+			if (type == "float4x4")
 			{
 				Matrix& viewI = pScene->GetCamera()->GetViewMatrix().Invert();
 				variable->SetMatrix(viewI);
 			}
 		}
-		else if (variable->GetVariableType() == "float4")
+		else if (type == "float4")
 		{
 			std::stringstream ss(pNode->Attribute("value"));
 			Vector4 value;
 			ss >> value.x >> value.y >> value.z >> value.w;
 			variable->SetVector(value);
 		}
-		else if (variable->GetVariableType() == "float3")
+		else if (type == "float3")
 		{
 			std::stringstream ss(pNode->Attribute("value"));
 			Vector3 value;
 			ss >> value.x >> value.y >> value.z;
 			variable->SetVector(value);
 		}
-		else if (variable->GetVariableType() == "float2")
+		else if (type == "float2")
 		{
 			std::stringstream ss(pNode->Attribute("value"));
 			Vector2 value;
 			ss >> value.x >> value.y;
 			variable->SetVector(value);
 		}
-		else if (variable->GetVariableType() == "float")
+		else if (type == "float")
 		{
-			variable->SetFloat(pNode->FloatAttribute("value"));
+			switch (variable->GetElementsCount())
+			{
+			case 0:
+			{
+				variable->SetFloat(pNode->FloatAttribute("value"));
+				break;
+			}
+			case 2:
+			{
+				std::stringstream ss(pNode->Attribute("value"));
+				std::vector<float> value(2);
+				ss >> value[0] >> value[1];
+				variable->SetFloatArray(value);
+				break;
+			}
+			case 3:
+			{
+				std::stringstream ss(pNode->Attribute("value"));
+				std::vector<float> value(3);
+				ss >> value[0] >> value[1] >> value[2];
+				variable->SetFloatArray(value);
+				break;
+			}
+			case 4:
+			{
+				std::stringstream ss(pNode->Attribute("value"));
+				std::vector<float> value(4);
+				ss >> value[0] >> value[1] >> value[2] >> value[3];
+				variable->SetFloatArray(value);
+				break;
+			}
+			default:
+				break;
+			}
 		}
-		else if (variable->GetVariableType() == "Texture1D" ||
-			variable->GetVariableType() == "Texture2D" || variable->GetVariableType() == "TextureCube")
+		else if (type == "int")
+		{
+			variable->SetInt(pNode->IntAttribute("value"));
+		}
+		else if (type == "Texture1D" ||
+			type == "Texture2D" || type == "TextureCube")
 		{
 			const tinyxml2::XMLElement* pResourceNode = pNode->FirstChildElement("ResourceName");
 			if (pResourceNode != nullptr)

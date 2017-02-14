@@ -1123,24 +1123,22 @@ HRESULT ModelNode::VRender(Scene* pScene, const GameTime& gameTime)
 		}
 		else
 		{
-			// the model file had operated by assimp lib, always be triangle mode
-			pScene->GetRenderder()->VInputSetup(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, m_pCurrentPass->GetInputLayout());
-// 			Mesh* mesh = m_pModel->GetMeshes().at(i);
-// 			switch (mesh->GetPrimitiveType())
-// 			{
-// 			case Mesh::PT_Point:
-// 				pScene->GetRenderder()->VInputSetup(D3D_PRIMITIVE_TOPOLOGY_POINTLIST, m_pCurrentPass->GetInputLayout());
-// 				break;
-// 			case Mesh::PT_Line:
-// 				pScene->GetRenderder()->VInputSetup(D3D_PRIMITIVE_TOPOLOGY_LINELIST, m_pCurrentPass->GetInputLayout());
-// 				break;
-// 			case Mesh::PT_Triangle:
-// 				pScene->GetRenderder()->VInputSetup(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, m_pCurrentPass->GetInputLayout());
-// 				break;
-// 			default:
-// 				DEBUG_ERROR("Unsupport primitive type!");
-// 				return S_FALSE;
-// 			}
+			Mesh* mesh = m_pModel->GetMeshes().at(i);
+			switch (mesh->GetPrimitiveType())
+			{
+			case Mesh::PT_Point:
+				pScene->GetRenderder()->VInputSetup(D3D_PRIMITIVE_TOPOLOGY_POINTLIST, m_pCurrentPass->GetInputLayout());
+				break;
+			case Mesh::PT_Line:
+				pScene->GetRenderder()->VInputSetup(D3D_PRIMITIVE_TOPOLOGY_LINELIST, m_pCurrentPass->GetInputLayout());
+				break;
+			case Mesh::PT_Triangle:
+				pScene->GetRenderder()->VInputSetup(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, m_pCurrentPass->GetInputLayout());
+				break;
+			default:
+				DEBUG_ERROR("Unsupport primitive type!");
+				return S_FALSE;
+			}
 		}
 
 		uint32_t stride = m_pCurrentPass->GetVertexSize();
@@ -1178,24 +1176,42 @@ void ModelNode::VPick(Scene* pScene, int cursorX, int cursorY)
 			pScene->SetPickDistance(distance);
 			for (auto mesh : m_pModel->GetMeshes())
 			{
-				uint32_t len = mesh->GetIndices().size();
-				len = len - len % 3;
-				for (uint32_t i = 0; i < len; i += 3)
+				switch (mesh->GetPrimitiveType())
 				{
-					const std::vector<Vector3>& vertices = mesh->GetVertices();
-					const std::vector<uint32_t>& indices = mesh->GetIndices();
-					Vector3 tri0 = vertices.at(indices[i]);
-					Vector3 tri1 = vertices.at(indices[i + 1]);
-					Vector3 tri2 = vertices.at(indices[i + 2]);
-
+				case Mesh::PT_Point:
+				case Mesh::PT_Line:
+				{
 					distance = 0.0f;
-					if (ray.Intersects(tri0, tri1, tri2, distance))
+					if (ray.Intersects(mesh->GetBoundingBox(), distance))
 					{
 						pScene->SetPickedActor(m_Properties.GetActorId());
-						return;
 					}
+					break;
 				}
-				break;
+				case Mesh::PT_Triangle:
+				{
+					uint32_t len = mesh->GetIndices().size();
+					len = len - len % 3;
+					for (uint32_t i = 0; i < len; i += 3)
+					{
+						const std::vector<Vector3>& vertices = mesh->GetVertices();
+						const std::vector<uint32_t>& indices = mesh->GetIndices();
+						Vector3 tri0 = vertices.at(indices[i]);
+						Vector3 tri1 = vertices.at(indices[i + 1]);
+						Vector3 tri2 = vertices.at(indices[i + 2]);
+
+						distance = 0.0f;
+						if (ray.Intersects(tri0, tri1, tri2, distance))
+						{
+							pScene->SetPickedActor(m_Properties.GetActorId());
+							return;
+						}
+					}
+					break;
+				}
+				default:
+					break;
+				}
 			}
 		}
 	}

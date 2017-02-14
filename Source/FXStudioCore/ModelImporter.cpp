@@ -225,7 +225,12 @@ void ModelImporter::WriteMesh(const aiScene* pScene, std::ofstream& fs)
 		aiMesh* mesh = pScene->mMeshes[i];
 
 		// mesh header
-		FStreamPrintf(fs, "\t\t<Mesh types=\"triangles\" material_index=\"%i\">\n", mesh->mMaterialIndex);
+		FStreamPrintf(fs, "\t\t<Mesh types=\"%s%s%s%s\" material_index=\"%i\">\n",
+			(mesh->mPrimitiveTypes & aiPrimitiveType_POINT ? "points" : ""),
+			(mesh->mPrimitiveTypes & aiPrimitiveType_LINE ? "lines" : ""),
+			(mesh->mPrimitiveTypes & aiPrimitiveType_TRIANGLE ? "triangles" : ""),
+			(mesh->mPrimitiveTypes & aiPrimitiveType_POLYGON ? "polygons" : ""),
+			mesh->mMaterialIndex);
 
 		// bones
 		if (mesh->mNumBones)

@@ -1,5 +1,6 @@
 #include "Material.h"
 #include "Model.h"
+#include "boost/algorithm/string.hpp"
 #include <d3dcompiler.h>
 #include <cctype>
 #include <iostream>
@@ -71,9 +72,9 @@ const std::map<std::string, Variable*>& Effect::GetVariablesByName() const
 	return m_VariablesByName;
 }
 
-const std::string& Effect::GenerateXml(const std::string& effectObjectPath, const std::string& effectName)
+uint32_t Effect::GenerateXml(const std::string& effectObjectPath, const std::string& effectName, bool reLoad)
 {
-	if (m_effectXmlString.empty())
+	if (m_effectXmlString.empty() || reLoad)
 	{
 		unique_ptr<tinyxml2::XMLDocument> pEffectXmlDoc = std::unique_ptr<tinyxml2::XMLDocument>(DEBUG_NEW tinyxml2::XMLDocument());
 
@@ -133,7 +134,7 @@ const std::string& Effect::GenerateXml(const std::string& effectObjectPath, cons
 		m_effectXmlString = std::string(printer.CStr(), printer.CStrSize());
 	}
 	
-	return m_effectXmlString;
+	return (uint32_t)m_effectXmlString.length();
 }
 
 Technique::Technique(ID3D11Device* pDevice, ID3DX11EffectTechnique* pD3DX11EffectTechnique)
@@ -186,7 +187,8 @@ Pass::Pass(ID3D11Device* pDevice, ID3DX11EffectPass* pD3DX11EffectPass)
 	m_VertexSize(0),
 	m_HasGeometryShader(false),
 	m_HasHullShader(false),
-	m_HasDomainShader(false)
+	m_HasDomainShader(false),
+	m_TessPrimitive(0)
 {
 	D3DX11_PASS_DESC passDesc;
 	m_pD3DX11EffectPass->GetDesc(&passDesc);
@@ -220,13 +222,11 @@ Pass::Pass(ID3D11Device* pDevice, ID3DX11EffectPass* pD3DX11EffectPass)
 			&inputElementDescs[0], inputElementDescs.size(), passDesc.pIAInputSignature, passDesc.IAInputSignatureSize, &m_pInputLayouts);
 	}
 
-	D3DX11_EFFECT_SHADER_DESC shaderDesc;
 	D3DX11_PASS_SHADER_DESC geometryShaderDesc;
 	m_pD3DX11EffectPass->GetGeometryShaderDesc(&geometryShaderDesc);
 	pShaderVariable = geometryShaderDesc.pShaderVariable;
 	if (pShaderVariable != nullptr && pShaderVariable->IsValid())
 	{
-		pShaderVariable->GetShaderDesc(geometryShaderDesc.ShaderIndex, &shaderDesc);
 		m_HasGeometryShader = true;
 	}
 	else
@@ -239,11 +239,16 @@ Pass::Pass(ID3D11Device* pDevice, ID3DX11EffectPass* pD3DX11EffectPass)
 	pShaderVariable = hullShaderDesc.pShaderVariable;
 	if (pShaderVariable != nullptr && pShaderVariable->IsValid())
 	{
+		D3DX11_EFFECT_SHADER_DESC shaderDesc;
 		pShaderVariable->GetShaderDesc(hullShaderDesc.ShaderIndex, &shaderDesc);
 		D3D11_SIGNATURE_PARAMETER_DESC parameterDesc;
 		for (uint32_t i = 0; i < shaderDesc.NumPatchConstantSignatureEntries; i++)
 		{
 			pShaderVariable->GetPatchConstantSignatureElementDesc(hullShaderDesc.ShaderIndex, i, &parameterDesc);
+			if (boost::iequals(parameterDesc.SemanticName, "SV_TessFactor"))
+			{
+				m_TessPrimitive++;
+			}
 		}
 		m_HasHullShader = true;
 	}
@@ -257,12 +262,6 @@ Pass::Pass(ID3D11Device* pDevice, ID3DX11EffectPass* pD3DX11EffectPass)
 	pShaderVariable = domainShaderDesc.pShaderVariable;
 	if (pShaderVariable != nullptr && pShaderVariable->IsValid())
 	{
-		pShaderVariable->GetShaderDesc(domainShaderDesc.ShaderIndex, &shaderDesc);
-		D3D11_SIGNATURE_PARAMETER_DESC parameterDesc;
-		for (uint32_t i = 0; i < shaderDesc.NumPatchConstantSignatureEntries; i++)
-		{
-			pShaderVariable->GetPatchConstantSignatureElementDesc(domainShaderDesc.ShaderIndex, i, &parameterDesc);
-		}
 		m_HasDomainShader = true;
 	}
 	else
@@ -505,7 +504,8 @@ DXGI_FORMAT Pass::GetElementFormat(D3D_REGISTER_COMPONENT_TYPE compoentType, uin
 
 Variable::Variable(ID3D11Device* pDevice, ID3DX11EffectVariable* pD3DX11EffectVariable)
 	: m_pD3DX11EffectVariable(pD3DX11EffectVariable),
-	m_pD3DX11EffectType(nullptr)
+	m_pD3DX11EffectType(nullptr),
+	m_ElementsCount(0)
 {
 	D3DX11_EFFECT_VARIABLE_DESC variableDesc;
 	m_pD3DX11EffectVariable->GetDesc(&variableDesc);
@@ -663,6 +663,31 @@ Variable::Variable(ID3D11Device* pDevice, ID3DX11EffectVariable* pD3DX11EffectVa
 			}
 		}
 		m_VariableValue = ss.str();
+		break;
+	}
+	case D3D_SHADER_VARIABLE_CLASS::D3D_SVC_OBJECT:
+	{
+		switch (typeDesc.Type)
+		{
+		case D3D_SHADER_VARIABLE_TYPE::D3D_SVT_RASTERIZER:
+		{
+			ID3DX11EffectRasterizerVariable* rasterizerVal = m_pD3DX11EffectVariable->AsRasterizer();
+			break;
+		}
+		case D3D_SHADER_VARIABLE_TYPE::D3D_SVT_BLEND:
+		{
+			ID3DX11EffectBlendVariable* blendVal = m_pD3DX11EffectVariable->AsBlend();
+			break;
+		}
+		case D3D_SHADER_VARIABLE_TYPE::D3D_SVT_DEPTHSTENCIL:
+		{
+			ID3DX11EffectDepthStencilVariable* depthVal = m_pD3DX11EffectVariable->AsDepthStencil();
+			break;
+		}
+		default:
+			break;
+		}
+
 		break;
 	}
 	default:

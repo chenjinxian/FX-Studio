@@ -247,7 +247,7 @@ FXSTUDIOCORE_API int ImportModel(BSTR modelImportPath, BSTR modelExportPath, Pro
 	return 0;
 }
 
-FXSTUDIOCORE_API unsigned int AddMaterial(BSTR effectObjectPath, BSTR effectName)
+FXSTUDIOCORE_API unsigned int AddEffect(BSTR effectObjectPath, BSTR effectName)
 {
 	std::string objectPath = Utility::WS2S(std::wstring(effectObjectPath, SysStringLen(effectObjectPath)));
 	std::string effect = Utility::WS2S(std::wstring(effectName, SysStringLen(effectName)));
@@ -261,6 +261,21 @@ FXSTUDIOCORE_API void GetMaterialXml(BSTR effectObjectPath, char* effectXmlPtr, 
 
 	const std::string& effectXml = g_pApp->GetEffectXml(objectPath);
 	strncpy_s(effectXmlPtr, size, effectXml.c_str(), size);
+}
+
+FXSTUDIOCORE_API void ModifyMaterial(BSTR materialPath, bool withEffect)
+{
+	std::string material = Utility::WS2S(std::wstring(materialPath, SysStringLen(materialPath)));
+
+	return g_pApp->ModifyMaterial(material, withEffect);
+}
+
+FXSTUDIOCORE_API unsigned int ModifyEffect(BSTR effectObjectPath, BSTR effectName)
+{
+	std::string objectPath = Utility::WS2S(std::wstring(effectObjectPath, SysStringLen(effectObjectPath)));
+	std::string effect = Utility::WS2S(std::wstring(effectName, SysStringLen(effectName)));
+
+	return g_pApp->ModifyEffect(objectPath, effect);
 }
 
 FXSTUDIOCORE_API void SetMoveDelegate(MoveDelegate delegate)

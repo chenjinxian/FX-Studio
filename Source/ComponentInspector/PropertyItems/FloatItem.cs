@@ -6,63 +6,49 @@ namespace Inspector
 {
     public class FloatItem : BaseItem
     {
-
-        #region Private internal var./properties
-
-        private float mValue = 0.0f;
-        private float mMinValue = 0.0f;
-        private float mMaxValue = 100.0f;
-        private float mIncrement = 1.0f;
+        private float m_Value = 0.0f;
+        private float m_MinValue = 0.0f;
+        private float m_MaxValue = 100.0f;
+        private float m_Step = 1.0f;
         private ValidationRangeCheckType mValidationRangeCheck = ValidationRangeCheckType.Disabled;
         private string mEngineeringUnit = "";
         private int mDecimalPlaces = 1;
 
-        #endregion
-
-        #region Constructors
-
-        public FloatItem()
-        {
-            this.CategoryName = "Misc";
-            this.ItemName = "";
-        }
-
-        public FloatItem(string categoryKey, string itemKey, float value)
+        public FloatItem(string categoryKey, string itemKey, float value, float min, float max, float step)
         {
             this.CategoryName = categoryKey;
             this.ItemName = itemKey;
             this.Value = value;
+            this.m_MinValue = min;
+            this.m_MaxValue = max;
+            this.m_Step = step;
         }
-
-        #endregion
-
-        #region Public Properties
 
         public float Value
         {
             get
             {
-                return mValue;
+                return m_Value;
             }
             set
             {
-                float oldValue = mValue;
+                float oldValue = m_Value;
 
                 if (mValidationRangeCheck == ValidationRangeCheckType.Automatic)
                 {
-                    if (value < mMinValue)
-                        mValue = mMinValue;
+                    if (value < m_MinValue)
+                        m_Value = m_MinValue;
                     else
-                        if (value > mMaxValue)
-                        mValue = mMaxValue;
+                        if (value > m_MaxValue)
+                        m_Value = m_MaxValue;
                     else
-                        mValue = value;
+                        m_Value = value;
                 }
                 else
-                    mValue = value;
-                this.Changed = (oldValue != mValue);
+                    m_Value = value;
+                this.Changed = (oldValue != m_Value);
                 if (this.Changed)
-                    RaiseValueChanged(mValue);
+                    RaiseValueChanged(m_Value);
             }
         }
 
@@ -71,9 +57,9 @@ namespace Inspector
             get
             {
                 if (mEngineeringUnit.Length > 0)
-                    return (mValue + " " + EngineeringUnit);
+                    return (m_Value + " " + EngineeringUnit);
                 else
-                    return mValue.ToString();
+                    return m_Value.ToString();
             }
             set
             {
@@ -106,7 +92,7 @@ namespace Inspector
         {
             get
             {
-                return mMinValue;
+                return m_MinValue;
             }
         }
 
@@ -114,7 +100,7 @@ namespace Inspector
         {
             get
             {
-                return mMaxValue;
+                return m_MaxValue;
             }
         }
 
@@ -122,7 +108,7 @@ namespace Inspector
         {
             get
             {
-                return mIncrement;
+                return m_Step;
             }
         }
 
@@ -168,10 +154,6 @@ namespace Inspector
             }
         }
 
-        #endregion
-
-        #region Public Methods
-
         public void SetValidationRange(float minValue, float maxValue, float incrementStep, ValidationRangeCheckType validationRangeCheck)
         {
             if (minValue == maxValue)
@@ -180,27 +162,23 @@ namespace Inspector
             {
                 if (minValue > maxValue)
                 {
-                    mMinValue = maxValue;
-                    mMaxValue = minValue;
+                    m_MinValue = maxValue;
+                    m_MaxValue = minValue;
                 }
                 else
                 {
-                    mMinValue = minValue;
-                    mMaxValue = maxValue;
+                    m_MinValue = minValue;
+                    m_MaxValue = maxValue;
                 }
-                mIncrement = incrementStep;
+                m_Step = incrementStep;
                 ValidationRangeCheck = validationRangeCheck;
                 if (validationRangeCheck == ValidationRangeCheckType.Automatic)
                 {
-                    if (mValue < mMinValue) mValue = mMinValue;
-                    if (mValue > mMaxValue) mValue = mMaxValue;
+                    if (m_Value < m_MinValue) m_Value = m_MinValue;
+                    if (m_Value > m_MaxValue) m_Value = m_MaxValue;
                 }
             }
         }
-
-        #endregion
-
-        #region Public events
 
         public delegate void ValueChangedHandle(object sender, float value);
 
@@ -211,8 +189,5 @@ namespace Inspector
             if (ValueChanged != null)
                 ValueChanged(this, value);
         }
-
-        #endregion
-
     }
 }

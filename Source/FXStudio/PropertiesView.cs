@@ -37,7 +37,11 @@ namespace FXStudio
             string nodeName = selectedNode.Name;
             if (nodeName == "Effect")
             {
-
+                AddEffectProperties(selectedNode);
+            }
+            else if (nodeName == "Material")
+            {
+                AddMaterialProperties(selectedNode);
             }
             else if (nodeName == "Model")
             {
@@ -120,6 +124,87 @@ namespace FXStudio
             inspectorComponent.UpdateControl(reset);
             m_LastSelectedNode = selectedNode;
             return isActorNode;
+        }
+
+        private void AddEffectProperties(XmlNode effectNode)
+        {
+            Inspector.CategoryItem category = new Inspector.CategoryItem("Effect Properties");
+            inspectorComponent.CategoryAdd("EffectProperties", category);
+
+            string effectName = effectNode.Attributes["name"].Value;
+            inspectorComponent.ItemAdd(new Inspector.StringItem("EffectProperties", "Name", effectName));
+            string effectPath = effectNode.InnerText;
+            inspectorComponent.ItemAdd(new Inspector.StringItem("EffectProperties", "Full Path", effectNode.InnerText));
+        }
+
+        private void AddMaterialProperties(XmlNode materialNode)
+        {
+            Inspector.CategoryItem category = new Inspector.CategoryItem("Material Properties");
+            inspectorComponent.CategoryAdd("MaterialProperties", category);
+
+            XmlNode variablesRoot = materialNode.SelectSingleNode("Variables");
+            foreach (XmlNode child in variablesRoot)
+            {
+                string varName = child.Attributes["name"].Value;
+                string varValue = child.Attributes["value"].Value;
+
+                if (!child.HasChildNodes)
+                {
+                    if (!string.IsNullOrEmpty(varValue))
+                        inspectorComponent.ItemAdd(new Inspector.StringItem("MaterialProperties", varName, varValue));
+                    continue;
+                }
+
+                XmlNode nameNode = child.SelectSingleNode("UIName");
+                if (nameNode != null)
+                    varName = nameNode.InnerText;
+
+                XmlNode widgetNode = child.SelectSingleNode("UIWidget");
+                if (widgetNode != null)
+                {
+                    string uiWidget = widgetNode.InnerText;
+                    if (string.Equals(uiWidget, "None", StringComparison.OrdinalIgnoreCase))
+                    {
+                        // hide property
+                    }
+                    else if (string.Equals(uiWidget, "Color", StringComparison.OrdinalIgnoreCase))
+                    {
+                        AddColorItem("MaterialProperties", varName, varValue);
+                    }
+                    else if (string.Equals(uiWidget, "slider", StringComparison.OrdinalIgnoreCase))
+                    {
+                        XmlNode minNode = child.SelectSingleNode("UIMin");
+                        XmlNode maxNode = child.SelectSingleNode("UIMax");
+                        XmlNode stepNode = child.SelectSingleNode("UIStep");
+                        if (minNode != null && maxNode != null && stepNode != null)
+                        {
+                            AddFloatItem("MaterialProperties", varName,
+                                varValue, minNode.InnerText, maxNode.InnerText, stepNode.InnerText);
+                        }
+                        else
+                        {
+                            inspectorComponent.ItemAdd(new Inspector.StringItem("MaterialProperties", varName, varValue));
+                        }
+                    }
+                    continue;
+                }
+
+                XmlNode objectNode = child.SelectSingleNode("Object");
+                if (objectNode != null)
+                {
+                    inspectorComponent.ItemAdd(new Inspector.StringItem("MaterialProperties", varName, varValue));
+                    continue;
+                }
+
+                XmlNode textureNode = child.SelectSingleNode("ResourceType");
+                if (textureNode != null)
+                {
+                    XmlNode valueNode = child.SelectSingleNode("ResourceName");
+                    inspectorComponent.ItemAdd(new Inspector.StringItem(
+                        "MaterialProperties", varName, valueNode != null ? valueNode.InnerText : varValue));
+                    continue;
+                }
+            }
         }
 
         private void AddProjectProperties(XmlNode projectNode)
@@ -268,6 +353,32 @@ namespace FXStudio
             {
                 inspectorComponent.ItemAdd(new Inspector.ImageItem(actorNode.Name, effectNode.Name, effectNode.InnerText));
             }
+        }
+
+        private void AddColorItem(string category, string itemName, string colorValue)
+        {
+            string[] elements = colorValue.Split(' ');
+            float r = Convert.ToSingle(elements[0]);
+            float g = Convert.ToSingle(elements[1]);
+            float b = Convert.ToSingle(elements[2]);
+            float a = 1.0F;
+            if (elements.Count() > 3)
+                a = Convert.ToSingle(elements[3]);
+            Color color = Color.FromArgb((int)(a * 255.0), (int)(r * 255.0), (int)(g * 255.0), (int)(b * 255.0));
+
+            Inspector.ColorItem colorItem = new Inspector.ColorItem(category, itemName, color);
+            inspectorComponent.ItemAdd(colorItem);
+        }
+
+        private void AddFloatItem(string category, string itemName,
+            string floatValue, string minValue, string maxValue, string stepValue)
+        {
+            float value = Convert.ToSingle(floatValue);
+            float min = Convert.ToSingle(minValue);
+            float max = Convert.ToSingle(maxValue);
+            float step = Convert.ToSingle(stepValue);
+            Inspector.FloatItem floatItem = new Inspector.FloatItem(category, itemName, value, min, max, step);
+            inspectorComponent.ItemAdd(floatItem);
         }
     }
 }

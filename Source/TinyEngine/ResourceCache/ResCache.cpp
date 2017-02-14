@@ -53,13 +53,13 @@ int ResourceZipFile::VGetRawResource(const Resource &r, char *buffer)
 
 int ResourceZipFile::VGetNumResources() const
 {
-	return (m_pZipFile == NULL) ? 0 : m_pZipFile->GetNumFiles();
+	return (m_pZipFile == nullptr) ? 0 : m_pZipFile->GetNumFiles();
 }
 
 std::string ResourceZipFile::VGetResourceName(int num) const
 {
 	std::string resName = "";
-	if (m_pZipFile != NULL && num >= 0 && num < m_pZipFile->GetNumFiles())
+	if (m_pZipFile != nullptr && num >= 0 && num < m_pZipFile->GetNumFiles())
 	{
 		resName = m_pZipFile->GetFilename(num);
 	}
@@ -81,7 +81,7 @@ int DevelopmentResourceZipFile::Find(const std::string &name)
 	ZipContentsMap::const_iterator i = m_DirectoryContentsMap.find(lowerCase);
 	if (i == m_DirectoryContentsMap.end())
 	{
-		// In editor mode, you can add new resouce file
+		// In editor mode, allowed to add new resource file
 		if (AddNewResFile(name))
 		{
 			return m_AssetFileInfo.size() - 1;
@@ -284,10 +284,10 @@ void ResCache::RegisterLoader(shared_ptr<IResourceLoader> loader)
 	m_ResourceLoaders.push_front(loader);
 }
 
-shared_ptr<ResHandle> ResCache::GetHandle(Resource * r)
+shared_ptr<ResHandle> ResCache::GetHandle(Resource* r)
 {
 	shared_ptr<ResHandle> handle(Find(r));
-	if (handle == NULL)
+	if (handle == nullptr)
 	{
 		handle = Load(r);
 		DEBUG_ASSERT(handle);
@@ -299,7 +299,17 @@ shared_ptr<ResHandle> ResCache::GetHandle(Resource * r)
 	return handle;
 }
 
-shared_ptr<ResHandle> ResCache::Load(Resource *r)
+void ResCache::RemoveHandle(Resource* r)
+{
+	shared_ptr<ResHandle> handle(Find(r));
+	if (handle != nullptr)
+	{
+		m_ResList.remove(handle);
+		m_ResMap.erase(handle->m_Resource.m_name);
+	}
+}
+
+shared_ptr<ResHandle> ResCache::Load(Resource* r)
 {
 	shared_ptr<IResourceLoader> loader;
 	shared_ptr<ResHandle> handle;
@@ -332,13 +342,13 @@ shared_ptr<ResHandle> ResCache::Load(Resource *r)
 	char *rawBuffer = loader->VUseRawFile() ? Allocate(allocSize) : DEBUG_NEW char[allocSize];
 	memset(rawBuffer, 0, allocSize);
 
-	if (rawBuffer == NULL || m_pResFile->VGetRawResource(*r, rawBuffer) == 0)
+	if (rawBuffer == nullptr || m_pResFile->VGetRawResource(*r, rawBuffer) == 0)
 	{
 		// resource cache out of memory
 		return shared_ptr<ResHandle>();
 	}
 
-	char *buffer = NULL;
+	char *buffer = nullptr;
 	uint32_t size = 0;
 
 	if (loader->VUseRawFile())
@@ -350,7 +360,7 @@ shared_ptr<ResHandle> ResCache::Load(Resource *r)
 	{
 		size = loader->VGetLoadedResourceSize(rawBuffer, rawSize);
 		buffer = Allocate(size);
-		if (rawBuffer == NULL || buffer == NULL)
+		if (rawBuffer == nullptr || buffer == nullptr)
 		{
 			// resource cache out of memory
 			return shared_ptr<ResHandle>();
@@ -390,6 +400,7 @@ shared_ptr<ResHandle> ResCache::Find(Resource * r)
 
 void ResCache::Update(shared_ptr<ResHandle> handle)
 {
+	// Move most recently used resource to the front, let least used resource clear first
 	m_ResList.remove(handle);
 	m_ResList.push_front(handle);
 }
@@ -397,7 +408,7 @@ void ResCache::Update(shared_ptr<ResHandle> handle)
 char *ResCache::Allocate(uint32_t size)
 {
 	if (!MakeRoom(size))
-		return NULL;
+		return nullptr;
 
 	char *mem = DEBUG_NEW char[size];
 	if (mem)
@@ -461,7 +472,7 @@ void ResCache::MemoryHasBeenFreed(uint32_t size)
 std::vector<std::string> ResCache::Match(const std::string pattern)
 {
 	std::vector<std::string> matchingNames;
-	if (m_pResFile == NULL)
+	if (m_pResFile == nullptr)
 		return matchingNames;
 
 	int numFiles = m_pResFile->VGetNumResources();
@@ -479,7 +490,7 @@ std::vector<std::string> ResCache::Match(const std::string pattern)
 
 int ResCache::Preload(const std::string pattern, void(*progressCallback)(int, bool &))
 {
-	if (m_pResFile == NULL)
+	if (m_pResFile == nullptr)
 		return 0;
 
 	int numFiles = m_pResFile->VGetNumResources();
@@ -495,7 +506,7 @@ int ResCache::Preload(const std::string pattern, void(*progressCallback)(int, bo
 			++loaded;
 		}
 
-		if (progressCallback != NULL)
+		if (progressCallback != nullptr)
 		{
 			progressCallback(i * 100 / numFiles, cancel);
 		}

@@ -21,7 +21,7 @@ public:
 	const std::vector<Variable*>& GetVariables() const;
 	const std::map<std::string, Variable*>& GetVariablesByName() const;
 
-	const std::string& GenerateXml(const std::string& effectObjectPath, const std::string& effectName);
+	uint32_t GenerateXml(const std::string& effectObjectPath, const std::string& effectName, bool reLoad = false);
 	const std::string& GetEffectXmlString() { return m_effectXmlString; }
 
 private:
@@ -69,6 +69,8 @@ public:
 	bool HasGeometryShader() { return m_HasGeometryShader; }
 	bool HasHullShader() { return m_HasHullShader; }
 	bool HasDomainShader() { return m_HasDomainShader; }
+	int GetTessellationPrimitive() { return m_TessPrimitive; }
+
 	void Apply(uint32_t flags, ID3D11DeviceContext* pDeviceContext);
 
 private:
@@ -84,6 +86,7 @@ private:
 	bool m_HasGeometryShader;
 	bool m_HasHullShader;
 	bool m_HasDomainShader;
+	int m_TessPrimitive;
 };
 
 class Variable : public boost::noncopyable

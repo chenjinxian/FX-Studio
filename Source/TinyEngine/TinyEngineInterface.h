@@ -96,8 +96,8 @@ public:
 	IGameView() {}
 	~IGameView() {}
 
-	virtual HRESULT VOnInitGameViews() = 0;
-	virtual HRESULT VOnDeleteGameViews() = 0;
+	virtual HRESULT VOnInitGameViews(bool onlyCamera = false) = 0;
+	virtual HRESULT VOnDeleteGameViews(bool onlyCamera = false) = 0;
 	virtual void VOnUpdate(const GameTime& gameTime) = 0;
 	virtual void VOnRender(const GameTime& gameTime) = 0;
 	virtual void VOnAttach(GameViewId viewId, ActorId actorId) = 0;

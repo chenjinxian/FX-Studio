@@ -13,8 +13,8 @@ namespace Inspector
     public partial class PropertiesInspector : UserControl
     {
         private readonly int m_NameLocationX = 24;
-        private readonly int m_ValueLocationX = 106;
         private readonly int m_ItemHeight = 26;
+        private int m_ValueLocationX = 120;
         private Color mTextForeColor = Color.White;
         private Dictionary<string, CategoryItem> m_CategoryByName = null;
 
@@ -229,6 +229,7 @@ namespace Inspector
             labelItem.AutoSize = true;
             labelItem.ForeColor = Color.Black;
             labelItem.Location = new Point(m_NameLocationX, 3);
+            labelItem.MaximumSize = new Size(m_ValueLocationX - m_NameLocationX, 20);
             labelItem.Name = item.CategoryName + "_" + item.ItemName + "_" + "label";
             labelItem.Text = item.ItemName;
 
@@ -237,7 +238,7 @@ namespace Inspector
             textItem.Size = new Size(this.Width - m_ValueLocationX - 2, m_ItemHeight - 1);
             textItem.Name = item.CategoryName + "_" + item.ItemName + "_" + "text";
             textItem.Text = item.ValueString;
-            textItem.ReadOnly = !item.Enabled;
+            textItem.Enabled = item.Enabled;
 
             panelItem.Controls.Add(labelItem);
             panelItem.Controls.Add(textItem);
@@ -249,6 +250,7 @@ namespace Inspector
             labelItem.AutoSize = true;
             labelItem.ForeColor = Color.Black;
             labelItem.Location = new Point(m_NameLocationX, 3);
+            labelItem.MaximumSize = new Size(m_ValueLocationX - m_NameLocationX, 20);
             labelItem.Name = item.CategoryName + "_" + item.ItemName + "_" + "label";
             labelItem.Text = item.ItemName;
 
@@ -360,11 +362,12 @@ namespace Inspector
             labelItem.AutoSize = true;
             labelItem.ForeColor = Color.Black;
             labelItem.Location = new Point(m_NameLocationX, 3);
+            labelItem.MaximumSize = new Size(m_ValueLocationX - m_NameLocationX, 20);
             labelItem.Name = item.CategoryName + "_" + item.ItemName + "_" + "label";
             labelItem.Text = item.ItemName;
 
             Panel panelColor = new Panel();
-            panelColor.BackColor = /*((ColorItem)item).Value*/Color.White;
+            panelColor.BackColor = ((ColorItem)item).Value;
             panelColor.BorderStyle = BorderStyle.FixedSingle;
             panelColor.Dock = DockStyle.None;
             panelColor.Location = new Point(m_ValueLocationX, 2);
@@ -376,7 +379,6 @@ namespace Inspector
             textColor.Size = new Size(this.Width - m_ValueLocationX - 21 - 2, m_ItemHeight);
             textColor.Name = item.CategoryName + "_" + item.ItemName + "_" + "text";
             textColor.Text = item.ValueString;
-            textColor.ReadOnly = item.Enabled;
 
             panelItem.Controls.Add(labelItem);
             panelItem.Controls.Add(panelColor);
@@ -389,6 +391,7 @@ namespace Inspector
             labelItem.AutoSize = true;
             labelItem.ForeColor = Color.Black;
             labelItem.Location = new Point(m_NameLocationX, 3);
+            labelItem.MaximumSize = new Size(m_ValueLocationX - m_NameLocationX, 20);
             labelItem.Name = item.CategoryName + "_" + item.ItemName + "_" + "label";
             labelItem.Text = item.ItemName;
 
@@ -405,11 +408,30 @@ namespace Inspector
             textColor.Size = new Size(this.Width - m_ValueLocationX - 21 - 2, m_ItemHeight - 2);
             textColor.Name = item.CategoryName + "_" + item.ItemName + "_" + "text";
             textColor.Text = item.ValueString;
-            textColor.ReadOnly = item.Enabled;
 
             panelItem.Controls.Add(labelItem);
             panelItem.Controls.Add(pictureImage);
             panelItem.Controls.Add(textColor);
+        }
+
+        private void AddFloatItemControl(BaseItem item, Panel panelItem)
+        {
+            Label labelItem = new Label();
+            labelItem.AutoSize = true;
+            labelItem.ForeColor = Color.Black;
+            labelItem.Location = new Point(m_NameLocationX, 3);
+            labelItem.MaximumSize = new Size(m_ValueLocationX - m_NameLocationX, 20);
+            labelItem.Name = item.CategoryName + "_" + item.ItemName + "_" + "label";
+            labelItem.Text = item.ItemName;
+
+            TextBox textItem = new TextBox();
+            textItem.Location = new Point(m_ValueLocationX, 1);
+            textItem.Size = new Size(this.Width - m_ValueLocationX - 2, m_ItemHeight - 1);
+            textItem.Name = item.CategoryName + "_" + item.ItemName + "_" + "text";
+            textItem.Text = item.ValueString;
+
+            panelItem.Controls.Add(labelItem);
+            panelItem.Controls.Add(textItem);
         }
 
         private void PaintItem(BaseItem item, int x1, int x2, ref int y1, ref int y2)
@@ -427,6 +449,10 @@ namespace Inspector
             panelItem.Size = new Size(this.Width, m_ItemHeight);
             this.panelProperties.Controls.Add(panelItem);
 
+            if (item is FloatItem)
+            {
+                AddFloatItemControl(item, panelItem);
+            }
             if (item is StringItem)
             {
                 AddStringItemControl(item, panelItem);
@@ -463,6 +489,7 @@ namespace Inspector
 
         private void PropertiesInspector_SizeChanged(object sender, EventArgs e)
         {
+            m_ValueLocationX = (int)(this.Width * 0.4);
             UpdateControl();
         }
     }

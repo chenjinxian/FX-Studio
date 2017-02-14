@@ -498,7 +498,7 @@ void BaseGameApp::OnResize(int screenWidth, int screenHeight)
 	{
 		for (auto view : g_pApp->m_pGameLogic->m_GameViews)
 		{
-			view->VOnDeleteGameViews();
+			view->VOnDeleteGameViews(true);
 		}
 
 		g_pApp->m_Config.m_ScreenWidth = screenWidth;
@@ -507,7 +507,7 @@ void BaseGameApp::OnResize(int screenWidth, int screenHeight)
 
 		for (auto view : g_pApp->m_pGameLogic->m_GameViews)
 		{
-			view->VOnInitGameViews();
+			view->VOnInitGameViews(true);
 		}
 	}
 }
@@ -537,14 +537,35 @@ void BaseGameApp::OnRenderFrame()
 uint32_t BaseGameApp::AddEffect(const std::string& effectObjectPath, const std::string& effectName)
 {
 	Resource effectRes(effectObjectPath);
-	shared_ptr<ResHandle> pEffectResHandle = g_pApp->GetResCache()->GetHandle(&effectRes);
+	shared_ptr<ResHandle> pEffectResHandle = m_pResCache->GetHandle(&effectRes);
 	if (pEffectResHandle != nullptr)
 	{
 		shared_ptr<HlslResourceExtraData> extra = static_pointer_cast<HlslResourceExtraData>(pEffectResHandle->GetExtraData());
 		if (extra != nullptr)
 		{
 			Effect* pEffect = extra->GetEffect();
-			return pEffect->GenerateXml(effectObjectPath, effectName).length();
+			return pEffect->GenerateXml(effectObjectPath, effectName, true);
+		}
+	}
+
+	return 0;
+}
+
+uint32_t BaseGameApp::ModifyEffect(const std::string& effectObjectPath, const std::string& effectName)
+{
+	Resource effectRes(effectObjectPath);
+	// first remove the old effect object resource
+	m_pResCache->RemoveHandle(&effectRes);
+
+	// use DevelopmentResourceZipFile::AddNewResFile reload the resource
+	shared_ptr<ResHandle> pEffectResHandle = m_pResCache->GetHandle(&effectRes);
+	if (pEffectResHandle != nullptr)
+	{
+		shared_ptr<HlslResourceExtraData> extra = static_pointer_cast<HlslResourceExtraData>(pEffectResHandle->GetExtraData());
+		if (extra != nullptr)
+		{
+			Effect* pEffect = extra->GetEffect();
+			return pEffect->GenerateXml(effectObjectPath, effectName, true);
 		}
 	}
 
@@ -554,7 +575,7 @@ uint32_t BaseGameApp::AddEffect(const std::string& effectObjectPath, const std::
 const std::string& BaseGameApp::GetEffectXml(const std::string& effectObjectPath)
 {
 	Resource effectRes(effectObjectPath);
-	shared_ptr<ResHandle> pEffectResHandle = g_pApp->GetResCache()->GetHandle(&effectRes);
+	shared_ptr<ResHandle> pEffectResHandle = m_pResCache->GetHandle(&effectRes);
 	if (pEffectResHandle != nullptr)
 	{
 		shared_ptr<HlslResourceExtraData> extra = static_pointer_cast<HlslResourceExtraData>(pEffectResHandle->GetExtraData());
@@ -566,4 +587,24 @@ const std::string& BaseGameApp::GetEffectXml(const std::string& effectObjectPath
 	}
 
 	return nullptr;
+}
+
+void BaseGameApp::ModifyMaterial(const std::string& materialPath, bool withEffect)
+{
+	Resource materialRes(materialPath);
+	// first remove the old effect object resource
+	m_pResCache->RemoveHandle(&materialRes);
+
+	if (withEffect)
+	{
+		for (auto view : g_pApp->m_pGameLogic->m_GameViews)
+		{
+			view->VOnDeleteGameViews();
+		}
+
+		for (auto view : g_pApp->m_pGameLogic->m_GameViews)
+		{
+			view->VOnInitGameViews();
+		}
+	}
 }

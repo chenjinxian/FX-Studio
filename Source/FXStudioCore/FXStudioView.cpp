@@ -125,20 +125,6 @@ void FXStudioView::VRenderText(const GameTime& gameTime)
 	ImGui::End();
 }
 
-HRESULT FXStudioView::VOnInitGameViews()
-{
-	if (m_pEditorCamera != nullptr)
-		m_pEditorCamera->VOnInitSceneNode(m_pScene.get());
-	return S_OK;
-}
-
-HRESULT FXStudioView::VOnDeleteGameViews()
-{
-	if (m_pEditorCamera != nullptr)
-		m_pEditorCamera->VOnDeleteSceneNode(m_pScene.get());
-	return S_OK;
-}
-
 bool FXStudioView::VLoadGameDelegate(tinyxml2::XMLElement* pCameraNode)
 {
 	if (!HumanView::VLoadGameDelegate(pCameraNode))

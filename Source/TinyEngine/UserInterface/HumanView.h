@@ -12,8 +12,8 @@ public:
 	HumanView(shared_ptr<IRenderer> renderer);
 	virtual ~HumanView();
 
-	virtual HRESULT VOnInitGameViews() override;
-	virtual HRESULT VOnDeleteGameViews() override;
+	virtual HRESULT VOnInitGameViews(bool onlyCamera) override;
+	virtual HRESULT VOnDeleteGameViews(bool onlyCamera) override;
 	virtual void VOnUpdate(const GameTime& gameTime) override;
 	virtual void VOnRender(const GameTime& gameTime) override;
 	virtual GameViewType VGetType()  override { return GameView_Human; }

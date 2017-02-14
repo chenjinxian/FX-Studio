@@ -134,7 +134,7 @@ namespace FXStudio
 
             if (!string.IsNullOrEmpty(compileInfo) && !string.IsNullOrEmpty(materialName))
             {
-                uint size = RenderMethods.AddMaterial(@"Effects\" + Path.GetFileName(destOjbect), effectName);
+                uint size = RenderMethods.AddEffect(@"Effects\" + Path.GetFileName(destOjbect), effectName);
                 if (size > 0)
                 {
                     StringBuilder materialtString = new StringBuilder((int)size);

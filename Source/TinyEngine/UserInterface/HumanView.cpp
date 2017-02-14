@@ -75,31 +75,38 @@ void HumanView::VOnRender(const GameTime& gameTime)
 	g_pApp->GetRendererAPI()->VPostRender();
 }
 
-HRESULT HumanView::VOnInitGameViews()
+HRESULT HumanView::VOnInitGameViews(bool onlyCamera)
 {
-// 	HRESULT hr = S_OK;
-// 	for (ScreenElementList::iterator i = m_ScreenElements.begin(); i != m_ScreenElements.end(); ++i)
-// 	{
-// 		(*i)->VOnInitScreenElements();
-// 	}
-
-	if (m_pCamera != nullptr)
-		m_pCamera->VOnInitSceneNode(m_pScene.get());
+	if (onlyCamera)
+	{
+		if (m_pCamera != nullptr)
+			m_pCamera->VOnInitSceneNode(m_pScene.get());
+	}
+	else
+	{
+		for (ScreenElementList::iterator i = m_ScreenElements.begin(); i != m_ScreenElements.end(); ++i)
+		{
+			(*i)->VOnInitScreenElements();
+		}
+	}
 
 	return S_OK;
 }
 
-HRESULT HumanView::VOnDeleteGameViews()
+HRESULT HumanView::VOnDeleteGameViews(bool onlyCamera)
 {
-// 	HRESULT hr;
-
-// 	for (ScreenElementList::iterator i = m_ScreenElements.begin(); i != m_ScreenElements.end(); ++i)
-// 	{
-// 		(*i)->VOnDeleteScreenElements();
-// 	}
-
-	if (m_pCamera != nullptr)
-		m_pCamera->VOnDeleteSceneNode(m_pScene.get());
+	if (onlyCamera)
+	{
+		if (m_pCamera != nullptr)
+			m_pCamera->VOnDeleteSceneNode(m_pScene.get());
+	}
+	else
+	{
+		for (ScreenElementList::iterator i = m_ScreenElements.begin(); i != m_ScreenElements.end(); ++i)
+		{
+			(*i)->VOnDeleteScreenElements();
+		}
+	}
 
 	return S_OK;
 }

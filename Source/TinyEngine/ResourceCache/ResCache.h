@@ -121,7 +121,8 @@ public:
 
 	void RegisterLoader(shared_ptr<IResourceLoader> loader);
 
-	shared_ptr<ResHandle> GetHandle(Resource * r);
+	shared_ptr<ResHandle> GetHandle(Resource* r);
+	void RemoveHandle(Resource* r);
 
 	int Preload(const std::string pattern, void(*progressCallback)(int, bool &) = nullptr);
 	std::vector<std::string> Match(const std::string pattern);
@@ -136,8 +137,8 @@ protected:
 	char *Allocate(uint32_t size);
 	void Free(shared_ptr<ResHandle> gonner);
 
-	shared_ptr<ResHandle> Load(Resource * r);
-	shared_ptr<ResHandle> Find(Resource * r);
+	shared_ptr<ResHandle> Load(Resource* r);
+	shared_ptr<ResHandle> Find(Resource* r);
 	void Update(shared_ptr<ResHandle> handle);
 
 	void FreeOneResource();

@@ -66,7 +66,7 @@ namespace FXStudio
             [MarshalAs(UnmanagedType.FunctionPtr)] DllProgressCallback callback);
 
         [DllImport(editorDllName, CallingConvention = CallingConvention.Cdecl)]
-        public static extern uint AddMaterial(
+        public static extern uint AddEffect(
             [MarshalAs(UnmanagedType.BStr)] string effectObjectPath,
             [MarshalAs(UnmanagedType.BStr)] string effectName);
 

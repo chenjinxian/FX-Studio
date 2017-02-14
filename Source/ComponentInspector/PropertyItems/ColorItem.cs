@@ -15,8 +15,6 @@ namespace Inspector
             this.Value = value;
         }
 
-        #region Public Properties
-
         public System.Drawing.Color Value
         {
             get
@@ -38,13 +36,12 @@ namespace Inspector
         {
             get
             {
-                return m_Value.R + " " + m_Value.G + " " + m_Value.B + " " + m_Value.A;
+                return (m_Value.R / 255.0F).ToString("F1") + " " +
+                    (m_Value.G / 255.0F).ToString("F1") + " " +
+                    (m_Value.B / 255.0F).ToString("F1") + " " +
+                    (m_Value.A / 255.0F).ToString("F1");
             }
         }
-
-        #endregion
-
-        #region Public events
 
         public delegate void ValueChangedHandle(object sender, System.Drawing.Color value);
 
@@ -55,8 +52,5 @@ namespace Inspector
             if (ValueChanged != null)
                 ValueChanged(this, value);
         }
-
-        #endregion
-
     }
 }

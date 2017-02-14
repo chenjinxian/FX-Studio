@@ -89,29 +89,50 @@ namespace FXStudio
             }));
         }
 
+        public void ModifyEffect(XmlNode effectNode)
+        {
+            string sourceFileName = effectNode.InnerText;
+            if (!File.Exists(sourceFileName) && File.Exists(m_ProjectLocation + @"\" + sourceFileName))
+            {
+                sourceFileName = m_ProjectLocation + @"\" + sourceFileName;
+            }
+
+            string effectName = effectNode.Attributes["name"].Value;
+
+            string destOjbect = m_ProjectLocation + @"\Effects\" + Path.GetFileNameWithoutExtension(sourceFileName) + ".fxo";
+            if (CompileEffect(sourceFileName, destOjbect))
+            {
+                uint size = RenderMethods.ModifyEffect(@"Effects\" + Path.GetFileName(destOjbect), effectName);
+                if (size > 0)
+                {
+                    StringBuilder materialtString = new StringBuilder((int)size);
+                    RenderMethods.GetMaterialXml(@"Effects\" + Path.GetFileName(destOjbect), materialtString, size);
+//                     File.WriteAllText(m_ProjectLocation + @"\Materials\" + materialName + ".mat", materialtString.ToString());
+// 
+//                     string materialtXml = string.Format(
+//                         @"<Material name=""{0}"">{1}</Material>", materialName, @"Materials\" + materialName + ".mat");
+//                     XmlDocument materialDoc = new XmlDocument();
+//                     materialDoc.LoadXml(materialtXml.ToString());
+//                     XmlElement materialXmlNode = materialDoc.DocumentElement;
+// 
+//                     XmlNode materialRoot = m_XmlDoc.DocumentElement.SelectSingleNode("Materials");
+//                     if (materialRoot != null)
+//                     {
+//                         materialRoot.AppendChild(m_XmlDoc.ImportNode(materialXmlNode, true));
+//                         TreeNode materialsTreeNode = treeViewAssets.Nodes["Materials"];
+//                         if (materialsTreeNode != null)
+//                         {
+//                             AddMaterial(materialsTreeNode, materialRoot.LastChild);
+//                         }
+//                     }
+                }
+            }
+        }
+
         public void AddEffect(string sourceFileName, string effectName, string materialName, bool fromExist)
         {
             string destOjbect = m_ProjectLocation + @"\Effects\" + Path.GetFileNameWithoutExtension(sourceFileName) + ".fxo";
-            var processInfo = new ProcessStartInfo
-            {
-                FileName = "fxc.exe",
-#if (Debug)
-                Arguments = "/Od /Zi /T fx_5_0 /nologo /Fo \"" + destOjbect + "\" \"" + sourceFileName + "\"",
-#else
-                    Arguments = "/T fx_5_0 /nologo /Fo \"" + destOjbect + "\" \"" + sourceFileName + "\"",
-#endif
-                CreateNoWindow = true,
-                UseShellExecute = false,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                WindowStyle = ProcessWindowStyle.Hidden
-            };
-            var fxcProcess = Process.Start(processInfo);
-            string compileInfo = fxcProcess.StandardOutput.ReadToEnd();
-            string errorInfo = fxcProcess.StandardError.ReadToEnd();
-            fxcProcess.WaitForExit();
-
-            m_OuputDeleagate?.Invoke(compileInfo, errorInfo);
+            bool success = CompileEffect(sourceFileName, destOjbect);
 
             {
                 string effectXml = string.Format(
@@ -132,7 +153,7 @@ namespace FXStudio
                 }
             }
 
-            if (!string.IsNullOrEmpty(compileInfo) && !string.IsNullOrEmpty(materialName))
+            if (success && !string.IsNullOrEmpty(materialName))
             {
                 uint size = RenderMethods.AddEffect(@"Effects\" + Path.GetFileName(destOjbect), effectName);
                 if (size > 0)
@@ -159,6 +180,31 @@ namespace FXStudio
                     }
                 }
             }
+        }
+
+        public bool CompileEffect(string sourceFileName, string destOjbect)
+        {
+            var processInfo = new ProcessStartInfo
+            {
+                FileName = "fxc.exe",
+#if (Debug)
+                Arguments = "/Od /Zi /T fx_5_0 /nologo /Fo \"" + destOjbect + "\" \"" + sourceFileName + "\"",
+#else
+                Arguments = "/T fx_5_0 /nologo /Fo \"" + destOjbect + "\" \"" + sourceFileName + "\"",
+#endif
+                CreateNoWindow = true,
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                WindowStyle = ProcessWindowStyle.Hidden
+            };
+            var fxcProcess = Process.Start(processInfo);
+            string compileInfo = fxcProcess.StandardOutput.ReadToEnd();
+            string errorInfo = fxcProcess.StandardError.ReadToEnd();
+            fxcProcess.WaitForExit();
+
+            m_OuputDeleagate?.Invoke(compileInfo, errorInfo);
+            return !string.IsNullOrEmpty(compileInfo);
         }
 
         private void AddEffect(TreeNode treeNode, XmlNode effectNode)
@@ -282,11 +328,7 @@ namespace FXStudio
                 XmlNode element = (XmlNode)e.Node.Tag;
                 if (element != null)
                 {
-                    string path = element.InnerText;
-                    if (File.Exists(path))
-                        m_OpenEffect?.Invoke(path);
-                    else if (File.Exists(m_ProjectLocation + @"\" + path))
-                        m_OpenEffect?.Invoke(m_ProjectLocation + @"\" + path);
+                    m_OpenEffect?.Invoke(element);
                 }
             }
         }

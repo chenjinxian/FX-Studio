@@ -561,9 +561,10 @@
             this.toolStripButtonReBuild.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonReBuild.Image")));
             this.toolStripButtonReBuild.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButtonReBuild.Name = "toolStripButtonReBuild";
-            this.toolStripButtonReBuild.Size = new System.Drawing.Size(51, 59);
-            this.toolStripButtonReBuild.Text = "ReBuild";
+            this.toolStripButtonReBuild.Size = new System.Drawing.Size(68, 59);
+            this.toolStripButtonReBuild.Text = "ReBuild All";
             this.toolStripButtonReBuild.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.toolStripButtonReBuild.Click += new System.EventHandler(this.toolStripButtonReBuild_Click);
             // 
             // toolStripButtonCompile
             // 
@@ -574,6 +575,7 @@
             this.toolStripButtonCompile.Size = new System.Drawing.Size(56, 59);
             this.toolStripButtonCompile.Text = "Compile";
             this.toolStripButtonCompile.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.toolStripButtonCompile.Click += new System.EventHandler(this.toolStripButtonCompile_Click);
             // 
             // toolStripSeparator4
             // 

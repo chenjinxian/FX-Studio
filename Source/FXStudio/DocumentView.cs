@@ -48,6 +48,11 @@ while";
             InitCodeFolding();
         }
 
+        public void SaveFile()
+        {
+            File.WriteAllText(this.ToolTipText, scintillaBox.Text);
+        }
+
         private void DocumentView_Load(object sender, EventArgs e)
         {
             scintillaBox.Text = File.ReadAllText(this.ToolTipText);

@@ -20,7 +20,7 @@ namespace FXStudio
     public delegate void ChangeMaterialDelegate(string name, uint actorId);
     public delegate void MoveActorDelegate(string component, string attribute, Inspector.Vector3 value);
     public delegate void UpdateOutputDelegate(string output, string error);
-    public delegate void OpenEffectFile(string effectFile);
+    public delegate void OpenEffectFile(XmlNode effectNode);
 
     public delegate bool DllProgressCallback(Single percent, string error);
     public delegate void DllMoveDelegate(string actorXml);
@@ -107,9 +107,9 @@ namespace FXStudio
 
             string assetFile = m_ProjectLocation + @"\" + Path.GetFileNameWithoutExtension(project) + ".asset";
             m_AssetsView.UpdateAssets(assetFile, m_PropertiesView.UpdateAssetProperties, m_outputView.UpdateCompileInfo,
-                effectPath => {
+                effectNode => {
                     panelAllView.ActiveDocumentPane.ActiveContent = m_EditorView;
-                    m_EditorView.ShowEffectDoc(effectPath);
+                    m_EditorView.ShowEffectDoc(effectNode, m_ProjectLocation);
                 });
 
             m_PropertiesView.SetMoveActorDelegate((string component, string attribute, Inspector.Vector3 value) =>
@@ -544,6 +544,22 @@ namespace FXStudio
             m_AssetsView.SaveAssetsFile();
         }
 
+        private void toolStripButtonReBuild_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void toolStripButtonCompile_Click(object sender, EventArgs e)
+        {
+            XmlNode effectNode = m_EditorView.GetSelectedDocument();
+            if (effectNode == null)
+            {
+                MessageBox.Show(@"Please open an effect file in ""Editor"" pane!", "FX Studio");
+                return;
+            }
+            m_AssetsView.ModifyEffect(effectNode);
+        }
+
         private void toolStripMenuItemUndo_Click(object sender, EventArgs e)
         {
 
@@ -553,5 +569,6 @@ namespace FXStudio
         {
 
         }
+
     }
 }

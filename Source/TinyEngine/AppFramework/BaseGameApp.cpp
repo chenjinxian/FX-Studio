@@ -564,12 +564,20 @@ uint32_t BaseGameApp::ModifyEffect(const std::string& effectObjectPath, const st
 		shared_ptr<HlslResourceExtraData> extra = static_pointer_cast<HlslResourceExtraData>(pEffectResHandle->GetExtraData());
 		if (extra != nullptr)
 		{
+			for (auto view : g_pApp->m_pGameLogic->m_GameViews)
+			{
+				view->VOnDeleteGameViews();
+			}
+
+			for (auto view : g_pApp->m_pGameLogic->m_GameViews)
+			{
+				view->VOnInitGameViews();
+			}
+
 			Effect* pEffect = extra->GetEffect();
 			return pEffect->GenerateXml(effectObjectPath, effectName, true);
 		}
 	}
-
-	return 0;
 }
 
 const std::string& BaseGameApp::GetEffectXml(const std::string& effectObjectPath)

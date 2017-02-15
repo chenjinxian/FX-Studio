@@ -134,7 +134,6 @@ namespace FXStudio
 
         private void listViewEffect_SelectedIndexChanged(object sender, EventArgs e)
         {
-            int count = listViewEffect.SelectedItems.Count;
             if (listViewEffect.SelectedIndices.Count > 0)
             {
                 textBoxName.Text = (string)listViewEffect.SelectedItems[0].Tag + ".fx";

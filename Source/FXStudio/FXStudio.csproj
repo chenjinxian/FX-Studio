@@ -91,6 +91,12 @@
     <Compile Include="FXStudioForm.Designer.cs">
       <DependentUpon>FXStudioForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="TexturesDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TexturesDialog.Designer.cs">
+      <DependentUpon>TexturesDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="LoadingProgressDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -177,6 +183,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="EditorView.resx">
       <DependentUpon>EditorView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TexturesDialog.resx">
+      <DependentUpon>TexturesDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="LoadingProgressDialog.resx">
       <DependentUpon>LoadingProgressDialog.cs</DependentUpon>

@@ -54,11 +54,11 @@ namespace FXStudio
             }
             else if (nodeName == "Texture")
             {
-                Inspector.CategoryItem category = new Inspector.CategoryItem("Image Properties");
-                inspectorComponent.CategoryAdd("ImageProperties", category);
-
-                string textureName = selectedNode.Attributes["name"].Value;
-                inspectorComponent.ItemAdd(new Inspector.StringItem("ImageProperties", textureName, "", selectedNode.InnerText));
+//                 Inspector.CategoryItem category = new Inspector.CategoryItem("Image Properties");
+//                 inspectorComponent.CategoryAdd("ImageProperties", category);
+// 
+//                 string textureName = selectedNode.Attributes["name"].Value;
+//                 inspectorComponent.ItemAdd(new Inspector.StringItem("ImageProperties", textureName, "", selectedNode.InnerText));
             }
 
             inspectorComponent.UpdateControl(reset);
@@ -201,9 +201,7 @@ namespace FXStudio
                     XmlNode valueNode = child.Attributes["ResourceName"];
                     if (!string.IsNullOrEmpty(valueNode.InnerText))
                     {
-                        Inspector.ImageItem imageItem = new Inspector.ImageItem(
-                            "MaterialProperties", uiName, varName, m_ProjectLocation + @"\Textures\" + valueNode.InnerText);
-                        inspectorComponent.ItemAdd(imageItem);
+                        AddTextureItem("MaterialProperties", uiName, varName, m_ProjectLocation + @"\Textures\" + valueNode.InnerText);
                     }
                     else
                     {
@@ -328,7 +326,7 @@ namespace FXStudio
             XmlNode textureNode = actorNode.SelectSingleNode("Texture");
             if (textureNode != null)
             {
-                inspectorComponent.ItemAdd(new Inspector.ImageItem(actorNode.Name, textureNode.Name, "", textureNode.InnerText));
+                AddTextureItem(actorNode.Name, textureNode.Name, textureNode.Name, textureNode.InnerText);
             }
         }
 
@@ -337,7 +335,7 @@ namespace FXStudio
             XmlNode effectNode = actorNode.SelectSingleNode("Effect");
             if (effectNode != null)
             {
-                inspectorComponent.ItemAdd(new Inspector.ImageItem(actorNode.Name, effectNode.Name, "", effectNode.InnerText));
+                inspectorComponent.ItemAdd(new Inspector.ImageItem(actorNode.Name, effectNode.Name, effectNode.Name, effectNode.InnerText));
             }
         }
 
@@ -361,6 +359,23 @@ namespace FXStudio
         {
             Inspector.ColorItem vector3Item = sender as Inspector.ColorItem;
             m_ModifyDelegate?.Invoke(vector3Item.VariableName, vector3Item.ValueString);
+        }
+
+        private void AddTextureItem(string category, string itemName, string variableName, string fileName)
+        {
+            Inspector.ImageItem imageItem = new Inspector.ImageItem(
+                category, itemName, variableName, m_ProjectLocation + @"\Textures\" + fileName);
+            imageItem.ValueChanging += ImageItem_ValueChanging;
+            inspectorComponent.ItemAdd(imageItem);
+        }
+
+        private string ImageItem_ValueChanging(object sender, string value)
+        {
+            TexturesDialog dialog = new TexturesDialog();
+            dialog.FileName = value;
+            dialog.TextureDirectory = m_ProjectLocation + @"\Textures";
+            dialog.ShowDialog();
+            return "";
         }
 
         private void AddFloatItem(string category, string itemName, string variableName,

@@ -454,11 +454,27 @@ namespace Inspector
             btnImage.Name = item.CategoryName + "_" + item.UIName + "_" + "button";
             btnImage.Text = "..";
             btnImage.UseVisualStyleBackColor = true;
+            btnImage.Tag = item;
+            btnImage.Click += BtnImage_Click;
 
             panelItem.Controls.Add(labelItem);
             panelItem.Controls.Add(pictureImage);
             panelItem.Controls.Add(textColor);
             panelItem.Controls.Add(btnImage);
+        }
+
+        private void BtnImage_Click(object sender, EventArgs e)
+        {
+            ImageItem item = ((Button)sender).Tag as ImageItem;
+            if (item == null)
+                return;
+
+            string newFile = item.DelegateChanging();
+            if (string.IsNullOrEmpty(newFile))
+            {
+                item.FileName = newFile;
+                UpdateValue();
+            }
         }
 
         private void AddFloatItemControl(BaseItem item, Panel panelItem)

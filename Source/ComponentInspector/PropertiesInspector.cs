@@ -14,6 +14,8 @@ namespace Inspector
     {
         private readonly int m_NameLocationX = 24;
         private readonly int m_ItemHeight = 26;
+        private readonly int m_SideLength = 20;
+        private readonly int m_ButtonWidth = 22;
         private int m_ValueLocationX = 120;
         private Color mTextForeColor = Color.White;
         private Dictionary<string, CategoryItem> m_CategoryByName = null;
@@ -121,9 +123,6 @@ namespace Inspector
         {
             foreach (var category in m_CategoryByName)
             {
-                if (category.Key != "TransformComponent" && category.Key != "EditorCamera")
-                    continue;
-
                 foreach (var item in category.Value.ItemList)
                 {
                     BaseItem child = item.Value;
@@ -141,6 +140,20 @@ namespace Inspector
                             if (labelValue != null)
                                 labelValue.Text = elements[i];
                         }
+                    }
+                    else if (child is ColorItem)
+                    {
+                        ControlCollection controls = panelProperties.Controls[child.CategoryName + "_" + child.ItemName + "_" + "panel"].Controls;
+
+                        string controlName = child.CategoryName + "_" + child.ItemName + "_" + "panelColor";
+                        Panel panelColor = controls[controlName] as Panel;
+                        if (panelColor != null)
+                            panelColor.BackColor = ((ColorItem)child).Value;
+
+                        controlName = child.CategoryName + "_" + child.ItemName + "_" + "textColor";
+                        TextBox textColor = controls[controlName] as TextBox;
+                        if (textColor != null)
+                            textColor.Text = child.ValueString;
                     }
                 }
             }
@@ -371,18 +384,44 @@ namespace Inspector
             panelColor.BorderStyle = BorderStyle.FixedSingle;
             panelColor.Dock = DockStyle.None;
             panelColor.Location = new Point(m_ValueLocationX, 2);
-            panelColor.Name = item.CategoryName + "_" + item.ItemName + "_" + "panel";
-            panelColor.Size = new Size(20, 20);
+            panelColor.Name = item.CategoryName + "_" + item.ItemName + "_" + "panelColor";
+            panelColor.Size = new Size(m_SideLength, m_SideLength);
 
             TextBox textColor = new TextBox();
-            textColor.Location = new Point(m_ValueLocationX + 21, 1);
-            textColor.Size = new Size(this.Width - m_ValueLocationX - 21 - 2, m_ItemHeight);
-            textColor.Name = item.CategoryName + "_" + item.ItemName + "_" + "text";
+            textColor.Location = new Point(m_ValueLocationX + m_SideLength + 1, 1);
+            textColor.Size = new Size(this.Width - m_ValueLocationX - m_SideLength - m_ButtonWidth - 2 - 2, m_ItemHeight);
+            textColor.Name = item.CategoryName + "_" + item.ItemName + "_" + "textColor";
             textColor.Text = item.ValueString;
+
+            Button btnColor = new Button();
+            btnColor.Location = new Point(this.Width - m_ButtonWidth - 2, 1);
+            btnColor.Size = new Size(m_ButtonWidth, m_ButtonWidth);
+            btnColor.Name = item.CategoryName + "_" + item.ItemName + "_" + "button";
+            btnColor.Text = "..";
+            btnColor.UseVisualStyleBackColor = true;
+            btnColor.Tag = item;
+            btnColor.Click += BtnColor_Click;
 
             panelItem.Controls.Add(labelItem);
             panelItem.Controls.Add(panelColor);
             panelItem.Controls.Add(textColor);
+            panelItem.Controls.Add(btnColor);
+        }
+
+        private void BtnColor_Click(object sender, EventArgs e)
+        {
+            ColorItem item = ((Button)sender).Tag as ColorItem;
+            if (item == null)
+                return;
+
+            ColorDialog dialog = new ColorDialog();
+            dialog.Color = item.Value;
+            dialog.FullOpen = true;
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                item.Value = dialog.Color;
+                UpdateValue();
+            }
         }
 
         private void AddImageItemControl(BaseItem item, Panel panelItem)
@@ -401,17 +440,25 @@ namespace Inspector
             pictureImage.Dock = DockStyle.None;
             pictureImage.Location = new Point(m_ValueLocationX, 2);
             pictureImage.Name = item.CategoryName + "_" + item.ItemName + "_" + "panel";
-            pictureImage.Size = new Size(20, 20);
+            pictureImage.Size = new Size(m_SideLength, m_SideLength);
 
             TextBox textColor = new TextBox();
-            textColor.Location = new Point(m_ValueLocationX + 21, 1);
-            textColor.Size = new Size(this.Width - m_ValueLocationX - 21 - 2, m_ItemHeight - 2);
+            textColor.Location = new Point(m_ValueLocationX + m_SideLength + 1, 1);
+            textColor.Size = new Size(this.Width - m_ValueLocationX - m_SideLength - m_ButtonWidth - 2 - 2, m_ItemHeight);
             textColor.Name = item.CategoryName + "_" + item.ItemName + "_" + "text";
             textColor.Text = item.ValueString;
+
+            Button btnImage = new Button();
+            btnImage.Location = new Point(this.Width - m_ButtonWidth - 2, 1);
+            btnImage.Size = new Size(m_ButtonWidth, m_ButtonWidth);
+            btnImage.Name = item.CategoryName + "_" + item.ItemName + "_" + "button";
+            btnImage.Text = "..";
+            btnImage.UseVisualStyleBackColor = true;
 
             panelItem.Controls.Add(labelItem);
             panelItem.Controls.Add(pictureImage);
             panelItem.Controls.Add(textColor);
+            panelItem.Controls.Add(btnImage);
         }
 
         private void AddFloatItemControl(BaseItem item, Panel panelItem)

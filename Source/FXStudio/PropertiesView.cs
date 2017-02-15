@@ -16,16 +16,21 @@ namespace FXStudio
     public partial class PropertiesView : ViewWindow
     {
         private MoveActorDelegate m_MoveDelegate = null;
+        private ModifyMaterialDelegate m_ModifyDelegate = null;
         private XmlNode m_LastSelectedNode = null;
+        private string m_ProjectLocation;
 
         public PropertiesView()
         {
             InitializeComponent();
         }
 
-        public void SetMoveActorDelegate(MoveActorDelegate moveDelegate)
+        public string ProjectLocation { get { return m_ProjectLocation; } set { m_ProjectLocation = value; } }
+
+        public void SetMoveActorDelegate(MoveActorDelegate moveDelegate, ModifyMaterialDelegate modifyDelegate)
         {
             m_MoveDelegate = moveDelegate;
+            m_ModifyDelegate = modifyDelegate;
         }
 
         public void UpdateAssetProperties(XmlNode selectedNode)
@@ -193,8 +198,16 @@ namespace FXStudio
                 if (textureNode != null)
                 {
                     XmlNode valueNode = child.Attributes["ResourceName"];
-                    inspectorComponent.ItemAdd(new Inspector.StringItem(
-                        "MaterialProperties", varName, valueNode != null ? valueNode.InnerText : varValue));
+                    if (!string.IsNullOrEmpty(valueNode.InnerText))
+                    {
+                        Inspector.ImageItem imageItem = new Inspector.ImageItem(
+                            "MaterialProperties", varName, m_ProjectLocation + @"\Textures\" + valueNode.InnerText);
+                        inspectorComponent.ItemAdd(imageItem);
+                    }
+                    else
+                    {
+                        inspectorComponent.ItemAdd(new Inspector.StringItem("MaterialProperties", varName, varValue));
+                    }
                     continue;
                 }
 
@@ -236,7 +249,6 @@ namespace FXStudio
             Inspector.CategoryItem category = new Inspector.CategoryItem(skyboxNode.Name);
             inspectorComponent.CategoryAdd(skyboxNode.Name, category);
 
-            AddColorItem(skyboxNode);
             AddTextureItem(skyboxNode);
         }
 
@@ -245,7 +257,6 @@ namespace FXStudio
             Inspector.CategoryItem category = new Inspector.CategoryItem(gridNode.Name);
             inspectorComponent.CategoryAdd(gridNode.Name, category);
 
-            AddColorItem(gridNode);
             AddTextureItem(gridNode);
         }
 
@@ -262,8 +273,6 @@ namespace FXStudio
             Inspector.CategoryItem category = new Inspector.CategoryItem(cubeNode.Name);
             inspectorComponent.CategoryAdd(cubeNode.Name, category);
 
-            AddColorItem(cubeNode);
-            AddTextureItem(cubeNode);
             AddEffectItem(cubeNode);
         }
 
@@ -272,8 +281,6 @@ namespace FXStudio
             Inspector.CategoryItem category = new Inspector.CategoryItem(sphereNode.Name);
             inspectorComponent.CategoryAdd(sphereNode.Name, category);
 
-            AddColorItem(sphereNode);
-            AddTextureItem(sphereNode);
             AddEffectItem(sphereNode);
         }
 
@@ -282,8 +289,6 @@ namespace FXStudio
             Inspector.CategoryItem category = new Inspector.CategoryItem(cylinderNode.Name);
             inspectorComponent.CategoryAdd(cylinderNode.Name, category);
 
-            AddColorItem(cylinderNode);
-            AddTextureItem(cylinderNode);
             AddEffectItem(cylinderNode);
         }
 
@@ -292,8 +297,6 @@ namespace FXStudio
             Inspector.CategoryItem category = new Inspector.CategoryItem(teapotNode.Name);
             inspectorComponent.CategoryAdd(teapotNode.Name, category);
 
-            AddColorItem(teapotNode);
-            AddTextureItem(teapotNode);
             AddEffectItem(teapotNode);
         }
 
@@ -317,20 +320,6 @@ namespace FXStudio
         {
             Inspector.Vector3Item vector3Item = sender as Inspector.Vector3Item;
             m_MoveDelegate?.Invoke(vector3Item.CategoryName, vector3Item.ItemName, value);
-        }
-
-        private void AddColorItem(XmlNode actorNode)
-        {
-            XmlNode colorNode = actorNode.SelectSingleNode("Color");
-            if (colorNode != null)
-            {
-                float r = Convert.ToSingle(colorNode.Attributes["r"].Value);
-                float g = Convert.ToSingle(colorNode.Attributes["g"].Value);
-                float b = Convert.ToSingle(colorNode.Attributes["b"].Value);
-                float a = Convert.ToSingle(colorNode.Attributes["a"].Value);
-                inspectorComponent.ItemAdd(new Inspector.ColorItem(actorNode.Name, colorNode.Name,
-                    Color.FromArgb((int)(a * 255.0), (int)(r * 255.0), (int)(g * 255.0), (int)(b * 255.0))));
-            }
         }
 
         private void AddTextureItem(XmlNode actorNode)
@@ -363,7 +352,14 @@ namespace FXStudio
             Color color = Color.FromArgb((int)(a * 255.0), (int)(r * 255.0), (int)(g * 255.0), (int)(b * 255.0));
 
             Inspector.ColorItem colorItem = new Inspector.ColorItem(category, itemName, color);
+            colorItem.ValueChanged += ColorItem_ValueChanged;
             inspectorComponent.ItemAdd(colorItem);
+        }
+
+        private void ColorItem_ValueChanged(object sender, Color value)
+        {
+            Inspector.ColorItem vector3Item = sender as Inspector.ColorItem;
+            m_ModifyDelegate?.Invoke(vector3Item.ItemName, vector3Item.ValueString);
         }
 
         private void AddFloatItem(string category, string itemName,

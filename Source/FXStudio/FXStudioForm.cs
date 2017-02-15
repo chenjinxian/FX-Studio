@@ -19,6 +19,7 @@ namespace FXStudio
     public delegate void UpdatePropertiesDelegate(XmlNode selectedNode);
     public delegate void ChangeMaterialDelegate(string name, uint actorId);
     public delegate void MoveActorDelegate(string component, string attribute, Inspector.Vector3 value);
+    public delegate void ModifyMaterialDelegate(string name, string value);
     public delegate void UpdateOutputDelegate(string output, string error);
     public delegate void OpenEffectFile(XmlNode effectNode);
 
@@ -113,25 +114,32 @@ namespace FXStudio
                     m_EditorView.ShowEffectDoc(effectNode, m_ProjectLocation);
                 });
 
-            m_PropertiesView.SetMoveActorDelegate((string component, string attribute, Inspector.Vector3 value) =>
-            {
-                int actorId = m_ProjectView.GetSelectActorId();
+            m_PropertiesView.ProjectLocation = m_ProjectLocation;
+            m_PropertiesView.SetMoveActorDelegate(
+                (string component, string attribute, Inspector.Vector3 value) =>
+                {
+                    int actorId = m_ProjectView.GetSelectActorId();
 
-                XmlDocument xmlDoc = new XmlDocument();
-                XmlElement xmlActor = xmlDoc.CreateElement("Actor");
+                    XmlDocument xmlDoc = new XmlDocument();
+                    XmlElement xmlActor = xmlDoc.CreateElement("Actor");
 
-                xmlActor.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "id", (actorId > 2 ? actorId : 0).ToString()));
+                    xmlActor.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "id", (actorId > 2 ? actorId : 0).ToString()));
 
-                XmlElement transformComponent = xmlDoc.CreateElement(component); ;
-                XmlElement transformType = xmlDoc.CreateElement(attribute);
-                transformComponent.AppendChild(transformType);
-                transformType.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "x", value.X.ToString()));
-                transformType.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "y", value.Y.ToString()));
-                transformType.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "z", value.Z.ToString()));
-                xmlActor.AppendChild(transformComponent);
+                    XmlElement transformComponent = xmlDoc.CreateElement(component); ;
+                    XmlElement transformType = xmlDoc.CreateElement(attribute);
+                    transformComponent.AppendChild(transformType);
+                    transformType.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "x", value.X.ToString()));
+                    transformType.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "y", value.Y.ToString()));
+                    transformType.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "z", value.Z.ToString()));
+                    xmlActor.AppendChild(transformComponent);
 
-                RenderMethods.ModifyActor(xmlActor.OuterXml);
-            });
+                    RenderMethods.ModifyActor(xmlActor.OuterXml);
+                },
+                (string name, string value) =>
+                {
+                    m_AssetsView.ModifyMaterial(name, value);
+                }
+            );
 
             m_RenderView.SetChangeMaterialDelegate((name, actorId) =>
             {

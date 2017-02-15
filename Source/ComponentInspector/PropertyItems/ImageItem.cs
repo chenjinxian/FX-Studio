@@ -2,27 +2,15 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Drawing.Imaging;
+using System.IO;
 
 namespace Inspector
 {
     public class ImageItem : BaseItem
     {
-
-        #region Private internal var./properties
-
-        private System.Drawing.Image mValue = null;
-        private string mFileName = "";
+        private System.Drawing.Image m_Value = null;
+        private string m_FileName = "";
         private string tempFileName = "";
-
-        #endregion
-
-        #region Constructors
-
-        public ImageItem()
-        {
-            this.CategoryName = "Misc";
-            this.ItemName = "";
-        }
 
         public ImageItem(string categoryKey, string itemKey, string fileName)
         {
@@ -31,23 +19,19 @@ namespace Inspector
             this.FileName = fileName;
         }
 
-        #endregion
-
-        #region Public Properties
-
         public System.Drawing.Image Value
         {
             get
             {
-                return mValue;
+                return m_Value;
             }
             set
             {
-                System.Drawing.Image oldValue = mValue;
+                System.Drawing.Image oldValue = m_Value;
 
-                mValue = value;
+                m_Value = value;
                 //this.Changed = true;
-                this.Changed = (mValue != oldValue);
+                this.Changed = (m_Value != oldValue);
             }
         }
 
@@ -55,14 +39,14 @@ namespace Inspector
         {
             get
             {
-                return mFileName;
+                return Path.GetFileName(m_FileName);
             }
             set
             {
-                string oldValue = mFileName;
+                string oldValue = m_FileName;
 
-                mFileName = value;
-                this.Changed = (oldValue.ToLower() != mFileName.ToLower());
+                m_FileName = value;
+                this.Changed = (oldValue.ToLower() != m_FileName.ToLower());
             }
         }
 
@@ -70,62 +54,12 @@ namespace Inspector
         {
             get
             {
-                return mFileName;
+                return m_FileName;
             }
             set
             {
-                mFileName = value;
+                m_FileName = value;
                 ImportImage();
-            }
-        }
-
-        #endregion
-
-        #region Public Methods
-
-        public bool ExportImage()
-        {
-            return ExportImage(this.FileName, ImageFormat.Png);
-        }
-
-        public bool ExportImage(string fileName, ImageFormat imgFormat)
-        {
-            string path;
-            string fileExt = "";
-
-            try
-            {
-                if (imgFormat == ImageFormat.Bmp) fileExt = ".bmp";
-                if (imgFormat == ImageFormat.Emf) fileExt = ".emf";
-                if (imgFormat == ImageFormat.Gif) fileExt = ".gif";
-                if (imgFormat == ImageFormat.Icon) fileExt = ".ico";
-                if (imgFormat == ImageFormat.Jpeg) fileExt = ".jpg";
-                if (imgFormat == ImageFormat.Png) fileExt = ".png";
-                if (imgFormat == ImageFormat.Tiff) fileExt = ".tif";
-                if (imgFormat == ImageFormat.Wmf) fileExt = ".wmf";
-                path = System.IO.Path.GetDirectoryName(fileName);
-                if (fileName.Length > 0 && System.IO.Directory.Exists(path))
-                {
-                    if (fileExt.Length > 0)
-                    {
-                        fileName = System.IO.Path.GetFileNameWithoutExtension(fileName);
-                        if (!path.EndsWith(@"\"))
-                            path += @"\";
-                        fileName = path + fileName + fileExt;
-                    }
-                    if (mValue != null)
-                    {
-                        mValue.Save(fileName, imgFormat);
-                        return true;
-                    }
-                    else return false;
-                }
-                else
-                    return false;
-            }
-            catch
-            {
-                return false;
             }
         }
 
@@ -157,8 +91,8 @@ namespace Inspector
                     tempFileName = tempPath + tempName + tempExt;
                     System.IO.File.Copy(fileName, tempFileName, true);
 
-                    if (mValue != null) mValue.Dispose();
-                    mValue = System.Drawing.Image.FromFile(tempFileName);
+                    if (m_Value != null) m_Value.Dispose();
+                    m_Value = System.Drawing.Image.FromFile(tempFileName);
                     return true;
                 }
                 else
@@ -166,21 +100,17 @@ namespace Inspector
             }
             catch
             {
-                mValue = null;
+                m_Value = null;
                 return false;
             }
         }
 
         public void Refresh()
         {
-            if (mValue != null) mValue.Dispose();
+            if (m_Value != null) m_Value.Dispose();
             if (tempFileName.Length > 0 && System.IO.File.Exists(tempFileName))
                 System.IO.File.Delete(tempFileName);
             ImportImage();
         }
-
-
-        #endregion
-
     }
 }

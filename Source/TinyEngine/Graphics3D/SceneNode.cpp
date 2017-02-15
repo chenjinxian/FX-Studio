@@ -60,8 +60,6 @@ void SceneNode::VSetTransform(const Matrix& worldMatrix)
 
 HRESULT SceneNode::VOnInitSceneNode(Scene* pScene)
 {
-	Color color = (m_pRenderComponent) ? m_pRenderComponent->GetColor() : Color(Colors::White.f);
-
 	for (auto& child : m_Children)
 	{
 		child->VOnInitSceneNode(pScene);

@@ -39,15 +39,7 @@ namespace Inspector
 
     public class Vector3Item : BaseItem
     {
-
-        #region Private internal var./properties
-
         private Vector3 m_Value;
-        private float m_Increment = 0.05f;
-
-        #endregion
-
-        #region Constructors
 
         public Vector3Item(string categoryKey, string itemKey, Vector3 value)
         {
@@ -55,10 +47,6 @@ namespace Inspector
             this.ItemName = itemKey;
             this.Value = value;
         }
-
-        #endregion
-
-        #region Public Properties
 
         public Vector3 Value
         {
@@ -96,12 +84,6 @@ namespace Inspector
             }
         }
 
-        public float Increment { get { return m_Increment; } }
-
-        #endregion
-
-        #region Public events
-
         public delegate void ValueChangedHandle(object sender, Vector3 value);
 
         public event ValueChangedHandle ValueChanged;
@@ -111,8 +93,5 @@ namespace Inspector
             if (ValueChanged != null)
                 ValueChanged(this, value);
         }
-
-        #endregion
-
     }
 }

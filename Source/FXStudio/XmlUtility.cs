@@ -82,21 +82,9 @@ namespace FXStudio
             return transformElement;
         }
 
-        static XmlElement CreateColorElement(XmlDocument xmlDoc)
-        {
-            XmlElement color = xmlDoc.CreateElement("Color");
-            color.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "r", "1"));
-            color.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "g", "1"));
-            color.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "b", "1"));
-            color.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "a", "1"));
-
-            return color;
-        }
-
         public static XmlElement CreateCubeRenderComponent(XmlDocument xmlDoc)
         {
             XmlElement cubeElement = xmlDoc.CreateElement("CubeRenderComponent");
-            cubeElement.AppendChild(CreateColorElement(xmlDoc));
 
             XmlElement cube = xmlDoc.CreateElement("Cube");
             XmlElement effect = xmlDoc.CreateElement("Material");
@@ -114,7 +102,6 @@ namespace FXStudio
         public static XmlElement CreateSphereRenderComponent(XmlDocument xmlDoc)
         {
             XmlElement sphereElement = xmlDoc.CreateElement("SphereRenderComponent");
-            sphereElement.AppendChild(CreateColorElement(xmlDoc));
 
             XmlElement sphere = xmlDoc.CreateElement("Sphere");
             XmlElement effect = xmlDoc.CreateElement("Material");
@@ -133,7 +120,6 @@ namespace FXStudio
         public static XmlElement CreateCylinderRenderComponent(XmlDocument xmlDoc)
         {
             XmlElement cylinderElement = xmlDoc.CreateElement("CylinderRenderComponent");
-            cylinderElement.AppendChild(CreateColorElement(xmlDoc));
 
             XmlElement cylinder = xmlDoc.CreateElement("Cylinder");
             XmlElement effect = xmlDoc.CreateElement("Material");
@@ -153,7 +139,6 @@ namespace FXStudio
         public static XmlElement CreateTeapotRenderComponent(XmlDocument xmlDoc)
         {
             XmlElement teapotElement = xmlDoc.CreateElement("TeapotRenderComponent");
-            teapotElement.AppendChild(CreateColorElement(xmlDoc));
 
             XmlElement teapot = xmlDoc.CreateElement("Teapot");
             XmlElement effect = xmlDoc.CreateElement("Material");
@@ -172,7 +157,6 @@ namespace FXStudio
         public static XmlElement CreateModelRenderComponent(XmlDocument xmlDoc, string fileName)
         {
             XmlElement modelElement = xmlDoc.CreateElement("ModelRenderComponent");
-            modelElement.AppendChild(CreateColorElement(xmlDoc));
 
             XmlElement model = xmlDoc.CreateElement("Model");
             XmlElement effect = xmlDoc.CreateElement("Material");
@@ -195,13 +179,11 @@ namespace FXStudio
     <DefaultScene type = ""Scene"">
         <Skybox type = ""Skybox"">
             <SkyboxRenderComponent>
-                <Color r = ""1"" g=""1"" b=""1"" a=""1"" />
                 <Texture>Textures\Skybox.dds</Texture>
             </SkyboxRenderComponent>
         </Skybox>
         <Grid type = ""Grid"" >
             <GridRenderComponent >
-                <Color r = ""1"" g=""1"" b=""1"" a=""1"" />
                 <Texture>Textures\Grid.dds</Texture>
                 <GridSize x = ""10"" y=""10"" />
                 <TicksInterval>1.0</TicksInterval>

@@ -11,12 +11,10 @@ public:
 	virtual void VPostInit() override;
 	virtual void VOnChanged() override;
 	virtual tinyxml2::XMLElement* VGenerateXml(tinyxml2::XMLDocument* pDocument) override;
-	const Color& GetColor() const { return m_Color; }
 
 protected:
 	virtual bool VDelegateInit(tinyxml2::XMLElement* pData) { return true; }
 	virtual shared_ptr<SceneNode> VCreateSceneNode() = 0;
-	Color LoadColor(tinyxml2::XMLElement* pData);
 	
 	virtual tinyxml2::XMLElement* VCreateBaseElement(tinyxml2::XMLDocument* pDocument)
 	{
@@ -28,7 +26,6 @@ private:
 	virtual shared_ptr<SceneNode> VGetSceneNode() override;
 
 	shared_ptr<SceneNode> m_pSceneNode;
-	Color m_Color;
 };
 
 class GridRenderComponent : public BaseRenderComponent

@@ -89,6 +89,34 @@ namespace FXStudio
             }));
         }
 
+        public void ModifyMaterial(string name, string value)
+        {
+            XmlNode materialNode = treeViewAssets.SelectedNode.Tag as XmlNode;
+            if (materialNode != null)
+            {
+                XmlNode variable = materialNode.SelectSingleNode(name);
+                if (variable == null)
+                    return;
+
+                variable.InnerText = value;
+
+                XmlDocument materialDoc = new XmlDocument();
+                materialDoc.LoadXml(materialNode.OuterXml);
+                XmlWriter writer = XmlWriter.Create(treeViewAssets.SelectedNode.Name, new XmlWriterSettings()
+                {
+                    Indent = true,
+                    IndentChars = "\t",
+                    OmitXmlDeclaration = true
+                });
+                materialDoc.Save(writer);
+                writer.Flush();
+                writer.Close();
+
+                treeViewAssets.SelectedNode.Tag = materialNode;
+                RenderMethods.ModifyMaterial(@"Materials\" + Path.GetFileName(treeViewAssets.SelectedNode.Name), false);
+            }
+        }
+
         public void ModifyEffect(XmlNode effectNode)
         {
             string sourceFileName = effectNode.InnerText;
@@ -113,7 +141,7 @@ namespace FXStudio
                 materialDoc.LoadXml(materialtString.ToString());
                 XmlElement newMaterialNode = materialDoc.DocumentElement;
 
-                ModifyMaterial(newMaterialNode, effectName);
+                ReSetMaterial(newMaterialNode, effectName);
             }
         }
 
@@ -238,7 +266,7 @@ namespace FXStudio
             }
         }
 
-        private void ModifyMaterial(XmlElement newMaterialNode, string effectName)
+        private void ReSetMaterial(XmlElement newMaterialNode, string effectName)
         {
             TreeNode materialRoot = treeViewAssets.Nodes["Materials"];
             if (materialRoot == null)

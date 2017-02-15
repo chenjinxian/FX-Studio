@@ -26,12 +26,6 @@ BaseRenderComponent::~BaseRenderComponent()
 
 bool BaseRenderComponent::VInit(tinyxml2::XMLElement* pData)
 {
-	tinyxml2::XMLElement* pColorNode = pData->FirstChildElement("Color");
-	if (pColorNode != nullptr)
-	{
-		m_Color = LoadColor(pColorNode);
-	}
-
 	return VDelegateInit(pData);
 }
 
@@ -51,31 +45,8 @@ void BaseRenderComponent::VOnChanged()
 tinyxml2::XMLElement* BaseRenderComponent::VGenerateXml(tinyxml2::XMLDocument* pDocument)
 {
 	tinyxml2::XMLElement* pBaseElement = VCreateBaseElement(pDocument);
-
-	tinyxml2::XMLElement* pColor = pDocument->NewElement("Color");
-	pColor->SetAttribute("r", m_Color.x);
-	pColor->SetAttribute("g", m_Color.y);
-	pColor->SetAttribute("b", m_Color.z);
-	pColor->SetAttribute("a", m_Color.w);
-	pBaseElement->InsertEndChild(pColor);
-
 	VCreateInheritedXmlElement(pBaseElement, pDocument);
 	return pBaseElement;
-}
-
-Color BaseRenderComponent::LoadColor(tinyxml2::XMLElement* pData)
-{
-	Color color;
-
-	if (pData != nullptr)
-	{
-		color.x = pData->FloatAttribute("r");
-		color.y = pData->FloatAttribute("g");
-		color.z = pData->FloatAttribute("b");
-		color.w = pData->FloatAttribute("a");
-	}
-
-	return color;
 }
 
 shared_ptr<SceneNode> BaseRenderComponent::VGetSceneNode()

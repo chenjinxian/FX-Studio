@@ -19,22 +19,13 @@ namespace Inspector
 
         #endregion
 
-        #region Constructors
-
-        public Int32Item()
-        {
-            this.CategoryName = "Misc";
-            this.ItemName = "";
-        }
-
-        public Int32Item(string categoryKey, string itemKey, int value)
+        public Int32Item(string categoryKey, string itemKey, string variable, int value)
         {
             this.CategoryName = categoryKey;
-            this.ItemName = itemKey;
+            this.UIName = itemKey;
+            this.VariableName = variable;
             this.Value = value;
         }
-
-        #endregion
 
         #region Public Properties
 

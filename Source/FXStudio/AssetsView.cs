@@ -94,10 +94,13 @@ namespace FXStudio
             XmlNode materialNode = treeViewAssets.SelectedNode.Tag as XmlNode;
             if (materialNode != null)
             {
-                XmlNode variable = materialNode.SelectSingleNode(name);
-                if (variable == null)
+                XmlNode varRoot = materialNode.SelectSingleNode("Variables");
+                if (varRoot == null)
                     return;
 
+                XmlNode variable = varRoot.SelectSingleNode(name);
+                if (variable == null)
+                    return;
                 variable.InnerText = value;
 
                 XmlDocument materialDoc = new XmlDocument();

@@ -6,33 +6,17 @@ namespace Inspector
 {
     public class BooleanItem : BaseItem
     {
-
-        #region Private internal var./properties
-
         private bool mValue = false;
         private string mTrueValue = "true";
         private string mFalseValue = "false";
 
-        #endregion
-
-        #region Constructors
-
-        public BooleanItem()
-        {
-            this.CategoryName = "Misc";
-            this.ItemName = "";
-        }
-
-        public BooleanItem(string categoryKey, string itemKey, bool value)
+        public BooleanItem(string categoryKey, string itemKey, string variable, bool value)
         {
             this.CategoryName = categoryKey;
-            this.ItemName = itemKey;
+            this.UIName = itemKey;
+            this.VariableName = variable;
             this.Value = value;
         }
-
-        #endregion
-
-        #region Public Properties
 
         public bool Value
         {
@@ -88,10 +72,6 @@ namespace Inspector
             }
         }
 
-        #endregion
-
-        #region Public Methods
-
         public void SetValidationRange(string falseValue, string trueValue)
         {
             falseValue = falseValue.Trim();
@@ -105,10 +85,6 @@ namespace Inspector
             }
         }
 
-        #endregion
-
-        #region Public events
-
         public delegate void ValueChangedHandle(object sender, bool value);
 
         public event ValueChangedHandle ValueChanged;
@@ -118,8 +94,5 @@ namespace Inspector
             if (ValueChanged != null)
                 ValueChanged(this, value);
         }
-
-        #endregion
-
     }
 }

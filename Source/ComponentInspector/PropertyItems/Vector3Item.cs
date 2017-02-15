@@ -41,10 +41,11 @@ namespace Inspector
     {
         private Vector3 m_Value;
 
-        public Vector3Item(string categoryKey, string itemKey, Vector3 value)
+        public Vector3Item(string categoryKey, string itemKey, string variable, Vector3 value)
         {
             this.CategoryName = categoryKey;
-            this.ItemName = itemKey;
+            this.UIName = itemKey;
+            this.VariableName = variable;
             this.Value = value;
         }
 

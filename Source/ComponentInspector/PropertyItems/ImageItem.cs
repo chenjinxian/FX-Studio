@@ -12,10 +12,11 @@ namespace Inspector
         private string m_FileName = "";
         private string tempFileName = "";
 
-        public ImageItem(string categoryKey, string itemKey, string fileName)
+        public ImageItem(string categoryKey, string itemKey, string variable, string fileName)
         {
             this.CategoryName = categoryKey;
-            this.ItemName = itemKey;
+            this.UIName = itemKey;
+            this.VariableName = variable;
             this.FileName = fileName;
         }
 

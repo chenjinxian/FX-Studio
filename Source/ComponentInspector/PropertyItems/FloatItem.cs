@@ -14,10 +14,11 @@ namespace Inspector
         private string mEngineeringUnit = "";
         private int mDecimalPlaces = 1;
 
-        public FloatItem(string categoryKey, string itemKey, float value, float min, float max, float step)
+        public FloatItem(string categoryKey, string itemKey, string variable, float value, float min, float max, float step)
         {
             this.CategoryName = categoryKey;
-            this.ItemName = itemKey;
+            this.UIName = itemKey;
+            this.VariableName = variable;
             this.Value = value;
             this.m_MinValue = min;
             this.m_MaxValue = max;

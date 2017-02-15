@@ -128,14 +128,14 @@ namespace Inspector
                     BaseItem child = item.Value;
                     if (child is Vector3Item)
                     {
-                        ControlCollection controls = panelProperties.Controls[child.CategoryName + "_" + child.ItemName + "_" + "panel"].Controls;
+                        ControlCollection controls = panelProperties.Controls[child.CategoryName + "_" + child.UIName + "_" + "panel"].Controls;
                         string[] elements = child.ValueString.Split(',');
                         if (elements.Length != 3)
                             return;
                         for (int i = 0; i < 3; i++)
                         {
                             string name = i == 0 ? "X" : (i == 1 ? "Y" : "Z");
-                            string controlName = child.CategoryName + "_" + child.ItemName + "_" + "labelValue_" + name;
+                            string controlName = child.CategoryName + "_" + child.UIName + "_" + "labelValue_" + name;
                             Label labelValue = controls[controlName] as Label;
                             if (labelValue != null)
                                 labelValue.Text = elements[i];
@@ -143,14 +143,14 @@ namespace Inspector
                     }
                     else if (child is ColorItem)
                     {
-                        ControlCollection controls = panelProperties.Controls[child.CategoryName + "_" + child.ItemName + "_" + "panel"].Controls;
+                        ControlCollection controls = panelProperties.Controls[child.CategoryName + "_" + child.UIName + "_" + "panel"].Controls;
 
-                        string controlName = child.CategoryName + "_" + child.ItemName + "_" + "panelColor";
+                        string controlName = child.CategoryName + "_" + child.UIName + "_" + "panelColor";
                         Panel panelColor = controls[controlName] as Panel;
                         if (panelColor != null)
                             panelColor.BackColor = ((ColorItem)child).Value;
 
-                        controlName = child.CategoryName + "_" + child.ItemName + "_" + "textColor";
+                        controlName = child.CategoryName + "_" + child.UIName + "_" + "textColor";
                         TextBox textColor = controls[controlName] as TextBox;
                         if (textColor != null)
                             textColor.Text = child.ValueString;
@@ -193,10 +193,10 @@ namespace Inspector
         {
             if (m_CategoryByName.ContainsKey(baseItem.CategoryName))
             {
-                if (m_CategoryByName[baseItem.CategoryName].ItemList.ContainsKey(baseItem.ItemName))
-                    m_CategoryByName[baseItem.CategoryName].ItemList[baseItem.ItemName] = baseItem;
+                if (m_CategoryByName[baseItem.CategoryName].ItemList.ContainsKey(baseItem.UIName))
+                    m_CategoryByName[baseItem.CategoryName].ItemList[baseItem.UIName] = baseItem;
                 else
-                    m_CategoryByName[baseItem.CategoryName].ItemList.Add(baseItem.ItemName, baseItem);
+                    m_CategoryByName[baseItem.CategoryName].ItemList.Add(baseItem.UIName, baseItem);
             }
         }
 
@@ -243,13 +243,13 @@ namespace Inspector
             labelItem.ForeColor = Color.Black;
             labelItem.Location = new Point(m_NameLocationX, 3);
             labelItem.MaximumSize = new Size(m_ValueLocationX - m_NameLocationX, 20);
-            labelItem.Name = item.CategoryName + "_" + item.ItemName + "_" + "label";
-            labelItem.Text = item.ItemName;
+            labelItem.Name = item.CategoryName + "_" + item.UIName + "_" + "label";
+            labelItem.Text = item.UIName;
 
             TextBox textItem = new TextBox();
             textItem.Location = new Point(m_ValueLocationX, 1);
             textItem.Size = new Size(this.Width - m_ValueLocationX - 2, m_ItemHeight - 1);
-            textItem.Name = item.CategoryName + "_" + item.ItemName + "_" + "text";
+            textItem.Name = item.CategoryName + "_" + item.UIName + "_" + "text";
             textItem.Text = item.ValueString;
             textItem.Enabled = item.Enabled;
 
@@ -264,8 +264,8 @@ namespace Inspector
             labelItem.ForeColor = Color.Black;
             labelItem.Location = new Point(m_NameLocationX, 3);
             labelItem.MaximumSize = new Size(m_ValueLocationX - m_NameLocationX, 20);
-            labelItem.Name = item.CategoryName + "_" + item.ItemName + "_" + "label";
-            labelItem.Text = item.ItemName;
+            labelItem.Name = item.CategoryName + "_" + item.UIName + "_" + "label";
+            labelItem.Text = item.UIName;
 
             panelItem.Controls.Add(labelItem);
 
@@ -285,7 +285,7 @@ namespace Inspector
                 labelName.AutoSize = true;
                 labelName.ForeColor = Color.Black;
                 labelName.Location = new Point(x1, 3);
-                labelName.Name = item.CategoryName + "_" + item.ItemName + "_" + "labelName_" + name;
+                labelName.Name = item.CategoryName + "_" + item.UIName + "_" + "labelName_" + name;
                 labelName.Text = name;
 
                 x1 += labelWidth;
@@ -295,7 +295,7 @@ namespace Inspector
                 labelValue.Enabled = item.Enabled;
                 labelValue.ForeColor = Color.White;
                 labelValue.Location = new Point(x1, 1);
-                labelValue.Name = item.CategoryName + "_" + item.ItemName + "_" + "labelValue_" + name;
+                labelValue.Name = item.CategoryName + "_" + item.UIName + "_" + "labelValue_" + name;
                 labelValue.Size = new Size(textWidth, m_ItemHeight - 4);
                 labelValue.Tag = item;
                 labelValue.Text = elements[i];
@@ -376,27 +376,27 @@ namespace Inspector
             labelItem.ForeColor = Color.Black;
             labelItem.Location = new Point(m_NameLocationX, 3);
             labelItem.MaximumSize = new Size(m_ValueLocationX - m_NameLocationX, 20);
-            labelItem.Name = item.CategoryName + "_" + item.ItemName + "_" + "label";
-            labelItem.Text = item.ItemName;
+            labelItem.Name = item.CategoryName + "_" + item.UIName + "_" + "label";
+            labelItem.Text = item.UIName;
 
             Panel panelColor = new Panel();
             panelColor.BackColor = ((ColorItem)item).Value;
             panelColor.BorderStyle = BorderStyle.FixedSingle;
             panelColor.Dock = DockStyle.None;
             panelColor.Location = new Point(m_ValueLocationX, 2);
-            panelColor.Name = item.CategoryName + "_" + item.ItemName + "_" + "panelColor";
+            panelColor.Name = item.CategoryName + "_" + item.UIName + "_" + "panelColor";
             panelColor.Size = new Size(m_SideLength, m_SideLength);
 
             TextBox textColor = new TextBox();
             textColor.Location = new Point(m_ValueLocationX + m_SideLength + 1, 1);
             textColor.Size = new Size(this.Width - m_ValueLocationX - m_SideLength - m_ButtonWidth - 2 - 2, m_ItemHeight);
-            textColor.Name = item.CategoryName + "_" + item.ItemName + "_" + "textColor";
+            textColor.Name = item.CategoryName + "_" + item.UIName + "_" + "textColor";
             textColor.Text = item.ValueString;
 
             Button btnColor = new Button();
             btnColor.Location = new Point(this.Width - m_ButtonWidth - 2, 1);
             btnColor.Size = new Size(m_ButtonWidth, m_ButtonWidth);
-            btnColor.Name = item.CategoryName + "_" + item.ItemName + "_" + "button";
+            btnColor.Name = item.CategoryName + "_" + item.UIName + "_" + "button";
             btnColor.Text = "..";
             btnColor.UseVisualStyleBackColor = true;
             btnColor.Tag = item;
@@ -431,27 +431,27 @@ namespace Inspector
             labelItem.ForeColor = Color.Black;
             labelItem.Location = new Point(m_NameLocationX, 3);
             labelItem.MaximumSize = new Size(m_ValueLocationX - m_NameLocationX, 20);
-            labelItem.Name = item.CategoryName + "_" + item.ItemName + "_" + "label";
-            labelItem.Text = item.ItemName;
+            labelItem.Name = item.CategoryName + "_" + item.UIName + "_" + "label";
+            labelItem.Text = item.UIName;
 
             PictureBox pictureImage = new PictureBox();
             pictureImage.BackColor = Color.White;
             pictureImage.BorderStyle = BorderStyle.FixedSingle;
             pictureImage.Dock = DockStyle.None;
             pictureImage.Location = new Point(m_ValueLocationX, 2);
-            pictureImage.Name = item.CategoryName + "_" + item.ItemName + "_" + "panel";
+            pictureImage.Name = item.CategoryName + "_" + item.UIName + "_" + "panel";
             pictureImage.Size = new Size(m_SideLength, m_SideLength);
 
             TextBox textColor = new TextBox();
             textColor.Location = new Point(m_ValueLocationX + m_SideLength + 1, 1);
             textColor.Size = new Size(this.Width - m_ValueLocationX - m_SideLength - m_ButtonWidth - 2 - 2, m_ItemHeight);
-            textColor.Name = item.CategoryName + "_" + item.ItemName + "_" + "text";
+            textColor.Name = item.CategoryName + "_" + item.UIName + "_" + "text";
             textColor.Text = item.ValueString;
 
             Button btnImage = new Button();
             btnImage.Location = new Point(this.Width - m_ButtonWidth - 2, 1);
             btnImage.Size = new Size(m_ButtonWidth, m_ButtonWidth);
-            btnImage.Name = item.CategoryName + "_" + item.ItemName + "_" + "button";
+            btnImage.Name = item.CategoryName + "_" + item.UIName + "_" + "button";
             btnImage.Text = "..";
             btnImage.UseVisualStyleBackColor = true;
 
@@ -468,13 +468,13 @@ namespace Inspector
             labelItem.ForeColor = Color.Black;
             labelItem.Location = new Point(m_NameLocationX, 3);
             labelItem.MaximumSize = new Size(m_ValueLocationX - m_NameLocationX, 20);
-            labelItem.Name = item.CategoryName + "_" + item.ItemName + "_" + "label";
-            labelItem.Text = item.ItemName;
+            labelItem.Name = item.CategoryName + "_" + item.UIName + "_" + "label";
+            labelItem.Text = item.UIName;
 
             TextBox textItem = new TextBox();
             textItem.Location = new Point(m_ValueLocationX, 1);
             textItem.Size = new Size(this.Width - m_ValueLocationX - 2, m_ItemHeight - 1);
-            textItem.Name = item.CategoryName + "_" + item.ItemName + "_" + "text";
+            textItem.Name = item.CategoryName + "_" + item.UIName + "_" + "text";
             textItem.Text = item.ValueString;
 
             panelItem.Controls.Add(labelItem);
@@ -492,7 +492,7 @@ namespace Inspector
             panelItem.BackColor = Color.White;
             panelItem.Dock = DockStyle.None;
             panelItem.Location = new Point(0, y1);
-            panelItem.Name = item.CategoryName + "_" + item.ItemName + "_" + "panel";
+            panelItem.Name = item.CategoryName + "_" + item.UIName + "_" + "panel";
             panelItem.Size = new Size(this.Width, m_ItemHeight);
             this.panelProperties.Controls.Add(panelItem);
 

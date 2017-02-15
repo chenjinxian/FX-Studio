@@ -4,37 +4,17 @@ using System.Text;
 
 namespace Inspector
 {
-    #region String property item class
-
     public class StringItem : BaseItem
     {
-
-        #region Private internal var./properties
-
         private string m_Value = "";
         private int m_MaxLength = 0;
-
-        #endregion
-
-        #region Contructors
-
-        public StringItem()
-        {
-            this.CategoryName = "Misc";
-            this.ItemName = "";
-        }
-
-        public StringItem(string categoryKey, string itemKey, string value)
+        public StringItem(string categoryKey, string itemKey, string variable, string value)
         {
             this.CategoryName = categoryKey;
-            this.ItemName = itemKey;
+            this.UIName = itemKey;
+            this.VariableName = variable;
             this.Value = value;
         }
-
-        #endregion
-
-        #region Public Properties
-
         public string Value
         {
             get
@@ -84,10 +64,6 @@ namespace Inspector
             }
         }
 
-        #endregion
-
-        #region Public events
-
         public delegate void ValueChangedHandle(object sender, string value);
 
         public event ValueChangedHandle ValueChanged;
@@ -98,11 +74,5 @@ namespace Inspector
                 // Raise event
                 ValueChanged(this, value);
         }
-
-        #endregion
-
     }
-
-    #endregion
-
 }

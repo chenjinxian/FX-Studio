@@ -74,8 +74,6 @@
     <Compile Include="PropertyItems\CategoryItem.cs" />
     <Compile Include="PropertyItems\ColorItem.cs" />
     <Compile Include="PropertyItems\FloatItem.cs" />
-    <Compile Include="PropertyItems\DropDownItem.cs" />
-    <Compile Include="PropertyItems\FileItem.cs" />
     <Compile Include="PropertyItems\BaseItem.cs" />
     <Compile Include="PropertyItems\ImageItem.cs" />
     <Compile Include="PropertyItems\Int32Item.cs" />

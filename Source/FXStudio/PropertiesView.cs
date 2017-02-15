@@ -58,7 +58,7 @@ namespace FXStudio
                 inspectorComponent.CategoryAdd("ImageProperties", category);
 
                 string textureName = selectedNode.Attributes["name"].Value;
-                inspectorComponent.ItemAdd(new Inspector.StringItem("ImageProperties", textureName, selectedNode.InnerText));
+                inspectorComponent.ItemAdd(new Inspector.StringItem("ImageProperties", textureName, "", selectedNode.InnerText));
             }
 
             inspectorComponent.UpdateControl(reset);
@@ -137,9 +137,9 @@ namespace FXStudio
             inspectorComponent.CategoryAdd("EffectProperties", category);
 
             string effectName = effectNode.Attributes["name"].Value;
-            inspectorComponent.ItemAdd(new Inspector.StringItem("EffectProperties", "Name", effectName));
+            inspectorComponent.ItemAdd(new Inspector.StringItem("EffectProperties", "Name", "", effectName));
             string effectPath = effectNode.InnerText;
-            inspectorComponent.ItemAdd(new Inspector.StringItem("EffectProperties", "Full Path", effectNode.InnerText));
+            inspectorComponent.ItemAdd(new Inspector.StringItem("EffectProperties", "Full Path", "", effectNode.InnerText));
         }
 
         private void AddMaterialProperties(XmlNode materialNode)
@@ -152,10 +152,11 @@ namespace FXStudio
             {
                 string varName = child.Name;
                 string varValue = child.InnerText;
+                string uiName = varName;
 
                 XmlAttribute nameNode = child.Attributes["UIName"];
                 if (nameNode != null)
-                    varName = nameNode.Value;
+                    uiName = nameNode.Value;
 
                 XmlAttribute widgetNode = child.Attributes["UIWidget"];
                 if (widgetNode != null)
@@ -167,7 +168,7 @@ namespace FXStudio
                     }
                     else if (string.Equals(uiWidget, "Color", StringComparison.OrdinalIgnoreCase))
                     {
-                        AddColorItem("MaterialProperties", varName, varValue);
+                        AddColorItem("MaterialProperties", uiName, varName, varValue);
                     }
                     else if (string.Equals(uiWidget, "slider", StringComparison.OrdinalIgnoreCase))
                     {
@@ -176,12 +177,12 @@ namespace FXStudio
                         XmlNode stepNode = child.Attributes["UIStep"];
                         if (minNode != null && maxNode != null && stepNode != null)
                         {
-                            AddFloatItem("MaterialProperties", varName,
+                            AddFloatItem("MaterialProperties", uiName, varName,
                                 varValue, minNode.InnerText, maxNode.InnerText, stepNode.InnerText);
                         }
                         else
                         {
-                            inspectorComponent.ItemAdd(new Inspector.StringItem("MaterialProperties", varName, varValue));
+                            inspectorComponent.ItemAdd(new Inspector.StringItem("MaterialProperties", uiName, varName, varValue));
                         }
                     }
                     continue;
@@ -190,7 +191,7 @@ namespace FXStudio
                 XmlNode objectNode = child.Attributes["Object"];
                 if (objectNode != null)
                 {
-                    inspectorComponent.ItemAdd(new Inspector.StringItem("MaterialProperties", varName, varValue));
+                    inspectorComponent.ItemAdd(new Inspector.StringItem("MaterialProperties", uiName, varName, varValue));
                     continue;
                 }
 
@@ -201,18 +202,18 @@ namespace FXStudio
                     if (!string.IsNullOrEmpty(valueNode.InnerText))
                     {
                         Inspector.ImageItem imageItem = new Inspector.ImageItem(
-                            "MaterialProperties", varName, m_ProjectLocation + @"\Textures\" + valueNode.InnerText);
+                            "MaterialProperties", uiName, varName, m_ProjectLocation + @"\Textures\" + valueNode.InnerText);
                         inspectorComponent.ItemAdd(imageItem);
                     }
                     else
                     {
-                        inspectorComponent.ItemAdd(new Inspector.StringItem("MaterialProperties", varName, varValue));
+                        inspectorComponent.ItemAdd(new Inspector.StringItem("MaterialProperties", uiName, varName, varValue));
                     }
                     continue;
                 }
 
                 if (!string.IsNullOrEmpty(varValue))
-                    inspectorComponent.ItemAdd(new Inspector.StringItem("MaterialProperties", varName, varValue));
+                    inspectorComponent.ItemAdd(new Inspector.StringItem("MaterialProperties", uiName, varName, varValue));
             }
         }
 
@@ -222,10 +223,10 @@ namespace FXStudio
             inspectorComponent.CategoryAdd(projectNode.Name, category);
 
             XmlNode nameNode = projectNode.SelectSingleNode("Name");
-            inspectorComponent.ItemAdd(new Inspector.StringItem(projectNode.Name, nameNode.Name, nameNode.InnerText));
+            inspectorComponent.ItemAdd(new Inspector.StringItem(projectNode.Name, nameNode.Name, "", nameNode.InnerText));
 
             XmlNode locationNode = projectNode.SelectSingleNode("Location");
-            inspectorComponent.ItemAdd(new Inspector.StringItem(projectNode.Name, locationNode.Name, locationNode.InnerText));
+            inspectorComponent.ItemAdd(new Inspector.StringItem(projectNode.Name, locationNode.Name, "", locationNode.InnerText));
         }
 
         private void AddSceneProperties(XmlNode sceneNode)
@@ -233,7 +234,7 @@ namespace FXStudio
             Inspector.CategoryItem category = new Inspector.CategoryItem("Scene");
             inspectorComponent.CategoryAdd("Scene", category);
 
-            inspectorComponent.ItemAdd(new Inspector.StringItem("Scene", "Name", sceneNode.Name));
+            inspectorComponent.ItemAdd(new Inspector.StringItem("Scene", "Name", "", sceneNode.Name));
         }
 
         private void AddEditorCameraProperties(XmlNode cameraNode)
@@ -309,7 +310,7 @@ namespace FXStudio
                 float z = Convert.ToSingle(vector3Node.Attributes["z"].Value);
 
                 Inspector.Vector3Item vector3Item = new Inspector.Vector3Item(
-                    transformNode.Name, vector3Node.Name, new Inspector.Vector3(x, y, z));
+                    transformNode.Name, vector3Node.Name, "", new Inspector.Vector3(x, y, z));
                 vector3Item.Enabled = enable;
                 vector3Item.ValueChanged += Vector3Item_ValueChanged;
                 inspectorComponent.ItemAdd(vector3Item);
@@ -319,7 +320,7 @@ namespace FXStudio
         private void Vector3Item_ValueChanged(object sender, Inspector.Vector3 value)
         {
             Inspector.Vector3Item vector3Item = sender as Inspector.Vector3Item;
-            m_MoveDelegate?.Invoke(vector3Item.CategoryName, vector3Item.ItemName, value);
+            m_MoveDelegate?.Invoke(vector3Item.CategoryName, vector3Item.UIName, value);
         }
 
         private void AddTextureItem(XmlNode actorNode)
@@ -327,7 +328,7 @@ namespace FXStudio
             XmlNode textureNode = actorNode.SelectSingleNode("Texture");
             if (textureNode != null)
             {
-                inspectorComponent.ItemAdd(new Inspector.ImageItem(actorNode.Name, textureNode.Name, textureNode.InnerText));
+                inspectorComponent.ItemAdd(new Inspector.ImageItem(actorNode.Name, textureNode.Name, "", textureNode.InnerText));
             }
         }
 
@@ -336,11 +337,11 @@ namespace FXStudio
             XmlNode effectNode = actorNode.SelectSingleNode("Effect");
             if (effectNode != null)
             {
-                inspectorComponent.ItemAdd(new Inspector.ImageItem(actorNode.Name, effectNode.Name, effectNode.InnerText));
+                inspectorComponent.ItemAdd(new Inspector.ImageItem(actorNode.Name, effectNode.Name, "", effectNode.InnerText));
             }
         }
 
-        private void AddColorItem(string category, string itemName, string colorValue)
+        private void AddColorItem(string category, string itemName, string variableName, string colorValue)
         {
             string[] elements = colorValue.Split(' ');
             float r = Convert.ToSingle(elements[0]);
@@ -351,7 +352,7 @@ namespace FXStudio
                 a = Convert.ToSingle(elements[3]);
             Color color = Color.FromArgb((int)(a * 255.0), (int)(r * 255.0), (int)(g * 255.0), (int)(b * 255.0));
 
-            Inspector.ColorItem colorItem = new Inspector.ColorItem(category, itemName, color);
+            Inspector.ColorItem colorItem = new Inspector.ColorItem(category, itemName, variableName, color);
             colorItem.ValueChanged += ColorItem_ValueChanged;
             inspectorComponent.ItemAdd(colorItem);
         }
@@ -359,17 +360,17 @@ namespace FXStudio
         private void ColorItem_ValueChanged(object sender, Color value)
         {
             Inspector.ColorItem vector3Item = sender as Inspector.ColorItem;
-            m_ModifyDelegate?.Invoke(vector3Item.ItemName, vector3Item.ValueString);
+            m_ModifyDelegate?.Invoke(vector3Item.VariableName, vector3Item.ValueString);
         }
 
-        private void AddFloatItem(string category, string itemName,
+        private void AddFloatItem(string category, string itemName, string variableName,
             string floatValue, string minValue, string maxValue, string stepValue)
         {
             float value = Convert.ToSingle(floatValue);
             float min = Convert.ToSingle(minValue);
             float max = Convert.ToSingle(maxValue);
             float step = Convert.ToSingle(stepValue);
-            Inspector.FloatItem floatItem = new Inspector.FloatItem(category, itemName, value, min, max, step);
+            Inspector.FloatItem floatItem = new Inspector.FloatItem(category, itemName, variableName, value, min, max, step);
             inspectorComponent.ItemAdd(floatItem);
         }
     }

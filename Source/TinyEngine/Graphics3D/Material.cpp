@@ -115,16 +115,12 @@ uint32_t Effect::GenerateXml(const std::string& effectObjectPath, const std::str
 
 		for (auto variable : m_Variables)
 		{
-			tinyxml2::XMLElement* pChildVariable = pEffectXmlDoc->NewElement("Variable");
-			pChildVariable->SetAttribute("name", variable->GetVariableName().c_str());
-			pChildVariable->SetAttribute("value", variable->GetVariableValue().c_str());
-
+			tinyxml2::XMLElement* pChildVariable = pEffectXmlDoc->NewElement(variable->GetVariableName().c_str());
 			for (auto annotation : variable->GetAnnotations())
 			{
-				tinyxml2::XMLElement* pChildAnnotation = pEffectXmlDoc->NewElement(annotation->GetAnnotationName().c_str());
-				pChildAnnotation->SetText(annotation->GetAnnotationValue().c_str());
-				pChildVariable->InsertEndChild(pChildAnnotation);
+				pChildVariable->SetAttribute(annotation->GetAnnotationName().c_str(), annotation->GetAnnotationValue().c_str());
 			}
+			pChildVariable->SetText(variable->GetVariableValue().c_str());
 
 			pVariables->InsertEndChild(pChildVariable);
 		}

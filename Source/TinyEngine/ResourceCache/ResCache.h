@@ -26,6 +26,7 @@ public:
 	virtual ~ResourceZipFile();
 
 	virtual bool VOpen() override;
+	virtual void VRemoveRawResource(const Resource &r) override {}
 	virtual int VGetRawResourceSize(const Resource &r) override;
 	virtual int VGetRawResource(const Resource &r, char *buffer) override;
 	virtual int VGetNumResources() const override;
@@ -49,11 +50,12 @@ public:
 	DevelopmentResourceZipFile(const std::string assetDir, const Mode mode);
 
 	virtual bool VOpen();
-	virtual int VGetRawResourceSize(const Resource &r);
-	virtual int VGetRawResource(const Resource &r, char *buffer);
-	virtual int VGetNumResources() const;
-	virtual std::string VGetResourceName(int num) const;
-	virtual bool VIsUsingDevelopmentDirectories(void) const { return true; }
+	virtual void VRemoveRawResource(const Resource &r) override;
+	virtual int VGetRawResourceSize(const Resource &r) override;
+	virtual int VGetRawResource(const Resource &r, char *buffer) override;
+	virtual int VGetNumResources() const override;
+	virtual std::string VGetResourceName(int num) const override;
+	virtual bool VIsUsingDevelopmentDirectories(void) const override { return true; }
 
 	int Find(const std::string &path);
 

@@ -100,32 +100,20 @@ namespace FXStudio
             string effectName = effectNode.Attributes["name"].Value;
 
             string destOjbect = m_ProjectLocation + @"\Effects\" + Path.GetFileNameWithoutExtension(sourceFileName) + ".fxo";
-            if (CompileEffect(sourceFileName, destOjbect))
+            if (!CompileEffect(sourceFileName, destOjbect))
+                return;
+
+            uint size = RenderMethods.ModifyEffect(@"Effects\" + Path.GetFileName(destOjbect), effectName);
+            if (size > 0)
             {
-                uint size = RenderMethods.ModifyEffect(@"Effects\" + Path.GetFileName(destOjbect), effectName);
-                if (size > 0)
-                {
-                    StringBuilder materialtString = new StringBuilder((int)size);
-                    RenderMethods.GetMaterialXml(@"Effects\" + Path.GetFileName(destOjbect), materialtString, size);
-//                     File.WriteAllText(m_ProjectLocation + @"\Materials\" + materialName + ".mat", materialtString.ToString());
-// 
-//                     string materialtXml = string.Format(
-//                         @"<Material name=""{0}"">{1}</Material>", materialName, @"Materials\" + materialName + ".mat");
-//                     XmlDocument materialDoc = new XmlDocument();
-//                     materialDoc.LoadXml(materialtXml.ToString());
-//                     XmlElement materialXmlNode = materialDoc.DocumentElement;
-// 
-//                     XmlNode materialRoot = m_XmlDoc.DocumentElement.SelectSingleNode("Materials");
-//                     if (materialRoot != null)
-//                     {
-//                         materialRoot.AppendChild(m_XmlDoc.ImportNode(materialXmlNode, true));
-//                         TreeNode materialsTreeNode = treeViewAssets.Nodes["Materials"];
-//                         if (materialsTreeNode != null)
-//                         {
-//                             AddMaterial(materialsTreeNode, materialRoot.LastChild);
-//                         }
-//                     }
-                }
+                StringBuilder materialtString = new StringBuilder((int)size);
+                RenderMethods.GetMaterialXml(@"Effects\" + Path.GetFileName(destOjbect), materialtString, size);
+
+                XmlDocument materialDoc = new XmlDocument();
+                materialDoc.LoadXml(materialtString.ToString());
+                XmlElement newMaterialNode = materialDoc.DocumentElement;
+
+                ModifyMaterial(newMaterialNode, effectName);
             }
         }
 
@@ -232,11 +220,11 @@ namespace FXStudio
                 materialDoc.Load(materialFile);
                 XmlElement materialXmlNode = materialDoc.DocumentElement;
 
-                TreeNode materialRoot = new TreeNode(nameNode.Value) { Tag = materialXmlNode };
+                TreeNode materialRoot = new TreeNode(nameNode.Value) { Name = materialFile, Tag = materialXmlNode };
                 treeNode.Nodes.Add(materialRoot);
 
                 XmlNode effectNode = materialXmlNode.Attributes["effect"];
-                TreeNode effectRoot = new TreeNode(effectNode.Value) { Tag = effectNode };
+                TreeNode effectRoot = new TreeNode(effectNode.Value) { Name = materialXmlNode.Attributes["object"].Value, Tag = effectNode };
                 materialRoot.Nodes.Add(effectRoot);
 
                 XmlNode techniqueRoot = materialXmlNode.SelectSingleNode("Techniques");
@@ -247,6 +235,53 @@ namespace FXStudio
                 {
                     apiNode.Nodes.Add(new TreeNode(techniqueChild.Attributes["name"].Value) { Tag = techniqueChild });
                 }
+            }
+        }
+
+        private void ModifyMaterial(XmlElement newMaterialNode, string effectName)
+        {
+            TreeNode materialRoot = treeViewAssets.Nodes["Materials"];
+            if (materialRoot == null)
+                return;
+
+            foreach (TreeNode child in materialRoot.Nodes)
+            {
+                if (child.FirstNode.Text != effectName)
+                {
+                    continue;
+                }
+
+                XmlNode oldMaterialNode = child.Tag as XmlNode;
+                if (oldMaterialNode == null)
+                    continue;
+
+                XmlNode variables = newMaterialNode.SelectSingleNode("Variables");
+                foreach (XmlNode childVar in variables)
+                {
+                    string varName = childVar.Name;
+                    XmlNode varNode = oldMaterialNode.SelectSingleNode(varName);
+                    if (varNode != null)
+                    {
+                        childVar.InnerText = varNode.InnerText;
+                        if (childVar.Attributes["ResourceName"] != null && varNode.Attributes["ResourceName"] != null)
+                            childVar.Attributes["ResourceName"].Value = varNode.Attributes["ResourceName"].Value;
+                    }
+                }
+
+                XmlDocument materialDoc = new XmlDocument();
+                materialDoc.LoadXml(newMaterialNode.OuterXml);
+                XmlWriter writer = XmlWriter.Create(child.Name, new XmlWriterSettings()
+                {
+                    Indent = true,
+                    IndentChars = "\t",
+                    OmitXmlDeclaration = true
+                });
+                materialDoc.Save(writer);
+                writer.Flush();
+                writer.Close();
+
+                child.Tag = newMaterialNode;
+                RenderMethods.ModifyMaterial(@"Materials\" + Path.GetFileName(child.Name), true);
             }
         }
 

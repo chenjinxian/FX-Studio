@@ -77,12 +77,12 @@ namespace FXStudio
 
         private void panelRender_DragDrop(object sender, DragEventArgs e)
         {
-            TreeNode effectNode = (TreeNode)e.Data.GetData(typeof(TreeNode).ToString(), false);
-            if (effectNode != null)
+            TreeNode materialNode = (TreeNode)e.Data.GetData(typeof(TreeNode).ToString(), false);
+            if (materialNode != null)
             {
                 Point targetPoint = panelRender.PointToClient(new Point(e.X, e.Y));
                 uint actorId = RenderMethods.GetPickedActor(targetPoint.X, targetPoint.Y);
-                m_ChangeDelegate?.Invoke(effectNode.Text, actorId);
+                m_ChangeDelegate?.Invoke(materialNode.Name, actorId);
             }
         }
 

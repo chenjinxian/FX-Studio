@@ -12,6 +12,7 @@
 #include "../ResourceCache/XmlResource.h"
 #include "../AppFramework/BaseGameApp.h"
 #include "../AppFramework/BaseGameLogic.h"
+#include "boost/lexical_cast.hpp"
 #include <DirectXColors.h>
 
 SceneNodeProperties::SceneNodeProperties()
@@ -578,7 +579,7 @@ HRESULT GeometryNode::VRender(Scene* pScene, const GameTime& gameTime)
 	const std::map<std::string, Variable*>& variables = m_pEffect->GetVariablesByName();
 	for (const tinyxml2::XMLElement* pNode = pVariables->FirstChildElement(); pNode; pNode = pNode->NextSiblingElement())
 	{
-		Variable* variable = variables.at(pNode->Attribute("name"));
+		Variable* variable = variables.at(pNode->Name());
 		std::string semantic = variable->GetVariableSemantic();
 		std::string type = variable->GetVariableType();
 
@@ -616,21 +617,21 @@ HRESULT GeometryNode::VRender(Scene* pScene, const GameTime& gameTime)
 		}
 		else if (type == "float4")
 		{
-			std::stringstream ss(pNode->Attribute("value"));
+			std::stringstream ss(pNode->GetText());
 			Vector4 value;
 			ss >> value.x >> value.y >> value.z >> value.w;
 			variable->SetVector(value);
 		}
 		else if (type == "float3")
 		{
-			std::stringstream ss(pNode->Attribute("value"));
+			std::stringstream ss(pNode->GetText());
 			Vector3 value;
 			ss >> value.x >> value.y >> value.z;
 			variable->SetVector(value);
 		}
 		else if (type == "float2")
 		{
-			std::stringstream ss(pNode->Attribute("value"));
+			std::stringstream ss(pNode->GetText());
 			Vector2 value;
 			ss >> value.x >> value.y;
 			variable->SetVector(value);
@@ -641,12 +642,12 @@ HRESULT GeometryNode::VRender(Scene* pScene, const GameTime& gameTime)
 			{
 			case 0:
 			{
-				variable->SetFloat(pNode->FloatAttribute("value"));
+				variable->SetFloat(boost::lexical_cast<float>(pNode->GetText()));
 				break;
 			}
 			case 2:
 			{
-				std::stringstream ss(pNode->Attribute("value"));
+				std::stringstream ss(pNode->GetText());
 				std::vector<float> value(2);
 				ss >> value[0] >> value[1];
 				variable->SetFloatArray(value);
@@ -654,7 +655,7 @@ HRESULT GeometryNode::VRender(Scene* pScene, const GameTime& gameTime)
 			}
 			case 3:
 			{
-				std::stringstream ss(pNode->Attribute("value"));
+				std::stringstream ss(pNode->GetText());
 				std::vector<float> value(3);
 				ss >> value[0] >> value[1] >> value[2];
 				variable->SetFloatArray(value);
@@ -662,7 +663,7 @@ HRESULT GeometryNode::VRender(Scene* pScene, const GameTime& gameTime)
 			}
 			case 4:
 			{
-				std::stringstream ss(pNode->Attribute("value"));
+				std::stringstream ss(pNode->GetText());
 				std::vector<float> value(4);
 				ss >> value[0] >> value[1] >> value[2] >> value[3];
 				variable->SetFloatArray(value);
@@ -674,26 +675,26 @@ HRESULT GeometryNode::VRender(Scene* pScene, const GameTime& gameTime)
 		}
 		else if (type == "int")
 		{
-			variable->SetInt(pNode->IntAttribute("value"));
+			variable->SetInt(boost::lexical_cast<int>(pNode->GetText()));
 		}
 		else if (type == "Texture1D" ||
 			type == "Texture2D" || type == "TextureCube")
 		{
-			const tinyxml2::XMLElement* pResourceNode = pNode->FirstChildElement("ResourceName");
-			if (pResourceNode != nullptr)
+			const char* resourName = pNode->Attribute("ResourceName");
+			if (resourName != nullptr)
 			{
-				 std::string textureName = std::string("Textures\\") + pResourceNode->GetText();
-				 Resource resource(textureName);
-				 shared_ptr<ResHandle> pTextureRes = g_pApp->GetResCache()->GetHandle(&resource);
-				 if (pTextureRes != nullptr)
-				 {
-					 shared_ptr<D3D11TextureResourceExtraData> extra =
-						 static_pointer_cast<D3D11TextureResourceExtraData>(pTextureRes->GetExtraData());
-					 if (extra != nullptr)
-					 {
-						 variable->SetResource(extra->GetTexture());
-					 }
-				 }
+				std::string textureName = std::string("Textures\\") + resourName;
+				Resource resource(textureName);
+				shared_ptr<ResHandle> pTextureRes = g_pApp->GetResCache()->GetHandle(&resource);
+				if (pTextureRes != nullptr)
+				{
+					shared_ptr<D3D11TextureResourceExtraData> extra =
+						static_pointer_cast<D3D11TextureResourceExtraData>(pTextureRes->GetExtraData());
+					if (extra != nullptr)
+					{
+						variable->SetResource(extra->GetTexture());
+					}
+				}
 			}
 		}
 	}
@@ -993,7 +994,7 @@ HRESULT ModelNode::VRender(Scene* pScene, const GameTime& gameTime)
 	const std::map<std::string, Variable*>& variables = m_pEffect->GetVariablesByName();
 	for (const tinyxml2::XMLElement* pNode = pVariables->FirstChildElement(); pNode; pNode = pNode->NextSiblingElement())
 	{
-		Variable* variable = variables.at(pNode->Attribute("name"));
+		Variable* variable = variables.at(pNode->Name());
 		std::string semantic = variable->GetVariableSemantic();
 		std::string type = variable->GetVariableType();
 
@@ -1031,21 +1032,21 @@ HRESULT ModelNode::VRender(Scene* pScene, const GameTime& gameTime)
 		}
 		else if (type == "float4")
 		{
-			std::stringstream ss(pNode->Attribute("value"));
+			std::stringstream ss(pNode->GetText());
 			Vector4 value;
 			ss >> value.x >> value.y >> value.z >> value.w;
 			variable->SetVector(value);
 		}
 		else if (type == "float3")
 		{
-			std::stringstream ss(pNode->Attribute("value"));
+			std::stringstream ss(pNode->GetText());
 			Vector3 value;
 			ss >> value.x >> value.y >> value.z;
 			variable->SetVector(value);
 		}
 		else if (type == "float2")
 		{
-			std::stringstream ss(pNode->Attribute("value"));
+			std::stringstream ss(pNode->GetText());
 			Vector2 value;
 			ss >> value.x >> value.y;
 			variable->SetVector(value);
@@ -1056,12 +1057,12 @@ HRESULT ModelNode::VRender(Scene* pScene, const GameTime& gameTime)
 			{
 			case 0:
 			{
-				variable->SetFloat(pNode->FloatAttribute("value"));
+				variable->SetFloat(boost::lexical_cast<float>(pNode->GetText()));
 				break;
 			}
 			case 2:
 			{
-				std::stringstream ss(pNode->Attribute("value"));
+				std::stringstream ss(pNode->GetText());
 				std::vector<float> value(2);
 				ss >> value[0] >> value[1];
 				variable->SetFloatArray(value);
@@ -1069,7 +1070,7 @@ HRESULT ModelNode::VRender(Scene* pScene, const GameTime& gameTime)
 			}
 			case 3:
 			{
-				std::stringstream ss(pNode->Attribute("value"));
+				std::stringstream ss(pNode->GetText());
 				std::vector<float> value(3);
 				ss >> value[0] >> value[1] >> value[2];
 				variable->SetFloatArray(value);
@@ -1077,7 +1078,7 @@ HRESULT ModelNode::VRender(Scene* pScene, const GameTime& gameTime)
 			}
 			case 4:
 			{
-				std::stringstream ss(pNode->Attribute("value"));
+				std::stringstream ss(pNode->GetText());
 				std::vector<float> value(4);
 				ss >> value[0] >> value[1] >> value[2] >> value[3];
 				variable->SetFloatArray(value);
@@ -1089,15 +1090,15 @@ HRESULT ModelNode::VRender(Scene* pScene, const GameTime& gameTime)
 		}
 		else if (type == "int")
 		{
-			variable->SetInt(pNode->IntAttribute("value"));
+			variable->SetInt(boost::lexical_cast<int>(pNode->GetText()));
 		}
 		else if (type == "Texture1D" ||
 			type == "Texture2D" || type == "TextureCube")
 		{
-			const tinyxml2::XMLElement* pResourceNode = pNode->FirstChildElement("ResourceName");
-			if (pResourceNode != nullptr)
+			const char* resourName = pNode->Attribute("ResourceName");
+			if (resourName != nullptr)
 			{
-				std::string textureName = std::string("Textures\\") + pResourceNode->GetText();
+				std::string textureName = std::string("Textures\\") + resourName;
 				Resource resource(textureName);
 				shared_ptr<ResHandle> pTextureRes = g_pApp->GetResCache()->GetHandle(&resource);
 				if (pTextureRes != nullptr)

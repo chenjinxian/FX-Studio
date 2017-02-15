@@ -600,8 +600,19 @@ const std::string& BaseGameApp::GetEffectXml(const std::string& effectObjectPath
 void BaseGameApp::ModifyMaterial(const std::string& materialPath, bool withEffect)
 {
 	Resource materialRes(materialPath);
-	// first remove the old effect object resource
+	// first remove the old material resource
 	m_pResCache->RemoveHandle(&materialRes);
+
+	// add to resource cache
+	shared_ptr<ResHandle> pMaterialResHandle = g_pApp->GetResCache()->GetHandle(&materialRes);
+	if (pMaterialResHandle != nullptr)
+	{
+		shared_ptr<XmlResourceExtraData> extra = static_pointer_cast<XmlResourceExtraData>(pMaterialResHandle->GetExtraData());
+		if (extra != nullptr)
+		{
+
+		}
+	}
 
 	if (withEffect)
 	{

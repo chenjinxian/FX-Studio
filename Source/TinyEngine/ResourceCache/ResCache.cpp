@@ -76,9 +76,9 @@ DevelopmentResourceZipFile::DevelopmentResourceZipFile(const std::string assetDi
 
 int DevelopmentResourceZipFile::Find(const std::string &name)
 {
-	std::string lowerCase = name;
-	std::transform(lowerCase.begin(), lowerCase.end(), lowerCase.begin(), (int(*)(int)) std::tolower);
-	ZipContentsMap::const_iterator i = m_DirectoryContentsMap.find(lowerCase);
+// 	std::string lowerCase = name;
+// 	std::transform(lowerCase.begin(), lowerCase.end(), lowerCase.begin(), (int(*)(int)) std::tolower);
+	ZipContentsMap::const_iterator i = m_DirectoryContentsMap.find(name);
 	if (i == m_DirectoryContentsMap.end())
 	{
 		// In editor mode, allowed to add new resource file
@@ -116,6 +116,16 @@ bool DevelopmentResourceZipFile::VOpen()
 	return true;
 }
 
+
+void DevelopmentResourceZipFile::VRemoveRawResource(const Resource &r)
+{
+	ZipContentsMap::const_iterator i = m_DirectoryContentsMap.find(r.m_name);
+	if (i != m_DirectoryContentsMap.end())
+	{
+		m_AssetFileInfo.erase(m_AssetFileInfo.begin() + i->second - 1);
+	}
+	m_DirectoryContentsMap.erase(r.m_name);
+}
 
 bool DevelopmentResourceZipFile::AddNewResFile(const std::string& filePath)
 {
@@ -306,6 +316,7 @@ void ResCache::RemoveHandle(Resource* r)
 	{
 		m_ResList.remove(handle);
 		m_ResMap.erase(handle->m_Resource.m_name);
+		m_pResFile->VRemoveRawResource(*r);
 	}
 }
 

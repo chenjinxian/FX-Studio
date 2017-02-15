@@ -107,7 +107,8 @@ namespace FXStudio
 
             string assetFile = m_ProjectLocation + @"\" + Path.GetFileNameWithoutExtension(project) + ".asset";
             m_AssetsView.UpdateAssets(assetFile, m_PropertiesView.UpdateAssetProperties, m_outputView.UpdateCompileInfo,
-                effectNode => {
+                effectNode =>
+                {
                     panelAllView.ActiveDocumentPane.ActiveContent = m_EditorView;
                     m_EditorView.ShowEffectDoc(effectNode, m_ProjectLocation);
                 });
@@ -167,7 +168,7 @@ namespace FXStudio
 
                 XmlElement material = xmlDoc.CreateElement("Material");
                 renderComponent.AppendChild(material);
-                material.InnerText = @"Materials\" + name + ".mat";
+                material.InnerText = @"Materials\" + Path.GetFileName(name);
                 xmlActor.AppendChild(renderComponent);
 
                 RenderMethods.ModifyActor(xmlActor.OuterXml);

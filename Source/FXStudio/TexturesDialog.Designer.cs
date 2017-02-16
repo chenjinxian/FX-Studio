@@ -36,8 +36,8 @@
             this.buttonCancel = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
             this.toolStripOperation = new System.Windows.Forms.ToolStrip();
-            this.panel2 = new System.Windows.Forms.Panel();
             this.toolStripButtonAdd = new System.Windows.Forms.ToolStripButton();
+            this.panel2 = new System.Windows.Forms.Panel();
             this.openFileDialogAdd = new System.Windows.Forms.OpenFileDialog();
             this.panel1.SuspendLayout();
             this.toolStripOperation.SuspendLayout();
@@ -54,7 +54,7 @@
             this.listViewTextures.LargeImageList = this.imageListLarge;
             this.listViewTextures.Location = new System.Drawing.Point(0, 0);
             this.listViewTextures.Name = "listViewTextures";
-            this.listViewTextures.Size = new System.Drawing.Size(704, 349);
+            this.listViewTextures.Size = new System.Drawing.Size(704, 380);
             this.listViewTextures.TabIndex = 0;
             this.listViewTextures.UseCompatibleStateImageBehavior = false;
             // 
@@ -67,9 +67,9 @@
             // buttonOK
             // 
             this.buttonOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonOK.Location = new System.Drawing.Point(541, 6);
+            this.buttonOK.Location = new System.Drawing.Point(541, 7);
             this.buttonOK.Name = "buttonOK";
-            this.buttonOK.Size = new System.Drawing.Size(75, 21);
+            this.buttonOK.Size = new System.Drawing.Size(75, 23);
             this.buttonOK.TabIndex = 1;
             this.buttonOK.Text = "OK";
             this.buttonOK.UseVisualStyleBackColor = true;
@@ -78,9 +78,9 @@
             // buttonCancel
             // 
             this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonCancel.Location = new System.Drawing.Point(622, 6);
+            this.buttonCancel.Location = new System.Drawing.Point(622, 7);
             this.buttonCancel.Name = "buttonCancel";
-            this.buttonCancel.Size = new System.Drawing.Size(75, 21);
+            this.buttonCancel.Size = new System.Drawing.Size(75, 23);
             this.buttonCancel.TabIndex = 2;
             this.buttonCancel.Text = "Cancel";
             this.buttonCancel.UseVisualStyleBackColor = true;
@@ -91,9 +91,9 @@
             this.panel1.Controls.Add(this.buttonOK);
             this.panel1.Controls.Add(this.buttonCancel);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel1.Location = new System.Drawing.Point(0, 374);
+            this.panel1.Location = new System.Drawing.Point(0, 405);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(704, 33);
+            this.panel1.Size = new System.Drawing.Size(704, 36);
             this.panel1.TabIndex = 3;
             // 
             // toolStripOperation
@@ -107,15 +107,6 @@
             this.toolStripOperation.TabIndex = 4;
             this.toolStripOperation.Text = "toolStrip1";
             // 
-            // panel2
-            // 
-            this.panel2.Controls.Add(this.listViewTextures);
-            this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel2.Location = new System.Drawing.Point(0, 25);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(704, 349);
-            this.panel2.TabIndex = 5;
-            // 
             // toolStripButtonAdd
             // 
             this.toolStripButtonAdd.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -126,6 +117,15 @@
             this.toolStripButtonAdd.Text = "Add Texture";
             this.toolStripButtonAdd.Click += new System.EventHandler(this.toolStripButtonAdd_Click);
             // 
+            // panel2
+            // 
+            this.panel2.Controls.Add(this.listViewTextures);
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel2.Location = new System.Drawing.Point(0, 25);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(704, 380);
+            this.panel2.TabIndex = 5;
+            // 
             // openFileDialogAdd
             // 
             this.openFileDialogAdd.Filter = "Image Files (*.dds; *.bmp; *.jpg; *.jpeg; *.png; *.gif; *.tif;)|*.dds; *.bmp; *.j" +
@@ -133,9 +133,9 @@
             // 
             // TexturesDialog
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(704, 407);
+            this.ClientSize = new System.Drawing.Size(704, 441);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.toolStripOperation);
             this.Controls.Add(this.panel1);

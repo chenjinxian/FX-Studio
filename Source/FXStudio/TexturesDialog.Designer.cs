@@ -31,13 +31,16 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TexturesDialog));
             this.listViewTextures = new System.Windows.Forms.ListView();
+            this.imageListLarge = new System.Windows.Forms.ImageList(this.components);
             this.buttonOK = new System.Windows.Forms.Button();
             this.buttonCancel = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.imageListLarge = new System.Windows.Forms.ImageList(this.components);
             this.toolStripOperation = new System.Windows.Forms.ToolStrip();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.toolStripButtonAdd = new System.Windows.Forms.ToolStripButton();
+            this.openFileDialogAdd = new System.Windows.Forms.OpenFileDialog();
             this.panel1.SuspendLayout();
+            this.toolStripOperation.SuspendLayout();
             this.panel2.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -51,16 +54,22 @@
             this.listViewTextures.LargeImageList = this.imageListLarge;
             this.listViewTextures.Location = new System.Drawing.Point(0, 0);
             this.listViewTextures.Name = "listViewTextures";
-            this.listViewTextures.Size = new System.Drawing.Size(704, 380);
+            this.listViewTextures.Size = new System.Drawing.Size(704, 349);
             this.listViewTextures.TabIndex = 0;
             this.listViewTextures.UseCompatibleStateImageBehavior = false;
+            // 
+            // imageListLarge
+            // 
+            this.imageListLarge.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageListLarge.ImageStream")));
+            this.imageListLarge.TransparentColor = System.Drawing.Color.Transparent;
+            this.imageListLarge.Images.SetKeyName(0, "default_texture.png");
             // 
             // buttonOK
             // 
             this.buttonOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonOK.Location = new System.Drawing.Point(541, 6);
             this.buttonOK.Name = "buttonOK";
-            this.buttonOK.Size = new System.Drawing.Size(75, 23);
+            this.buttonOK.Size = new System.Drawing.Size(75, 21);
             this.buttonOK.TabIndex = 1;
             this.buttonOK.Text = "OK";
             this.buttonOK.UseVisualStyleBackColor = true;
@@ -71,7 +80,7 @@
             this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonCancel.Location = new System.Drawing.Point(622, 6);
             this.buttonCancel.Name = "buttonCancel";
-            this.buttonCancel.Size = new System.Drawing.Size(75, 23);
+            this.buttonCancel.Size = new System.Drawing.Size(75, 21);
             this.buttonCancel.TabIndex = 2;
             this.buttonCancel.Text = "Cancel";
             this.buttonCancel.UseVisualStyleBackColor = true;
@@ -82,20 +91,16 @@
             this.panel1.Controls.Add(this.buttonOK);
             this.panel1.Controls.Add(this.buttonCancel);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel1.Location = new System.Drawing.Point(0, 405);
+            this.panel1.Location = new System.Drawing.Point(0, 374);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(704, 36);
+            this.panel1.Size = new System.Drawing.Size(704, 33);
             this.panel1.TabIndex = 3;
-            // 
-            // imageListLarge
-            // 
-            this.imageListLarge.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageListLarge.ImageStream")));
-            this.imageListLarge.TransparentColor = System.Drawing.Color.Transparent;
-            this.imageListLarge.Images.SetKeyName(0, "default_texture.png");
             // 
             // toolStripOperation
             // 
             this.toolStripOperation.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            this.toolStripOperation.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripButtonAdd});
             this.toolStripOperation.Location = new System.Drawing.Point(0, 0);
             this.toolStripOperation.Name = "toolStripOperation";
             this.toolStripOperation.Size = new System.Drawing.Size(704, 25);
@@ -108,14 +113,29 @@
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel2.Location = new System.Drawing.Point(0, 25);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(704, 380);
+            this.panel2.Size = new System.Drawing.Size(704, 349);
             this.panel2.TabIndex = 5;
+            // 
+            // toolStripButtonAdd
+            // 
+            this.toolStripButtonAdd.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButtonAdd.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonAdd.Image")));
+            this.toolStripButtonAdd.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonAdd.Name = "toolStripButtonAdd";
+            this.toolStripButtonAdd.Size = new System.Drawing.Size(23, 22);
+            this.toolStripButtonAdd.Text = "Add Texture";
+            this.toolStripButtonAdd.Click += new System.EventHandler(this.toolStripButtonAdd_Click);
+            // 
+            // openFileDialogAdd
+            // 
+            this.openFileDialogAdd.Filter = "Image Files (*.dds; *.bmp; *.jpg; *.jpeg; *.png; *.gif; *.tif;)|*.dds; *.bmp; *.j" +
+    "pg; *.jpeg; *.png; *.gif; *.tif;";
             // 
             // TexturesDialog
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(704, 441);
+            this.ClientSize = new System.Drawing.Size(704, 407);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.toolStripOperation);
             this.Controls.Add(this.panel1);
@@ -126,6 +146,8 @@
             this.Text = "Textures";
             this.Load += new System.EventHandler(this.ImageCollectionsDialog_Load);
             this.panel1.ResumeLayout(false);
+            this.toolStripOperation.ResumeLayout(false);
+            this.toolStripOperation.PerformLayout();
             this.panel2.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -141,5 +163,7 @@
         private System.Windows.Forms.ImageList imageListLarge;
         private System.Windows.Forms.ToolStrip toolStripOperation;
         private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.ToolStripButton toolStripButtonAdd;
+        private System.Windows.Forms.OpenFileDialog openFileDialogAdd;
     }
 }

@@ -15,42 +15,44 @@
 #define FXSTUDIOCORE_API __declspec(dllimport)
 #endif
 
+#define FX_APIENTRY __stdcall 
+
 #ifdef __cplusplus
 extern "C" {
 #endif //__cplusplus
 
-	FXSTUDIOCORE_API bool CreateInstance(
+	FXSTUDIOCORE_API bool FX_APIENTRY CreateInstance(
 		int *instancePtrAddress,
 		int *hPrevInstancePtrAddress,
 		int *hWndPtrAddress,
 		int nCmdShow,
 		int screenWidth, int screenHeight);
-	FXSTUDIOCORE_API int DestroyInstance();
+	FXSTUDIOCORE_API int FX_APIENTRY DestroyInstance();
 
-	FXSTUDIOCORE_API void ResizeWnd(int screenWidth, int screenHeight);
-	FXSTUDIOCORE_API void WndProc(int *hWndPtrAddress, int msg, int* wParam, int* lParam);
-	FXSTUDIOCORE_API void RenderFrame();
+	FXSTUDIOCORE_API void FX_APIENTRY ResizeWnd(int screenWidth, int screenHeight);
+	FXSTUDIOCORE_API void FX_APIENTRY WndProc(int *hWndPtrAddress, int msg, int* wParam, int* lParam);
+	FXSTUDIOCORE_API void FX_APIENTRY RenderFrame();
 
-	FXSTUDIOCORE_API bool IsGameRunning();
+	FXSTUDIOCORE_API bool FX_APIENTRY IsGameRunning();
 
-	FXSTUDIOCORE_API void OpenProject(BSTR lFileName);
+	FXSTUDIOCORE_API void FX_APIENTRY OpenProject(BSTR lFileName);
 
-	FXSTUDIOCORE_API void SetCameraType(int type);
-	FXSTUDIOCORE_API void SetTransformType(int type);
-	FXSTUDIOCORE_API unsigned int GetPickedActor(int cursorX, int cursorY);
-	FXSTUDIOCORE_API void SetPickedActor(unsigned int actorId);
+	FXSTUDIOCORE_API void FX_APIENTRY SetCameraType(int type);
+	FXSTUDIOCORE_API void FX_APIENTRY SetTransformType(int type);
+	FXSTUDIOCORE_API unsigned int FX_APIENTRY GetPickedActor(int cursorX, int cursorY);
+	FXSTUDIOCORE_API void FX_APIENTRY SetPickedActor(unsigned int actorId);
 
-	FXSTUDIOCORE_API unsigned int AddActor(BSTR actorResource);
-	FXSTUDIOCORE_API bool ModifyActor(BSTR modificationXml);
-	FXSTUDIOCORE_API bool RemoveActor(unsigned int actorId);
+	FXSTUDIOCORE_API unsigned int FX_APIENTRY AddActor(BSTR actorResource);
+	FXSTUDIOCORE_API bool FX_APIENTRY ModifyActor(BSTR modificationXml);
+	FXSTUDIOCORE_API bool FX_APIENTRY RemoveActor(unsigned int actorId);
 
-	FXSTUDIOCORE_API int ImportModel(BSTR modelImportPath, BSTR modelExportPath, ProgressCallback progressCallback);
-	FXSTUDIOCORE_API unsigned int AddEffect(BSTR effectObjectPath, BSTR effectName);
-	FXSTUDIOCORE_API unsigned int ModifyEffect(BSTR effectObjectPath, BSTR effectName);
-	FXSTUDIOCORE_API void GetMaterialXml(BSTR effectObjectPath, char* effectXmlPtr, unsigned int size);
-	FXSTUDIOCORE_API void ModifyMaterial(BSTR materialPath, bool withEffect);
+	FXSTUDIOCORE_API int FX_APIENTRY ImportModel(BSTR modelImportPath, BSTR modelExportPath, ProgressCallback progressCallback);
+	FXSTUDIOCORE_API unsigned int FX_APIENTRY AddEffect(BSTR effectObjectPath, BSTR effectName);
+	FXSTUDIOCORE_API unsigned int FX_APIENTRY ModifyEffect(BSTR effectObjectPath, BSTR effectName);
+	FXSTUDIOCORE_API void FX_APIENTRY GetMaterialXml(BSTR effectObjectPath, char* effectXmlPtr, unsigned int size);
+	FXSTUDIOCORE_API void FX_APIENTRY ModifyMaterial(BSTR materialPath, bool withEffect);
 
-	FXSTUDIOCORE_API void SetMoveDelegate(MoveDelegate delegate);
+	FXSTUDIOCORE_API void FX_APIENTRY SetMoveDelegate(MoveDelegate delegate);
 
 #ifdef __cplusplus
 }

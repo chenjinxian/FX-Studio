@@ -28,32 +28,32 @@ namespace FXStudio
         {
             foreach (string texture in Directory.GetFiles(m_TextureDir))
             {
-                ListViewItem item = new ListViewItem();
-                item.Text = Path.GetFileName(texture);
-                item.ToolTipText = texture;
-                listViewTextures.Items.Add(item);
-
-                if (string.Equals(texture, m_SelectFile, StringComparison.OrdinalIgnoreCase))
-                {
-                    item.Selected = true;
-                }
-
-                try
-                {
-                    Image image = Image.FromFile(texture);
-                    if (image != null)
-                    {
-                        imageListLarge.Images.Add(image);
-                        item.ImageIndex = imageListLarge.Images.Count - 1;
-                    }
-                }
-                catch (OutOfMemoryException)
-                {
-                    item.ImageIndex = 0;
-                }
+                AddNewImage(texture);
             }
 
             listViewTextures.LargeImageList = imageListLarge;
+        }
+
+        private void AddNewImage(string filePath)
+        {
+            ListViewItem item = new ListViewItem();
+            item.Text = Path.GetFileName(filePath);
+            item.ToolTipText = filePath;
+            listViewTextures.Items.Add(item);
+
+            try
+            {
+                Image image = Image.FromFile(filePath);
+                if (image != null)
+                {
+                    imageListLarge.Images.Add(image);
+                    item.ImageIndex = imageListLarge.Images.Count - 1;
+                }
+            }
+            catch (OutOfMemoryException)
+            {
+                item.ImageIndex = 0;
+            }
         }
 
         private void buttonOK_Click(object sender, EventArgs e)
@@ -68,6 +68,20 @@ namespace FXStudio
         {
             this.DialogResult = DialogResult.Cancel;
             this.Close();
+        }
+
+        private void toolStripButtonAdd_Click(object sender, EventArgs e)
+        {
+            if (openFileDialogAdd.ShowDialog() == DialogResult.OK)
+            {
+                string source = openFileDialogAdd.FileName;
+                string dest = m_TextureDir + @"\" + Path.GetFileName(source);
+                if (!File.Exists(dest))
+                {
+                    File.Copy(source, dest);
+                    AddNewImage(dest);
+                }
+            }
         }
     }
 }

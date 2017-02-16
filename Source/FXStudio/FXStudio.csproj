@@ -73,6 +73,7 @@
       <DependentUpon>AssetsView.cs</DependentUpon>
     </Compile>
     <Compile Include="CustomColorTable.cs" />
+    <Compile Include="DevILMethods.cs" />
     <Compile Include="DocumentView.cs">
       <SubType>Form</SubType>
     </Compile>

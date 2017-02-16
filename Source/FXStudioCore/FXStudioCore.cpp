@@ -6,7 +6,7 @@
 #include "FXStudioView.h"
 #include "ModelImporter.h"
 
-FXSTUDIOCORE_API bool CreateInstance(
+FXSTUDIOCORE_API bool FX_APIENTRY CreateInstance(
 	int *instancePtrAddress,
 	int *hPrevInstancePtrAddress,
 	int *hWndPtrAddress,
@@ -42,19 +42,19 @@ FXSTUDIOCORE_API bool CreateInstance(
 	return true;
 }
 
-FXSTUDIOCORE_API int DestroyInstance()
+FXSTUDIOCORE_API int FX_APIENTRY DestroyInstance()
 {
 	g_pApp->OnClose();
 	Logger::Destroy();
 	return 0;
 }
 
-FXSTUDIOCORE_API void ResizeWnd(int screenWidth, int screenHeight)
+FXSTUDIOCORE_API void FX_APIENTRY ResizeWnd(int screenWidth, int screenHeight)
 {
 	g_pApp->OnResize(screenWidth, screenHeight);
 }
 
-FXSTUDIOCORE_API void WndProc(int *hWndPtrAddress, int uMsg, int* wParam, int* lParam)
+FXSTUDIOCORE_API void FX_APIENTRY WndProc(int *hWndPtrAddress, int uMsg, int* wParam, int* lParam)
 {
 	HWND hWnd = (HWND)hWndPtrAddress;
 
@@ -92,17 +92,17 @@ FXSTUDIOCORE_API void WndProc(int *hWndPtrAddress, int uMsg, int* wParam, int* l
 	}
 }
 
-FXSTUDIOCORE_API void RenderFrame()
+FXSTUDIOCORE_API void FX_APIENTRY RenderFrame()
 {
 	g_pApp->OnRenderFrame();
 }
 
-FXSTUDIOCORE_API bool IsGameRunning()
+FXSTUDIOCORE_API bool FX_APIENTRY IsGameRunning()
 {
 	return true;
 }
 
-FXSTUDIOCORE_API void OpenProject(BSTR lFileName)
+FXSTUDIOCORE_API void FX_APIENTRY OpenProject(BSTR lFileName)
 {
 	std::string project = Utility::WS2S(std::wstring(lFileName, SysStringLen(lFileName)));
 	FXStudioLogic* pEditorLogic = dynamic_cast<FXStudioLogic*>(g_pApp->GetGameLogic());
@@ -113,7 +113,7 @@ FXSTUDIOCORE_API void OpenProject(BSTR lFileName)
 	}
 }
 
-FXSTUDIOCORE_API void SetCameraType(int type)
+FXSTUDIOCORE_API void FX_APIENTRY SetCameraType(int type)
 {
 	FXStudioLogic* pEditorLogic = dynamic_cast<FXStudioLogic*>(g_pApp->GetGameLogic());
 	if (pEditorLogic != nullptr)
@@ -126,7 +126,7 @@ FXSTUDIOCORE_API void SetCameraType(int type)
 	}
 }
 
-FXSTUDIOCORE_API void SetTransformType(int type)
+FXSTUDIOCORE_API void FX_APIENTRY SetTransformType(int type)
 {
 	FXStudioLogic* pEditorLogic = dynamic_cast<FXStudioLogic*>(g_pApp->GetGameLogic());
 	if (pEditorLogic != nullptr)
@@ -139,7 +139,7 @@ FXSTUDIOCORE_API void SetTransformType(int type)
 	}
 }
 
-FXSTUDIOCORE_API unsigned int GetPickedActor(int cursorX, int cursorY)
+FXSTUDIOCORE_API unsigned int FX_APIENTRY GetPickedActor(int cursorX, int cursorY)
 {
 	FXStudioLogic* pEditorLogic = dynamic_cast<FXStudioLogic*>(g_pApp->GetGameLogic());
 	if (pEditorLogic == nullptr)
@@ -161,7 +161,7 @@ FXSTUDIOCORE_API unsigned int GetPickedActor(int cursorX, int cursorY)
 		return pView->GetScene()->PickActor(cursorX, cursorY);
 }
 
-FXSTUDIOCORE_API void SetPickedActor(unsigned int actorId)
+FXSTUDIOCORE_API void FX_APIENTRY SetPickedActor(unsigned int actorId)
 {
 	FXStudioLogic* pEditorLogic = dynamic_cast<FXStudioLogic*>(g_pApp->GetGameLogic());
 	if (pEditorLogic == nullptr)
@@ -178,7 +178,7 @@ FXSTUDIOCORE_API void SetPickedActor(unsigned int actorId)
 	pView->GetScene()->SetPickedActor(actorId);
 }
 
-FXSTUDIOCORE_API unsigned int AddActor(BSTR actorResource)
+FXSTUDIOCORE_API unsigned int FX_APIENTRY AddActor(BSTR actorResource)
 {
 	std::string actorXml = Utility::WS2S(std::wstring(actorResource, SysStringLen(actorResource)));
 	StrongActorPtr pActor = g_pApp->GetGameLogic()->VCreateActor(actorXml);
@@ -199,7 +199,7 @@ FXSTUDIOCORE_API unsigned int AddActor(BSTR actorResource)
 	return pActor->GetActorId();
 }
 
-FXSTUDIOCORE_API bool ModifyActor(BSTR modificationXml)
+FXSTUDIOCORE_API bool FX_APIENTRY ModifyActor(BSTR modificationXml)
 {
 	std::string actorModificationXML = Utility::WS2S(std::wstring(modificationXml, SysStringLen(modificationXml)));
 	tinyxml2::XMLDocument doc;
@@ -232,13 +232,13 @@ FXSTUDIOCORE_API bool ModifyActor(BSTR modificationXml)
 	return true;
 }
 
-FXSTUDIOCORE_API bool RemoveActor(unsigned int actorId)
+FXSTUDIOCORE_API bool FX_APIENTRY RemoveActor(unsigned int actorId)
 {
 	g_pApp->GetGameLogic()->VDestroyActor(actorId);
 	return true;
 }
 
-FXSTUDIOCORE_API int ImportModel(BSTR modelImportPath, BSTR modelExportPath, ProgressCallback progressCallback)
+FXSTUDIOCORE_API int FX_APIENTRY ImportModel(BSTR modelImportPath, BSTR modelExportPath, ProgressCallback progressCallback)
 {
 	std::string importPath = Utility::WS2S(std::wstring(modelImportPath, SysStringLen(modelImportPath)));
 	std::string exportPath = Utility::WS2S(std::wstring(modelExportPath, SysStringLen(modelExportPath)));
@@ -247,7 +247,7 @@ FXSTUDIOCORE_API int ImportModel(BSTR modelImportPath, BSTR modelExportPath, Pro
 	return 0;
 }
 
-FXSTUDIOCORE_API unsigned int AddEffect(BSTR effectObjectPath, BSTR effectName)
+FXSTUDIOCORE_API unsigned int FX_APIENTRY AddEffect(BSTR effectObjectPath, BSTR effectName)
 {
 	std::string objectPath = Utility::WS2S(std::wstring(effectObjectPath, SysStringLen(effectObjectPath)));
 	std::string effect = Utility::WS2S(std::wstring(effectName, SysStringLen(effectName)));
@@ -255,7 +255,7 @@ FXSTUDIOCORE_API unsigned int AddEffect(BSTR effectObjectPath, BSTR effectName)
 	return g_pApp->AddEffect(objectPath, effect);
 }
 
-FXSTUDIOCORE_API unsigned int ModifyEffect(BSTR effectObjectPath, BSTR effectName)
+FXSTUDIOCORE_API unsigned int FX_APIENTRY ModifyEffect(BSTR effectObjectPath, BSTR effectName)
 {
 	std::string objectPath = Utility::WS2S(std::wstring(effectObjectPath, SysStringLen(effectObjectPath)));
 	std::string effect = Utility::WS2S(std::wstring(effectName, SysStringLen(effectName)));
@@ -263,7 +263,7 @@ FXSTUDIOCORE_API unsigned int ModifyEffect(BSTR effectObjectPath, BSTR effectNam
 	return g_pApp->ModifyEffect(objectPath, effect);
 }
 
-FXSTUDIOCORE_API void GetMaterialXml(BSTR effectObjectPath, char* effectXmlPtr, unsigned int size)
+FXSTUDIOCORE_API void FX_APIENTRY GetMaterialXml(BSTR effectObjectPath, char* effectXmlPtr, unsigned int size)
 {
 	std::string objectPath = Utility::WS2S(std::wstring(effectObjectPath, SysStringLen(effectObjectPath)));
 
@@ -271,14 +271,14 @@ FXSTUDIOCORE_API void GetMaterialXml(BSTR effectObjectPath, char* effectXmlPtr, 
 	strncpy_s(effectXmlPtr, size, effectXml.c_str(), size);
 }
 
-FXSTUDIOCORE_API void ModifyMaterial(BSTR materialPath, bool withEffect)
+FXSTUDIOCORE_API void FX_APIENTRY ModifyMaterial(BSTR materialPath, bool withEffect)
 {
 	std::string material = Utility::WS2S(std::wstring(materialPath, SysStringLen(materialPath)));
 
 	return g_pApp->ModifyMaterial(material, withEffect);
 }
 
-FXSTUDIOCORE_API void SetMoveDelegate(MoveDelegate delegate)
+FXSTUDIOCORE_API void FX_APIENTRY SetMoveDelegate(MoveDelegate delegate)
 {
 	FXStudioLogic* pEditorLogic = dynamic_cast<FXStudioLogic*>(g_pApp->GetGameLogic());
 	if (pEditorLogic != nullptr)

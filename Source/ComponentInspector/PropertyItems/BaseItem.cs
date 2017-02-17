@@ -5,49 +5,6 @@ using System.Drawing.Imaging;
 
 namespace Inspector
 {
-
-    #region Public enum.
-
-    /// <summary>
-    /// Drop down item style.
-    /// </summary>
-    public enum DropDownStyleType : int
-    {
-        /// <summary>
-        /// Simple style. Value can be edit.
-        /// </summary>
-        Simple = 0,
-        /// <summary>
-        /// Drop down style.
-        /// </summary>
-        DropDown = 1,
-        /// <summary>
-        /// Drop down list style. Value can't be edit.
-        /// </summary>
-        DropDownList = 2
-    }
-
-    /// <summary>
-    /// Validation range check type.
-    /// </summary>
-    public enum ValidationRangeCheckType : int
-    {
-        /// <summary>
-        /// Disabled (no validation range check).
-        /// </summary>
-        Disabled = 0,
-        /// <summary>
-        /// Automatic (auto data validation range. Set value to Minimum or to Maximum if Value is out of range).
-        /// </summary>
-        Automatic = 1,
-        /// <summary>
-        /// Manual (manual data validation range. If Value is out of range the program show a warning to the user).
-        /// </summary>
-        Manual = 2
-    }
-
-    #endregion
-
     public class BaseItem
     {
         private bool m_Enabled = true;

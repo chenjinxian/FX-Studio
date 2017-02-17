@@ -155,6 +155,20 @@ namespace Inspector
                         if (textColor != null)
                             textColor.Text = child.ValueString;
                     }
+                    else if (child is ImageItem)
+                    {
+                        ControlCollection controls = panelProperties.Controls[child.CategoryName + "_" + child.UIName + "_" + "panel"].Controls;
+
+                        string controlName = child.CategoryName + "_" + child.UIName + "_" + "panelImage";
+                        PictureBox panelImage = controls[controlName] as PictureBox;
+                        if (panelImage != null)
+                            panelImage.Image = ((ImageItem)child).Value;
+
+                        controlName = child.CategoryName + "_" + child.UIName + "_" + "textImage";
+                        TextBox textImage = controls[controlName] as TextBox;
+                        if (textImage != null)
+                            textImage.Text = child.ValueString;
+                    }
                 }
             }
         }
@@ -439,13 +453,14 @@ namespace Inspector
             pictureImage.BorderStyle = BorderStyle.FixedSingle;
             pictureImage.Dock = DockStyle.None;
             pictureImage.Location = new Point(m_ValueLocationX, 2);
-            pictureImage.Name = item.CategoryName + "_" + item.UIName + "_" + "panel";
+            pictureImage.Name = item.CategoryName + "_" + item.UIName + "_" + "panelImage";
             pictureImage.Size = new Size(m_SideLength, m_SideLength);
+            pictureImage.Image = ((ImageItem)item).Value;
 
             TextBox textColor = new TextBox();
             textColor.Location = new Point(m_ValueLocationX + m_SideLength + 1, 1);
             textColor.Size = new Size(this.Width - m_ValueLocationX - m_SideLength - m_ButtonWidth - 2 - 2, m_ItemHeight);
-            textColor.Name = item.CategoryName + "_" + item.UIName + "_" + "text";
+            textColor.Name = item.CategoryName + "_" + item.UIName + "_" + "textImage";
             textColor.Text = item.ValueString;
 
             Button btnImage = new Button();
@@ -469,12 +484,8 @@ namespace Inspector
             if (item == null)
                 return;
 
-            string newFile = item.DelegateChanging();
-            if (string.IsNullOrEmpty(newFile))
-            {
-                item.FileName = newFile;
-                UpdateValue();
-            }
+            item.DelegateChanging();
+            UpdateValue();
         }
 
         private void AddFloatItemControl(BaseItem item, Panel panelItem)
@@ -489,12 +500,43 @@ namespace Inspector
 
             TextBox textItem = new TextBox();
             textItem.Location = new Point(m_ValueLocationX, 1);
-            textItem.Size = new Size(this.Width - m_ValueLocationX - 2, m_ItemHeight - 1);
-            textItem.Name = item.CategoryName + "_" + item.UIName + "_" + "text";
+            textItem.Size = new Size(50, m_ItemHeight - 1);
+            textItem.Name = item.CategoryName + "_" + item.UIName + "_" + "textFloat";
             textItem.Text = item.ValueString;
+            textItem.ReadOnly = true;
+
+            FloatItem floatItem = item as FloatItem;
+            TrackBar trackBarItem = new TrackBar();
+            trackBarItem.Location = new Point(m_ValueLocationX + 51, 1);
+            trackBarItem.Size = new Size(this.Width - m_ValueLocationX - 51 - 2, m_ItemHeight - 1);
+            trackBarItem.Name = item.CategoryName + "_" + item.UIName + "_" + "trackBarFloat";
+            trackBarItem.Maximum = (int)(floatItem.Maximum / floatItem.Increment);
+            trackBarItem.Minimum = (int)(floatItem.Minimum / floatItem.Increment);
+            trackBarItem.LargeChange = 1;
+            trackBarItem.SmallChange = 1;
+            trackBarItem.TickFrequency = 1;
+            trackBarItem.TickStyle = TickStyle.None;
+            trackBarItem.Value = (int)(floatItem.Value / floatItem.Increment);
+            trackBarItem.Cursor = Cursors.Hand;
+            trackBarItem.Scroll += TrackBarItem_Scroll;
+            trackBarItem.Tag = floatItem;
 
             panelItem.Controls.Add(labelItem);
             panelItem.Controls.Add(textItem);
+            panelItem.Controls.Add(trackBarItem);
+        }
+
+        private void TrackBarItem_Scroll(object sender, EventArgs e)
+        {
+            TrackBar bar = sender as TrackBar;
+            FloatItem item = bar.Tag as FloatItem;
+            if (item != null)
+            {
+                item.Value = bar.Value * item.Increment;
+                string controlName = item.CategoryName + "_" + item.UIName + "_" + "textFloat";
+                if (bar.Parent.Controls[controlName] != null)
+                    bar.Parent.Controls[controlName].Text = item.ValueString;
+            }
         }
 
         private void PaintItem(BaseItem item, int x1, int x2, ref int y1, ref int y2)

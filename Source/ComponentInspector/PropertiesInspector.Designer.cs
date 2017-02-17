@@ -40,7 +40,7 @@
             this.panelProperties.Font = new System.Drawing.Font("Microsoft YaHei UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.panelProperties.Location = new System.Drawing.Point(0, 0);
             this.panelProperties.Name = "panelProperties";
-            this.panelProperties.Size = new System.Drawing.Size(352, 672);
+            this.panelProperties.Size = new System.Drawing.Size(352, 620);
             this.panelProperties.TabIndex = 1;
             // 
             // imageListExpand
@@ -52,12 +52,12 @@
             // 
             // PropertiesInspector
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Window;
             this.Controls.Add(this.panelProperties);
             this.Name = "PropertiesInspector";
-            this.Size = new System.Drawing.Size(352, 672);
+            this.Size = new System.Drawing.Size(352, 620);
             this.SizeChanged += new System.EventHandler(this.PropertiesInspector_SizeChanged);
             this.ResumeLayout(false);
 

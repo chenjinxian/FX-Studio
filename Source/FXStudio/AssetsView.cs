@@ -101,7 +101,11 @@ namespace FXStudio
                 XmlNode variable = varRoot.SelectSingleNode(name);
                 if (variable == null)
                     return;
-                variable.InnerText = value;
+
+                if (variable.Attributes["ResourceName"] != null)
+                    variable.Attributes["ResourceName"].Value = value;
+                else
+                    variable.InnerText = value;
 
                 XmlDocument materialDoc = new XmlDocument();
                 materialDoc.LoadXml(materialNode.OuterXml);
@@ -343,14 +347,14 @@ namespace FXStudio
 
         private void treeViewAssets_VisibleChanged(object sender, EventArgs e)
         {
-            //             if (treeViewAssets.SelectedNode != null)
-            //             {
-            //                 XmlNode element = (XmlNode)treeViewAssets.SelectedNode.Tag;
-            //                 if (element != null)
-            //                 {
-            //                     m_NodeDelegate?.Invoke(element);
-            //                 }
-            //             }
+            if (treeViewAssets.SelectedNode != null)
+            {
+                XmlNode element = (XmlNode)treeViewAssets.SelectedNode.Tag;
+                if (element != null)
+                {
+                    m_NodeDelegate?.Invoke(element);
+                }
+            }
         }
 
         private void treeViewAssets_DragEnter(object sender, DragEventArgs e)
@@ -395,6 +399,18 @@ namespace FXStudio
                 if (element != null)
                 {
                     m_OpenEffect?.Invoke(element);
+                }
+            }
+        }
+
+        private void treeViewAssets_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (treeViewAssets.SelectedNode != null)
+            {
+                XmlNode element = (XmlNode)treeViewAssets.SelectedNode.Tag;
+                if (element != null)
+                {
+                    m_NodeDelegate?.Invoke(element);
                 }
             }
         }

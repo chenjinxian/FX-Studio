@@ -4,12 +4,11 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
-using System.Reflection;
-using System.Globalization;
 
 namespace FXStudio
 {
@@ -23,6 +22,14 @@ namespace FXStudio
         public PropertiesView()
         {
             InitializeComponent();
+            try
+            {
+                DevILMethods.ilInit();
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
         }
 
         public string ProjectLocation { get { return m_ProjectLocation; } set { m_ProjectLocation = value; } }
@@ -54,11 +61,11 @@ namespace FXStudio
             }
             else if (nodeName == "Texture")
             {
-//                 Inspector.CategoryItem category = new Inspector.CategoryItem("Image Properties");
-//                 inspectorComponent.CategoryAdd("ImageProperties", category);
-// 
-//                 string textureName = selectedNode.Attributes["name"].Value;
-//                 inspectorComponent.ItemAdd(new Inspector.StringItem("ImageProperties", textureName, "", selectedNode.InnerText));
+                //                 Inspector.CategoryItem category = new Inspector.CategoryItem("Image Properties");
+                //                 inspectorComponent.CategoryAdd("ImageProperties", category);
+                // 
+                //                 string textureName = selectedNode.Attributes["name"].Value;
+                //                 inspectorComponent.ItemAdd(new Inspector.StringItem("ImageProperties", textureName, "", selectedNode.InnerText));
             }
 
             inspectorComponent.UpdateControl(reset);
@@ -201,7 +208,8 @@ namespace FXStudio
                     XmlNode valueNode = child.Attributes["ResourceName"];
                     if (!string.IsNullOrEmpty(valueNode.InnerText))
                     {
-                        AddTextureItem("MaterialProperties", uiName, varName, m_ProjectLocation + @"\Textures\" + valueNode.InnerText);
+                        AddTextureItem("MaterialProperties", uiName, varName,
+                            m_ProjectLocation + @"\Textures\" + Path.GetFileName(valueNode.InnerText));
                     }
                     else
                     {
@@ -332,11 +340,11 @@ namespace FXStudio
 
         private void AddEffectItem(XmlNode actorNode)
         {
-            XmlNode effectNode = actorNode.SelectSingleNode("Effect");
-            if (effectNode != null)
-            {
-                inspectorComponent.ItemAdd(new Inspector.ImageItem(actorNode.Name, effectNode.Name, effectNode.Name, effectNode.InnerText));
-            }
+            //             XmlNode effectNode = actorNode.SelectSingleNode("Effect");
+            //             if (effectNode != null)
+            //             {
+            //                 inspectorComponent.ItemAdd(new Inspector.ImageItem(actorNode.Name, effectNode.Name, effectNode.Name, effectNode.InnerText));
+            //             }
         }
 
         private void AddColorItem(string category, string itemName, string variableName, string colorValue)
@@ -363,19 +371,29 @@ namespace FXStudio
 
         private void AddTextureItem(string category, string itemName, string variableName, string fileName)
         {
-            Inspector.ImageItem imageItem = new Inspector.ImageItem(
-                category, itemName, variableName, m_ProjectLocation + @"\Textures\" + fileName);
+            Image original = DevILMethods.ImageFromFile(fileName);
+            if (original != null)
+                original = DevILMethods.FixedSize(original, 20, 20);
+            Inspector.ImageItem imageItem = new Inspector.ImageItem(category, itemName, variableName, fileName, original);
             imageItem.ValueChanging += ImageItem_ValueChanging;
             inspectorComponent.ItemAdd(imageItem);
         }
 
-        private string ImageItem_ValueChanging(object sender, string value)
+        private void ImageItem_ValueChanging(object sender, string value)
         {
             TexturesDialog dialog = new TexturesDialog();
             dialog.FileName = value;
             dialog.TextureDirectory = m_ProjectLocation + @"\Textures";
-            dialog.ShowDialog();
-            return "";
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                Inspector.ImageItem imageItem = sender as Inspector.ImageItem;
+                m_ModifyDelegate?.Invoke(imageItem.VariableName, Path.GetFileName(dialog.FileName));
+                imageItem.FileName = dialog.FileName;
+                Image original = DevILMethods.ImageFromFile(dialog.FileName);
+                if (original != null)
+                    original = DevILMethods.FixedSize(original, 20, 20);
+                imageItem.Value = original;
+            }
         }
 
         private void AddFloatItem(string category, string itemName, string variableName,
@@ -386,7 +404,14 @@ namespace FXStudio
             float max = Convert.ToSingle(maxValue);
             float step = Convert.ToSingle(stepValue);
             Inspector.FloatItem floatItem = new Inspector.FloatItem(category, itemName, variableName, value, min, max, step);
+            floatItem.ValueChanged += FloatItem_ValueChanged;
             inspectorComponent.ItemAdd(floatItem);
+        }
+
+        private void FloatItem_ValueChanged(object sender, float value)
+        {
+            Inspector.FloatItem floatItem = sender as Inspector.FloatItem;
+            m_ModifyDelegate?.Invoke(floatItem.VariableName, floatItem.ValueString);
         }
     }
 }

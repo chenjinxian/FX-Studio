@@ -54,9 +54,10 @@
             this.listViewTextures.LargeImageList = this.imageListLarge;
             this.listViewTextures.Location = new System.Drawing.Point(0, 0);
             this.listViewTextures.Name = "listViewTextures";
-            this.listViewTextures.Size = new System.Drawing.Size(704, 380);
+            this.listViewTextures.Size = new System.Drawing.Size(684, 463);
             this.listViewTextures.TabIndex = 0;
             this.listViewTextures.UseCompatibleStateImageBehavior = false;
+            this.listViewTextures.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listViewTextures_MouseDoubleClick);
             // 
             // imageListLarge
             // 
@@ -67,9 +68,9 @@
             // buttonOK
             // 
             this.buttonOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonOK.Location = new System.Drawing.Point(541, 7);
+            this.buttonOK.Location = new System.Drawing.Point(521, 6);
             this.buttonOK.Name = "buttonOK";
-            this.buttonOK.Size = new System.Drawing.Size(75, 23);
+            this.buttonOK.Size = new System.Drawing.Size(75, 21);
             this.buttonOK.TabIndex = 1;
             this.buttonOK.Text = "OK";
             this.buttonOK.UseVisualStyleBackColor = true;
@@ -78,9 +79,9 @@
             // buttonCancel
             // 
             this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonCancel.Location = new System.Drawing.Point(622, 7);
+            this.buttonCancel.Location = new System.Drawing.Point(602, 6);
             this.buttonCancel.Name = "buttonCancel";
-            this.buttonCancel.Size = new System.Drawing.Size(75, 23);
+            this.buttonCancel.Size = new System.Drawing.Size(75, 21);
             this.buttonCancel.TabIndex = 2;
             this.buttonCancel.Text = "Cancel";
             this.buttonCancel.UseVisualStyleBackColor = true;
@@ -91,9 +92,9 @@
             this.panel1.Controls.Add(this.buttonOK);
             this.panel1.Controls.Add(this.buttonCancel);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel1.Location = new System.Drawing.Point(0, 405);
+            this.panel1.Location = new System.Drawing.Point(0, 488);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(704, 36);
+            this.panel1.Size = new System.Drawing.Size(684, 33);
             this.panel1.TabIndex = 3;
             // 
             // toolStripOperation
@@ -103,7 +104,7 @@
             this.toolStripButtonAdd});
             this.toolStripOperation.Location = new System.Drawing.Point(0, 0);
             this.toolStripOperation.Name = "toolStripOperation";
-            this.toolStripOperation.Size = new System.Drawing.Size(704, 25);
+            this.toolStripOperation.Size = new System.Drawing.Size(684, 25);
             this.toolStripOperation.TabIndex = 4;
             this.toolStripOperation.Text = "toolStrip1";
             // 
@@ -123,7 +124,7 @@
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel2.Location = new System.Drawing.Point(0, 25);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(704, 380);
+            this.panel2.Size = new System.Drawing.Size(684, 463);
             this.panel2.TabIndex = 5;
             // 
             // openFileDialogAdd
@@ -133,9 +134,9 @@
             // 
             // TexturesDialog
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(704, 441);
+            this.ClientSize = new System.Drawing.Size(684, 521);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.toolStripOperation);
             this.Controls.Add(this.panel1);

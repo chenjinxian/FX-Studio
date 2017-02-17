@@ -76,7 +76,6 @@
     <Compile Include="PropertyItems\FloatItem.cs" />
     <Compile Include="PropertyItems\BaseItem.cs" />
     <Compile Include="PropertyItems\ImageItem.cs" />
-    <Compile Include="PropertyItems\Int32Item.cs" />
     <Compile Include="PropertyItems\StringItem.cs" />
     <Compile Include="PropertyItems\Vector3Item.cs" />
   </ItemGroup>

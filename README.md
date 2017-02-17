@@ -1,5 +1,7 @@
 # FX Studio
 
+![Editor screenshot](https://github.com/chenjinxian/FX-Studio/blob/master/Build/editor_screenshot.png)
+
 ## Getting up and running
 
 The steps below will take you through cloning your own private fork, then compiling and running the studio yourself:

@@ -42,23 +42,6 @@ namespace FXStudio
             return transformElement;
         }
 
-        public static XmlElement CreateCubeRenderComponent(XmlDocument xmlDoc)
-        {
-            XmlElement cubeElement = xmlDoc.CreateElement("CubeRenderComponent");
-
-            XmlElement cube = xmlDoc.CreateElement("Cube");
-            XmlElement effect = xmlDoc.CreateElement("Material");
-            cubeElement.AppendChild(cube);
-            cubeElement.AppendChild(effect);
-
-            effect.InnerText = @"Materials\DefaultMaterial.mat";
-
-            cube.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "size", "1.0"));
-            cube.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "rhcoords", "1"));
-
-            return cubeElement;
-        }
-
         public static XmlElement CreateSphereRenderComponent(XmlDocument xmlDoc)
         {
             XmlElement sphereElement = xmlDoc.CreateElement("SphereRenderComponent");
@@ -71,29 +54,29 @@ namespace FXStudio
             effect.InnerText = @"Materials\DefaultMaterial.mat";
 
             sphere.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "diameter", "1.0"));
-            sphere.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "tessellation", "3"));
+            sphere.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "tessellation", "4"));
             sphere.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "rhcoords", "1"));
 
             return sphereElement;
         }
 
-        public static XmlElement CreateCylinderRenderComponent(XmlDocument xmlDoc)
+        public static XmlElement CreateTorusRenderComponent(XmlDocument xmlDoc)
         {
-            XmlElement cylinderElement = xmlDoc.CreateElement("CylinderRenderComponent");
+            XmlElement torusElement = xmlDoc.CreateElement("TorusRenderComponent");
 
-            XmlElement cylinder = xmlDoc.CreateElement("Cylinder");
+            XmlElement torus = xmlDoc.CreateElement("Torus");
             XmlElement effect = xmlDoc.CreateElement("Material");
-            cylinderElement.AppendChild(cylinder);
-            cylinderElement.AppendChild(effect);
+            torusElement.AppendChild(torus);
+            torusElement.AppendChild(effect);
 
             effect.InnerText = @"Materials\DefaultMaterial.mat";
 
-            cylinder.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "height", "1.0"));
-            cylinder.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "diameter", "1.0"));
-            cylinder.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "tessellation", "32"));
-            cylinder.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "rhcoords", "1"));
+            torus.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "diameter", "1.0"));
+            torus.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "thickness", "0.33"));
+            torus.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "tessellation", "32"));
+            torus.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "rhcoords", "1"));
 
-            return cylinderElement;
+            return torusElement;
         }
 
         public static XmlElement CreateTeapotRenderComponent(XmlDocument xmlDoc)
@@ -112,6 +95,23 @@ namespace FXStudio
             teapot.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "rhcoords", "1"));
 
             return teapotElement;
+        }
+
+        public static XmlElement CreatePlaneRenderComponent(XmlDocument xmlDoc)
+        {
+            XmlElement cubeElement = xmlDoc.CreateElement("PlaneRenderComponent");
+
+            XmlElement cube = xmlDoc.CreateElement("Cube");
+            XmlElement effect = xmlDoc.CreateElement("Material");
+            cubeElement.AppendChild(cube);
+            cubeElement.AppendChild(effect);
+
+            effect.InnerText = @"Materials\DefaultMaterial.mat";
+
+            cube.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "size", "1.0"));
+            cube.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "rhcoords", "1"));
+
+            return cubeElement;
         }
 
         public static XmlElement CreateModelRenderComponent(XmlDocument xmlDoc, string fileName)

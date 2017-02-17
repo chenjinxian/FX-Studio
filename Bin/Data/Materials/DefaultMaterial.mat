@@ -5,14 +5,14 @@
 		</Technique>
 	</Techniques>
 	<Variables>
-		<WorldITXf UIWidget="None">0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</WorldITXf>
-		<WvpXf UIWidget="None">0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</WvpXf>
-		<WorldXf UIWidget="None">0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</WorldXf>
-		<ViewIXf UIWidget="None">0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</ViewIXf>
-		<LightPos Object="PointLight0" Space="World">10 10 -10</LightPos>
-		<AmbiColor UIName="Ambient Lighting" UIWidget="Color">0.1 0.1 0.1</AmbiColor>
-		<SurfColor UIName="Surface Color" UIWidget="Color">0.8 0.8 1</SurfColor>
-		<Ks UIName="Specular Intensity" UIWidget="slider" UIMin="0" UIMax="1" UIStep="0.01">0.5</Ks>
-		<SpecExpon UIName="Specular Power" UIWidget="slider" UIMin="1" UIMax="128" UIStep="1">30</SpecExpon>
+		<WorldITXf uiwidget="None">0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</WorldITXf>
+		<WvpXf uiwidget="None">0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</WvpXf>
+		<WorldXf uiwidget="None">0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</WorldXf>
+		<ViewIXf uiwidget="None">0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</ViewIXf>
+		<LightPos object="PointLight0" space="World">10 10 -10</LightPos>
+		<AmbiColor uiname="Ambient Lighting" uiwidget="Color">0.1 0.1 0.1</AmbiColor>
+		<SurfColor uiname="Surface Color" uiwidget="Color">0.8 0.8 1</SurfColor>
+		<Ks uiname="Specular Intensity" uiwidget="slider" uimin="0" uimax="1" uistep="0.01">0.5</Ks>
+		<SpecExpon uiname="Specular Power" uiwidget="slider" uimin="1" uimax="128" uistep="1">30</SpecExpon>
 	</Variables>
 </Material>

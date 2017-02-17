@@ -417,7 +417,7 @@ HRESULT GridNode::VOnUpdate(Scene* pScene, const GameTime& gameTime)
 
 const std::string GeometryNode::m_Cube = "Cube";
 const std::string GeometryNode::m_Sphere = "Sphere";
-const std::string GeometryNode::m_Cylinder = "Cylinder";
+const std::string GeometryNode::m_Torus = "Torus";
 const std::string GeometryNode::m_Teapot = "Teapot";
 const std::string GeometryNode::m_Plane = "Plane";
 
@@ -437,9 +437,9 @@ GeometryNode::GeometryNode(ActorType actorType, ActorId actorId, WeakBaseRenderC
 	{
 		CreateSphere();
 	}
-	else if (actorType == m_Cylinder)
+	else if (actorType == m_Torus)
 	{
-		CreateCylinder();
+		CreateTorus();
 	}
 	else if (actorType == m_Teapot)
 	{
@@ -613,6 +613,10 @@ HRESULT GeometryNode::VRender(Scene* pScene, const GameTime& gameTime)
 				variable->SetMatrix(viewI);
 			}
 		}
+		else if (semantic == "time")
+		{
+			variable->SetFloat(gameTime.GetTotalTime());
+		}
 		else if (type == "float4")
 		{
 			std::stringstream ss(pNode->GetText());
@@ -675,10 +679,9 @@ HRESULT GeometryNode::VRender(Scene* pScene, const GameTime& gameTime)
 		{
 			variable->SetInt(boost::lexical_cast<int>(pNode->GetText()));
 		}
-		else if (type == "Texture1D" ||
-			type == "Texture2D" || type == "TextureCube")
+		else if (type == "Texture1D" || type == "Texture2D" || type == "Texture3D" || type == "TextureCube")
 		{
-			const char* resourName = pNode->Attribute("ResourceName");
+			const char* resourName = pNode->Attribute("resourcename");
 			if (resourName != nullptr)
 			{
 				std::string textureName = std::string("Textures\\") + resourName;
@@ -759,7 +762,7 @@ void GeometryNode::VPick(Scene* pScene, int cursorX, int cursorY)
 
 void GeometryNode::CreateCube()
 {
-	CubeRenderComponent* pMeshRender = static_cast<CubeRenderComponent*>(m_pRenderComponent);
+	PlaneRenderComponent* pMeshRender = static_cast<PlaneRenderComponent*>(m_pRenderComponent);
 	if (pMeshRender != nullptr)
 	{
 		float size = pMeshRender->GetSize();
@@ -790,19 +793,19 @@ void GeometryNode::CreateSphere()
 	}
 }
 
-void GeometryNode::CreateCylinder()
+void GeometryNode::CreateTorus()
 {
-	CylinderRenderComponent* pMeshRender = static_cast<CylinderRenderComponent*>(m_pRenderComponent);
+	TorusRenderComponent* pMeshRender = static_cast<TorusRenderComponent*>(m_pRenderComponent);
 	if (pMeshRender != nullptr)
 	{
-		float height = pMeshRender->GetHeight();
+		float thickness = pMeshRender->GetThickness();
 		float diameter = pMeshRender->GetDiameter();
 		uint32_t tessellation = pMeshRender->GetTessellation();
 		bool useRHcoords = pMeshRender->UseRHcoords();
 
 		std::vector<VertexPositionNormalTexture> vertices;
 		std::vector<uint16_t> indices;
-		GeometricPrimitive::CreateCylinder(vertices, indices, height, diameter, tessellation, useRHcoords);
+		GeometricPrimitive::CreateTorus(vertices, indices, diameter, thickness, tessellation, useRHcoords);
 		m_IndexCount = indices.size();
 		m_Mesh = unique_ptr<Mesh>(DEBUG_NEW Mesh(vertices, indices));
 	}
@@ -1028,6 +1031,10 @@ HRESULT ModelNode::VRender(Scene* pScene, const GameTime& gameTime)
 				variable->SetMatrix(viewI);
 			}
 		}
+		else if (semantic == "time")
+		{
+			variable->SetFloat(gameTime.GetElapsedTime());
+		}
 		else if (type == "float4")
 		{
 			std::stringstream ss(pNode->GetText());
@@ -1090,10 +1097,9 @@ HRESULT ModelNode::VRender(Scene* pScene, const GameTime& gameTime)
 		{
 			variable->SetInt(boost::lexical_cast<int>(pNode->GetText()));
 		}
-		else if (type == "Texture1D" ||
-			type == "Texture2D" || type == "TextureCube")
+		else if (type == "Texture1D" || type == "Texture2D" || type == "Texture3D" || type == "TextureCube")
 		{
-			const char* resourName = pNode->Attribute("ResourceName");
+			const char* resourName = pNode->Attribute("resourcename");
 			if (resourName != nullptr)
 			{
 				std::string textureName = std::string("Textures\\") + resourName;

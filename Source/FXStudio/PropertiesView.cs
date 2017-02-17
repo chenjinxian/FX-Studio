@@ -110,7 +110,7 @@ namespace FXStudio
                     {
                         AddGridProperties(component);
                     }
-                    else if (component.Name == "CubeRenderComponent")
+                    else if (component.Name == "PlaneRenderComponent")
                     {
                         AddCubeProperties(component);
                     }
@@ -118,9 +118,9 @@ namespace FXStudio
                     {
                         AddSphereProperties(component);
                     }
-                    else if (component.Name == "CylinderRenderComponent")
+                    else if (component.Name == "TorusRenderComponent")
                     {
-                        AddCylinderProperties(component);
+                        AddTorusProperties(component);
                     }
                     else if (component.Name == "TeapotRenderComponent")
                     {
@@ -161,11 +161,11 @@ namespace FXStudio
                 string varValue = child.InnerText;
                 string uiName = varName;
 
-                XmlAttribute nameNode = child.Attributes["UIName"];
+                XmlAttribute nameNode = child.Attributes["uiname"];
                 if (nameNode != null)
                     uiName = nameNode.Value;
 
-                XmlAttribute widgetNode = child.Attributes["UIWidget"];
+                XmlAttribute widgetNode = child.Attributes["uiwidget"];
                 if (widgetNode != null)
                 {
                     string uiWidget = widgetNode.Value;
@@ -179,9 +179,9 @@ namespace FXStudio
                     }
                     else if (string.Equals(uiWidget, "slider", StringComparison.OrdinalIgnoreCase))
                     {
-                        XmlNode minNode = child.Attributes["UIMin"];
-                        XmlNode maxNode = child.Attributes["UIMax"];
-                        XmlNode stepNode = child.Attributes["UIStep"];
+                        XmlNode minNode = child.Attributes["uimin"];
+                        XmlNode maxNode = child.Attributes["uimax"];
+                        XmlNode stepNode = child.Attributes["uistep"];
                         if (minNode != null && maxNode != null && stepNode != null)
                         {
                             AddFloatItem("MaterialProperties", uiName, varName,
@@ -195,17 +195,17 @@ namespace FXStudio
                     continue;
                 }
 
-                XmlNode objectNode = child.Attributes["Object"];
+                XmlNode objectNode = child.Attributes["bbject"];
                 if (objectNode != null)
                 {
                     inspectorComponent.ItemAdd(new Inspector.StringItem("MaterialProperties", uiName, varName, varValue));
                     continue;
                 }
 
-                XmlNode textureNode = child.Attributes["ResourceType"];
+                XmlNode textureNode = child.Attributes["resourcetype"];
                 if (textureNode != null)
                 {
-                    XmlNode valueNode = child.Attributes["ResourceName"];
+                    XmlNode valueNode = child.Attributes["resourcename"];
                     if (!string.IsNullOrEmpty(valueNode.InnerText))
                     {
                         AddTextureItem("MaterialProperties", uiName, varName,
@@ -291,12 +291,12 @@ namespace FXStudio
             AddEffectItem(sphereNode);
         }
 
-        private void AddCylinderProperties(XmlNode cylinderNode)
+        private void AddTorusProperties(XmlNode torusNode)
         {
-            Inspector.CategoryItem category = new Inspector.CategoryItem(cylinderNode.Name);
-            inspectorComponent.CategoryAdd(cylinderNode.Name, category);
+            Inspector.CategoryItem category = new Inspector.CategoryItem(torusNode.Name);
+            inspectorComponent.CategoryAdd(torusNode.Name, category);
 
-            AddEffectItem(cylinderNode);
+            AddEffectItem(torusNode);
         }
 
         private void AddTeapotProperties(XmlNode teapotNode)

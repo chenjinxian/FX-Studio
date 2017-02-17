@@ -1,0 +1,1 @@
+download examles from https://github.com/chenjinxian/FX-Studio-Examples, and copy all examples to current directory.

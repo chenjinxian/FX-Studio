@@ -155,7 +155,7 @@ public:
 private:
 	void CreateCube();
 	void CreateSphere();
-	void CreateCylinder();
+	void CreateTorus();
 	void CreateTeapot();
 	void CreatePlane();
 
@@ -170,7 +170,7 @@ private:
 
 	static const std::string m_Cube;
 	static const std::string m_Sphere;
-	static const std::string m_Cylinder;
+	static const std::string m_Torus;
 	static const std::string m_Teapot;
 	static const std::string m_Plane;
 };

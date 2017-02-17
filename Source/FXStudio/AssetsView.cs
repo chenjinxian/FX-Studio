@@ -76,7 +76,6 @@ namespace FXStudio
             }
 
             treeViewAssets.EndUpdate();
-            treeViewAssets.ExpandAll();
         }
 
         public void SaveAssetsFile()
@@ -102,8 +101,8 @@ namespace FXStudio
                 if (variable == null)
                     return;
 
-                if (variable.Attributes["ResourceName"] != null)
-                    variable.Attributes["ResourceName"].Value = value;
+                if (variable.Attributes["resourcename"] != null)
+                    variable.Attributes["resourcename"].Value = value;
                 else
                     variable.InnerText = value;
 
@@ -298,8 +297,8 @@ namespace FXStudio
                     if (varNode != null)
                     {
                         childVar.InnerText = varNode.InnerText;
-                        if (childVar.Attributes["ResourceName"] != null && varNode.Attributes["ResourceName"] != null)
-                            childVar.Attributes["ResourceName"].Value = varNode.Attributes["ResourceName"].Value;
+                        if (childVar.Attributes["resourcename"] != null && varNode.Attributes["resourcename"] != null)
+                            childVar.Attributes["resourcename"].Value = varNode.Attributes["resourcename"].Value;
                     }
                 }
 

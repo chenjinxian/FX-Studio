@@ -155,11 +155,37 @@ bool FXStudioView::VLoadGameDelegate(tinyxml2::XMLElement* pCameraNode)
 	}
 
 	m_pModelController.reset(DEBUG_NEW ModelController(m_pEditorCamera, m_pGizmosNode, position, yaw, pitch));
-	m_pCamera->ClearTarget();
+	m_pEditorCamera->ClearTarget();
 
 	m_pPointerHandler = m_pModelController;
 	m_pKeyboardHandler = m_pModelController;
 
 	m_pScene->VOnInitScreenElements();
 	return true;
+}
+
+HRESULT FXStudioView::VOnInitGameViews(bool onlyCamera)
+{
+	HumanView::VOnInitGameViews(onlyCamera);
+
+	if (onlyCamera)
+	{
+		if (m_pEditorCamera != nullptr)
+			m_pEditorCamera->VOnInitSceneNode(m_pScene.get());
+	}
+
+	return S_OK;
+}
+
+HRESULT FXStudioView::VOnDeleteGameViews(bool onlyCamera)
+{
+	HumanView::VOnDeleteGameViews(onlyCamera);
+
+	if (onlyCamera)
+	{
+		if (m_pEditorCamera != nullptr)
+			m_pEditorCamera->VOnDeleteSceneNode(m_pScene.get());
+	}
+
+	return S_OK;
 }

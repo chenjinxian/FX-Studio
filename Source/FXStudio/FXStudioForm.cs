@@ -159,15 +159,15 @@ namespace FXStudio
                 }
                 else if (nodeType == "Cube")
                 {
-                    renderComponent = xmlDoc.CreateElement("CubeRenderComponent");
+                    renderComponent = xmlDoc.CreateElement("PlaneRenderComponent");
                 }
                 else if (nodeType == "Sphere")
                 {
                     renderComponent = xmlDoc.CreateElement("SphereRenderComponent");
                 }
-                else if (nodeType == "Cylinder")
+                else if (nodeType == "Torus")
                 {
-                    renderComponent = xmlDoc.CreateElement("CylinderRenderComponent");
+                    renderComponent = xmlDoc.CreateElement("TorusRenderComponent");
                 }
                 else if (nodeType == "Teapot")
                 {
@@ -202,9 +202,8 @@ namespace FXStudio
             toolStripButtonReBuild.Enabled = enable;
             toolStripButtonCompile.Enabled = enable;
             toolStripButtonTeapot.Enabled = enable;
-            toolStripButtonCube.Enabled = enable;
             toolStripButtonSphere.Enabled = enable;
-            toolStripButtonCylinder.Enabled = enable;
+            toolStripButtonTorus.Enabled = enable;
             toolStripButtonPlane.Enabled = enable;
             toolStripButtonDirectional.Enabled = enable;
             toolStripButtonPoint.Enabled = enable;
@@ -445,21 +444,6 @@ namespace FXStudio
             }
         }
 
-        private void toolStripButtonCube_Click(object sender, EventArgs e)
-        {
-            XmlDocument xmlDoc = new XmlDocument();
-            XmlElement geometryElement = xmlDoc.CreateElement("Cube");
-
-            geometryElement.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "type", "Cube"));
-            geometryElement.AppendChild(XmlUtility.CreateTransformComponent(xmlDoc, "-2", "0.5"));
-            geometryElement.AppendChild(XmlUtility.CreateCubeRenderComponent(xmlDoc));
-
-            if (RenderMethods.AddActor(geometryElement.OuterXml) > 0)
-            {
-                m_ProjectView.AddActorNode(geometryElement);
-            }
-        }
-
         private void toolStripButtonSphere_Click(object sender, EventArgs e)
         {
             XmlDocument xmlDoc = new XmlDocument();
@@ -475,14 +459,14 @@ namespace FXStudio
             }
         }
 
-        private void toolStripButtonCylinder_Click(object sender, EventArgs e)
+        private void toolStripButtonTorus_Click(object sender, EventArgs e)
         {
             XmlDocument xmlDoc = new XmlDocument();
-            XmlElement geometryElement = xmlDoc.CreateElement("Cylinder");
+            XmlElement geometryElement = xmlDoc.CreateElement("Torus");
 
-            geometryElement.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "type", "Cylinder"));
+            geometryElement.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "type", "Torus"));
             geometryElement.AppendChild(XmlUtility.CreateTransformComponent(xmlDoc, "2", "0.5"));
-            geometryElement.AppendChild(XmlUtility.CreateCylinderRenderComponent(xmlDoc));
+            geometryElement.AppendChild(XmlUtility.CreateTorusRenderComponent(xmlDoc));
 
             if (RenderMethods.AddActor(geometryElement.OuterXml) > 0)
             {
@@ -492,7 +476,17 @@ namespace FXStudio
 
         private void toolStripButtonPlane_Click(object sender, EventArgs e)
         {
-
+//             XmlDocument xmlDoc = new XmlDocument();
+//             XmlElement geometryElement = xmlDoc.CreateElement("Plane");
+// 
+//             geometryElement.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "type", "Plane"));
+//             geometryElement.AppendChild(XmlUtility.CreateTransformComponent(xmlDoc, "-2", "0.5"));
+//             geometryElement.AppendChild(XmlUtility.CreatePlaneRenderComponent(xmlDoc));
+// 
+//             if (RenderMethods.AddActor(geometryElement.OuterXml) > 0)
+//             {
+//                 m_ProjectView.AddActorNode(geometryElement);
+//             }
         }
 
         private void toolStripButtonImport_Click(object sender, EventArgs e)

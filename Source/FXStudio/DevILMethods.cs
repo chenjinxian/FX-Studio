@@ -91,7 +91,7 @@ namespace FXStudio
                 BitmapData bmpData = original.LockBits(rect, ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
 
                 DevILMethods.ilConvertImage(DevILMethods.IL_BGRA, DevILMethods.IL_UNSIGNED_BYTE);
-                DevILMethods.ilCopyPixels(0, 0, 0, width, height, depth, DevILMethods.IL_BGRA, DevILMethods.IL_UNSIGNED_BYTE, bmpData.Scan0);
+                DevILMethods.ilCopyPixels(0, 0, 0, width, height, 1, DevILMethods.IL_BGRA, DevILMethods.IL_UNSIGNED_BYTE, bmpData.Scan0);
 
                 original.UnlockBits(bmpData);
 

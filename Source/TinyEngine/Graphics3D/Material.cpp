@@ -833,4 +833,5 @@ Annotation::Annotation(ID3DX11EffectVariable* pAnnotation)
 	D3DX11_EFFECT_VARIABLE_DESC annotationDesc;
 	pAnnotation->GetDesc(&annotationDesc);
 	m_AnnotationName = annotationDesc.Name;
+	std::transform(m_AnnotationName.begin(), m_AnnotationName.end(), m_AnnotationName.begin(), (int(*)(int)) std::tolower);
 }

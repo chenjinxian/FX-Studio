@@ -19,6 +19,9 @@ protected:
 	virtual void VRenderText(const GameTime& gameTime) override;
 	virtual bool VLoadGameDelegate(tinyxml2::XMLElement* pCameraNode) override;
 	
+	virtual HRESULT VOnInitGameViews(bool onlyCamera) override;
+	virtual HRESULT VOnDeleteGameViews(bool onlyCamera) override;
+
 private:
 	shared_ptr<ModelController> m_pModelController;
 	shared_ptr<CameraNode> m_pEditorCamera;

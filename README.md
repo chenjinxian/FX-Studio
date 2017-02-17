@@ -22,3 +22,11 @@ The steps below will take you through cloning your own private fork, then compil
    platform to **x64**, then right click on the **FXStudio** target and select **Build**. It may take less than one minutes to finish compiling, depending on your system specs.
 
 1. After compiling finishes, you can load the studio from Visual Studio by setting your startup project to **FXStudio** and pressing **F5** to debug.
+
+## [Examples](https://github.com/chenjinxian/FX-Studio-Examples)
+
+All examples of FX Studio.
+
+### Materials
+
+![Materials screenshot](https://github.com/chenjinxian/FX-Studio-Examples/blob/master/multi_materials.png)

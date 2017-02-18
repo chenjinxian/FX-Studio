@@ -92,6 +92,12 @@
     <Compile Include="FXStudioForm.Designer.cs">
       <DependentUpon>FXStudioForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="MaterialsView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MaterialsView.Designer.cs">
+      <DependentUpon>MaterialsView.cs</DependentUpon>
+    </Compile>
     <Compile Include="TexturesDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -184,6 +190,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="EditorView.resx">
       <DependentUpon>EditorView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MaterialsView.resx">
+      <DependentUpon>MaterialsView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="TexturesDialog.resx">
       <DependentUpon>TexturesDialog.cs</DependentUpon>

@@ -21,6 +21,7 @@ protected:
 	
 	virtual HRESULT VOnInitGameViews(bool onlyCamera) override;
 	virtual HRESULT VOnDeleteGameViews(bool onlyCamera) override;
+	virtual void VOnRender(const GameTime& gameTime) override;
 
 private:
 	shared_ptr<ModelController> m_pModelController;

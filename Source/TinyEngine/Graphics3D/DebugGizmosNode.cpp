@@ -660,8 +660,8 @@ void DebugGizmosNode::CreateGeometryBuffers()
 Ray DebugGizmosNode::CreateRay(Scene* pScene, const Matrix& world, bool inLocal)
 {
 	const Matrix& projectMat = pScene->GetCamera()->GetProjectMatrix();
-	float viewX = (2.0f * m_MousePos.x / g_pApp->GetGameConfig().m_ScreenWidth - 1.0f) / projectMat.m[0][0];
-	float viewY = (1.0f - 2.0f * m_MousePos.y / g_pApp->GetGameConfig().m_ScreenHeight) / projectMat.m[1][1];
+	float viewX = (2.0f * m_MousePos.x / g_pApp->GetGameConfig().m_ScreenWidth[0] - 1.0f) / projectMat.m[0][0];
+	float viewY = (1.0f - 2.0f * m_MousePos.y / g_pApp->GetGameConfig().m_ScreenHeight[0]) / projectMat.m[1][1];
 
 	Matrix toSpace;
 	if (inLocal)

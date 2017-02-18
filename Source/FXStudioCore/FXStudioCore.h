@@ -22,14 +22,16 @@ extern "C" {
 #endif //__cplusplus
 
 	FXSTUDIOCORE_API bool FX_APIENTRY CreateInstance(
-		int *instancePtrAddress,
-		int *hPrevInstancePtrAddress,
-		int *hWndPtrAddress,
+		int* instancePtrAddress,
+		int* hPrevInstancePtrAddress,
+		int* hWndMain,
+		int* hWndMaterial,
 		int nCmdShow,
-		int screenWidth, int screenHeight);
+		int screenWidth, int screenHeight,
+		int materialWidth, int materialHeight);
 	FXSTUDIOCORE_API int FX_APIENTRY DestroyInstance();
 
-	FXSTUDIOCORE_API void FX_APIENTRY ResizeWnd(int screenWidth, int screenHeight);
+	FXSTUDIOCORE_API void FX_APIENTRY ResizeWnd(int screenWidth, int screenHeight, int wndIndex);
 	FXSTUDIOCORE_API void FX_APIENTRY WndProc(int *hWndPtrAddress, int msg, int* wParam, int* lParam);
 	FXSTUDIOCORE_API void FX_APIENTRY RenderFrame();
 

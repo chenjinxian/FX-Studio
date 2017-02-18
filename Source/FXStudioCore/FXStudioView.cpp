@@ -189,3 +189,25 @@ HRESULT FXStudioView::VOnDeleteGameViews(bool onlyCamera)
 
 	return S_OK;
 }
+
+void FXStudioView::VOnRender(const GameTime& gameTime)
+{
+	HumanView::VOnRender(gameTime);
+
+	if (g_pApp->GetRendererAPI()->VPreRender(gameTime, 1))
+	{
+		m_ScreenElements.sort(SortBy_SharedPtr_Content<IScreenElement>());
+
+		for (ScreenElementList::iterator i = m_ScreenElements.begin(); i != m_ScreenElements.end(); ++i)
+		{
+			if ((*i)->VIsVisible())
+			{
+				(*i)->VOnRender(gameTime);
+			}
+		}
+
+		VRenderText(gameTime);
+	}
+
+	g_pApp->GetRendererAPI()->VPostRender(1);
+}

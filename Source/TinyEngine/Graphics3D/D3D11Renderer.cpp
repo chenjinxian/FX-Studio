@@ -32,13 +32,14 @@ struct VERTEX_CONSTANT_BUFFER
 D3D11Renderer::D3D11Renderer()
 	: m_pDevice(nullptr),
 	m_pDeviceContext(nullptr),
-	m_pSwapChain(nullptr),
-	m_pDepthStencilBuffer(nullptr),
-	m_pRenderTargetView(nullptr),
 	m_pDepthStencilView(nullptr),
 	m_DeviceName(),
 	m_BackgroundColor()
 {
+	m_pSwapChain[0] = nullptr;
+	m_pSwapChain[1] = nullptr;
+	m_pRenderTargetView[0] = nullptr;
+	m_pRenderTargetView[1] = nullptr;
 	InitD3D11Device();
 }
 
@@ -46,28 +47,12 @@ D3D11Renderer::~D3D11Renderer()
 {
 }
 
-bool D3D11Renderer::VInitRenderer(HWND hWnd)
+bool D3D11Renderer::VInitRenderer(HWND hWnd, HWND hMaterialWnd)
 {
 	if (m_pDevice == nullptr || m_pDeviceContext == nullptr)
 		return false;
 
 	HRESULT hr;
-
-	DXGI_SWAP_CHAIN_DESC swapChainDesc;
-	ZeroMemory(&swapChainDesc, sizeof(swapChainDesc));
-	swapChainDesc.BufferDesc.Width = g_pApp->GetGameConfig().m_ScreenWidth;
-	swapChainDesc.BufferDesc.Height = g_pApp->GetGameConfig().m_ScreenHeight;
-	swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	swapChainDesc.BufferDesc.RefreshRate.Numerator = 60;
-	swapChainDesc.BufferDesc.RefreshRate.Denominator = 1;
-	swapChainDesc.SampleDesc.Count = g_pApp->GetGameConfig().m_AntiAliasingSample;
-	swapChainDesc.SampleDesc.Quality = 0;
-	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	swapChainDesc.BufferCount = 1;
-	swapChainDesc.OutputWindow = hWnd;
-	swapChainDesc.Windowed = !g_pApp->GetGameConfig().m_IsFullScreen;
-	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
-	swapChainDesc.Flags = 0;
 
 	IDXGIDevice* dxgiDevice = nullptr;
 	if (FAILED(hr = m_pDevice->QueryInterface(__uuidof(IDXGIDevice), reinterpret_cast<void**>(&dxgiDevice))))
@@ -97,13 +82,59 @@ bool D3D11Renderer::VInitRenderer(HWND hWnd)
 		return false;
 	}
 
-	if (FAILED(hr = dxgiFactory->CreateSwapChain(m_pDevice, &swapChainDesc, &m_pSwapChain)))
+	DXGI_SWAP_CHAIN_DESC swapChainDesc;
+	ZeroMemory(&swapChainDesc, sizeof(swapChainDesc));
+	swapChainDesc.BufferDesc.Width = g_pApp->GetGameConfig().m_ScreenWidth[0];
+	swapChainDesc.BufferDesc.Height = g_pApp->GetGameConfig().m_ScreenHeight[0];
+	swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	swapChainDesc.BufferDesc.RefreshRate.Numerator = 60;
+	swapChainDesc.BufferDesc.RefreshRate.Denominator = 1;
+	swapChainDesc.SampleDesc.Count = g_pApp->GetGameConfig().m_AntiAliasingSample;
+	swapChainDesc.SampleDesc.Quality = 0;
+	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+	swapChainDesc.BufferCount = 1;
+	swapChainDesc.OutputWindow = hWnd;
+	swapChainDesc.Windowed = !g_pApp->GetGameConfig().m_IsFullScreen;
+	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
+	swapChainDesc.Flags = 0;
+
+	if (FAILED(hr = dxgiFactory->CreateSwapChain(m_pDevice, &swapChainDesc, &m_pSwapChain[0])))
 	{
 		SAFE_RELEASE(dxgiDevice);
 		SAFE_RELEASE(dxgiAdapter);
 		SAFE_RELEASE(dxgiFactory);
 		DEBUG_ERROR("IDXGIDevice::CreateSwapChainForHwnd() failed.");
 		return false;
+	}
+	dxgiFactory->MakeWindowAssociation(hWnd, DXGI_MWA_NO_ALT_ENTER);
+
+	if (hMaterialWnd != nullptr)
+	{
+		DXGI_SWAP_CHAIN_DESC swapChainDesc;
+		ZeroMemory(&swapChainDesc, sizeof(swapChainDesc));
+		swapChainDesc.BufferDesc.Width = g_pApp->GetGameConfig().m_ScreenWidth[1];
+		swapChainDesc.BufferDesc.Height = g_pApp->GetGameConfig().m_ScreenHeight[1];
+		swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		swapChainDesc.BufferDesc.RefreshRate.Numerator = 60;
+		swapChainDesc.BufferDesc.RefreshRate.Denominator = 1;
+		swapChainDesc.SampleDesc.Count = g_pApp->GetGameConfig().m_AntiAliasingSample;
+		swapChainDesc.SampleDesc.Quality = 0;
+		swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+		swapChainDesc.BufferCount = 1;
+		swapChainDesc.OutputWindow = hMaterialWnd;
+		swapChainDesc.Windowed = !g_pApp->GetGameConfig().m_IsFullScreen;
+		swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
+		swapChainDesc.Flags = 0;
+
+		if (FAILED(hr = dxgiFactory->CreateSwapChain(m_pDevice, &swapChainDesc, &m_pSwapChain[1])))
+		{
+			SAFE_RELEASE(dxgiDevice);
+			SAFE_RELEASE(dxgiAdapter);
+			SAFE_RELEASE(dxgiFactory);
+			DEBUG_ERROR("IDXGIDevice::CreateSwapChainForHwnd() failed.");
+			return false;
+		}
+		dxgiFactory->MakeWindowAssociation(hMaterialWnd, DXGI_MWA_NO_ALT_ENTER);
 	}
 
 	SAFE_RELEASE(dxgiDevice);
@@ -123,7 +154,8 @@ void D3D11Renderer::VDeleteRenderer()
 	ImGui::Shutdown();
 	DeleteBuffers();
 
-	SAFE_RELEASE(m_pSwapChain);
+	SAFE_RELEASE(m_pSwapChain[1]);
+	SAFE_RELEASE(m_pSwapChain[0]);
 	SAFE_RELEASE(m_pDeviceContext);
 	SAFE_RELEASE(m_pDevice);
 }
@@ -135,33 +167,88 @@ void D3D11Renderer::VResizeSwapChain()
 
 	DeleteImGuiBuffers();
 	DeleteBuffers();
-	m_pSwapChain->ResizeBuffers(0, g_pApp->GetGameConfig().m_ScreenWidth, g_pApp->GetGameConfig().m_ScreenHeight, DXGI_FORMAT_UNKNOWN, 0);
+	m_pSwapChain[0]->ResizeBuffers(0, g_pApp->GetGameConfig().m_ScreenWidth[0], g_pApp->GetGameConfig().m_ScreenHeight[0], DXGI_FORMAT_UNKNOWN, 0);
+	m_pSwapChain[1]->ResizeBuffers(0, g_pApp->GetGameConfig().m_ScreenWidth[1], g_pApp->GetGameConfig().m_ScreenHeight[1], DXGI_FORMAT_UNKNOWN, 0);
 	CreateBuffers();
 	CreateImGuiBuffers();
 }
 
-bool D3D11Renderer::VPreRender(const GameTime& gameTime)
+bool D3D11Renderer::VPreRender(const GameTime& gameTime, int index)
 {
-	if (m_pDeviceContext != nullptr && m_pRenderTargetView != nullptr)
-	{
-		ImGuiIO& io = ImGui::GetIO();
-		io.DeltaTime = gameTime.GetElapsedTime();
-		ImGui::NewFrame();
+	if (nullptr == m_pDeviceContext)
+		return false;
 
-		m_pDeviceContext->ClearRenderTargetView(m_pRenderTargetView, m_BackgroundColor);
-		m_pDeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+	if (0 == index)
+	{
+		if (m_pRenderTargetView[0] != nullptr)
+		{
+			m_pDeviceContext->OMSetRenderTargets(1, &m_pRenderTargetView[0], m_pDepthStencilView);
+
+			m_Viewport.TopLeftX = 0.0f;
+			m_Viewport.TopLeftY = 0.0f;
+			m_Viewport.Width = static_cast<float>(g_pApp->GetGameConfig().m_ScreenWidth[0]);
+			m_Viewport.Height = static_cast<float>(g_pApp->GetGameConfig().m_ScreenHeight[0]);
+			m_Viewport.MinDepth = 0.0f;
+			m_Viewport.MaxDepth = 1.0f;
+			m_pDeviceContext->RSSetViewports(1, &m_Viewport);
+	
+			ImGuiIO& io = ImGui::GetIO();
+			io.DeltaTime = gameTime.GetElapsedTime();
+			ImGui::NewFrame();
+
+			m_pDeviceContext->ClearRenderTargetView(m_pRenderTargetView[0], m_BackgroundColor);
+			m_pDeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+		}
 	}
+	else
+	{
+		if (m_pRenderTargetView[1] != nullptr)
+		{
+			m_pDeviceContext->OMSetRenderTargets(1, &m_pRenderTargetView[1], m_pDepthStencilView);
+
+			m_Viewport.TopLeftX = 0.0f;
+			m_Viewport.TopLeftY = 0.0f;
+			m_Viewport.Width = static_cast<float>(g_pApp->GetGameConfig().m_ScreenWidth[1]);
+			m_Viewport.Height = static_cast<float>(g_pApp->GetGameConfig().m_ScreenHeight[1]);
+			m_Viewport.MinDepth = 0.0f;
+			m_Viewport.MaxDepth = 1.0f;
+			m_pDeviceContext->RSSetViewports(1, &m_Viewport);
+	
+			ImGuiIO& io = ImGui::GetIO();
+			io.DeltaTime = gameTime.GetElapsedTime();
+			ImGui::NewFrame();
+
+			m_pDeviceContext->ClearRenderTargetView(m_pRenderTargetView[1], Color(0.66, 0.66, 0.66));
+			m_pDeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+		}
+	}
+
 	return true;
 }
 
-bool D3D11Renderer::VPostRender()
+bool D3D11Renderer::VPostRender(int index)
 {
-	if (m_pSwapChain == nullptr)
-		return false;
+	if (index == 0)
+	{
+		if (m_pSwapChain[0] != nullptr)
+		{
+			ImGui::Render();
+			RenderDrawLists();
+			m_pSwapChain[0]->Present(g_pApp->GetGameConfig().m_IsVSync ? 1 : 0, 0);
+			m_pDeviceContext->OMSetRenderTargets(0, nullptr, nullptr);
+		}
+	}
+	else
+	{
+		if (m_pSwapChain[1] != nullptr)
+		{
+			ImGui::Render();
+			RenderDrawLists();
+			m_pSwapChain[1]->Present(1, 0);
+			m_pDeviceContext->OMSetRenderTargets(0, nullptr, nullptr);
+		}
+	}
 
-	ImGui::Render();
-	RenderDrawLists();
-	m_pSwapChain->Present(g_pApp->GetGameConfig().m_IsVSync ? 1 : 0, 0);
 	return true;
 }
 
@@ -217,26 +304,33 @@ void D3D11Renderer::InitD3D11Device()
 void D3D11Renderer::CreateBuffers()
 {
 	HRESULT hr;
-	ID3D11Texture2D* backBuffer;
-	if (FAILED(hr = m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBuffer))))
+	for (int i = 0; i < 2; i++)
 	{
-		DEBUG_ERROR("IDXGISwapChain::GetBuffer() failed.");
+		if (m_pSwapChain[i] != nullptr)
+		{
+			ID3D11Texture2D* backBuffer;
+			if (FAILED(hr = m_pSwapChain[i]->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBuffer))))
+			{
+				DEBUG_ERROR("IDXGISwapChain::GetBuffer() failed.");
+			}
+
+			D3D11_TEXTURE2D_DESC backBufferDesc;
+			backBuffer->GetDesc(&backBufferDesc);
+
+			if (FAILED(hr = m_pDevice->CreateRenderTargetView(backBuffer, nullptr, &m_pRenderTargetView[i])))
+			{
+				SAFE_RELEASE(backBuffer);
+				DEBUG_ERROR("IDXGIDevice::CreateRenderTargetView() failed.");
+			}
+
+			SAFE_RELEASE(backBuffer);
+		}
 	}
-
-	backBuffer->GetDesc(&m_BackBufferDesc);
-
-	if (FAILED(hr = m_pDevice->CreateRenderTargetView(backBuffer, nullptr, &m_pRenderTargetView)))
-	{
-		SAFE_RELEASE(backBuffer);
-		DEBUG_ERROR("IDXGIDevice::CreateRenderTargetView() failed.");
-	}
-
-	SAFE_RELEASE(backBuffer);
 
 	D3D11_TEXTURE2D_DESC depthStencilDesc;
 	ZeroMemory(&depthStencilDesc, sizeof(depthStencilDesc));
-	depthStencilDesc.Width = g_pApp->GetGameConfig().m_ScreenWidth;
-	depthStencilDesc.Height = g_pApp->GetGameConfig().m_ScreenHeight;
+	depthStencilDesc.Width = g_pApp->GetGameConfig().m_ScreenWidth[0];
+	depthStencilDesc.Height = g_pApp->GetGameConfig().m_ScreenHeight[0];
 	depthStencilDesc.MipLevels = 1;
 	depthStencilDesc.ArraySize = 1;
 	depthStencilDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
@@ -245,26 +339,26 @@ void D3D11Renderer::CreateBuffers()
 	depthStencilDesc.SampleDesc.Count = g_pApp->GetGameConfig().m_AntiAliasingSample;
 	depthStencilDesc.SampleDesc.Quality = 0;
 
-	if (FAILED(hr = m_pDevice->CreateTexture2D(&depthStencilDesc, nullptr, &m_pDepthStencilBuffer)))
+	ID3D11Texture2D* pDepthStencilBuffer;
+	if (FAILED(hr = m_pDevice->CreateTexture2D(&depthStencilDesc, nullptr, &pDepthStencilBuffer)))
 	{
 		DEBUG_ERROR("IDXGIDevice::CreateTexture2D() failed.");
 	}
 
-	if (FAILED(hr = m_pDevice->CreateDepthStencilView(m_pDepthStencilBuffer, nullptr, &m_pDepthStencilView)))
+	if (FAILED(hr = m_pDevice->CreateDepthStencilView(pDepthStencilBuffer, nullptr, &m_pDepthStencilView)))
 	{
 		DEBUG_ERROR("IDXGIDevice::CreateDepthStencilView() failed.");
 	}
+	SAFE_RELEASE(pDepthStencilBuffer);
 
-	m_pDeviceContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
-
-	m_Viewport.TopLeftX = 0.0f;
-	m_Viewport.TopLeftY = 0.0f;
-	m_Viewport.Width = static_cast<float>(g_pApp->GetGameConfig().m_ScreenWidth);
-	m_Viewport.Height = static_cast<float>(g_pApp->GetGameConfig().m_ScreenHeight);
-	m_Viewport.MinDepth = 0.0f;
-	m_Viewport.MaxDepth = 1.0f;
-
-	m_pDeviceContext->RSSetViewports(1, &m_Viewport);
+// 	m_Viewport.TopLeftX = 0.0f;
+// 	m_Viewport.TopLeftY = 0.0f;
+// 	m_Viewport.Width = static_cast<float>(g_pApp->GetGameConfig().m_ScreenWidth[0]);
+// 	m_Viewport.Height = static_cast<float>(g_pApp->GetGameConfig().m_ScreenHeight[0]);
+// 	m_Viewport.MinDepth = 0.0f;
+// 	m_Viewport.MaxDepth = 1.0f;
+// 
+// 	m_pDeviceContext->RSSetViewports(1, &m_Viewport);
 }
 
 void D3D11Renderer::DeleteBuffers()
@@ -273,9 +367,9 @@ void D3D11Renderer::DeleteBuffers()
 	{
 		m_pDeviceContext->OMSetRenderTargets(0, nullptr, nullptr);
 	}
-	SAFE_RELEASE(m_pRenderTargetView);
+	SAFE_RELEASE(m_pRenderTargetView[0]);
+	SAFE_RELEASE(m_pRenderTargetView[1]);
 	SAFE_RELEASE(m_pDepthStencilView);
-	SAFE_RELEASE(m_pDepthStencilBuffer);
 }
 
 bool D3D11Renderer::CreateImGuiBuffers()
@@ -457,7 +551,7 @@ bool D3D11Renderer::CreateImGuiBuffers()
 		m_pDevice->CreateSamplerState(&desc, &g_pFontSampler);
 	}
 
-	io.DisplaySize = ImVec2((float)g_pApp->GetGameConfig().m_ScreenWidth, (float)g_pApp->GetGameConfig().m_ScreenHeight);
+	io.DisplaySize = ImVec2((float)g_pApp->GetGameConfig().m_ScreenWidth[0], (float)g_pApp->GetGameConfig().m_ScreenHeight[0]);
 	return true;
 }
 

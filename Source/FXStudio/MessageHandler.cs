@@ -31,30 +31,32 @@ namespace FXStudio
         const int WM_CLOSE = 0x0010;
 
         FXStudioForm m_formMain;
-        Panel m_renderPanel;
+        Panel m_RenderPanel;
+        Panel m_MaterialPanel;
         bool m_fakeFocus;
         System.Drawing.Point m_mouseDownPosition;
 
         public MessageHandler(FXStudioForm formMain, Panel renderPanel)
         {
             m_formMain = formMain;
-            m_renderPanel = renderPanel;
+            m_RenderPanel = renderPanel;
             m_fakeFocus = false;
             m_mouseDownPosition = new System.Drawing.Point(0, 0);
         }
 
-        public void ResetRenderPanel(Panel renderPanel)
+        public void ResetRenderPanel(Panel renderPanel, Panel materialPanel)
         {
-            m_renderPanel = renderPanel;
+            m_RenderPanel = renderPanel;
+            m_MaterialPanel = materialPanel;
         }
 
         void CheckFakeFocus()
         {
             System.Drawing.Point position = Cursor.Position;
-            System.Drawing.Point relativeToForm = m_renderPanel.PointToClient(position);
+            System.Drawing.Point relativeToForm = m_RenderPanel.PointToClient(position);
             m_fakeFocus = (relativeToForm.X >= 0 && relativeToForm.Y >= 0 &&
-                relativeToForm.X < m_renderPanel.Width && relativeToForm.Y < m_renderPanel.Width &&
-                m_renderPanel.Parent.Focused);
+                relativeToForm.X < m_RenderPanel.Width && relativeToForm.Y < m_RenderPanel.Width &&
+                m_RenderPanel.Parent.Focused);
             if (m_fakeFocus)
             {
                 m_mouseDownPosition = position;
@@ -63,17 +65,17 @@ namespace FXStudio
 
         public bool PreFilterMessage(ref Message m)
         {
-            if (m_renderPanel != null && m_renderPanel.IsHandleCreated)
+            if (m_RenderPanel != null && m_RenderPanel.IsHandleCreated)
             {
                 if (m.Msg == WM_LBUTTONDOWN || m.Msg == WM_RBUTTONDOWN || m.Msg == WM_MBUTTONDOWN)
                     CheckFakeFocus();
 
                 if (m.Msg == WM_MOUSEWHEEL && m_fakeFocus)
                 {
-                    RenderMethods.WndProc(m_renderPanel.Handle, m.Msg, m.WParam, m.LParam);
+                    RenderMethods.WndProc(m_RenderPanel.Handle, m.Msg, m.WParam, m.LParam);
                     return true;
                 }
-                if (m.HWnd == m_renderPanel.Handle || (m_fakeFocus && (m.Msg == WM_KEYDOWN || m.Msg == WM_KEYUP)))
+                if (m.HWnd == m_RenderPanel.Handle || (m_fakeFocus && (m.Msg == WM_KEYDOWN || m.Msg == WM_KEYUP)))
                 {
                     switch (m.Msg)
                     {
@@ -103,11 +105,11 @@ namespace FXStudio
                                         Math.Pow((position.Y - m_mouseDownPosition.Y), 2)), 1);
                                     if (distance < 3)
                                     {
-                                        System.Drawing.Point relativeToForm = m_renderPanel.PointToClient(position);
+                                        System.Drawing.Point relativeToForm = m_RenderPanel.PointToClient(position);
                                         m_formMain.PickActor(relativeToForm);
                                     }
                                 }
-                                RenderMethods.WndProc(m_renderPanel.Handle, m.Msg, m.WParam, m.LParam);
+                                RenderMethods.WndProc(m_RenderPanel.Handle, m.Msg, m.WParam, m.LParam);
 
                                 return true;
                             }
@@ -124,7 +126,7 @@ namespace FXStudio
                 try
                 {
                     // Render the scene if we are idle
-                    if (m_renderPanel.Handle != null && m_renderPanel.Visible)
+                    if (m_RenderPanel.Handle != null && m_RenderPanel.Visible)
                         RenderMethods.RenderFrame();
                 }
                 catch (Exception ex)

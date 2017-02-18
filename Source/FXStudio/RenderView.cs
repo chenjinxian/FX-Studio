@@ -38,7 +38,7 @@ namespace FXStudio
         {
             Control control = (Control)sender;
             if (control.Width != 0 && control.Height != 0)
-                RenderMethods.ResizeWnd(control.Width, control.Height);
+                RenderMethods.ResizeWnd(control.Width, control.Height, 0);
         }
 
         private void toolStripButtonTransform_Click(object sender, EventArgs e)

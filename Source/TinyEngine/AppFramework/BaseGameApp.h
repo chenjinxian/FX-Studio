@@ -16,7 +16,7 @@ public:
 	virtual ~BaseGameApp();
 
 	bool InitEnvironment();
-	bool SetupWindow(HINSTANCE hInstance, HWND hWnd);
+	bool SetupWindow(HINSTANCE hInstance, HWND hWndMain, HWND hWndMaterial);
 	bool InitRenderer();
 	void RenderLoop();
 
@@ -31,7 +31,7 @@ public:
 	virtual bool VLoadGame(void);
 	bool IsRestoring() { return m_IsRestoring; }
 	void SetQuitting(bool isExiting, bool isRestoring) { m_IsExiting = isExiting; m_IsRestoring = isRestoring; }
-	void OnResize(int screenWidth, int screenHeight);
+	void OnResize(int screenWidth, int screenHeight, int wndIndex = 0);
 	void OnDispatchMsg(AppMsg msg);
 	void OnStartRender() { m_GameTime.Reset(); }
 	void OnRenderFrame();
@@ -74,7 +74,8 @@ private:
 	static const int MEGABYTE;
 
 	HINSTANCE m_hInstance;
-	HWND m_hWindow;
+	HWND m_hMainWnd;
+	HWND m_hMaterialWnd;
 
 	GameTime m_GameTime;
 	EventManager* m_pEventManager;

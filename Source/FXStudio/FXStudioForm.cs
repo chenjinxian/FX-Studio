@@ -36,6 +36,7 @@ namespace FXStudio
         private DllMoveDelegate m_DllMoveDelegate;
 
         private DeserializeDockContent m_dockContent;
+        private MaterialsView m_MaterialView;
         private AssetsView m_AssetsView;
         private ProjectView m_ProjectView;
         private EditorView m_EditorView;
@@ -216,6 +217,7 @@ namespace FXStudio
 
         private void CreateStandardViews()
         {
+            m_MaterialView = new MaterialsView();
             m_AssetsView = new AssetsView();
             m_ProjectView = new ProjectView();
             m_PropertiesView = new PropertiesView();
@@ -227,6 +229,7 @@ namespace FXStudio
 
         private void DestoryStandardViews()
         {
+            m_MaterialView.DockPanel = null;
             m_AssetsView.DockPanel = null;
             m_ProjectView.DockPanel = null;
             m_RenderView.DockPanel = null;
@@ -246,6 +249,10 @@ namespace FXStudio
 
         private IDockContent GetContentFromString(string viewString)
         {
+            if (viewString == typeof(MaterialsView).ToString())
+            {
+                return m_MaterialView;
+            }
             if (viewString == typeof(AssetsView).ToString())
             {
                 return m_AssetsView;
@@ -295,6 +302,7 @@ namespace FXStudio
             DestoryStandardViews();
             CreateStandardViews();
 
+            m_MaterialView.Show(panelAllView, DockState.DockLeft);
             m_AssetsView.Show(panelAllView, DockState.DockLeft);
             m_ProjectView.Show(panelAllView, DockState.DockLeft);
             m_PropertiesView.Show(panelAllView, DockState.DockRight);
@@ -323,16 +331,20 @@ namespace FXStudio
             panelAllView.DockRightPortion = panelAllView.DockLeftPortion;
 
             IntPtr hInstance = Marshal.GetHINSTANCE(this.GetType().Module);
-            var panel = m_RenderView.GetRenderPanel();
-            m_messageHandler.ResetRenderPanel(panel);
+            var panelRender = m_RenderView.GetRenderPanel();
+            var panelMaterial = m_MaterialView.GetRenderPanel();
+            m_messageHandler.ResetRenderPanel(panelRender, panelMaterial);
 
             try
             {
-                if (!RenderMethods.CreateInstance(hInstance, IntPtr.Zero, panel.Handle, 1, panel.Width, panel.Height))
+                if (!RenderMethods.CreateInstance(hInstance, IntPtr.Zero, panelRender.Handle, panelMaterial.Handle, 1,
+                    panelRender.Width, panelRender.Height, panelMaterial.Width, panelMaterial.Height))
                     this.Close();
 
-                if (panel.Width != 0 && panel.Height != 0)
-                    RenderMethods.ResizeWnd(panel.Width, panel.Height);
+                if (panelRender.Width != 0 && panelRender.Height != 0)
+                    RenderMethods.ResizeWnd(panelRender.Width, panelRender.Height, 0);
+                if (panelMaterial.Width != 0 && panelMaterial.Height != 0)
+                    RenderMethods.ResizeWnd(panelMaterial.Width, panelMaterial.Height, 1);
             }
             catch (Exception ex)
             {

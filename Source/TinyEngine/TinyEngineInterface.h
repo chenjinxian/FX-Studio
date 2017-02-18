@@ -201,11 +201,11 @@ public:
 		Format_uint16 = 57
 	};
 
-	virtual bool VInitRenderer(HWND hWnd) = 0;
+	virtual bool VInitRenderer(HWND hMainWnd, HWND hMaterialWnd = nullptr) = 0;
 	virtual void VDeleteRenderer() = 0;
 	virtual void VResizeSwapChain() = 0;
-	virtual bool VPreRender(const GameTime& gameTime) = 0;
-	virtual bool VPostRender() = 0;
+	virtual bool VPreRender(const GameTime& gameTime, int index = 0) = 0;
+	virtual bool VPostRender(int index = 0) = 0;
 	virtual void VSetBackgroundColor(const Color& color) = 0;
 
 	virtual shared_ptr<IRenderState> VPrepareAlphaPass() = 0;

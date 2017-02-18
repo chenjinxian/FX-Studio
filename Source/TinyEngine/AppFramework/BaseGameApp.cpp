@@ -16,7 +16,8 @@ BaseGameApp::BaseGameApp()
 	m_pRenderer(nullptr),
 	m_pGameLogic(nullptr),
 	m_hInstance(nullptr),
-	m_hWindow(nullptr),
+	m_hMainWnd(nullptr),
+	m_hMaterialWnd(nullptr),
 	m_pEventManager(nullptr),
 	m_HasModalDialog(false),
 	m_IsExiting(false),
@@ -78,11 +79,12 @@ bool BaseGameApp::InitEnvironment()
 	return true;
 }
 
-bool BaseGameApp::SetupWindow(HINSTANCE hInstance, HWND hWnd)
+bool BaseGameApp::SetupWindow(HINSTANCE hInstance, HWND hWndMain, HWND hWndMaterial)
 {
-	if (hWnd)
+	if (hWndMain)
 	{
-		m_hWindow = hWnd;
+		m_hMainWnd = hWndMain;
+		m_hMaterialWnd = hWndMaterial;
 		return true;
 	}
 
@@ -122,7 +124,7 @@ bool BaseGameApp::SetupWindow(HINSTANCE hInstance, HWND hWnd)
 		dmScreenSettings.dmBitsPerPel = 32;
 		dmScreenSettings.dmFields = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
 
-		if ((m_Config.m_ScreenWidth != screenWidth) && (m_Config.m_ScreenHeight != screenHeight))
+		if ((m_Config.m_ScreenWidth[0] != screenWidth) && (m_Config.m_ScreenHeight[0] != screenHeight))
 		{
 			if (ChangeDisplaySettings(&dmScreenSettings, CDS_FULLSCREEN) != DISP_CHANGE_SUCCESSFUL)
 			{
@@ -148,8 +150,8 @@ bool BaseGameApp::SetupWindow(HINSTANCE hInstance, HWND hWnd)
 		dwExStyle = WS_EX_APPWINDOW;
 		dwStyle = WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN;
 
-		m_Config.m_ScreenWidth = screenWidth;
-		m_Config.m_ScreenHeight = screenHeight;
+		m_Config.m_ScreenWidth[0] = screenWidth;
+		m_Config.m_ScreenHeight[0] = screenHeight;
 	}
 	else
 	{
@@ -160,16 +162,16 @@ bool BaseGameApp::SetupWindow(HINSTANCE hInstance, HWND hWnd)
 	RECT windowRect;
 	windowRect.left = 0L;
 	windowRect.top = 0L;
-	windowRect.right = (long)m_Config.m_ScreenWidth;
-	windowRect.bottom = (long)m_Config.m_ScreenHeight;
+	windowRect.right = (long)m_Config.m_ScreenWidth[0];
+	windowRect.bottom = (long)m_Config.m_ScreenHeight[0];
 
 	AdjustWindowRectEx(&windowRect, dwStyle, FALSE, dwExStyle);
 
-	m_hWindow = CreateWindowEx(dwExStyle, VGetWindowClass(), VGetWindowTitle(), dwStyle,
+	m_hMainWnd = CreateWindowEx(dwExStyle, VGetWindowClass(), VGetWindowTitle(), dwStyle,
 		0, 0, windowRect.right - windowRect.left, windowRect.bottom - windowRect.top,
 		NULL, NULL, m_hInstance, NULL);
 
-	if (!m_hWindow)
+	if (!m_hMainWnd)
 	{
 		return false;
 	}
@@ -178,12 +180,12 @@ bool BaseGameApp::SetupWindow(HINSTANCE hInstance, HWND hWnd)
 	{
 		uint32_t x = (screenWidth - windowRect.right) / 2;
 		uint32_t y = (screenHeight - windowRect.bottom) / 2;
-		SetWindowPos(m_hWindow, 0, x, y, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
+		SetWindowPos(m_hMainWnd, 0, x, y, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
 	}
 
-	ShowWindow(m_hWindow, SW_SHOW);
-	UpdateWindow(m_hWindow);
-	SetForegroundWindow(m_hWindow);
+	ShowWindow(m_hMainWnd, SW_SHOW);
+	UpdateWindow(m_hMainWnd);
+	SetForegroundWindow(m_hMainWnd);
 
 	return true;
 }
@@ -209,7 +211,7 @@ bool BaseGameApp::InitRenderer()
 
 // 	m_IsRunning = true;
 
-	if (m_pRenderer != nullptr && m_pRenderer->VInitRenderer(m_hWindow))
+	if (m_pRenderer != nullptr && m_pRenderer->VInitRenderer(m_hMainWnd, m_hMaterialWnd))
 	{
 		m_pRenderer->VSetBackgroundColor(Color(0.1f, 0.1f, 0.1f, 1.0f));
 
@@ -265,7 +267,7 @@ void BaseGameApp::OnUpdate(const GameTime& gameTime)
 
 	if (g_pApp->m_IsExiting)
 	{
-		PostMessage(m_hWindow, WM_CLOSE, 0, 0);
+		PostMessage(m_hMainWnd, WM_CLOSE, 0, 0);
 	}
 
 	if (g_pApp->m_pGameLogic != nullptr)
@@ -454,7 +456,7 @@ void BaseGameApp::OnClose()
 		m_pRenderer->VDeleteRenderer();
 		m_pRenderer.reset();
 	}
-	DestroyWindow(m_hWindow);
+	DestroyWindow(m_hMainWnd);
 	m_IsExiting = false;
 }
 
@@ -492,7 +494,7 @@ bool BaseGameApp::InitResource()
 	return true;
 }
 
-void BaseGameApp::OnResize(int screenWidth, int screenHeight)
+void BaseGameApp::OnResize(int screenWidth, int screenHeight, int wndIndex)
 {
 	if (g_pApp->m_pGameLogic != nullptr && g_pApp->m_pRenderer != nullptr)
 	{
@@ -501,8 +503,19 @@ void BaseGameApp::OnResize(int screenWidth, int screenHeight)
 			view->VOnDeleteGameViews(true);
 		}
 
-		g_pApp->m_Config.m_ScreenWidth = screenWidth;
-		g_pApp->m_Config.m_ScreenHeight = screenHeight;
+		switch (wndIndex)
+		{
+		case 0:
+			g_pApp->m_Config.m_ScreenWidth[0] = screenWidth;
+			g_pApp->m_Config.m_ScreenHeight[0] = screenHeight;
+			break;
+		case 1:
+			g_pApp->m_Config.m_ScreenWidth[1] = screenWidth;
+			g_pApp->m_Config.m_ScreenHeight[1] = screenHeight;
+			break;
+		default:
+			break;
+		}
 		g_pApp->m_pRenderer->VResizeSwapChain();
 
 		for (auto view : g_pApp->m_pGameLogic->m_GameViews)

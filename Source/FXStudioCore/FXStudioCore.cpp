@@ -7,15 +7,18 @@
 #include "ModelImporter.h"
 
 FXSTUDIOCORE_API bool FX_APIENTRY CreateInstance(
-	int *instancePtrAddress,
-	int *hPrevInstancePtrAddress,
-	int *hWndPtrAddress,
+	int* instancePtrAddress,
+	int* hPrevInstancePtrAddress,
+	int* hWndMain,
+	int* hWndMaterial,
 	int nCmdShow,
-	int screenWidth, int screenHeight)
+	int screenWidth, int screenHeight,
+	int materialWidth, int materialHeight)
 {
 	HINSTANCE hInstance = (HINSTANCE)instancePtrAddress;
 	HINSTANCE hPrevInstance = (HINSTANCE)hPrevInstancePtrAddress;
-	HWND hWnd = (HWND)hWndPtrAddress;
+	HWND hMainWnd = (HWND)hWndMain;
+	HWND hMaterialWnd = (HWND)hWndMaterial;
 
 	int tmpDbgFlag = _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG);
 	tmpDbgFlag |= _CRTDBG_LEAK_CHECK_DF;
@@ -32,9 +35,11 @@ FXSTUDIOCORE_API bool FX_APIENTRY CreateInstance(
 	if (!g_pApp->InitEnvironment())
 		return false;
 
-	g_pApp->GetGameConfig().m_ScreenWidth = screenWidth;
-	g_pApp->GetGameConfig().m_ScreenWidth = screenHeight;
-	g_pApp->SetupWindow(hInstance, hWnd);
+	g_pApp->GetGameConfig().m_ScreenWidth[0] = screenWidth;
+	g_pApp->GetGameConfig().m_ScreenHeight[0] = screenHeight;
+	g_pApp->GetGameConfig().m_ScreenWidth[1] = materialWidth;
+	g_pApp->GetGameConfig().m_ScreenHeight[1] = materialHeight;
+	g_pApp->SetupWindow(hInstance, hMainWnd, hMaterialWnd);
 	if (!g_pApp->InitRenderer())
 		return false;
 	g_pApp->OnStartRender();
@@ -49,9 +54,9 @@ FXSTUDIOCORE_API int FX_APIENTRY DestroyInstance()
 	return 0;
 }
 
-FXSTUDIOCORE_API void FX_APIENTRY ResizeWnd(int screenWidth, int screenHeight)
+FXSTUDIOCORE_API void FX_APIENTRY ResizeWnd(int screenWidth, int screenHeight, int wndIndex)
 {
-	g_pApp->OnResize(screenWidth, screenHeight);
+	g_pApp->OnResize(screenWidth, screenHeight, wndIndex);
 }
 
 FXSTUDIOCORE_API void FX_APIENTRY WndProc(int *hWndPtrAddress, int uMsg, int* wParam, int* lParam)

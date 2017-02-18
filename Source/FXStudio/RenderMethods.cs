@@ -19,15 +19,17 @@ namespace FXStudio
         public unsafe static extern bool CreateInstance(
             IntPtr instancePtrAddress,
             IntPtr hPrevInstancePtrAddress,
-            IntPtr hWndPtrAddress,
+            IntPtr hWndRender,
+            IntPtr hWndMaterial,
             int nCmdShow,
-            int screenWidth, int screenHeight);
+            int screenWidth, int screenHeight,
+            int materialWidth, int materialHeight);
 
         [DllImport(editorDllName, CallingConvention = CallingConvention.StdCall)]
         public static extern int DestroyInstance();
 
         [DllImport(editorDllName, CallingConvention = CallingConvention.StdCall)]
-        public static extern void ResizeWnd(int wParam, int lParam);
+        public static extern void ResizeWnd(int wParam, int lParam, int wndIndex);
 
         [DllImport(editorDllName, CallingConvention = CallingConvention.StdCall)]
         public unsafe static extern void WndProc(IntPtr hWndPtrAddress, int msg, IntPtr wParam, IntPtr lParam);

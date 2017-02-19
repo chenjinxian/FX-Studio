@@ -22,6 +22,7 @@ namespace FXStudio
         private OpenEffectFile m_OpenEffect = null;
         private string m_AssetPath;
         private XmlDocument m_XmlDoc;
+        private MaterialsView m_MaterialsHandle;
 
         public AssetsView()
         {
@@ -30,7 +31,10 @@ namespace FXStudio
         }
 
         public void UpdateAssets(string assetFile,
-            UpdatePropertiesDelegate updateProps, UpdateOutputDelegate updateOutput, OpenEffectFile openEffect)
+            UpdatePropertiesDelegate updateProps,
+            UpdateOutputDelegate updateOutput,
+            OpenEffectFile openEffect,
+            MaterialsView materialsHandle)
         {
             if (!File.Exists(assetFile))
             {
@@ -42,6 +46,7 @@ namespace FXStudio
             m_NodeDelegate = updateProps;
             m_OuputDeleagate = updateOutput;
             m_OpenEffect = openEffect;
+            m_MaterialsHandle = materialsHandle;
 
             m_XmlDoc.Load(assetFile);
             XmlElement rootXml = m_XmlDoc.DocumentElement;
@@ -269,6 +274,8 @@ namespace FXStudio
                 {
                     apiNode.Nodes.Add(new TreeNode(techniqueChild.Attributes["name"].Value) { Tag = techniqueChild });
                 }
+
+                m_MaterialsHandle?.AddMaterial(materialFile);
             }
         }
 

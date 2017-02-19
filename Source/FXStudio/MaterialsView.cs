@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,6 +21,11 @@ namespace FXStudio
         public Panel GetRenderPanel()
         {
             return this.panelMaterial;
+        }
+
+        public void AddMaterial(string materialFile)
+        {
+            RenderMethods.AddMaterial(@"Materials\" + Path.GetFileName(materialFile));
         }
 
         private void panelMaterial_Resize(object sender, EventArgs e)

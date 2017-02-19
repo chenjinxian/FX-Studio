@@ -58,15 +58,16 @@
             this.splitContainer1.Panel2.Controls.Add(this.toolStripTexture);
             this.splitContainer1.Panel2MinSize = 300;
             this.splitContainer1.Size = new System.Drawing.Size(366, 702);
-            this.splitContainer1.SplitterDistance = 271;
+            this.splitContainer1.SplitterDistance = 398;
             this.splitContainer1.TabIndex = 0;
             // 
             // panelMaterial
             // 
+            this.panelMaterial.AutoScroll = true;
             this.panelMaterial.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelMaterial.Location = new System.Drawing.Point(0, 25);
             this.panelMaterial.Name = "panelMaterial";
-            this.panelMaterial.Size = new System.Drawing.Size(366, 246);
+            this.panelMaterial.Size = new System.Drawing.Size(366, 373);
             this.panelMaterial.TabIndex = 1;
             this.panelMaterial.Resize += new System.EventHandler(this.panelMaterial_Resize);
             // 
@@ -83,7 +84,7 @@
             this.panelTexture.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelTexture.Location = new System.Drawing.Point(0, 25);
             this.panelTexture.Name = "panelTexture";
-            this.panelTexture.Size = new System.Drawing.Size(366, 402);
+            this.panelTexture.Size = new System.Drawing.Size(366, 275);
             this.panelTexture.TabIndex = 1;
             // 
             // toolStripTexture
@@ -102,7 +103,7 @@
             this.Controls.Add(this.splitContainer1);
             this.Name = "MaterialsView";
             this.TabText = "Materials";
-            this.Text = "Materials";
+            this.Text = "     ";
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel1.PerformLayout();
             this.splitContainer1.Panel2.ResumeLayout(false);

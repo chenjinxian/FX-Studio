@@ -11,6 +11,7 @@ public:
 	virtual bool VInitRenderer(HWND hWnd, HWND hMaterialWnd) override;
 	virtual void VDeleteRenderer() override;
 	virtual void VResizeSwapChain() override;
+	virtual void VSetViewport(const DirectX::SimpleMath::Rectangle& viewRect) override;
 	virtual bool VPreRender(const GameTime& gameTime, int index) override;
 	virtual bool VPostRender(int index) override;
 	virtual void VSetBackgroundColor(const Color& color) override;

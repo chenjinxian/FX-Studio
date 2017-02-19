@@ -171,6 +171,7 @@
     <ClInclude Include="FXStudioCore.h" />
     <ClInclude Include="FXStudioEvent.h" />
     <ClInclude Include="FXStudioView.h" />
+    <ClInclude Include="MaterialNode.h" />
     <ClInclude Include="ModelController.h" />
     <ClInclude Include="ModelImporter.h" />
     <ClInclude Include="stdafx.h" />
@@ -194,6 +195,7 @@
     <ClCompile Include="FXStudioApp.cpp" />
     <ClCompile Include="FXStudioCore.cpp" />
     <ClCompile Include="FXStudioView.cpp" />
+    <ClCompile Include="MaterialNode.cpp" />
     <ClCompile Include="ModelController.cpp" />
     <ClCompile Include="ModelImporter.cpp" />
     <ClCompile Include="stdafx.cpp">

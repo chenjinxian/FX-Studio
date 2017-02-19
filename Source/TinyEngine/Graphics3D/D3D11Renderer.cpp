@@ -173,6 +173,17 @@ void D3D11Renderer::VResizeSwapChain()
 	CreateImGuiBuffers();
 }
 
+void D3D11Renderer::VSetViewport(const DirectX::SimpleMath::Rectangle& viewRect)
+{
+	m_Viewport.TopLeftX = viewRect.x;
+	m_Viewport.TopLeftY = viewRect.y;
+	m_Viewport.Width = static_cast<float>(viewRect.width);
+	m_Viewport.Height = static_cast<float>(viewRect.height);
+	m_Viewport.MinDepth = 0.0f;
+	m_Viewport.MaxDepth = 1.0f;
+	m_pDeviceContext->RSSetViewports(1, &m_Viewport);
+}
+
 bool D3D11Renderer::VPreRender(const GameTime& gameTime, int index)
 {
 	if (nullptr == m_pDeviceContext)
@@ -184,6 +195,13 @@ bool D3D11Renderer::VPreRender(const GameTime& gameTime, int index)
 		{
 			m_pDeviceContext->OMSetRenderTargets(1, &m_pRenderTargetView[0], m_pDepthStencilView);
 
+			ImGuiIO& io = ImGui::GetIO();
+			io.DeltaTime = gameTime.GetElapsedTime();
+			ImGui::NewFrame();
+
+			m_pDeviceContext->ClearRenderTargetView(m_pRenderTargetView[0], m_BackgroundColor);
+			m_pDeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+	
 			m_Viewport.TopLeftX = 0.0f;
 			m_Viewport.TopLeftY = 0.0f;
 			m_Viewport.Width = static_cast<float>(g_pApp->GetGameConfig().m_ScreenWidth[0]);
@@ -191,13 +209,6 @@ bool D3D11Renderer::VPreRender(const GameTime& gameTime, int index)
 			m_Viewport.MinDepth = 0.0f;
 			m_Viewport.MaxDepth = 1.0f;
 			m_pDeviceContext->RSSetViewports(1, &m_Viewport);
-	
-			ImGuiIO& io = ImGui::GetIO();
-			io.DeltaTime = gameTime.GetElapsedTime();
-			ImGui::NewFrame();
-
-			m_pDeviceContext->ClearRenderTargetView(m_pRenderTargetView[0], m_BackgroundColor);
-			m_pDeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 		}
 	}
 	else
@@ -206,14 +217,6 @@ bool D3D11Renderer::VPreRender(const GameTime& gameTime, int index)
 		{
 			m_pDeviceContext->OMSetRenderTargets(1, &m_pRenderTargetView[1], m_pDepthStencilView);
 
-			m_Viewport.TopLeftX = 0.0f;
-			m_Viewport.TopLeftY = 0.0f;
-			m_Viewport.Width = static_cast<float>(g_pApp->GetGameConfig().m_ScreenWidth[1]);
-			m_Viewport.Height = static_cast<float>(g_pApp->GetGameConfig().m_ScreenHeight[1]);
-			m_Viewport.MinDepth = 0.0f;
-			m_Viewport.MaxDepth = 1.0f;
-			m_pDeviceContext->RSSetViewports(1, &m_Viewport);
-	
 			ImGuiIO& io = ImGui::GetIO();
 			io.DeltaTime = gameTime.GetElapsedTime();
 			ImGui::NewFrame();
@@ -235,7 +238,6 @@ bool D3D11Renderer::VPostRender(int index)
 			ImGui::Render();
 			RenderDrawLists();
 			m_pSwapChain[0]->Present(g_pApp->GetGameConfig().m_IsVSync ? 1 : 0, 0);
-			m_pDeviceContext->OMSetRenderTargets(0, nullptr, nullptr);
 		}
 	}
 	else
@@ -245,7 +247,6 @@ bool D3D11Renderer::VPostRender(int index)
 			ImGui::Render();
 			RenderDrawLists();
 			m_pSwapChain[1]->Present(1, 0);
-			m_pDeviceContext->OMSetRenderTargets(0, nullptr, nullptr);
 		}
 	}
 
@@ -784,7 +785,7 @@ bool D3D11Renderer::InitImGui(HWND hWnd)
 	io.KeyMap[ImGuiKey_Z] = 'Z';
 	io.RenderDrawListsFn = nullptr;
 	io.ImeWindowHandle = hWnd;
-	io.Fonts->AddFontFromFileTTF("Fonts/Cousine-Regular.ttf", 20.0f);
+	io.Fonts->AddFontFromFileTTF("Fonts/Cousine-Regular.ttf", 10.0f);
 
 	return true;
 }

@@ -2,6 +2,7 @@
 #include "FXStudioView.h"
 #include "FXStudioApp.h"
 #include "FXStudioEvent.h"
+#include "MaterialNode.h"
 #include "imgui.h"
 #include "imgui_internal.h"
 
@@ -107,6 +108,13 @@ void FXStudioView::SetCameraType(int type)
 	m_pModelController->SetCameraType((CameraType)type);
 }
 
+void FXStudioView::AddMaterial(const std::string& materialName)
+{
+	shared_ptr<MaterialNode> material(new MaterialNode(materialName));
+	material->OnInitSceneNode();
+	m_Materials.push_back(material);
+}
+
 void FXStudioView::VRenderText(const GameTime& gameTime)
 {
 	ImGui::SetNextWindowPos(ImVec2(0, 0));
@@ -196,17 +204,19 @@ void FXStudioView::VOnRender(const GameTime& gameTime)
 
 	if (g_pApp->GetRendererAPI()->VPreRender(gameTime, 1))
 	{
-		m_ScreenElements.sort(SortBy_SharedPtr_Content<IScreenElement>());
-
-		for (ScreenElementList::iterator i = m_ScreenElements.begin(); i != m_ScreenElements.end(); ++i)
+		int width = g_pApp->GetGameConfig().m_ScreenWidth[1];
+		int count = 0;
+		for (auto material : m_Materials)
 		{
-			if ((*i)->VIsVisible())
-			{
-				(*i)->VOnRender(gameTime);
-			}
-		}
+			int column = width / 100;
+			int row = count / column;
 
-		VRenderText(gameTime);
+			int x = (count % column) * 100;
+			int y = row * 100;
+			g_pApp->GetRendererAPI()->VSetViewport(DirectX::SimpleMath::Rectangle(x, y, 100, 100));
+			material->Render(gameTime);
+			count++;
+		}
 	}
 
 	g_pApp->GetRendererAPI()->VPostRender(1);

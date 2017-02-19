@@ -53,6 +53,7 @@ extern "C" {
 	FXSTUDIOCORE_API unsigned int FX_APIENTRY ModifyEffect(BSTR effectObjectPath, BSTR effectName);
 	FXSTUDIOCORE_API void FX_APIENTRY GetMaterialXml(BSTR effectObjectPath, char* effectXmlPtr, unsigned int size);
 	FXSTUDIOCORE_API void FX_APIENTRY ModifyMaterial(BSTR materialPath, bool withEffect);
+	FXSTUDIOCORE_API void FX_APIENTRY AddMaterial(BSTR materialName);
 
 	FXSTUDIOCORE_API void FX_APIENTRY SetMoveDelegate(MoveDelegate delegate);
 

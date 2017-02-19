@@ -283,6 +283,21 @@ FXSTUDIOCORE_API void FX_APIENTRY ModifyMaterial(BSTR materialPath, bool withEff
 	return g_pApp->ModifyMaterial(material, withEffect);
 }
 
+FXSTUDIOCORE_API void FX_APIENTRY AddMaterial(BSTR materialName)
+{
+	std::string material = Utility::WS2S(std::wstring(materialName, SysStringLen(materialName)));
+
+	FXStudioLogic* pEditorLogic = dynamic_cast<FXStudioLogic*>(g_pApp->GetGameLogic());
+	if (pEditorLogic != nullptr)
+	{
+		shared_ptr<FXStudioView> pView = pEditorLogic->GetHumanView();
+		if (pView != nullptr)
+		{
+			pView->AddMaterial(material);
+		}
+	}
+}
+
 FXSTUDIOCORE_API void FX_APIENTRY SetMoveDelegate(MoveDelegate delegate)
 {
 	FXStudioLogic* pEditorLogic = dynamic_cast<FXStudioLogic*>(g_pApp->GetGameLogic());

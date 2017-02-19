@@ -113,7 +113,8 @@ namespace FXStudio
                 {
                     panelAllView.ActiveDocumentPane.ActiveContent = m_EditorView;
                     m_EditorView.ShowEffectDoc(effectNode, m_ProjectLocation);
-                });
+                },
+                m_MaterialView);
 
             m_PropertiesView.ProjectLocation = m_ProjectLocation;
             m_PropertiesView.SetMoveActorDelegate(

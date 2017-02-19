@@ -86,6 +86,9 @@ namespace FXStudio
             [MarshalAs(UnmanagedType.BStr)] string materialPath, bool withEffect);
 
         [DllImport(editorDllName, CallingConvention = CallingConvention.StdCall)]
+        public static extern uint AddMaterial([MarshalAs(UnmanagedType.BStr)] string materialName);
+
+        [DllImport(editorDllName, CallingConvention = CallingConvention.StdCall)]
         public unsafe static extern void SetMoveDelegate(
             [MarshalAs(UnmanagedType.FunctionPtr)] DllMoveDelegate moveDelegate);
     }

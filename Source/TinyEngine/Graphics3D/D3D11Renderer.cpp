@@ -747,7 +747,7 @@ bool D3D11Renderer::InitImGui(HWND hWnd)
 	io.KeyMap[ImGuiKey_Z] = 'Z';
 	io.RenderDrawListsFn = nullptr;
 	io.ImeWindowHandle = hWnd;
-	io.Fonts->AddFontFromFileTTF("Fonts/Cousine-Regular.ttf", 10.0f);
+	io.Fonts->AddFontFromFileTTF("Fonts/Cousine-Regular.ttf", 16.0f);
 
 	return true;
 }

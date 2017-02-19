@@ -56,7 +56,7 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.toolStripTexture);
-            this.splitContainer1.Panel2MinSize = 300;
+            this.splitContainer1.Panel2MinSize = 100;
             this.splitContainer1.Size = new System.Drawing.Size(366, 702);
             this.splitContainer1.SplitterDistance = 398;
             this.splitContainer1.TabIndex = 0;

@@ -195,6 +195,7 @@
     <ClInclude Include="Graphics3D\CameraNode.h" />
     <ClInclude Include="Graphics3D\D3D11Renderer.h" />
     <ClInclude Include="Graphics3D\DebugGizmosNode.h" />
+    <ClInclude Include="Graphics3D\FullScreenRenderTarget.h" />
     <ClInclude Include="Graphics3D\LightNode.h" />
     <ClInclude Include="Graphics3D\Material.h" />
     <ClInclude Include="Graphics3D\Model.h" />
@@ -236,6 +237,7 @@
     <ClCompile Include="Graphics3D\CameraNode.cpp" />
     <ClCompile Include="Graphics3D\D3D11Renderer.cpp" />
     <ClCompile Include="Graphics3D\DebugGizmosNode.cpp" />
+    <ClCompile Include="Graphics3D\FullScreenRenderTarget.cpp" />
     <ClCompile Include="Graphics3D\LightNode.cpp" />
     <ClCompile Include="Graphics3D\Material.cpp" />
     <ClCompile Include="Graphics3D\Model.cpp" />

@@ -13,26 +13,41 @@ namespace FXStudio
 {
     public partial class MaterialsView : ViewWindow
     {
+        private string m_BmpTempDir = Path.GetTempPath() + @"\FX-Studio\";
         public MaterialsView()
         {
             InitializeComponent();
+            if (!Directory.Exists(m_BmpTempDir))
+                Directory.CreateDirectory(m_BmpTempDir);
         }
 
-        public Panel GetRenderPanel()
+        public void AddMaterial(string materialName, string materialFile)
         {
-            return this.panelMaterial;
-        }
+            string bmpPath = m_BmpTempDir + Path.GetFileNameWithoutExtension(materialFile) + ".bmp";
+            RenderMethods.AddMaterial(@"Materials\" + Path.GetFileName(materialFile), bmpPath);
 
-        public void AddMaterial(string materialFile)
-        {
-            RenderMethods.AddMaterial(@"Materials\" + Path.GetFileName(materialFile));
+            ListViewItem item = new ListViewItem();
+            item.Text = materialName;
+            listViewMaterials.Items.Add(item);
+
+            try
+            {
+                Image original = Image.FromFile(bmpPath);
+                if (original != null)
+                {
+                    imageListLarge.Images.Add(original);
+                    item.ImageIndex = imageListLarge.Images.Count - 1;
+                }
+            }
+            catch (OutOfMemoryException)
+            {
+
+            }
         }
 
         private void panelMaterial_Resize(object sender, EventArgs e)
         {
-            Control control = (Control)sender;
-            if (control.Width != 0 && control.Height != 0)
-                RenderMethods.ResizeWnd(control.Width, control.Height, 1);
+
         }
     }
 }

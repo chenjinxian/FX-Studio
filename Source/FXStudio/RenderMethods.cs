@@ -20,16 +20,14 @@ namespace FXStudio
             IntPtr instancePtrAddress,
             IntPtr hPrevInstancePtrAddress,
             IntPtr hWndRender,
-            IntPtr hWndMaterial,
             int nCmdShow,
-            int screenWidth, int screenHeight,
-            int materialWidth, int materialHeight);
+            int screenWidth, int screenHeight);
 
         [DllImport(editorDllName, CallingConvention = CallingConvention.StdCall)]
         public static extern int DestroyInstance();
 
         [DllImport(editorDllName, CallingConvention = CallingConvention.StdCall)]
-        public static extern void ResizeWnd(int wParam, int lParam, int wndIndex);
+        public static extern void ResizeWnd(int wParam, int lParam);
 
         [DllImport(editorDllName, CallingConvention = CallingConvention.StdCall)]
         public unsafe static extern void WndProc(IntPtr hWndPtrAddress, int msg, IntPtr wParam, IntPtr lParam);
@@ -86,7 +84,8 @@ namespace FXStudio
             [MarshalAs(UnmanagedType.BStr)] string materialPath, bool withEffect);
 
         [DllImport(editorDllName, CallingConvention = CallingConvention.StdCall)]
-        public static extern uint AddMaterial([MarshalAs(UnmanagedType.BStr)] string materialName);
+        public static extern uint AddMaterial(
+            [MarshalAs(UnmanagedType.BStr)] string materialName, [MarshalAs(UnmanagedType.BStr)] string bmpPath);
 
         [DllImport(editorDllName, CallingConvention = CallingConvention.StdCall)]
         public unsafe static extern void SetMoveDelegate(

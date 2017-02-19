@@ -10,15 +10,12 @@ FXSTUDIOCORE_API bool FX_APIENTRY CreateInstance(
 	int* instancePtrAddress,
 	int* hPrevInstancePtrAddress,
 	int* hWndMain,
-	int* hWndMaterial,
 	int nCmdShow,
-	int screenWidth, int screenHeight,
-	int materialWidth, int materialHeight)
+	int screenWidth, int screenHeight)
 {
 	HINSTANCE hInstance = (HINSTANCE)instancePtrAddress;
 	HINSTANCE hPrevInstance = (HINSTANCE)hPrevInstancePtrAddress;
 	HWND hMainWnd = (HWND)hWndMain;
-	HWND hMaterialWnd = (HWND)hWndMaterial;
 
 	int tmpDbgFlag = _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG);
 	tmpDbgFlag |= _CRTDBG_LEAK_CHECK_DF;
@@ -35,11 +32,9 @@ FXSTUDIOCORE_API bool FX_APIENTRY CreateInstance(
 	if (!g_pApp->InitEnvironment())
 		return false;
 
-	g_pApp->GetGameConfig().m_ScreenWidth[0] = screenWidth;
-	g_pApp->GetGameConfig().m_ScreenHeight[0] = screenHeight;
-	g_pApp->GetGameConfig().m_ScreenWidth[1] = materialWidth;
-	g_pApp->GetGameConfig().m_ScreenHeight[1] = materialHeight;
-	g_pApp->SetupWindow(hInstance, hMainWnd, hMaterialWnd);
+	g_pApp->GetGameConfig().m_ScreenWidth = screenWidth;
+	g_pApp->GetGameConfig().m_ScreenHeight = screenHeight;
+	g_pApp->SetupWindow(hInstance, hMainWnd);
 	if (!g_pApp->InitRenderer())
 		return false;
 	g_pApp->OnStartRender();
@@ -54,9 +49,9 @@ FXSTUDIOCORE_API int FX_APIENTRY DestroyInstance()
 	return 0;
 }
 
-FXSTUDIOCORE_API void FX_APIENTRY ResizeWnd(int screenWidth, int screenHeight, int wndIndex)
+FXSTUDIOCORE_API void FX_APIENTRY ResizeWnd(int screenWidth, int screenHeight)
 {
-	g_pApp->OnResize(screenWidth, screenHeight, wndIndex);
+	g_pApp->OnResize(screenWidth, screenHeight);
 }
 
 FXSTUDIOCORE_API void FX_APIENTRY WndProc(int *hWndPtrAddress, int uMsg, int* wParam, int* lParam)
@@ -283,9 +278,10 @@ FXSTUDIOCORE_API void FX_APIENTRY ModifyMaterial(BSTR materialPath, bool withEff
 	return g_pApp->ModifyMaterial(material, withEffect);
 }
 
-FXSTUDIOCORE_API void FX_APIENTRY AddMaterial(BSTR materialName)
+FXSTUDIOCORE_API void FX_APIENTRY AddMaterial(BSTR materialName, BSTR bmpPath)
 {
 	std::string material = Utility::WS2S(std::wstring(materialName, SysStringLen(materialName)));
+	std::string bmp = Utility::WS2S(std::wstring(bmpPath, SysStringLen(bmpPath)));
 
 	FXStudioLogic* pEditorLogic = dynamic_cast<FXStudioLogic*>(g_pApp->GetGameLogic());
 	if (pEditorLogic != nullptr)
@@ -293,7 +289,7 @@ FXSTUDIOCORE_API void FX_APIENTRY AddMaterial(BSTR materialName)
 		shared_ptr<FXStudioView> pView = pEditorLogic->GetHumanView();
 		if (pView != nullptr)
 		{
-			pView->AddMaterial(material);
+			pView->AddMaterial(material, bmp);
 		}
 	}
 }

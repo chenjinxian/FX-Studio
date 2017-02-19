@@ -8,12 +8,13 @@ public:
 	D3D11Renderer();
 	virtual ~D3D11Renderer();
 
-	virtual bool VInitRenderer(HWND hWnd, HWND hMaterialWnd) override;
+	virtual bool VInitRenderer(HWND hWnd) override;
 	virtual void VDeleteRenderer() override;
 	virtual void VResizeSwapChain() override;
 	virtual void VSetViewport(const DirectX::SimpleMath::Rectangle& viewRect) override;
 	virtual bool VPreRender(const GameTime& gameTime, int index) override;
 	virtual bool VPostRender(int index) override;
+	virtual bool VSaveToFile(const std::wstring& fileName) override;
 	virtual void VSetBackgroundColor(const Color& color) override;
 
 	virtual shared_ptr<IRenderState> VPrepareAlphaPass() override;
@@ -44,10 +45,11 @@ private:
 	D3D_FEATURE_LEVEL m_FeatureLevel;
 	ID3D11Device* m_pDevice;
 	ID3D11DeviceContext* m_pDeviceContext;
-	IDXGISwapChain* m_pSwapChain[2];
+	IDXGISwapChain* m_pSwapChain;
 
-	ID3D11RenderTargetView* m_pRenderTargetView[2];
+	ID3D11RenderTargetView* m_pRenderTargetView;
 	ID3D11DepthStencilView* m_pDepthStencilView;
+	class FullScreenRenderTarget* m_pMaterialTargetView;
 	D3D11_VIEWPORT m_Viewport;
 
 	std::string m_DeviceName;

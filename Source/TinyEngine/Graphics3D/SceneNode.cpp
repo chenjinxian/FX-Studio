@@ -724,8 +724,8 @@ HRESULT GeometryNode::VRender(Scene* pScene, const GameTime& gameTime)
 void GeometryNode::VPick(Scene* pScene, int cursorX, int cursorY)
 {
 	const Matrix& projectMat = pScene->GetCamera()->GetProjectMatrix();
-	float viewX = (2.0f * cursorX / g_pApp->GetGameConfig().m_ScreenWidth[0] - 1.0f) / projectMat.m[0][0];
-	float viewY = (1.0f - 2.0f * cursorY / g_pApp->GetGameConfig().m_ScreenHeight[0]) / projectMat.m[1][1];
+	float viewX = (2.0f * cursorX / g_pApp->GetGameConfig().m_ScreenWidth - 1.0f) / projectMat.m[0][0];
+	float viewY = (1.0f - 2.0f * cursorY / g_pApp->GetGameConfig().m_ScreenHeight) / projectMat.m[1][1];
 
 	Matrix toLocal = (m_Properties.GetWorldMatrix() * pScene->GetCamera()->GetViewMatrix()).Invert();
 	Vector3 rayPos = toLocal.Translation();
@@ -1162,8 +1162,8 @@ HRESULT ModelNode::VRender(Scene* pScene, const GameTime& gameTime)
 void ModelNode::VPick(Scene* pScene, int cursorX, int cursorY)
 {
 	const Matrix& projectMat = pScene->GetCamera()->GetProjectMatrix();
-	float viewX = (2.0f * cursorX / g_pApp->GetGameConfig().m_ScreenWidth[0] - 1.0f) / projectMat.m[0][0];
-	float viewY = (1.0f - 2.0f * cursorY / g_pApp->GetGameConfig().m_ScreenHeight[0]) / projectMat.m[1][1];
+	float viewX = (2.0f * cursorX / g_pApp->GetGameConfig().m_ScreenWidth - 1.0f) / projectMat.m[0][0];
+	float viewY = (1.0f - 2.0f * cursorY / g_pApp->GetGameConfig().m_ScreenHeight) / projectMat.m[1][1];
 
 	Matrix toLocal = (m_Properties.GetWorldMatrix() * pScene->GetCamera()->GetViewMatrix()).Invert();
 	Vector3 rayPos = toLocal.Translation();

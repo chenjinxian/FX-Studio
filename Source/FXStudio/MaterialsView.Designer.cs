@@ -28,10 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.panelMaterial = new System.Windows.Forms.Panel();
+            this.listViewMaterials = new System.Windows.Forms.ListView();
+            this.imageListLarge = new System.Windows.Forms.ImageList(this.components);
             this.toolStripMaterial = new System.Windows.Forms.ToolStrip();
-            this.panelTexture = new System.Windows.Forms.Panel();
             this.toolStripTexture = new System.Windows.Forms.ToolStrip();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -48,28 +49,37 @@
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.panelMaterial);
+            this.splitContainer1.Panel1.Controls.Add(this.listViewMaterials);
             this.splitContainer1.Panel1.Controls.Add(this.toolStripMaterial);
             this.splitContainer1.Panel1MinSize = 200;
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.panelTexture);
             this.splitContainer1.Panel2.Controls.Add(this.toolStripTexture);
             this.splitContainer1.Panel2MinSize = 300;
             this.splitContainer1.Size = new System.Drawing.Size(366, 702);
             this.splitContainer1.SplitterDistance = 398;
             this.splitContainer1.TabIndex = 0;
             // 
-            // panelMaterial
+            // listViewMaterials
             // 
-            this.panelMaterial.AutoScroll = true;
-            this.panelMaterial.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelMaterial.Location = new System.Drawing.Point(0, 25);
-            this.panelMaterial.Name = "panelMaterial";
-            this.panelMaterial.Size = new System.Drawing.Size(366, 373);
-            this.panelMaterial.TabIndex = 1;
-            this.panelMaterial.Resize += new System.EventHandler(this.panelMaterial_Resize);
+            this.listViewMaterials.BackColor = System.Drawing.SystemColors.Window;
+            this.listViewMaterials.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.listViewMaterials.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.listViewMaterials.HideSelection = false;
+            this.listViewMaterials.LargeImageList = this.imageListLarge;
+            this.listViewMaterials.Location = new System.Drawing.Point(0, 25);
+            this.listViewMaterials.MultiSelect = false;
+            this.listViewMaterials.Name = "listViewMaterials";
+            this.listViewMaterials.Size = new System.Drawing.Size(366, 373);
+            this.listViewMaterials.TabIndex = 1;
+            this.listViewMaterials.UseCompatibleStateImageBehavior = false;
+            // 
+            // imageListLarge
+            // 
+            this.imageListLarge.ColorDepth = System.Windows.Forms.ColorDepth.Depth24Bit;
+            this.imageListLarge.ImageSize = new System.Drawing.Size(100, 100);
+            this.imageListLarge.TransparentColor = System.Drawing.Color.Transparent;
             // 
             // toolStripMaterial
             // 
@@ -78,14 +88,6 @@
             this.toolStripMaterial.Size = new System.Drawing.Size(366, 25);
             this.toolStripMaterial.TabIndex = 0;
             this.toolStripMaterial.Text = "toolStrip1";
-            // 
-            // panelTexture
-            // 
-            this.panelTexture.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelTexture.Location = new System.Drawing.Point(0, 25);
-            this.panelTexture.Name = "panelTexture";
-            this.panelTexture.Size = new System.Drawing.Size(366, 275);
-            this.panelTexture.TabIndex = 1;
             // 
             // toolStripTexture
             // 
@@ -117,9 +119,9 @@
         #endregion
 
         private System.Windows.Forms.SplitContainer splitContainer1;
-        private System.Windows.Forms.Panel panelMaterial;
         private System.Windows.Forms.ToolStrip toolStripMaterial;
-        private System.Windows.Forms.Panel panelTexture;
         private System.Windows.Forms.ToolStrip toolStripTexture;
+        private System.Windows.Forms.ListView listViewMaterials;
+        private System.Windows.Forms.ImageList imageListLarge;
     }
 }

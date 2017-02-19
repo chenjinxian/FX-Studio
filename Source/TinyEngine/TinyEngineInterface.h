@@ -201,12 +201,13 @@ public:
 		Format_uint16 = 57
 	};
 
-	virtual bool VInitRenderer(HWND hMainWnd, HWND hMaterialWnd = nullptr) = 0;
+	virtual bool VInitRenderer(HWND hMainWnd) = 0;
 	virtual void VDeleteRenderer() = 0;
 	virtual void VResizeSwapChain() = 0;
 	virtual void VSetViewport(const DirectX::SimpleMath::Rectangle& viewRect) = 0;
 	virtual bool VPreRender(const GameTime& gameTime, int index = 0) = 0;
 	virtual bool VPostRender(int index = 0) = 0;
+	virtual bool VSaveToFile(const std::wstring& fileName) = 0;
 	virtual void VSetBackgroundColor(const Color& color) = 0;
 
 	virtual shared_ptr<IRenderState> VPrepareAlphaPass() = 0;

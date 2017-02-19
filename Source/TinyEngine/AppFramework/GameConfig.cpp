@@ -3,17 +3,15 @@
 GameConfig::GameConfig()
 	: m_Project(),
 	m_Renderer("Direct3D 11"),
+	m_ScreenWidth(1024),
+	m_ScreenHeight(720),
 	m_IsFullScreen(false),
 	m_IsVSync(true),
 	m_AntiAliasingSample(0),
 	m_IsZipResource(false),
 	m_pDocument(nullptr)
 {
-	for (int i = 0; i < D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT; i++)
-	{
-		m_ScreenWidth[i] = 1024;
-		m_ScreenHeight[i] = 720;
-	}
+
 }
 
 
@@ -45,12 +43,12 @@ void GameConfig::InitConfig(const std::string& xmlFileName, LPWSTR lpCmdLine)
 
 			if (pNode->Attribute("width") != nullptr)
 			{
-				m_ScreenWidth[0] = pNode->IntAttribute("width");
+				m_ScreenWidth = pNode->IntAttribute("width");
 			}
 
 			if (pNode->Attribute("height") != nullptr)
 			{
-				m_ScreenHeight[0] = pNode->IntAttribute("height");
+				m_ScreenHeight = pNode->IntAttribute("height");
 			}
 
 			if (pNode->Attribute("fullscreen") != nullptr)

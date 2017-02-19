@@ -333,19 +333,15 @@ namespace FXStudio
 
             IntPtr hInstance = Marshal.GetHINSTANCE(this.GetType().Module);
             var panelRender = m_RenderView.GetRenderPanel();
-            var panelMaterial = m_MaterialView.GetRenderPanel();
-            m_messageHandler.ResetRenderPanel(panelRender, panelMaterial);
+            m_messageHandler.ResetRenderPanel(panelRender);
 
             try
             {
-                if (!RenderMethods.CreateInstance(hInstance, IntPtr.Zero, panelRender.Handle, panelMaterial.Handle, 1,
-                    panelRender.Width, panelRender.Height, panelMaterial.Width, panelMaterial.Height))
+                if (!RenderMethods.CreateInstance(hInstance, IntPtr.Zero, panelRender.Handle, 1, panelRender.Width, panelRender.Height))
                     this.Close();
 
                 if (panelRender.Width != 0 && panelRender.Height != 0)
-                    RenderMethods.ResizeWnd(panelRender.Width, panelRender.Height, 0);
-                if (panelMaterial.Width != 0 && panelMaterial.Height != 0)
-                    RenderMethods.ResizeWnd(panelMaterial.Width, panelMaterial.Height, 1);
+                    RenderMethods.ResizeWnd(panelRender.Width, panelRender.Height);
             }
             catch (Exception ex)
             {

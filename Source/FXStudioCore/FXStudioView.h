@@ -16,7 +16,7 @@ public:
 	void MoveEditorCamera(tinyxml2::XMLElement* pCameraNode);
 	tinyxml2::XMLElement* GenerateCameraXml(tinyxml2::XMLDocument* pDocument);
 	void SetCameraType(int type);
-	void AddMaterial(const std::string& materialName);
+	void AddMaterial(const std::string& materialName, const std::string& bmpPath);
 
 protected:
 	virtual void VRenderText(const GameTime& gameTime) override;
@@ -30,6 +30,5 @@ private:
 	shared_ptr<ModelController> m_pModelController;
 	shared_ptr<CameraNode> m_pEditorCamera;
 	shared_ptr<DebugGizmosNode> m_pGizmosNode;
-	std::vector<shared_ptr<MaterialNode> > m_Materials;
 };
 

@@ -108,11 +108,20 @@ void FXStudioView::SetCameraType(int type)
 	m_pModelController->SetCameraType((CameraType)type);
 }
 
-void FXStudioView::AddMaterial(const std::string& materialName)
+void FXStudioView::AddMaterial(const std::string& materialName, const std::string& bmpPath)
 {
-	shared_ptr<MaterialNode> material(new MaterialNode(materialName));
+	unique_ptr<MaterialNode> material(new MaterialNode(materialName));
 	material->OnInitSceneNode();
-	m_Materials.push_back(material);
+
+	GameTime t;
+	if (g_pApp->GetRendererAPI()->VPreRender(t, 1))
+	{
+		g_pApp->GetRendererAPI()->VSetViewport(DirectX::SimpleMath::Rectangle(0, 0, 100, 100));
+		material->Render(t);
+	}
+
+// 	g_pApp->GetRendererAPI()->VPostRender(1);
+	g_pApp->GetRendererAPI()->VSaveToFile(Utility::S2WS(bmpPath));
 }
 
 void FXStudioView::VRenderText(const GameTime& gameTime)
@@ -201,23 +210,4 @@ HRESULT FXStudioView::VOnDeleteGameViews(bool onlyCamera)
 void FXStudioView::VOnRender(const GameTime& gameTime)
 {
 	HumanView::VOnRender(gameTime);
-
-	if (g_pApp->GetRendererAPI()->VPreRender(gameTime, 1))
-	{
-		int width = g_pApp->GetGameConfig().m_ScreenWidth[1];
-		int count = 0;
-		for (auto material : m_Materials)
-		{
-			int column = width / 100;
-			int row = count / column;
-
-			int x = (count % column) * 100;
-			int y = row * 100;
-			g_pApp->GetRendererAPI()->VSetViewport(DirectX::SimpleMath::Rectangle(x, y, 100, 100));
-			material->Render(gameTime);
-			count++;
-		}
-	}
-
-	g_pApp->GetRendererAPI()->VPostRender(1);
 }

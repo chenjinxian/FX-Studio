@@ -275,7 +275,7 @@ namespace FXStudio
                     apiNode.Nodes.Add(new TreeNode(techniqueChild.Attributes["name"].Value) { Tag = techniqueChild });
                 }
 
-                m_MaterialsHandle?.AddMaterial(materialFile);
+                m_MaterialsHandle?.AddMaterial(nameNode.Value, materialFile);
             }
         }
 

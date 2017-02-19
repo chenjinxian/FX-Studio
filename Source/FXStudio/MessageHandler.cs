@@ -32,7 +32,6 @@ namespace FXStudio
 
         FXStudioForm m_formMain;
         Panel m_RenderPanel;
-        Panel m_MaterialPanel;
         bool m_fakeFocus;
         System.Drawing.Point m_mouseDownPosition;
 
@@ -44,10 +43,9 @@ namespace FXStudio
             m_mouseDownPosition = new System.Drawing.Point(0, 0);
         }
 
-        public void ResetRenderPanel(Panel renderPanel, Panel materialPanel)
+        public void ResetRenderPanel(Panel renderPanel)
         {
             m_RenderPanel = renderPanel;
-            m_MaterialPanel = materialPanel;
         }
 
         void CheckFakeFocus()

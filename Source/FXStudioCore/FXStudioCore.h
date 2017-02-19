@@ -25,13 +25,11 @@ extern "C" {
 		int* instancePtrAddress,
 		int* hPrevInstancePtrAddress,
 		int* hWndMain,
-		int* hWndMaterial,
 		int nCmdShow,
-		int screenWidth, int screenHeight,
-		int materialWidth, int materialHeight);
+		int screenWidth, int screenHeight);
 	FXSTUDIOCORE_API int FX_APIENTRY DestroyInstance();
 
-	FXSTUDIOCORE_API void FX_APIENTRY ResizeWnd(int screenWidth, int screenHeight, int wndIndex);
+	FXSTUDIOCORE_API void FX_APIENTRY ResizeWnd(int screenWidth, int screenHeight);
 	FXSTUDIOCORE_API void FX_APIENTRY WndProc(int *hWndPtrAddress, int msg, int* wParam, int* lParam);
 	FXSTUDIOCORE_API void FX_APIENTRY RenderFrame();
 
@@ -53,7 +51,7 @@ extern "C" {
 	FXSTUDIOCORE_API unsigned int FX_APIENTRY ModifyEffect(BSTR effectObjectPath, BSTR effectName);
 	FXSTUDIOCORE_API void FX_APIENTRY GetMaterialXml(BSTR effectObjectPath, char* effectXmlPtr, unsigned int size);
 	FXSTUDIOCORE_API void FX_APIENTRY ModifyMaterial(BSTR materialPath, bool withEffect);
-	FXSTUDIOCORE_API void FX_APIENTRY AddMaterial(BSTR materialName);
+	FXSTUDIOCORE_API void FX_APIENTRY AddMaterial(BSTR materialName, BSTR bmpPath);
 
 	FXSTUDIOCORE_API void FX_APIENTRY SetMoveDelegate(MoveDelegate delegate);
 

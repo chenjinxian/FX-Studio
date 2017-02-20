@@ -45,7 +45,7 @@ namespace FXStudio
         public static extern void SetTransformType(int type);
 
         [DllImport(editorDllName, CallingConvention = CallingConvention.StdCall)]
-        public static extern uint GetPickedActor(int cusorX, int cusorY);
+        public static extern uint GetPickedActor(int cusorX, int cusorY, ref int mesh);
 
         [DllImport(editorDllName, CallingConvention = CallingConvention.StdCall)]
         public static extern void SetPickedActor(uint actorId);

@@ -57,12 +57,13 @@
             // 
             this.splitContainer1.Panel2.Controls.Add(this.toolStripTexture);
             this.splitContainer1.Panel2MinSize = 100;
-            this.splitContainer1.Size = new System.Drawing.Size(366, 702);
-            this.splitContainer1.SplitterDistance = 398;
+            this.splitContainer1.Size = new System.Drawing.Size(366, 648);
+            this.splitContainer1.SplitterDistance = 367;
             this.splitContainer1.TabIndex = 0;
             // 
             // listViewMaterials
             // 
+            this.listViewMaterials.AllowDrop = true;
             this.listViewMaterials.BackColor = System.Drawing.SystemColors.Window;
             this.listViewMaterials.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.listViewMaterials.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -71,9 +72,11 @@
             this.listViewMaterials.Location = new System.Drawing.Point(0, 25);
             this.listViewMaterials.MultiSelect = false;
             this.listViewMaterials.Name = "listViewMaterials";
-            this.listViewMaterials.Size = new System.Drawing.Size(366, 373);
+            this.listViewMaterials.Size = new System.Drawing.Size(366, 342);
             this.listViewMaterials.TabIndex = 1;
             this.listViewMaterials.UseCompatibleStateImageBehavior = false;
+            this.listViewMaterials.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.listViewMaterials_ItemDrag);
+            this.listViewMaterials.SelectedIndexChanged += new System.EventHandler(this.listViewMaterials_SelectedIndexChanged);
             // 
             // imageListLarge
             // 
@@ -99,9 +102,9 @@
             // 
             // MaterialsView
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(366, 702);
+            this.ClientSize = new System.Drawing.Size(366, 648);
             this.Controls.Add(this.splitContainer1);
             this.Name = "MaterialsView";
             this.TabText = "Materials";

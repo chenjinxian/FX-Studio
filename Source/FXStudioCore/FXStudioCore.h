@@ -39,7 +39,7 @@ extern "C" {
 
 	FXSTUDIOCORE_API void FX_APIENTRY SetCameraType(int type);
 	FXSTUDIOCORE_API void FX_APIENTRY SetTransformType(int type);
-	FXSTUDIOCORE_API unsigned int FX_APIENTRY GetPickedActor(int cursorX, int cursorY);
+	FXSTUDIOCORE_API unsigned int FX_APIENTRY GetPickedActor(int cursorX, int cursorY, int* mesh);
 	FXSTUDIOCORE_API void FX_APIENTRY SetPickedActor(unsigned int actorId);
 
 	FXSTUDIOCORE_API unsigned int FX_APIENTRY AddActor(BSTR actorResource);

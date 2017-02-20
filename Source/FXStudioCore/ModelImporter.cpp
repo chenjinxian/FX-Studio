@@ -220,24 +220,25 @@ void ModelImporter::WriteAnimation(const aiScene* pScene, std::ofstream& fs)
 void ModelImporter::WriteMesh(const aiScene* pScene, std::ofstream& fs)
 {
 	FStreamPrintf(fs, "\t<MeshList num=\"%i\">\n", pScene->mNumMeshes);
+	aiString name;
 	for (unsigned int i = 0; i < pScene->mNumMeshes; ++i)
 	{
 		aiMesh* mesh = pScene->mMeshes[i];
 
 		// mesh header
-		FStreamPrintf(fs, "\t\t<Mesh types=\"%s%s%s%s\" material_index=\"%i\">\n",
+		ConvertName(name, mesh->mName);
+		FStreamPrintf(fs, "\t\t<Mesh types=\"%s%s%s%s\" name=\"%s\">\n",
 			(mesh->mPrimitiveTypes & aiPrimitiveType_POINT ? "points" : ""),
 			(mesh->mPrimitiveTypes & aiPrimitiveType_LINE ? "lines" : ""),
 			(mesh->mPrimitiveTypes & aiPrimitiveType_TRIANGLE ? "triangles" : ""),
 			(mesh->mPrimitiveTypes & aiPrimitiveType_POLYGON ? "polygons" : ""),
-			mesh->mMaterialIndex);
+			name.data);
 
 		// bones
 		if (mesh->mNumBones)
 		{
 			FStreamPrintf(fs, "\t\t\t<BoneList num=\"%i\">\n", mesh->mNumBones);
 
-			aiString name;
 			for (unsigned int n = 0; n < mesh->mNumBones; ++n)
 			{
 				aiBone* bone = mesh->mBones[n];

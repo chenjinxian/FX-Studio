@@ -17,7 +17,8 @@ MaterialNode::MaterialNode(const std::string& materialName)
 	m_Mesh = unique_ptr<Mesh>(DEBUG_NEW Mesh(vertices, indices));
 
 	m_World = Matrix::Identity;
-	m_View = (Matrix::CreateTranslation(0.0f, 0.0f, 2.0f) * Matrix::CreateRotationY(30.0f)).Invert();
+	m_View = (Matrix::CreateTranslation(0.0f, 0.0f, 2.0f) *
+		Matrix::CreateFromYawPitchRoll(XMConvertToRadians(45.0f), XMConvertToRadians(-45.0f), 0)).Invert();
 	m_Project = Matrix::CreatePerspectiveFieldOfView(XM_PIDIV4, 1.0f, 0.1f, 1000.0f);
 }
 

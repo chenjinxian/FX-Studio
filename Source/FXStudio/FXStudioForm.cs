@@ -17,7 +17,7 @@ using WeifenLuo.WinFormsUI.Docking;
 namespace FXStudio
 {
     public delegate void UpdatePropertiesDelegate(XmlNode selectedNode);
-    public delegate void ChangeMaterialDelegate(string name, uint actorId);
+    public delegate void ChangeMaterialDelegate(string name, uint actorId, int mesh);
     public delegate void MoveActorDelegate(string component, string attribute, Inspector.Vector3 value);
     public delegate void ModifyMaterialDelegate(string name, string value);
     public delegate void UpdateOutputDelegate(string output, string error);
@@ -82,7 +82,8 @@ namespace FXStudio
 
         public void PickActor(Point cursor)
         {
-            uint actorId = RenderMethods.GetPickedActor(cursor.X, cursor.Y);
+            int mesh = -1;
+            uint actorId = RenderMethods.GetPickedActor(cursor.X, cursor.Y, ref mesh);
             m_ProjectView.SelectActorNode(actorId);
         }
 
@@ -143,7 +144,7 @@ namespace FXStudio
                 }
             );
 
-            m_RenderView.SetChangeMaterialDelegate((name, actorId) =>
+            m_RenderView.SetChangeMaterialDelegate((name, actorId, mesh) =>
             {
                 m_ProjectView.SelectActorNode(actorId);
                 XmlNode actorNode = m_ProjectView.GetSelectActorXml();
@@ -153,32 +154,40 @@ namespace FXStudio
 
                 xmlActor.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "id", actorId.ToString()));
 
+                XmlElement material = xmlDoc.CreateElement("Material");
+                material.InnerText = @"Materials\" + Path.GetFileName(name);
+
                 XmlElement renderComponent = null;
                 string nodeType = actorNode.Attributes["type"].Value;
                 if (nodeType == "Model")
                 {
                     renderComponent = xmlDoc.CreateElement("ModelRenderComponent");
+                    material.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "index", mesh.ToString()));
+                    XmlElement materials = xmlDoc.CreateElement("Materials");
+                    materials.AppendChild(material);
+                    renderComponent.AppendChild(materials);
                 }
                 else if (nodeType == "Cube")
                 {
                     renderComponent = xmlDoc.CreateElement("PlaneRenderComponent");
+                    renderComponent.AppendChild(material);
                 }
                 else if (nodeType == "Sphere")
                 {
                     renderComponent = xmlDoc.CreateElement("SphereRenderComponent");
+                    renderComponent.AppendChild(material);
                 }
                 else if (nodeType == "Torus")
                 {
                     renderComponent = xmlDoc.CreateElement("TorusRenderComponent");
+                    renderComponent.AppendChild(material);
                 }
                 else if (nodeType == "Teapot")
                 {
                     renderComponent = xmlDoc.CreateElement("TeapotRenderComponent");
+                    renderComponent.AppendChild(material);
                 }
 
-                XmlElement material = xmlDoc.CreateElement("Material");
-                renderComponent.AppendChild(material);
-                material.InnerText = @"Materials\" + Path.GetFileName(name);
                 xmlActor.AppendChild(renderComponent);
 
                 RenderMethods.ModifyActor(xmlActor.OuterXml);
@@ -485,17 +494,17 @@ namespace FXStudio
 
         private void toolStripButtonPlane_Click(object sender, EventArgs e)
         {
-//             XmlDocument xmlDoc = new XmlDocument();
-//             XmlElement geometryElement = xmlDoc.CreateElement("Plane");
-// 
-//             geometryElement.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "type", "Plane"));
-//             geometryElement.AppendChild(XmlUtility.CreateTransformComponent(xmlDoc, "-2", "0.5"));
-//             geometryElement.AppendChild(XmlUtility.CreatePlaneRenderComponent(xmlDoc));
-// 
-//             if (RenderMethods.AddActor(geometryElement.OuterXml) > 0)
-//             {
-//                 m_ProjectView.AddActorNode(geometryElement);
-//             }
+            //             XmlDocument xmlDoc = new XmlDocument();
+            //             XmlElement geometryElement = xmlDoc.CreateElement("Plane");
+            // 
+            //             geometryElement.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "type", "Plane"));
+            //             geometryElement.AppendChild(XmlUtility.CreateTransformComponent(xmlDoc, "-2", "0.5"));
+            //             geometryElement.AppendChild(XmlUtility.CreatePlaneRenderComponent(xmlDoc));
+            // 
+            //             if (RenderMethods.AddActor(geometryElement.OuterXml) > 0)
+            //             {
+            //                 m_ProjectView.AddActorNode(geometryElement);
+            //             }
         }
 
         private void toolStripButtonImport_Click(object sender, EventArgs e)
@@ -530,7 +539,7 @@ namespace FXStudio
 
                     modelElement.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "type", "Model"));
                     modelElement.AppendChild(XmlUtility.CreateTransformComponent(xmlDoc));
-                    modelElement.AppendChild(XmlUtility.CreateModelRenderComponent(xmlDoc, Path.GetFileName(destFileName)));
+                    modelElement.AppendChild(XmlUtility.CreateModelRenderComponent(xmlDoc, destFileName));
 
                     if (RenderMethods.AddActor(modelElement.OuterXml) > 0)
                     {

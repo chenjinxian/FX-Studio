@@ -139,7 +139,7 @@ FXSTUDIOCORE_API void FX_APIENTRY SetTransformType(int type)
 	}
 }
 
-FXSTUDIOCORE_API unsigned int FX_APIENTRY GetPickedActor(int cursorX, int cursorY)
+FXSTUDIOCORE_API unsigned int FX_APIENTRY GetPickedActor(int cursorX, int cursorY, int* mesh)
 {
 	FXStudioLogic* pEditorLogic = dynamic_cast<FXStudioLogic*>(g_pApp->GetGameLogic());
 	if (pEditorLogic == nullptr)
@@ -155,10 +155,13 @@ FXSTUDIOCORE_API unsigned int FX_APIENTRY GetPickedActor(int cursorX, int cursor
 
 	if (pView->GetGizmosNode()->IsPicked() || GetKeyState(VK_MENU) < 0)
 	{
+		*mesh = 0;
 		return pView->GetScene()->GetPickedActor();
 	}
 	else
-		return pView->GetScene()->PickActor(cursorX, cursorY);
+	{
+		return pView->GetScene()->PickActor(cursorX, cursorY, mesh);
+	}
 }
 
 FXSTUDIOCORE_API void FX_APIENTRY SetPickedActor(unsigned int actorId)
@@ -175,7 +178,7 @@ FXSTUDIOCORE_API void FX_APIENTRY SetPickedActor(unsigned int actorId)
 		return;
 	}
 
-	pView->GetScene()->SetPickedActor(actorId);
+	pView->GetScene()->SetPickedActor(actorId, 0);
 }
 
 FXSTUDIOCORE_API unsigned int FX_APIENTRY AddActor(BSTR actorResource)
@@ -191,7 +194,7 @@ FXSTUDIOCORE_API unsigned int FX_APIENTRY AddActor(BSTR actorResource)
 		shared_ptr<FXStudioView> pView = pEditorLogic->GetHumanView();
 		if (pView != nullptr)
 		{
-			pView->GetScene()->SetPickedActor(pActor->GetActorId());
+			pView->GetScene()->SetPickedActor(pActor->GetActorId(), 0);
 			pView->GetScene()->ResetActorTransform(pActor->GetActorId());
 		}
 	}

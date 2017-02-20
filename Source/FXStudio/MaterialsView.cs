@@ -28,6 +28,7 @@ namespace FXStudio
 
             ListViewItem item = new ListViewItem();
             item.Text = materialName;
+            item.Name = materialFile;
             listViewMaterials.Items.Add(item);
 
             try
@@ -48,6 +49,18 @@ namespace FXStudio
         private void panelMaterial_Resize(object sender, EventArgs e)
         {
 
+        }
+
+        private void listViewMaterials_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void listViewMaterials_ItemDrag(object sender, ItemDragEventArgs e)
+        {
+            ListViewItem item = (ListViewItem)e.Item;
+            if (item != null)
+                DoDragDrop(e.Item, DragDropEffects.Copy);
         }
     }
 }

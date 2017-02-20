@@ -4,6 +4,7 @@
 #include "../EventManager/Events.h"
 #include "../AppFramework/BaseGameApp.h"
 #include "../Graphics3D/SkyboxNode.h"
+#include "../Graphics3D/ModelNode.h"
 
 const std::string GridRenderComponent::m_Name = "GridRenderComponent";
 const std::string ModelRenderComponent::m_Name = "ModelRenderComponent";
@@ -304,8 +305,7 @@ void PlaneRenderComponent::VCreateInheritedXmlElement(tinyxml2::XMLElement* pBas
 }
 
 ModelRenderComponent::ModelRenderComponent()
-	: m_ModelName(),
-	m_MaterialName()
+	: m_ModelName()
 {
 
 }
@@ -323,10 +323,17 @@ bool ModelRenderComponent::VDelegateInit(tinyxml2::XMLElement* pData)
 		m_ModelName = pModel->GetText();
 	}
 
-	tinyxml2::XMLElement* pMaterial = pData->FirstChildElement("Material");
-	if (pMaterial != nullptr)
+	tinyxml2::XMLElement* pMaterials = pData->FirstChildElement("Materials");
+	if (pMaterials != nullptr)
 	{
-		m_MaterialName = pMaterial->GetText();
+		for (tinyxml2::XMLElement* pChild = pMaterials->FirstChildElement(); pChild != nullptr; pChild = pChild->NextSiblingElement())
+		{
+			int index = pChild->IntAttribute("index");
+			if (m_MaterialNames.size() > index)
+				m_MaterialNames[index] = pChild->GetText();
+			else
+				m_MaterialNames.push_back(pChild->GetText());
+		}
 	}
 
 	return true;

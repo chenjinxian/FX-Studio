@@ -27,11 +27,11 @@ public:
 	void SetCamera(shared_ptr<CameraNode> pCamera) { m_pCamera = pCamera; }
 	const shared_ptr<CameraNode> GetCamera() const { return m_pCamera; }
 
-	ActorId PickActor(int cursorX, int cursorY);
+	ActorId PickActor(int cursorX, int cursorY, int* mesh);
 	void ResetActorTransform(ActorId actorId);
 
 	ActorId GetPickedActor() { return m_PickedActor; }
-	void SetPickedActor(ActorId actorId) { m_PickedActor = actorId; }
+	void SetPickedActor(ActorId actorId, int meshIndex) { m_PickedActor = actorId; m_MeshIndex = meshIndex; }
 	float GetPickDistance() { return m_PickDistance; }
 	void SetPickDistance(float distance) { m_PickDistance = distance; }
 
@@ -75,6 +75,7 @@ private:
 	SceneActorMap m_ActorMap;
 
 	ActorId m_PickedActor;
+	int m_MeshIndex;
 	float m_PickDistance;
 };
 

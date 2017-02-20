@@ -157,6 +157,9 @@
     <ClInclude Include="Graphics3D\FullScreenRenderTarget.h">
       <Filter>Graphics3D</Filter>
     </ClInclude>
+    <ClInclude Include="Graphics3D\ModelNode.h">
+      <Filter>Graphics3D</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Debugging\Logger.cpp">
@@ -256,6 +259,9 @@
       <Filter>Graphics3D</Filter>
     </ClCompile>
     <ClCompile Include="Graphics3D\FullScreenRenderTarget.cpp">
+      <Filter>Graphics3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics3D\ModelNode.cpp">
       <Filter>Graphics3D</Filter>
     </ClCompile>
   </ItemGroup>

@@ -162,7 +162,7 @@ public:
 	virtual ~ModelRenderComponent();
 
 	const std::string& GetModelName() { return m_ModelName; }
-	const std::string& GetMaterialName() { return m_MaterialName; }
+	const std::vector<std::string>& GetMaterialName() { return m_MaterialNames; }
 
 	virtual const std::string& VGetComponentName() const override { return m_Name; }
 	static const std::string m_Name;
@@ -174,7 +174,7 @@ protected:
 
 private:
 	std::string m_ModelName;
-	std::string m_MaterialName;
+	std::vector<std::string> m_MaterialNames;
 };
 
 class SkyboxRenderComponent : public BaseRenderComponent

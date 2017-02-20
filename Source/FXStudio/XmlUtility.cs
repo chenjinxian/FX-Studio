@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using System.IO;
 
 namespace FXStudio
 {
@@ -119,12 +120,28 @@ namespace FXStudio
             XmlElement modelElement = xmlDoc.CreateElement("ModelRenderComponent");
 
             XmlElement model = xmlDoc.CreateElement("Model");
-            XmlElement effect = xmlDoc.CreateElement("Material");
             modelElement.AppendChild(model);
-            modelElement.AppendChild(effect);
+            model.InnerText = @"Models\" + Path.GetFileName(fileName);
 
-            model.InnerText = @"Models\" + fileName;
-            effect.InnerText = @"Materials\DefaultMaterial.mat";
+            XmlElement materials = xmlDoc.CreateElement("Materials");
+            modelElement.AppendChild(materials);
+
+            XmlDocument xmlModel = new XmlDocument();
+            xmlModel.Load(fileName);
+            XmlNode nodeRoot = xmlModel.DocumentElement;
+            if (nodeRoot != null)
+            {
+                int index = 0;
+                XmlNode meshList = nodeRoot.SelectSingleNode("MeshList");
+                foreach (XmlNode mesh in meshList.ChildNodes)
+                {
+                    XmlElement child = xmlDoc.CreateElement("Material");
+                    materials.AppendChild(child);
+                    child.Attributes.Append(CreateAttribute(xmlDoc, "index", index.ToString()));
+                    child.InnerText = @"Materials\DefaultMaterial.mat";
+                    index++;
+                }
+            }
 
             return modelElement;
         }

@@ -12,6 +12,7 @@ Scene::Scene(shared_ptr<IRenderer> pRenderer)
 	m_MatrixStack(),
 	m_ActorMap(),
 	m_PickedActor(INVALID_ACTOR_ID),
+	m_MeshIndex(-1),
 	m_PickDistance(FLT_MAX)
 {
 	m_pRootNode.reset(DEBUG_NEW RootNode());
@@ -170,11 +171,13 @@ void Scene::DestroyActorDelegate(IEventDataPtr pEventData)
 // 	}
 // }
 
-ActorId Scene::PickActor(int cursorX, int cursorY)
+ActorId Scene::PickActor(int cursorX, int cursorY, int* mesh)
 {
 	m_PickedActor = INVALID_ACTOR_ID;
+	m_MeshIndex = -1;
 	m_PickDistance = FLT_MAX;
 	m_pRootNode->VPick(this, cursorX, cursorY);
+	*mesh = m_MeshIndex;
 	return m_PickedActor;
 }
 

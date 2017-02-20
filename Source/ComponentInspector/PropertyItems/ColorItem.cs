@@ -37,10 +37,10 @@ namespace Inspector
         {
             get
             {
-                return (m_Value.R / 255.0F).ToString("F1") + " " +
-                    (m_Value.G / 255.0F).ToString("F1") + " " +
-                    (m_Value.B / 255.0F).ToString("F1") + " " +
-                    (m_Value.A / 255.0F).ToString("F1");
+                return (m_Value.R / 255.0F).ToString("F2") + " " +
+                    (m_Value.G / 255.0F).ToString("F2") + " " +
+                    (m_Value.B / 255.0F).ToString("F2") + " " +
+                    (m_Value.A / 255.0F).ToString("F2");
             }
         }
 

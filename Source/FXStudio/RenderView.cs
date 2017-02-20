@@ -81,18 +81,30 @@ namespace FXStudio
             if (materialNode != null)
             {
                 Point targetPoint = panelRender.PointToClient(new Point(e.X, e.Y));
-                uint actorId = RenderMethods.GetPickedActor(targetPoint.X, targetPoint.Y);
-                m_ChangeDelegate?.Invoke(materialNode.Name, actorId);
+                int mesh = -1;
+                uint actorId = RenderMethods.GetPickedActor(targetPoint.X, targetPoint.Y, ref mesh);
+                m_ChangeDelegate?.Invoke(materialNode.Name, actorId, mesh);
+                return;
+            }
+
+            ListViewItem item = (ListViewItem)e.Data.GetData(typeof(ListViewItem).ToString(), false);
+            if (item != null)
+            {
+                Point targetPoint = panelRender.PointToClient(new Point(e.X, e.Y));
+                int mesh = -1;
+                uint actorId = RenderMethods.GetPickedActor(targetPoint.X, targetPoint.Y, ref mesh);
+                m_ChangeDelegate?.Invoke(item.Name, actorId, mesh);
             }
         }
 
         private void panelRender_DragOver(object sender, DragEventArgs e)
         {
             string[] formats = e.Data.GetFormats();
-            if (formats.Contains(typeof(TreeNode).ToString()))
+            if (formats.Contains(typeof(TreeNode).ToString()) || formats.Contains(typeof(ListViewItem).ToString()))
             {
                 Point targetPoint = panelRender.PointToClient(new Point(e.X, e.Y));
-                uint actorId = RenderMethods.GetPickedActor(targetPoint.X, targetPoint.Y);
+                int mesh = -1;
+                uint actorId = RenderMethods.GetPickedActor(targetPoint.X, targetPoint.Y, ref mesh);
                 if (actorId != 0)
                     e.Effect = DragDropEffects.Copy;
                 else

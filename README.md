@@ -29,6 +29,10 @@ The steps below will take you through cloning your own private fork, then compil
 
 All examples of FX Studio.
 
-### Materials
+### [Materials](https://github.com/chenjinxian/FX-Studio-Examples)
 
 ![Materials screenshot](https://github.com/chenjinxian/FX-Studio-Examples/blob/master/multi_materials.png)
+
+### [VisualStyles](https://github.com/chenjinxian/FX-Studio-Examples)
+
+![VisualStyles screenshot](https://github.com/chenjinxian/FX-Studio-Examples/blob/master/VisualStyles.png)

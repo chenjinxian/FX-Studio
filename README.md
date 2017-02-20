@@ -31,7 +31,7 @@ All examples of FX Studio.
 
 ### [Materials](https://github.com/chenjinxian/FX-Studio-Examples)
 
-![Materials screenshot](https://github.com/chenjinxian/FX-Studio-Examples/blob/master/multi_materials.png)
+![Materials screenshot](https://github.com/chenjinxian/FX-Studio-Examples/blob/master/Materials.png)
 
 ### [VisualStyles](https://github.com/chenjinxian/FX-Studio-Examples)
 

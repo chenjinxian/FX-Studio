@@ -128,7 +128,7 @@ namespace FXStudio
                     }
                     else if (component.Name == "ModelRenderComponent")
                     {
-
+                        AddModelProperties(component);
                     }
                 }
             }
@@ -275,12 +275,21 @@ namespace FXStudio
             AddTransformItem(transformNode);
         }
 
+        private void AddGeometryMaterial(XmlNode actorNode)
+        {
+            XmlNode material = actorNode.SelectSingleNode("Material");
+            if (material != null)
+            {
+                AddMaterialItem(actorNode.Name, material.Name, material.InnerText);
+            }
+        }
+
         private void AddCubeProperties(XmlNode cubeNode)
         {
             Inspector.CategoryItem category = new Inspector.CategoryItem(cubeNode.Name);
             inspectorComponent.CategoryAdd(cubeNode.Name, category);
 
-            AddEffectItem(cubeNode);
+            AddGeometryMaterial(cubeNode);
         }
 
         private void AddSphereProperties(XmlNode sphereNode)
@@ -288,7 +297,7 @@ namespace FXStudio
             Inspector.CategoryItem category = new Inspector.CategoryItem(sphereNode.Name);
             inspectorComponent.CategoryAdd(sphereNode.Name, category);
 
-            AddEffectItem(sphereNode);
+            AddGeometryMaterial(sphereNode);
         }
 
         private void AddTorusProperties(XmlNode torusNode)
@@ -296,7 +305,7 @@ namespace FXStudio
             Inspector.CategoryItem category = new Inspector.CategoryItem(torusNode.Name);
             inspectorComponent.CategoryAdd(torusNode.Name, category);
 
-            AddEffectItem(torusNode);
+            AddGeometryMaterial(torusNode);
         }
 
         private void AddTeapotProperties(XmlNode teapotNode)
@@ -304,7 +313,22 @@ namespace FXStudio
             Inspector.CategoryItem category = new Inspector.CategoryItem(teapotNode.Name);
             inspectorComponent.CategoryAdd(teapotNode.Name, category);
 
-            AddEffectItem(teapotNode);
+            AddGeometryMaterial(teapotNode);
+        }
+
+        private void AddModelProperties(XmlNode modelNode)
+        {
+            Inspector.CategoryItem category = new Inspector.CategoryItem(modelNode.Name);
+            inspectorComponent.CategoryAdd(modelNode.Name, category);
+
+            XmlNode materials = modelNode.SelectSingleNode("Materials");
+            if (materials != null)
+            {
+                foreach (XmlNode child in materials)
+                {
+                    AddMaterialItem(modelNode.Name, child.Name, child.InnerText);
+                }
+            }
         }
 
         private void AddTransformItem(XmlNode transformNode, bool enable = true)
@@ -338,13 +362,11 @@ namespace FXStudio
             }
         }
 
-        private void AddEffectItem(XmlNode actorNode)
+        private void AddMaterialItem(string category, string itemName, string materialName)
         {
-            //             XmlNode effectNode = actorNode.SelectSingleNode("Effect");
-            //             if (effectNode != null)
-            //             {
-            //                 inspectorComponent.ItemAdd(new Inspector.ImageItem(actorNode.Name, effectNode.Name, effectNode.Name, effectNode.InnerText));
-            //             }
+            Inspector.StringItem stringItem = new Inspector.StringItem(category, itemName, itemName, materialName);
+            stringItem.Enabled = false;
+            inspectorComponent.ItemAdd(stringItem);
         }
 
         private void AddColorItem(string category, string itemName, string variableName, string colorValue)

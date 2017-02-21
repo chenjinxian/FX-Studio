@@ -164,6 +164,12 @@ namespace FXStudio
             }
         }
 
+        public void ModifyMaterialXml(int actorId, int meshIndex, string material)
+        {
+            //             XmlNode selectNode = m_SceneNode.Nodes[actorId - 1].Tag as XmlNode;
+            //             XmlNode materialRoot = selectNode.
+        }
+
         private XmlNode CreateProjectXmlNode(XmlNode node, string projectLocation)
         {
             XmlDocument xmlDoc = new XmlDocument();

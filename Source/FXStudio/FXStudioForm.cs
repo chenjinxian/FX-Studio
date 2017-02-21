@@ -191,6 +191,7 @@ namespace FXStudio
                 xmlActor.AppendChild(renderComponent);
 
                 RenderMethods.ModifyActor(xmlActor.OuterXml);
+                m_ProjectView.ModifyMaterialXml((int)actorId, mesh, material.InnerText);
             });
 
             RenderMethods.SetMoveDelegate(m_DllMoveDelegate);

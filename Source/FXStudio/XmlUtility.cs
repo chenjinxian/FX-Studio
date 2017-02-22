@@ -138,8 +138,9 @@ namespace FXStudio
                     string name = mesh.Attributes["name"].Value;
                     if (string.IsNullOrEmpty(name))
                         name = "Material" + index.ToString();
-                    XmlElement child = xmlDoc.CreateElement(name);
+                    XmlElement child = xmlDoc.CreateElement("Material");
                     materials.AppendChild(child);
+                    child.Attributes.Append(CreateAttribute(xmlDoc, "name", name));
                     child.Attributes.Append(CreateAttribute(xmlDoc, "index", index.ToString()));
                     child.InnerText = @"Materials\DefaultMaterial.mat";
                     index++;

@@ -8,12 +8,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml;
 
 namespace FXStudio
 {
     public partial class MaterialsView : ViewWindow
     {
+        private UpdatePropertiesDelegate m_NodeDelegate = null;
         private string m_BmpTempDir = Path.GetTempPath() + @"\FX-Studio\";
+
         public MaterialsView()
         {
             InitializeComponent();
@@ -21,7 +24,9 @@ namespace FXStudio
                 Directory.CreateDirectory(m_BmpTempDir);
         }
 
-        public void AddMaterial(string materialName, string materialFile)
+        public UpdatePropertiesDelegate UpdateDelegate { set { m_NodeDelegate = value; } }
+
+        public void AddMaterial(string materialName, string materialFile, XmlNode materialNode)
         {
             string bmpPath = m_BmpTempDir + Path.GetFileNameWithoutExtension(materialFile) + ".bmp";
             RenderMethods.AddMaterial(@"Materials\" + Path.GetFileName(materialFile), bmpPath);
@@ -29,6 +34,7 @@ namespace FXStudio
             ListViewItem item = new ListViewItem();
             item.Text = materialName;
             item.Name = materialFile;
+            item.Tag = materialNode;
             listViewMaterials.Items.Add(item);
 
             try
@@ -53,7 +59,14 @@ namespace FXStudio
 
         private void listViewMaterials_SelectedIndexChanged(object sender, EventArgs e)
         {
-
+            if (listViewMaterials.SelectedIndices.Count > 0)
+            {
+                XmlNode element = listViewMaterials.SelectedItems[0].Tag as XmlNode;
+                if (element != null)
+                {
+                    m_NodeDelegate?.Invoke(element);
+                }
+            }
         }
 
         private void listViewMaterials_ItemDrag(object sender, ItemDragEventArgs e)

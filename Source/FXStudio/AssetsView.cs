@@ -47,6 +47,7 @@ namespace FXStudio
             m_OuputDeleagate = updateOutput;
             m_OpenEffect = openEffect;
             m_MaterialsHandle = materialsHandle;
+            m_MaterialsHandle.UpdateDelegate = m_NodeDelegate;
 
             m_XmlDoc.Load(assetFile);
             XmlElement rootXml = m_XmlDoc.DocumentElement;
@@ -162,6 +163,8 @@ namespace FXStudio
             bool success = CompileEffect(sourceFileName, destOjbect);
 
             {
+                if (Path.GetDirectoryName(sourceFileName) == m_ProjectLocation)
+                    sourceFileName = @"Effects\" + Path.GetFileName(sourceFileName);
                 string effectXml = string.Format(
                     @"<Effect name=""{0}"" object=""{1}"">{2}</Effect>", effectName, @"Effects\" + Path.GetFileName(destOjbect), sourceFileName);
                 XmlDocument effectDoc = new XmlDocument();
@@ -275,7 +278,7 @@ namespace FXStudio
                     apiNode.Nodes.Add(new TreeNode(techniqueChild.Attributes["name"].Value) { Tag = techniqueChild });
                 }
 
-                m_MaterialsHandle?.AddMaterial(nameNode.Value, materialFile);
+                m_MaterialsHandle?.AddMaterial(nameNode.Value, materialFile, materialXmlNode);
             }
         }
 

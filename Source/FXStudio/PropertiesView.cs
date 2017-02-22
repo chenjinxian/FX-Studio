@@ -326,7 +326,8 @@ namespace FXStudio
             {
                 foreach (XmlNode child in materials)
                 {
-                    AddMaterialItem(modelNode.Name, child.Name, child.InnerText);
+                    string name = child.Attributes["name"].Value;
+                    AddMaterialItem(modelNode.Name, name, child.InnerText);
                 }
             }
         }

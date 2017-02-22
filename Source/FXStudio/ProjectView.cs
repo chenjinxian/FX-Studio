@@ -166,8 +166,28 @@ namespace FXStudio
 
         public void ModifyMaterialXml(int actorId, int meshIndex, string material)
         {
-            //             XmlNode selectNode = m_SceneNode.Nodes[actorId - 1].Tag as XmlNode;
-            //             XmlNode materialRoot = selectNode.
+            XmlNode selectNode = m_SceneNode.Nodes[actorId - 1].Tag as XmlNode;
+            if (selectNode != null)
+            {
+                string path = string.Format("//Material[{0}]", meshIndex + 1);
+                XmlNode node = selectNode.SelectSingleNode(path);
+                if (node != null)
+                {
+                    node.InnerText = material;
+                    m_SceneNode.Nodes[actorId - 1].Tag = selectNode;
+
+                    try
+                    {
+                        XmlNode docNode = m_XmlDoc.DocumentElement.SelectSingleNode("DefaultScene").ChildNodes[actorId - 1];
+                        docNode.InnerXml = selectNode.InnerXml;
+                    }
+                    catch (Exception)
+                    {
+
+                    }
+                    m_NodeDelegate?.Invoke((XmlNode)treeViewProject.SelectedNode.Tag);
+                }
+            }
         }
 
         private XmlNode CreateProjectXmlNode(XmlNode node, string projectLocation)

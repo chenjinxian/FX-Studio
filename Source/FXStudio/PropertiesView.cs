@@ -46,26 +46,29 @@ namespace FXStudio
             if (reset)
                 inspectorComponent.ItemsClear();
 
-            string nodeName = selectedNode.Name;
-            if (nodeName == "Effect")
+            if (selectedNode != null)
             {
-                AddEffectProperties(selectedNode);
-            }
-            else if (nodeName == "Material")
-            {
-                AddMaterialProperties(selectedNode);
-            }
-            else if (nodeName == "Model")
-            {
+                string nodeName = selectedNode.Name;
+                if (nodeName == "Effect")
+                {
+                    AddEffectProperties(selectedNode);
+                }
+                else if (nodeName == "Material")
+                {
+                    AddMaterialProperties(selectedNode);
+                }
+                else if (nodeName == "Model")
+                {
 
-            }
-            else if (nodeName == "Texture")
-            {
-                //                 Inspector.CategoryItem category = new Inspector.CategoryItem("Image Properties");
-                //                 inspectorComponent.CategoryAdd("ImageProperties", category);
-                // 
-                //                 string textureName = selectedNode.Attributes["name"].Value;
-                //                 inspectorComponent.ItemAdd(new Inspector.StringItem("ImageProperties", textureName, "", selectedNode.InnerText));
+                }
+                else if (nodeName == "Texture")
+                {
+                    //                 Inspector.CategoryItem category = new Inspector.CategoryItem("Image Properties");
+                    //                 inspectorComponent.CategoryAdd("ImageProperties", category);
+                    // 
+                    //                 string textureName = selectedNode.Attributes["name"].Value;
+                    //                 inspectorComponent.ItemAdd(new Inspector.StringItem("ImageProperties", textureName, "", selectedNode.InnerText));
+                }
             }
 
             inspectorComponent.UpdateControl(reset);

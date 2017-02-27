@@ -52,6 +52,21 @@ namespace FXStudio
             }
         }
 
+        public void ModifyMaterial()
+        {
+
+        }
+
+        public int GetSelectedIndex()
+        {
+            if (listViewMaterials.SelectedIndices.Count > 0)
+            {
+                return listViewMaterials.SelectedIndices[0];
+            }
+            else
+                return -1;
+        }
+
         private void panelMaterial_Resize(object sender, EventArgs e)
         {
 
@@ -66,6 +81,10 @@ namespace FXStudio
                 {
                     m_NodeDelegate?.Invoke(element);
                 }
+            }
+            else
+            {
+                m_NodeDelegate?.Invoke(null);
             }
         }
 

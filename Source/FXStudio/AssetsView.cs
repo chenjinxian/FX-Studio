@@ -96,6 +96,13 @@ namespace FXStudio
 
         public void ModifyMaterial(string name, string value)
         {
+            if (m_MaterialsHandle.Visible)
+            {
+                int select = m_MaterialsHandle.GetSelectedIndex();
+                TreeNode materialsRoot = treeViewAssets.Nodes["Materials"];
+                treeViewAssets.SelectedNode = materialsRoot.Nodes[select];
+            }
+
             XmlNode materialNode = treeViewAssets.SelectedNode.Tag as XmlNode;
             if (materialNode != null)
             {
@@ -125,6 +132,7 @@ namespace FXStudio
                 writer.Close();
 
                 treeViewAssets.SelectedNode.Tag = materialNode;
+                m_MaterialsHandle.ModifyMaterial();
                 RenderMethods.ModifyMaterial(@"Materials\" + Path.GetFileName(treeViewAssets.SelectedNode.Name), false);
             }
         }

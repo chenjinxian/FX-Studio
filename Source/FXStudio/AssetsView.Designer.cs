@@ -89,12 +89,14 @@
             this.addEffectToolStripMenuItem.Name = "addEffectToolStripMenuItem";
             this.addEffectToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
             this.addEffectToolStripMenuItem.Text = "Add Effect...";
+            this.addEffectToolStripMenuItem.Click += new System.EventHandler(this.addEffectToolStripMenuItem_Click);
             // 
             // addEffectFromFileToolStripMenuItem
             // 
             this.addEffectFromFileToolStripMenuItem.Name = "addEffectFromFileToolStripMenuItem";
             this.addEffectFromFileToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
             this.addEffectFromFileToolStripMenuItem.Text = "Add Effect From File";
+            this.addEffectFromFileToolStripMenuItem.Click += new System.EventHandler(this.addEffectFromFileToolStripMenuItem_Click);
             // 
             // contextMenuStripMaterial
             // 
@@ -103,25 +105,28 @@
             this.addMaterialFromFileToolStripMenuItem,
             this.addMaterialFromNewEffectToolStripMenuItem});
             this.contextMenuStripMaterial.Name = "contextMenuStripMaterial";
-            this.contextMenuStripMaterial.Size = new System.Drawing.Size(262, 70);
+            this.contextMenuStripMaterial.Size = new System.Drawing.Size(262, 92);
             // 
             // addMaterialToolStripMenuItem
             // 
             this.addMaterialToolStripMenuItem.Name = "addMaterialToolStripMenuItem";
             this.addMaterialToolStripMenuItem.Size = new System.Drawing.Size(261, 22);
             this.addMaterialToolStripMenuItem.Text = "Add Material";
+            this.addMaterialToolStripMenuItem.Click += new System.EventHandler(this.addMaterialToolStripMenuItem_Click);
             // 
             // addMaterialFromFileToolStripMenuItem
             // 
             this.addMaterialFromFileToolStripMenuItem.Name = "addMaterialFromFileToolStripMenuItem";
             this.addMaterialFromFileToolStripMenuItem.Size = new System.Drawing.Size(261, 22);
             this.addMaterialFromFileToolStripMenuItem.Text = "Add Material From File";
+            this.addMaterialFromFileToolStripMenuItem.Click += new System.EventHandler(this.addMaterialFromFileToolStripMenuItem_Click);
             // 
             // addMaterialFromNewEffectToolStripMenuItem
             // 
             this.addMaterialFromNewEffectToolStripMenuItem.Name = "addMaterialFromNewEffectToolStripMenuItem";
             this.addMaterialFromNewEffectToolStripMenuItem.Size = new System.Drawing.Size(261, 22);
             this.addMaterialFromNewEffectToolStripMenuItem.Text = "Add Material From New Effect...";
+            this.addMaterialFromNewEffectToolStripMenuItem.Click += new System.EventHandler(this.addMaterialFromNewEffectToolStripMenuItem_Click);
             // 
             // contextMenuStripModel
             // 

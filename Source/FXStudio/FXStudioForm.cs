@@ -552,12 +552,7 @@ namespace FXStudio
 
         private void toolStripButtonEffect_Click(object sender, EventArgs e)
         {
-            EffectWizardDialog dialog = new EffectWizardDialog(m_ProjectLocation);
-            if (dialog.ShowDialog() == DialogResult.OK)
-            {
-                m_AssetsView.AddEffect(dialog.FileName, dialog.EffectName,
-                    dialog.CreateMaterial() ? dialog.MaterialName : string.Empty, dialog.IsEffectFromExist());
-            }
+            m_AssetsView.AddEffect();
         }
 
         private void toolStripButtonSaveAll_Click(object sender, EventArgs e)

@@ -165,6 +165,16 @@ namespace FXStudio
             }
         }
 
+        public void AddEffect()
+        {
+            EffectWizardDialog dialog = new EffectWizardDialog(m_ProjectLocation);
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                AddEffect(dialog.FileName, dialog.EffectName,
+                    dialog.CreateMaterial() ? dialog.MaterialName : string.Empty, dialog.IsEffectFromExist());
+            }
+        }
+
         public void AddEffect(string sourceFileName, string effectName, string materialName, bool fromExist)
         {
             string destOjbect = m_ProjectLocation + @"\Effects\" + Path.GetFileNameWithoutExtension(sourceFileName) + ".fxo";
@@ -218,6 +228,19 @@ namespace FXStudio
                     }
                 }
             }
+        }
+
+        public void AddMaterial()
+        {
+            //             TreeNode materialsTreeNode = treeViewAssets.Nodes["Materials"];
+            //             if (materialsTreeNode != null)
+            //             {
+            //                 foreach (TreeNode node in materialsTreeNode.Nodes)
+            //                 {
+            //                     node.Text
+            //                 }
+            //                 AddMaterial(materialsTreeNode, materialRoot.LastChild);
+            //             }
         }
 
         public bool CompileEffect(string sourceFileName, string destOjbect)
@@ -430,6 +453,31 @@ namespace FXStudio
                     m_NodeDelegate?.Invoke(element);
                 }
             }
+        }
+
+        private void addEffectToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AddEffect();
+        }
+
+        private void addEffectFromFileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void addMaterialToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void addMaterialFromFileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void addMaterialFromNewEffectToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

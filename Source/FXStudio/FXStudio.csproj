@@ -92,6 +92,12 @@
     <Compile Include="FXStudioForm.Designer.cs">
       <DependentUpon>FXStudioForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="MaterialRenameDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MaterialRenameDialog.Designer.cs">
+      <DependentUpon>MaterialRenameDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="MaterialsView.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -190,6 +196,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="EditorView.resx">
       <DependentUpon>EditorView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MaterialRenameDialog.resx">
+      <DependentUpon>MaterialRenameDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MaterialsView.resx">
       <DependentUpon>MaterialsView.cs</DependentUpon>

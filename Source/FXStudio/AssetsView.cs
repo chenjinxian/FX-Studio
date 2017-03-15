@@ -232,15 +232,35 @@ namespace FXStudio
 
         public void AddMaterial()
         {
-            //             TreeNode materialsTreeNode = treeViewAssets.Nodes["Materials"];
-            //             if (materialsTreeNode != null)
-            //             {
-            //                 foreach (TreeNode node in materialsTreeNode.Nodes)
-            //                 {
-            //                     node.Text
-            //                 }
-            //                 AddMaterial(materialsTreeNode, materialRoot.LastChild);
-            //             }
+            TreeNode materialsTreeNode = treeViewAssets.Nodes["Materials"];
+            if (materialsTreeNode != null)
+            {
+                int count = 1;
+                string materialName = $"DefaultMaterial{count}";
+
+                foreach (TreeNode node in materialsTreeNode.Nodes)
+                {
+                    if (node.Text == materialName)
+                    {
+                        count++;
+                        materialName = $"DefaultMaterial{count}";
+                    }
+                }
+
+                File.Copy(m_ProjectLocation + @"\Materials\DefaultMaterial.mat", m_ProjectLocation + @"\Materials\" + materialName + ".mat", true);
+                string materialtXml = string.Format(
+                    @"<Material name=""{0}"">{1}</Material>", materialName, @"Materials\" + materialName + ".mat");
+                XmlDocument materialDoc = new XmlDocument();
+                materialDoc.LoadXml(materialtXml.ToString());
+                XmlElement materialXmlNode = materialDoc.DocumentElement;
+
+                XmlNode materialRoot = m_XmlDoc.DocumentElement.SelectSingleNode("Materials");
+                if (materialRoot != null)
+                {
+                    materialRoot.AppendChild(m_XmlDoc.ImportNode(materialXmlNode, true));
+                    AddMaterial(materialsTreeNode, materialRoot.LastChild);
+                }
+            }
         }
 
         public bool CompileEffect(string sourceFileName, string destOjbect)
@@ -295,6 +315,7 @@ namespace FXStudio
 
                 TreeNode materialRoot = new TreeNode(nameNode.Value) { Name = materialFile, Tag = materialXmlNode };
                 treeNode.Nodes.Add(materialRoot);
+                materialRoot.ContextMenuStrip = this.contextMenuStripMatItem;
 
                 XmlNode effectNode = materialXmlNode.Attributes["effect"];
                 TreeNode effectRoot = new TreeNode(effectNode.Value) { Name = materialXmlNode.Attributes["object"].Value, Tag = effectNode };
@@ -467,7 +488,7 @@ namespace FXStudio
 
         private void addMaterialToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            AddMaterial();
         }
 
         private void addMaterialFromFileToolStripMenuItem_Click(object sender, EventArgs e)
@@ -478,6 +499,25 @@ namespace FXStudio
         private void addMaterialFromNewEffectToolStripMenuItem_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void assignEffectToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void reNameToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            TreeNode node = this.treeViewAssets.SelectedNode;
+            if (node != null)
+            {
+                MaterialRenameDialog dialog = new MaterialRenameDialog();
+                dialog.MaterialName = node.Text;
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    node.Text = dialog.MaterialName;
+                }
+            }
         }
     }
 }

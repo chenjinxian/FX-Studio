@@ -165,8 +165,7 @@ namespace FXStudio
         </Skybox>
         <Grid type = ""Grid"" >
             <GridRenderComponent >
-                <Texture>Textures\Grid.dds</Texture>
-                <GridSize x = ""10"" y=""10"" />
+                <GridSize>10</GridSize>
                 <TicksInterval>1.0</TicksInterval>
             </GridRenderComponent>
         </Grid>

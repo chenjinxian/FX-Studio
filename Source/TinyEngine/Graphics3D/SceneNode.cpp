@@ -271,14 +271,13 @@ GridNode::GridNode(ActorId actorId, WeakBaseRenderComponentPtr renderComponent)
 	m_pEffect(nullptr),
 	m_pCurrentPass(nullptr),
 	m_pVertexBuffer(nullptr),
-	m_pIndexBuffer(nullptr),
 	m_VertexCount(0),
-	m_IndexCount(0)
+	m_GridSize(10),
+	m_TicksInterval(0.1f)
 {
 	GridRenderComponent* pGridRender = static_cast<GridRenderComponent*>(m_pRenderComponent);
 	if (pGridRender != nullptr)
 	{
-		m_TextureName = pGridRender->GetTextureName();
 		m_GridSize = pGridRender->GetGridSize();
 		m_TicksInterval = pGridRender->GetTicksInterval();
 	}
@@ -300,7 +299,6 @@ GridNode::GridNode(ActorId actorId, WeakBaseRenderComponentPtr renderComponent)
 GridNode::~GridNode()
 {
 	SAFE_RELEASE(m_pVertexBuffer);
-	SAFE_RELEASE(m_pIndexBuffer);
 }
 
 void GridNode::InitGridVertex()
@@ -316,49 +314,28 @@ void GridNode::InitGridVertex()
 		DEBUG_ERROR(std::string("technique is not exist: ") + "p0");
 	}
 
-	Vector2 halfSize = m_GridSize * 0.5f;
-
-	uint16_t rows = static_cast<uint16_t>(m_GridSize.x / m_TicksInterval);
-	uint16_t columns = static_cast<uint16_t>(m_GridSize.y / m_TicksInterval);
-	m_VertexCount = (rows + 1) * (columns + 1);
-	m_IndexCount = rows * columns * 2 * 3;
-
-	std::vector<VertexPositionTexture> vertices;
+	m_VertexCount = (m_GridSize + 1) * 4;
+	std::vector<VertexPositionColor> vertices;
 	vertices.resize(m_VertexCount);
 
-	for (int i = 0; i < (rows + 1); i++)
+	float adjustedScale = m_GridSize * 0.1f;
+	float maxPosition = m_GridSize * adjustedScale / 2;
+
+	Color color(0.961f, 0.871f, 0.702f, 1.0f);
+	for (unsigned int i = 0, j = 0; i < m_GridSize + 1; i++, j = 4 * i)
 	{
-		for (int j = 0; j < (columns + 1); j++)
-		{
-			float x = (float)i - halfSize.x;
-			float y = halfSize.y - (float)j;
+		float position = maxPosition - (i * adjustedScale);
 
-			vertices[i * (columns + 1) + j] = VertexPositionTexture(Vector4(x, 0.0f, y, 1.0f), Vector2(x, y));
-		}
-	}
+		// Vertical line
+		vertices[j] = VertexPositionColor(Vector4(position, 0.0f, maxPosition, 1.0f), color);
+		vertices[j + 1] = VertexPositionColor(Vector4(position, 0.0f, -maxPosition, 1.0f), color);
 
-	std::vector<uint16_t> indices;
-	indices.resize(m_IndexCount);
-
-	uint16_t k = 0;
-	for (uint16_t i = 0; i < rows; i++)
-	{
-		for (uint16_t j = 0; j < columns; j++)
-		{
-			indices[k] = i * (columns + 1) + j;
-			indices[k + 1] = i * (columns + 1) + j + 1;
-			indices[k + 2] = (i + 1) * (columns + 1) + j;
-
-			indices[k + 3] = (i + 1) * (columns + 1) + j;
-			indices[k + 4] = i * (columns + 1) + j + 1;
-			indices[k + 5] = (i + 1) * (columns + 1) + j + 1;
-
-			k += 6;
-		}
+		// Horizontal line
+		vertices[j + 2] = VertexPositionColor(Vector4(maxPosition, 0.0f, position, 1.0f), color);
+		vertices[j + 3] = VertexPositionColor(Vector4(-maxPosition, 0.0f, position, 1.0f), color);
 	}
 
 	m_pCurrentPass->CreateVertexBuffer(&vertices.front(), vertices.size() * sizeof(VertexPositionTexture), &m_pVertexBuffer);
-	m_pCurrentPass->CreateIndexBuffer(&indices.front(), indices.size() * sizeof(uint16_t), &m_pIndexBuffer);
 }
 
 HRESULT GridNode::VOnInitSceneNode(Scene* pScene)
@@ -384,28 +361,13 @@ HRESULT GridNode::VRender(Scene* pScene, const GameTime& gameTime)
 				variable->SetMatrix(wvp);
 			}
 		}
-		else if (variable->GetVariableType() == "Texture2D")
-		{
-			Resource resource(m_TextureName);
-			shared_ptr<ResHandle> pTextureRes = g_pApp->GetResCache()->GetHandle(&resource);
-			if (pTextureRes != nullptr)
-			{
-				shared_ptr<D3D11TextureResourceExtraData> extra =
-					static_pointer_cast<D3D11TextureResourceExtraData>(pTextureRes->GetExtraData());
-				if (extra != nullptr)
-				{
-					variable->SetResource(extra->GetTexture());
-				}
-			}
-		}
 	}
 
-	pScene->GetRenderder()->VInputSetup(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, m_pCurrentPass->GetInputLayout());
+	pScene->GetRenderder()->VInputSetup(D3D11_PRIMITIVE_TOPOLOGY_LINELIST, m_pCurrentPass->GetInputLayout());
 	uint32_t stride = m_pCurrentPass->GetVertexSize();
 	uint32_t offset = 0;
 	pScene->GetRenderder()->VSetVertexBuffers(m_pVertexBuffer, &stride, &offset);
-	pScene->GetRenderder()->VSetIndexBuffer(m_pIndexBuffer, IRenderer::Format_uint16, 0);
-	pScene->GetRenderder()->VDrawMesh(m_IndexCount, 0, 0, m_pCurrentPass->GetEffectPass());
+	pScene->GetRenderder()->VDrawMesh(0, 0, m_VertexCount, m_pCurrentPass->GetEffectPass());
 
 	return S_OK;
 }

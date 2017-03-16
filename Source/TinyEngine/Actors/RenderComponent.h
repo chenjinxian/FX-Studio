@@ -34,8 +34,7 @@ public:
 	GridRenderComponent();
 	virtual ~GridRenderComponent();
 
-	const std::string& GetTextureName() { return m_TextureName; }
-	const Vector2& GetGridSize() const { return m_GridSize; }
+	uint32_t GetGridSize() const { return m_GridSize; }
 	const float GetTicksInterval() const { return m_TicksInterval; }
 
 	virtual const std::string& VGetComponentName() const override { return m_Name; }
@@ -46,8 +45,7 @@ protected:
 	virtual shared_ptr<SceneNode> VCreateSceneNode();
 	virtual void VCreateInheritedXmlElement(tinyxml2::XMLElement* pBaseElement, tinyxml2::XMLDocument* pDocument);
 
-	std::string m_TextureName;
-	Vector2 m_GridSize;
+	uint32_t m_GridSize;
 	float m_TicksInterval;
 };
 

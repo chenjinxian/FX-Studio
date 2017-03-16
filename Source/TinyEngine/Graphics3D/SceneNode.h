@@ -115,28 +115,25 @@ public:
 	virtual HRESULT VOnUpdate(Scene* pScene, const GameTime& gameTime) override;
 
 private:
-	typedef struct _VertexPositionTexture
+	typedef struct _VertexPositionColor
 	{
 		Vector4 position;
-		Vector2 texture;
+		Color color;
 
-		_VertexPositionTexture() { }
+		_VertexPositionColor() { }
 
-		_VertexPositionTexture(const Vector4& position, const Vector2& texture)
-			: position(position), texture(texture) { }
-	} VertexPositionTexture;
+		_VertexPositionColor(const Vector4& position, const Color& color)
+			: position(position), color(color) { }
+	} VertexPositionColor;
 
 	void InitGridVertex();
 
 	Effect* m_pEffect;
 	Pass* m_pCurrentPass;
 	ID3D11Buffer* m_pVertexBuffer;
-	ID3D11Buffer* m_pIndexBuffer;
 	uint32_t m_VertexCount;
-	uint32_t m_IndexCount;
 
-	std::string m_TextureName;
-	Vector2 m_GridSize;
+	uint32_t m_GridSize;
 	float m_TicksInterval;
 };
 

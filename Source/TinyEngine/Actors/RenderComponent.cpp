@@ -5,6 +5,7 @@
 #include "../AppFramework/BaseGameApp.h"
 #include "../Graphics3D/SkyboxNode.h"
 #include "../Graphics3D/ModelNode.h"
+#include "boost/lexical_cast.hpp"
 
 const std::string GridRenderComponent::m_Name = "GridRenderComponent";
 const std::string ModelRenderComponent::m_Name = "ModelRenderComponent";
@@ -72,23 +73,16 @@ GridRenderComponent::~GridRenderComponent()
 
 bool GridRenderComponent::VDelegateInit(tinyxml2::XMLElement* pData)
 {
-	tinyxml2::XMLElement* pTexture = pData->FirstChildElement("Texture");
-	if (pTexture != nullptr)
-	{
-		m_TextureName = pTexture->GetText();
-	}
-
 	tinyxml2::XMLElement* pGridSize = pData->FirstChildElement("GridSize");
 	if (pGridSize != nullptr)
 	{
-		m_GridSize.x = pGridSize->FloatAttribute("x");
-		m_GridSize.y = pGridSize->FloatAttribute("y");
+		m_GridSize = boost::lexical_cast<uint32_t>(pGridSize->GetText());
 	}
 
 	tinyxml2::XMLElement* pTicksInterval = pData->FirstChildElement("TicksInterval");
 	if (pTicksInterval != nullptr)
 	{
-		m_TicksInterval = atof(pTicksInterval->GetText());
+		m_TicksInterval = boost::lexical_cast<float>(pTicksInterval->GetText());
 	}
 
 	return true;

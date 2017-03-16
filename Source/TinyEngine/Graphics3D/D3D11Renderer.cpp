@@ -801,6 +801,10 @@ void D3D11Renderer::VDrawMesh(uint32_t indexCount, uint32_t startIndex, int32_t 
 	{
 		m_pDeviceContext->DrawIndexed(indexCount, startIndex, baseVertex);
 	}
+	else
+	{
+		m_pDeviceContext->Draw(baseVertex, 0);
+	}
 }
 
 void D3D11Renderer::VResetShader(bool geoemtryShader, bool hullShader, bool domainShader)

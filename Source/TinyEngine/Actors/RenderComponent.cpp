@@ -76,7 +76,7 @@ bool GridRenderComponent::VDelegateInit(tinyxml2::XMLElement* pData)
 	tinyxml2::XMLElement* pGridSize = pData->FirstChildElement("GridSize");
 	if (pGridSize != nullptr)
 	{
-		m_GridSize = boost::lexical_cast<uint32_t>(pGridSize->GetText());
+		m_GridSize = boost::lexical_cast<float>(pGridSize->GetText());
 	}
 
 	tinyxml2::XMLElement* pTicksInterval = pData->FirstChildElement("TicksInterval");

@@ -165,7 +165,7 @@ namespace FXStudio
         </Skybox>
         <Grid type = ""Grid"" >
             <GridRenderComponent >
-                <GridSize>10</GridSize>
+                <GridSize>100.0</GridSize>
                 <TicksInterval>1.0</TicksInterval>
             </GridRenderComponent>
         </Grid>

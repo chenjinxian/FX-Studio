@@ -133,7 +133,7 @@ private:
 	ID3D11Buffer* m_pVertexBuffer;
 	uint32_t m_VertexCount;
 
-	uint32_t m_GridSize;
+	float m_GridSize;
 	float m_TicksInterval;
 };
 

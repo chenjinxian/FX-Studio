@@ -272,7 +272,7 @@ GridNode::GridNode(ActorId actorId, WeakBaseRenderComponentPtr renderComponent)
 	m_pCurrentPass(nullptr),
 	m_pVertexBuffer(nullptr),
 	m_VertexCount(0),
-	m_GridSize(10),
+	m_GridSize(10.0f),
 	m_TicksInterval(0.1f)
 {
 	GridRenderComponent* pGridRender = static_cast<GridRenderComponent*>(m_pRenderComponent);
@@ -314,28 +314,36 @@ void GridNode::InitGridVertex()
 		DEBUG_ERROR(std::string("technique is not exist: ") + "p0");
 	}
 
-	m_VertexCount = (m_GridSize + 1) * 4;
+	uint32_t ticksCount = m_GridSize / m_TicksInterval;
+	m_VertexCount = (ticksCount * 2 + 1) * 4;
 	std::vector<VertexPositionColor> vertices;
-	vertices.resize(m_VertexCount);
+	vertices.reserve(m_VertexCount);
 
-	float adjustedScale = m_GridSize * 0.1f;
-	float maxPosition = m_GridSize * adjustedScale / 2;
+	// X-Axes line
+	vertices.push_back(VertexPositionColor(Vector4(-m_GridSize, 0, 0, 1.0f), Color(1.0f, 0.0f, 0.0f)));
+	vertices.push_back(VertexPositionColor(Vector4(m_GridSize, 0, 0, 1.0f), Color(1.0f, 0.0f, 0.0f)));
+
+	// Z-Axes line
+	vertices.push_back(VertexPositionColor(Vector4(0, 0, -m_GridSize, 1.0f), Color(0.0f, 0.0f, 1.0f)));
+	vertices.push_back(VertexPositionColor(Vector4(0, 0, m_GridSize, 1.0f), Color(0.0f, 0.0f, 1.0f)));
 
 	Color color(0.961f, 0.871f, 0.702f, 1.0f);
-	for (unsigned int i = 0, j = 0; i < m_GridSize + 1; i++, j = 4 * i)
+	for (uint32_t i = 1; i <= ticksCount; i++)
 	{
-		float position = maxPosition - (i * adjustedScale);
-
 		// Vertical line
-		vertices[j] = VertexPositionColor(Vector4(position, 0.0f, maxPosition, 1.0f), color);
-		vertices[j + 1] = VertexPositionColor(Vector4(position, 0.0f, -maxPosition, 1.0f), color);
+		vertices.push_back(VertexPositionColor(Vector4(-m_TicksInterval * i, 0, -m_GridSize, 1.0f), color));
+		vertices.push_back(VertexPositionColor(Vector4(-m_TicksInterval * i, 0, m_GridSize, 1.0f), color));
+		vertices.push_back(VertexPositionColor(Vector4(m_TicksInterval * i, 0, -m_GridSize, 1.0f), color));
+		vertices.push_back(VertexPositionColor(Vector4(m_TicksInterval * i, 0, m_GridSize, 1.0f), color));
 
 		// Horizontal line
-		vertices[j + 2] = VertexPositionColor(Vector4(maxPosition, 0.0f, position, 1.0f), color);
-		vertices[j + 3] = VertexPositionColor(Vector4(-maxPosition, 0.0f, position, 1.0f), color);
+		vertices.push_back(VertexPositionColor(Vector4(-m_GridSize, 0, m_TicksInterval * i, 1.0f), color));
+		vertices.push_back(VertexPositionColor(Vector4(m_GridSize, 0, m_TicksInterval * i, 1.0f), color));
+		vertices.push_back(VertexPositionColor(Vector4(-m_GridSize, 0, -m_TicksInterval * i, 1.0f), color));
+		vertices.push_back(VertexPositionColor(Vector4(m_GridSize, 0, -m_TicksInterval * i, 1.0f), color));
 	}
 
-	m_pCurrentPass->CreateVertexBuffer(&vertices.front(), vertices.size() * sizeof(VertexPositionTexture), &m_pVertexBuffer);
+	m_pCurrentPass->CreateVertexBuffer(&vertices.front(), vertices.size() * sizeof(VertexPositionColor), &m_pVertexBuffer);
 }
 
 HRESULT GridNode::VOnInitSceneNode(Scene* pScene)

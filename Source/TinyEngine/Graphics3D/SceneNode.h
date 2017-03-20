@@ -150,7 +150,6 @@ public:
 	virtual void VPick(Scene* pScene, int cursorX, int cursorY) override;
 
 private:
-	void CreateCube();
 	void CreateSphere();
 	void CreateTorus();
 	void CreateTeapot();
@@ -165,7 +164,6 @@ private:
 
 	std::string m_MaterialName;
 
-	static const std::string m_Cube;
 	static const std::string m_Sphere;
 	static const std::string m_Torus;
 	static const std::string m_Teapot;

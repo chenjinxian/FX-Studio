@@ -167,7 +167,7 @@ namespace FXStudio
                     materials.AppendChild(material);
                     renderComponent.AppendChild(materials);
                 }
-                else if (nodeType == "Cube")
+                else if (nodeType == "Plane")
                 {
                     renderComponent = xmlDoc.CreateElement("PlaneRenderComponent");
                     renderComponent.AppendChild(material);
@@ -454,7 +454,7 @@ namespace FXStudio
             XmlElement geometryElement = xmlDoc.CreateElement("Teapot");
 
             geometryElement.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "type", "Teapot"));
-            geometryElement.AppendChild(XmlUtility.CreateTransformComponent(xmlDoc, "0", "0.5"));
+            geometryElement.AppendChild(XmlUtility.CreateTransformComponent(xmlDoc, "0", "0"));
             geometryElement.AppendChild(XmlUtility.CreateTeapotRenderComponent(xmlDoc));
 
             if (RenderMethods.AddActor(geometryElement.OuterXml) > 0)
@@ -469,7 +469,7 @@ namespace FXStudio
             XmlElement geometryElement = xmlDoc.CreateElement("Sphere");
 
             geometryElement.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "type", "Sphere"));
-            geometryElement.AppendChild(XmlUtility.CreateTransformComponent(xmlDoc, "0", "0.5"));
+            geometryElement.AppendChild(XmlUtility.CreateTransformComponent(xmlDoc, "0", "0"));
             geometryElement.AppendChild(XmlUtility.CreateSphereRenderComponent(xmlDoc));
 
             if (RenderMethods.AddActor(geometryElement.OuterXml) > 0)
@@ -484,7 +484,7 @@ namespace FXStudio
             XmlElement geometryElement = xmlDoc.CreateElement("Torus");
 
             geometryElement.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "type", "Torus"));
-            geometryElement.AppendChild(XmlUtility.CreateTransformComponent(xmlDoc, "2", "0.5"));
+            geometryElement.AppendChild(XmlUtility.CreateTransformComponent(xmlDoc, "0", "0"));
             geometryElement.AppendChild(XmlUtility.CreateTorusRenderComponent(xmlDoc));
 
             if (RenderMethods.AddActor(geometryElement.OuterXml) > 0)
@@ -495,17 +495,17 @@ namespace FXStudio
 
         private void toolStripButtonPlane_Click(object sender, EventArgs e)
         {
-            //             XmlDocument xmlDoc = new XmlDocument();
-            //             XmlElement geometryElement = xmlDoc.CreateElement("Plane");
-            // 
-            //             geometryElement.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "type", "Plane"));
-            //             geometryElement.AppendChild(XmlUtility.CreateTransformComponent(xmlDoc, "-2", "0.5"));
-            //             geometryElement.AppendChild(XmlUtility.CreatePlaneRenderComponent(xmlDoc));
-            // 
-            //             if (RenderMethods.AddActor(geometryElement.OuterXml) > 0)
-            //             {
-            //                 m_ProjectView.AddActorNode(geometryElement);
-            //             }
+            XmlDocument xmlDoc = new XmlDocument();
+            XmlElement geometryElement = xmlDoc.CreateElement("Plane");
+
+            geometryElement.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "type", "Plane"));
+            geometryElement.AppendChild(XmlUtility.CreateTransformComponent(xmlDoc, "0", "0"));
+            geometryElement.AppendChild(XmlUtility.CreatePlaneRenderComponent(xmlDoc));
+
+            if (RenderMethods.AddActor(geometryElement.OuterXml) > 0)
+            {
+                m_ProjectView.AddActorNode(geometryElement);
+            }
         }
 
         private void toolStripButtonImport_Click(object sender, EventArgs e)

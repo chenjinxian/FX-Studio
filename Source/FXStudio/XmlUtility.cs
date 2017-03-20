@@ -72,8 +72,8 @@ namespace FXStudio
 
             effect.InnerText = @"Materials\DefaultMaterial.mat";
 
-            torus.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "diameter", "1.0"));
-            torus.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "thickness", "0.33"));
+            torus.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "diameter", "0.8"));
+            torus.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "thickness", "0.4"));
             torus.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "tessellation", "32"));
             torus.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "rhcoords", "1"));
 
@@ -100,19 +100,19 @@ namespace FXStudio
 
         public static XmlElement CreatePlaneRenderComponent(XmlDocument xmlDoc)
         {
-            XmlElement cubeElement = xmlDoc.CreateElement("PlaneRenderComponent");
+            XmlElement planeElement = xmlDoc.CreateElement("PlaneRenderComponent");
 
-            XmlElement cube = xmlDoc.CreateElement("Cube");
+            XmlElement plane = xmlDoc.CreateElement("Plane");
             XmlElement effect = xmlDoc.CreateElement("Material");
-            cubeElement.AppendChild(cube);
-            cubeElement.AppendChild(effect);
+            planeElement.AppendChild(plane);
+            planeElement.AppendChild(effect);
 
             effect.InnerText = @"Materials\DefaultMaterial.mat";
 
-            cube.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "size", "1.0"));
-            cube.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "rhcoords", "1"));
+            plane.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "size", "5.0"));
+            plane.Attributes.Append(XmlUtility.CreateAttribute(xmlDoc, "rhcoords", "1"));
 
-            return cubeElement;
+            return planeElement;
         }
 
         public static XmlElement CreateModelRenderComponent(XmlDocument xmlDoc, string fileName)

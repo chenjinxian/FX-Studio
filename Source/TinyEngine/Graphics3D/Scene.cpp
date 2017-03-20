@@ -1,6 +1,7 @@
 #include "Scene.h"
 #include "SceneNode.h"
 #include "CameraNode.h"
+#include "ModelNode.h"
 #include "../EventManager/EventManager.h"
 #include "../EventManager/Events.h"
 #include "../AppFramework/BaseGameApp.h"
@@ -184,7 +185,7 @@ ActorId Scene::PickActor(int cursorX, int cursorY, int* mesh)
 void Scene::ResetActorTransform(ActorId actorId)
 {
 	shared_ptr<ISceneNode> pNode = FindActor(actorId);
-	if (pNode != nullptr)
+	if (pNode != nullptr && dynamic_pointer_cast<ModelNode>(pNode) != nullptr)
 	{
 		const BoundingBox& aabb = pNode->VGet()->GetBoundingBox();
 		float scale = 1.0 / Vector3(aabb.Extents).Length();

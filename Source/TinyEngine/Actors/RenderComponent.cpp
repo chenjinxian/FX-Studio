@@ -180,12 +180,12 @@ bool SphereRenderComponent::VDelegateInit(tinyxml2::XMLElement* pData)
 {
 	GeometryRenderComponent::VDelegateInit(pData);
 
-	tinyxml2::XMLElement* pSphere = pData->FirstChildElement("Sphere");
-	if (pSphere != nullptr)
+	tinyxml2::XMLElement* pGeometry = pData->FirstChildElement("Sphere");
+	if (pGeometry != nullptr)
 	{
-		m_Diameter = pSphere->FloatAttribute("diameter");
-		m_Tessellation = pSphere->UnsignedAttribute("tessellation");
-		m_RHcoords = pSphere->BoolAttribute("rhcoords");
+		m_Diameter = pGeometry->FloatAttribute("diameter");
+		m_Tessellation = pGeometry->UnsignedAttribute("tessellation");
+		m_RHcoords = pGeometry->BoolAttribute("rhcoords");
 	}
 
 	return true;
@@ -215,13 +215,13 @@ bool TorusRenderComponent::VDelegateInit(tinyxml2::XMLElement* pData)
 {
 	GeometryRenderComponent::VDelegateInit(pData);
 
-	tinyxml2::XMLElement* pSphere = pData->FirstChildElement("Torus");
-	if (pSphere != nullptr)
+	tinyxml2::XMLElement* pGeometry = pData->FirstChildElement("Torus");
+	if (pGeometry != nullptr)
 	{
-		m_Diameter = pSphere->FloatAttribute("diameter");
-		m_Thickness = pSphere->FloatAttribute("thickness");
-		m_Tessellation = pSphere->UnsignedAttribute("tessellation");
-		m_RHcoords = pSphere->BoolAttribute("rhcoords");
+		m_Diameter = pGeometry->FloatAttribute("diameter");
+		m_Thickness = pGeometry->FloatAttribute("thickness");
+		m_Tessellation = pGeometry->UnsignedAttribute("tessellation");
+		m_RHcoords = pGeometry->BoolAttribute("rhcoords");
 	}
 
 	return true;
@@ -250,12 +250,12 @@ bool TeapotRenderComponent::VDelegateInit(tinyxml2::XMLElement* pData)
 {
 	GeometryRenderComponent::VDelegateInit(pData);
 
-	tinyxml2::XMLElement* pSphere = pData->FirstChildElement("Teapot");
-	if (pSphere != nullptr)
+	tinyxml2::XMLElement* pGeometry = pData->FirstChildElement("Teapot");
+	if (pGeometry != nullptr)
 	{
-		m_Size = pSphere->FloatAttribute("size");
-		m_Tessellation = pSphere->UnsignedAttribute("tessellation");
-		m_RHcoords = pSphere->BoolAttribute("rhcoords");
+		m_Size = pGeometry->FloatAttribute("size");
+		m_Tessellation = pGeometry->UnsignedAttribute("tessellation");
+		m_RHcoords = pGeometry->BoolAttribute("rhcoords");
 	}
 
 	return true;
@@ -283,11 +283,11 @@ bool PlaneRenderComponent::VDelegateInit(tinyxml2::XMLElement* pData)
 {
 	GeometryRenderComponent::VDelegateInit(pData);
 
-	tinyxml2::XMLElement* pSphere = pData->FirstChildElement("Cube");
-	if (pSphere != nullptr)
+	tinyxml2::XMLElement* pGeometry = pData->FirstChildElement("Plane");
+	if (pGeometry != nullptr)
 	{
-		m_Size = pSphere->FloatAttribute("size");
-		m_RHcoords = pSphere->BoolAttribute("rhcoords");
+		m_Size = pGeometry->FloatAttribute("size");
+		m_RHcoords = pGeometry->BoolAttribute("rhcoords");
 	}
 
 	return true;

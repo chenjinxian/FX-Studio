@@ -385,7 +385,6 @@ HRESULT GridNode::VOnUpdate(Scene* pScene, const GameTime& gameTime)
 	return S_OK;
 }
 
-const std::string GeometryNode::m_Cube = "Cube";
 const std::string GeometryNode::m_Sphere = "Sphere";
 const std::string GeometryNode::m_Torus = "Torus";
 const std::string GeometryNode::m_Teapot = "Teapot";
@@ -399,10 +398,6 @@ GeometryNode::GeometryNode(ActorType actorType, ActorId actorId, WeakBaseRenderC
 	m_pIndexBuffer(nullptr),
 	m_Mesh(nullptr)
 {
-	if (actorType == m_Cube)
-	{
-		CreateCube();
-	}
 	if (actorType == m_Sphere)
 	{
 		CreateSphere();
@@ -730,22 +725,6 @@ void GeometryNode::VPick(Scene* pScene, int cursorX, int cursorY)
 	}
 }
 
-void GeometryNode::CreateCube()
-{
-	PlaneRenderComponent* pMeshRender = static_cast<PlaneRenderComponent*>(m_pRenderComponent);
-	if (pMeshRender != nullptr)
-	{
-		float size = pMeshRender->GetSize();
-		bool useRHcoords = pMeshRender->UseRHcoords();
-
-		std::vector<VertexPositionNormalTexture> vertices;
-		std::vector<uint16_t> indices;
-		GeometricPrimitive::CreateCube(vertices, indices, size, useRHcoords);
-		m_IndexCount = indices.size();
-		m_Mesh = unique_ptr<Mesh>(DEBUG_NEW Mesh(vertices, indices));
-	}
-}
-
 void GeometryNode::CreateSphere()
 {
 	SphereRenderComponent* pMeshRender = static_cast<SphereRenderComponent*>(m_pRenderComponent);
@@ -800,5 +779,17 @@ void GeometryNode::CreateTeapot()
 
 void GeometryNode::CreatePlane()
 {
-
+	PlaneRenderComponent* pMeshRender = static_cast<PlaneRenderComponent*>(m_pRenderComponent);
+	if (pMeshRender != nullptr)
+	{
+		float size = pMeshRender->GetSize() / 2.0f;
+		std::vector<VertexPositionNormalTexture> vertices(4);
+		vertices[0] = VertexPositionNormalTexture(XMFLOAT3(-size, 0.0f, size), XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT2(0.0f, 1.0f));
+		vertices[1] = VertexPositionNormalTexture(XMFLOAT3(-size, 0.0f, -size), XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT2(0.0f, 0.0f));
+		vertices[2] = VertexPositionNormalTexture(XMFLOAT3(size, 0.0f, -size), XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT2(1.0f, 0.0f));
+		vertices[3] = VertexPositionNormalTexture(XMFLOAT3(size, 0.0f, size), XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT2(1.0f, 1.0f));
+		std::vector<uint16_t> indices = {0, 1, 2, 0, 2, 3 };
+		m_IndexCount = indices.size();
+		m_Mesh = unique_ptr<Mesh>(DEBUG_NEW Mesh(vertices, indices));
+	}
 }
